@@ -1,0 +1,32 @@
+import React from 'react';
+import { useToolbarStore } from '../../stores/toolbarStore';
+import {
+  HomeToolbar,
+  InsertToolbar,
+  FormulasToolbar,
+  DataToolbar,
+  ViewToolbar,
+} from './toolbars';
+
+export const Toolbar2026: React.FC = () => {
+  const { activeTab } = useToolbarStore();
+
+  const renderToolbar = () => {
+    switch (activeTab) {
+      case 'home':
+        return <HomeToolbar />;
+      case 'insert':
+        return <InsertToolbar />;
+      case 'formulas':
+        return <FormulasToolbar />;
+      case 'data':
+        return <DataToolbar />;
+      case 'view':
+        return <ViewToolbar />;
+      default:
+        return <HomeToolbar />;
+    }
+  };
+
+  return renderToolbar();
+};

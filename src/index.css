@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base dark mode body */
+:root[data-theme="dark"] body {
+  @apply bg-neutral-900 text-neutral-100;
+}
+
+/* Grid styles with CSS containment for performance */
+.cell {
+  @apply border-r border-b border-grid-border;
+  @apply px-1 text-sm font-mono;
+  @apply overflow-hidden whitespace-nowrap text-ellipsis;
+  @apply select-none cursor-cell;
+  @apply bg-white text-gray-900;
+  contain: strict;
+  content-visibility: auto;
+  contain-intrinsic-size: 100px 24px;
+}
+
+:root[data-theme="dark"] .cell {
+  @apply bg-neutral-900 text-neutral-100 border-neutral-700;
+}
+
+.cell:hover {
+  @apply bg-grid-hover;
+}
+
+:root[data-theme="dark"] .cell:hover {
+  @apply bg-neutral-800;
+}
+
+.cell.selected {
+  /* Selection handled by Selection overlay component */
+  @apply z-10;
+}
+
+.header-cell {
+  @apply bg-grid-header border-r border-b border-grid-border;
+  @apply px-1 text-xs font-medium text-gray-600;
+  @apply flex items-center justify-center;
+  @apply select-none;
+}
+
+:root[data-theme="dark"] .header-cell {
+  background-color: #2d5c47;  /* Lighter green */
+  border-color: #3a6b54;
+  color: #d4d4d4;
+}
+
+/* Selected header cell */
+.header-cell--selected {
+  background-color: #dbeafe;
+}
+
+:root[data-theme="dark"] .header-cell--selected {
+  background-color: #1a3a2d;  /* Darker for selected - easier to distinguish */
+}
+
+/* Corner cell */
+.header-corner {
+  background-color: #f1f5f9;
+}
+
+:root[data-theme="dark"] .header-corner {
+  background-color: #2d5c47;
+}
+
+/* Header container background */
+.header-container {
+  background-color: #f8fafc;
+}
+
+:root[data-theme="dark"] .header-container {
+  background-color: #234d3b;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+  @apply bg-neutral-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  @apply bg-neutral-600 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-500;
+}
+
+/* Formula bar */
+.formula-bar {
+  @apply h-8 border-b border-gray-200;
+  @apply flex items-center px-2 gap-2;
+  @apply bg-white;
+}
+
+:root[data-theme="dark"] .formula-bar {
+  @apply bg-neutral-900 border-neutral-700;
+}
+
+.formula-input {
+  @apply flex-1 h-6 px-2;
+  @apply border border-gray-300 rounded;
+  @apply font-mono text-sm;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+:root[data-theme="dark"] .formula-input {
+  @apply bg-neutral-800 border-neutral-600 text-neutral-100;
+}
+
+/* Toolbar */
+.toolbar {
+  @apply h-10 border-b border-gray-200;
+  @apply flex items-center px-2 gap-1;
+  @apply bg-gray-50;
+}
+
+:root[data-theme="dark"] .toolbar {
+  @apply bg-neutral-800 border-neutral-700;
+}
+
+.toolbar-btn {
+  @apply px-3 py-1 text-sm;
+  @apply rounded hover:bg-gray-200;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+:root[data-theme="dark"] .toolbar-btn {
+  @apply text-neutral-200 hover:bg-neutral-700;
+}

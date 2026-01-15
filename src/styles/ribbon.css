@@ -1,0 +1,908 @@
+/* Ribbon Container */
+.ribbon {
+  background: linear-gradient(to bottom, #f3f3f3, #e5e5e5);
+  border-bottom: 1px solid #d4d4d4;
+  user-select: none;
+}
+
+.ribbon-header {
+  display: flex;
+  align-items: center;
+  background: #217346;
+  height: 32px;
+}
+
+.file-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  height: 100%;
+  color: white;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.file-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ribbon-tabs {
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+
+.ribbon-tab {
+  padding: 0 16px;
+  height: 100%;
+  color: white;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.ribbon-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ribbon-tab.active {
+  background: #f3f3f3;
+  color: #217346;
+  border-bottom-color: #217346;
+}
+
+.collapse-button {
+  padding: 8px;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Ribbon Content */
+.ribbon-content {
+  display: flex;
+  padding: 4px 8px;
+  min-height: 90px;
+  background: #f3f3f3;
+}
+
+.ribbon-tab-content {
+  display: flex;
+  gap: 2px;
+  height: 100%;
+}
+
+.ribbon-separator {
+  width: 1px;
+  margin: 4px 6px;
+  background: #d4d4d4;
+}
+
+/* Ribbon Group */
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  padding: 0 6px;
+}
+
+.ribbon-group-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 4px 0;
+}
+
+.ribbon-group-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 2px 0;
+  font-size: 11px;
+  color: #666;
+  border-top: 1px solid #e0e0e0;
+}
+
+.dialog-launcher {
+  padding: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.dialog-launcher:hover {
+  opacity: 1;
+  background: #e0e0e0;
+}
+
+/* Ribbon Button */
+.ribbon-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #333;
+}
+
+.ribbon-button:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.ribbon-button.active {
+  background: #cce4f7;
+  border-color: #91c9f7;
+}
+
+.ribbon-button.small {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+.ribbon-button.large {
+  min-width: 50px;
+  height: 66px;
+  padding: 4px 8px;
+}
+
+.ribbon-button-label {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* Ribbon Dropdown */
+.ribbon-dropdown {
+  position: relative;
+}
+
+.ribbon-dropdown-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.ribbon-dropdown-trigger.large {
+  min-width: 50px;
+  height: 66px;
+}
+
+.ribbon-dropdown-trigger:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.ribbon-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  padding: 4px 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background: #e5f1fb;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: #e0e0e0;
+}
+
+/* Split Button */
+.ribbon-split-button {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+
+.ribbon-split-button.large {
+  min-width: 50px;
+}
+
+.split-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  cursor: pointer;
+}
+
+.split-main:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.split-dropdown {
+  display: flex;
+  justify-content: center;
+  padding: 2px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  cursor: pointer;
+}
+
+.split-dropdown:hover {
+  background: #cce4f7;
+  border-color: #91c9f7;
+}
+
+.split-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  padding: 4px 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+/* Group Layouts */
+.clipboard-group-layout {
+  display: flex;
+  gap: 4px;
+}
+
+.clipboard-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.font-group-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.font-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.size-button {
+  padding: 2px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.size-button:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.alignment-group-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alignment-row {
+  display: flex;
+  gap: 2px;
+}
+
+.number-group-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.number-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.decimal-button {
+  padding: 2px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.decimal-button:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.styles-group-layout {
+  display: flex;
+  gap: 4px;
+}
+
+.cells-group-layout {
+  display: flex;
+  gap: 4px;
+}
+
+.editing-group-layout {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+/* Font Picker */
+.font-picker {
+  position: relative;
+  width: 120px;
+}
+
+.font-picker-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.font-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  max-height: 300px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.font-search {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.font-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.font-option {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+
+.font-option:hover {
+  background: #e5f1fb;
+}
+
+.font-option.selected {
+  background: #cce4f7;
+}
+
+/* Font Size Picker */
+.font-size-picker {
+  position: relative;
+  width: 50px;
+}
+
+.font-size-input-wrapper {
+  display: flex;
+}
+
+.font-size-input {
+  width: 30px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.font-size-dropdown-trigger {
+  padding: 4px;
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+}
+
+.font-size-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 60px;
+  max-height: 200px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.font-size-option {
+  display: block;
+  width: 100%;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.font-size-option:hover {
+  background: #e5f1fb;
+}
+
+.font-size-option.selected {
+  background: #cce4f7;
+}
+
+/* Color Picker */
+.color-picker {
+  position: relative;
+}
+
+.color-picker-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.color-picker-trigger:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.color-indicator {
+  width: 16px;
+  height: 3px;
+}
+
+.color-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 20px);
+  gap: 2px;
+}
+
+.color-cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.color-cell:hover {
+  border-color: #666;
+}
+
+.color-cell.selected {
+  border: 2px solid #333;
+}
+
+.color-picker-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.more-colors-btn,
+.no-color-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #0066cc;
+}
+
+.more-colors-btn:hover,
+.no-color-btn:hover {
+  text-decoration: underline;
+}
+
+/* Border Selector */
+.border-selector {
+  position: relative;
+}
+
+.border-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.border-selector-trigger:hover {
+  background: #e5f1fb;
+  border-color: #b8d6fb;
+}
+
+.border-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  padding: 4px 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.border-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+.border-option:hover {
+  background: #e5f1fb;
+}
+
+.border-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: #e0e0e0;
+}
+
+/* Number Format Dropdown */
+.number-format-dropdown {
+  position: relative;
+  width: 100px;
+}
+
+.number-format-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.number-format-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 120px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.number-format-option {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+}
+
+.number-format-option:hover {
+  background: #e5f1fb;
+}
+
+.number-format-option.selected {
+  background: #cce4f7;
+}
+
+/* Sheet Tabs */
+.sheet-tab-bar {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  background: #f3f3f3;
+  border-top: 1px solid #d4d4d4;
+}
+
+.sheet-navigation {
+  display: flex;
+  padding: 0 4px;
+}
+
+.sheet-navigation button {
+  padding: 2px 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.sheet-navigation button:hover {
+  background: #e0e0e0;
+}
+
+.sheet-tabs-container {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.sheet-tab {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #e8e8e8;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: -1px;
+}
+
+.sheet-tab:hover {
+  background: #f5f5f5;
+}
+
+.sheet-tab.active {
+  background: white;
+  border-bottom: 1px solid white;
+  margin-bottom: -1px;
+}
+
+.sheet-tab-input {
+  width: 80px;
+  padding: 2px 4px;
+  border: 1px solid #0066cc;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.add-sheet-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.add-sheet-button:hover {
+  background: #e0e0e0;
+  border-radius: 3px;
+}
+
+/* Status Bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 24px;
+  padding: 0 8px;
+  background: #217346;
+  color: white;
+  font-size: 12px;
+}
+
+.status-bar-left,
+.status-bar-center,
+.status-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mode-indicator {
+  padding: 0 8px;
+}
+
+.selection-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  gap: 4px;
+}
+
+.stat-label {
+  opacity: 0.8;
+}
+
+.view-mode-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.view-mode-btn {
+  padding: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
+  opacity: 0.7;
+}
+
+.view-mode-btn:hover,
+.view-mode-btn.active {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.zoom-slider {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zoom-slider button {
+  padding: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
+  opacity: 0.7;
+}
+
+.zoom-slider button:hover {
+  opacity: 1;
+}
+
+.zoom-range {
+  width: 80px;
+}
+
+.zoom-value {
+  width: 40px;
+  text-align: right;
+}
+
+/* Context Menu */
+.sheet-context-menu {
+  position: fixed;
+  min-width: 180px;
+  padding: 4px 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+  color: #333;
+}
+
+.menu-item:hover {
+  background: #e5f1fb;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: #e0e0e0;
+}
+
+/* Checkbox in Ribbon */
+.ribbon-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ribbon-checkbox input {
+  margin: 0;
+}
