@@ -26,8 +26,11 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  // Local drag state for performance - only update store on mouse up
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<{ row: number; col: number } | null>(null);
+  const [dragEnd, setDragEnd] = useState<{ row: number; col: number } | null>(null);
 
   // Optimized selectors - only subscribe to what we need
   const sheet = useWorkbookStore(useCallback((state) => state.sheets[sheetId], [sheetId]));
@@ -87,60 +90,70 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
         setSelectedCell({ row, col });
         setSelectionRange(null);
         setDragStart({ row, col });
+        setDragEnd({ row, col });
         setIsDragging(true);
       }
     },
     [setSelectedCell, setSelectionRange, selectRange, selectedCell]
   );
 
-  // Handle cell mouse enter (during drag)
+  // Handle cell mouse enter (during drag) - use local state for performance
   const handleCellMouseEnter = useCallback(
     (row: number, col: number, e: React.MouseEvent) => {
-      // Only extend selection if mouse button is actually pressed (buttons === 1 means left button)
+      // Only extend selection if mouse button is actually pressed
       if (isDragging && dragStart && e.buttons === 1) {
-        selectRange(dragStart, { row, col });
+        // Update local state only - much faster than updating store
+        setDragEnd({ row, col });
       } else if (isDragging && e.buttons !== 1) {
-        // Mouse button was released but we didn't catch the event - reset dragging
+        // Mouse button was released but we didn't catch the event
         setIsDragging(false);
+        if (dragStart && dragEnd) {
+          selectRange(dragStart, dragEnd);
+        }
         setDragStart(null);
+        setDragEnd(null);
       }
     },
-    [isDragging, dragStart, selectRange]
+    [isDragging, dragStart, dragEnd, selectRange]
   );
 
-  // Handle mouse up (end drag) - using multiple event listeners for reliability
+  // Handle mouse up (end drag) - commit selection to store
   useEffect(() => {
     const handleMouseUp = () => {
-      if (isDragging) {
-        setIsDragging(false);
-        setDragStart(null);
+      if (isDragging && dragStart && dragEnd) {
+        // Commit the selection to store only on mouse up
+        if (dragStart.row !== dragEnd.row || dragStart.col !== dragEnd.col) {
+          selectRange(dragStart, dragEnd);
+        }
       }
+      setIsDragging(false);
+      setDragStart(null);
+      setDragEnd(null);
     };
 
-    // Listen on both window and document for reliability
     window.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mouseup', handleMouseUp);
-
-    // Also reset on blur (user switches tabs/windows)
     window.addEventListener('blur', handleMouseUp);
 
     return () => {
       window.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('blur', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, dragStart, dragEnd, selectRange]);
 
-  // Reset dragging when mouse leaves the grid container
-  const handleMouseLeave = useCallback(() => {
-    // Don't reset immediately - allow dragging outside briefly
-    // The mouseup event will handle the final reset
-  }, []);
-
-  // Direct mouseup handler on container as backup
+  // Direct mouseup handler on container
   const handleContainerMouseUp = useCallback(() => {
+    if (isDragging && dragStart && dragEnd) {
+      if (dragStart.row !== dragEnd.row || dragStart.col !== dragEnd.col) {
+        selectRange(dragStart, dragEnd);
+      }
+    }
     setIsDragging(false);
     setDragStart(null);
+    setDragEnd(null);
+  }, [isDragging, dragStart, dragEnd, selectRange]);
+
+  const handleMouseLeave = useCallback(() => {
+    // Allow dragging outside - mouseup will handle final commit
   }, []);
 
   // Handle cell double-click (enter edit mode)
@@ -255,21 +268,7 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedCell, isEditing, moveSelection, expandSelection, setIsEditing, setSelectionRange, handleCellSubmit]);
 
-  // Check if cell is in selection range
-  const isInRange = useCallback(
-    (row: number, col: number): boolean => {
-      if (!selectionRange) return false;
-      const { start, end } = selectionRange;
-      const minRow = Math.min(start.row, end.row);
-      const maxRow = Math.max(start.row, end.row);
-      const minCol = Math.min(start.col, end.col);
-      const maxCol = Math.max(start.col, end.col);
-      return row >= minRow && row <= maxRow && col >= minCol && col <= maxCol;
-    },
-    [selectionRange]
-  );
-
-  // Memoized visible cells - only recalculate when dependencies change
+  // Memoized visible cells - optimized: no per-cell range check, use overlay instead
   const visibleCells = useMemo(() => {
     const cells = [];
     for (let row = startRow; row < endRow; row++) {
@@ -291,7 +290,7 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
             displayValue={displayValue}
             format={format}
             isSelected={selectedCell?.row === row && selectedCell?.col === col}
-            isInRange={isInRange(row, col)}
+            isInRange={false}
             onMouseDown={(e) => handleCellMouseDown(row, col, e)}
             onMouseEnter={(e) => handleCellMouseEnter(row, col, e)}
             onDoubleClick={() => handleCellDoubleClick(row, col)}
@@ -307,7 +306,7 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
       }
     }
     return cells;
-  }, [startRow, endRow, startCol, endCol, sheet?.cells, sheetId, selectedCell, isInRange, handleCellMouseDown, handleCellMouseEnter, handleCellDoubleClick]);
+  }, [startRow, endRow, startCol, endCol, sheet?.cells, sheetId, selectedCell, handleCellMouseDown, handleCellMouseEnter, handleCellDoubleClick]);
 
   return (
     <div className="relative h-full overflow-hidden" style={{ background: 'var(--surface-0)' }}>
@@ -351,8 +350,22 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
         >
           {visibleCells}
 
-          {/* Range selection overlay */}
-          {selectionRange && (
+          {/* Live drag selection overlay - uses local state for instant feedback */}
+          {isDragging && dragStart && dragEnd && (
+            <RangeSelection
+              startRow={dragStart.row}
+              startCol={dragStart.col}
+              endRow={dragEnd.row}
+              endCol={dragEnd.col}
+              cellWidth={CELL_WIDTH}
+              cellHeight={CELL_HEIGHT}
+              headerWidth={0}
+              headerHeight={0}
+            />
+          )}
+
+          {/* Committed range selection overlay - from store */}
+          {!isDragging && selectionRange && (
             <RangeSelection
               startRow={selectionRange.start.row}
               startCol={selectionRange.start.col}
@@ -366,7 +379,7 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
           )}
 
           {/* Selection overlay */}
-          {selectedCell && !isEditing && (
+          {selectedCell && !isEditing && !isDragging && (
             <Selection
               row={selectedCell.row}
               col={selectedCell.col}
