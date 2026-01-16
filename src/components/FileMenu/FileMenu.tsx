@@ -427,6 +427,9 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       case 'new':
         if (subAction === 'blank') {
           window.location.reload();
+        } else if (subAction === 'import') {
+          // Trigger file input for import
+          document.getElementById('file-input-open')?.click();
         }
         break;
       case 'open':
