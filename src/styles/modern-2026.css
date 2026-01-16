@@ -157,6 +157,31 @@
   height: 18px;
 }
 
+/* Back to Landing Button */
+.header-2026__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.header-2026__back:hover {
+  color: var(--green-accent);
+}
+
+.header-2026__separator {
+  color: var(--text-5);
+  font-size: var(--text-14);
+  margin: 0 var(--spacing-sm);
+  user-select: none;
+}
+
 .header-2026__nav {
   display: flex;
   align-items: center;

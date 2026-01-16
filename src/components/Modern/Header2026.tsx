@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FileSpreadsheet, Search, Sparkles } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { FileSpreadsheet, Search, Sparkles, ChevronLeft } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useToolbarStore, TabId } from '../../stores/toolbarStore';
 import { useAIStore } from '../../stores/aiStore';
@@ -24,9 +24,24 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
   const isAIOpen = useAIStore((state) => state.isOpen);
   const toggleAIPanel = useAIStore((state) => state.togglePanel);
 
+  const handleBackToLanding = useCallback(() => {
+    localStorage.removeItem('ai-suite-entered');
+    window.location.reload();
+  }, []);
+
   return (
     <>
       <header className="header-2026">
+        {/* Back to Landing */}
+        <button
+          className="header-2026__back"
+          onClick={handleBackToLanding}
+          title="Back to Landing"
+        >
+          <ChevronLeft size={18} />
+        </button>
+        <span className="header-2026__separator">|</span>
+
         {/* Brand / File Menu Button */}
         <button
           className="header-2026__brand"
