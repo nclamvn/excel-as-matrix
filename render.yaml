@@ -1,10 +1,12 @@
 # Render Blueprint for ExcelAI
 # https://render.com/docs/blueprint-spec
+# Note: Root directory should be left empty (code is at repo root)
 
 services:
   - type: web
     name: excelai
     runtime: static
+    rootDir: ""
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
