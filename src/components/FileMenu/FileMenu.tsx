@@ -694,14 +694,11 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       }
     }
 
-    // Batch update cells
+    // Batch update cells (don't call setWorkbook as it resets sheets)
     batchUpdateCells(activeSheetId, updates);
 
-    // Update workbook name
     const baseName = fileName.replace(/\.[^/.]+$/, '');
-    setWorkbook(`local-${Date.now()}`, baseName);
-
-    console.log(`Imported ${rows.length} rows, ${updates.length} cells from ${fileName}`);
+    console.log(`Imported ${rows.length} rows, ${updates.length} cells from ${baseName}`);
   };
 
   // Import ExcelAI JSON format
