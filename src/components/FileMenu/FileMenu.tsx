@@ -16,7 +16,6 @@ import {
   RotateCcw,
   HelpCircle,
   Settings,
-  X,
   ChevronRight,
   FileSpreadsheet,
   RefreshCw,
@@ -841,11 +840,6 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
   return (
     <div className="file-menu__overlay" onClick={onClose}>
       <div className="file-menu" onClick={e => e.stopPropagation()}>
-        {/* Close button */}
-        <button className="file-menu__close" onClick={onClose}>
-          <X size={20} />
-        </button>
-
         {/* Sidebar */}
         <div className="file-menu__sidebar">
           {menuItems.map(item => (
