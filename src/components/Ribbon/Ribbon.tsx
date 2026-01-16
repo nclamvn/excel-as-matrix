@@ -5,11 +5,13 @@ import { InsertTab } from './tabs/InsertTab';
 import { FormulasTab } from './tabs/FormulasTab';
 import { DataTab } from './tabs/DataTab';
 import { ViewTab } from './tabs/ViewTab';
+import { PageLayoutToolbar } from '../Modern/toolbars/PageLayoutToolbar';
 import { Menu, ChevronUp, ChevronDown } from 'lucide-react';
 
 const TABS = [
   { id: 'home', label: 'Home', component: HomeTab },
   { id: 'insert', label: 'Insert', component: InsertTab },
+  { id: 'page-layout', label: 'Page Layout', component: PageLayoutToolbar },
   { id: 'formulas', label: 'Formulas', component: FormulasTab },
   { id: 'data', label: 'Data', component: DataTab },
   { id: 'view', label: 'View', component: ViewTab },

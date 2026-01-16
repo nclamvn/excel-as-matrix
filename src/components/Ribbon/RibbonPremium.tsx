@@ -6,6 +6,7 @@ import { InsertTab } from './tabs/InsertTab';
 import { FormulasTab } from './tabs/FormulasTab';
 import { DataTab } from './tabs/DataTab';
 import { ViewTab } from './tabs/ViewTab';
+import { PageLayoutToolbar } from '../Modern/toolbars/PageLayoutToolbar';
 
 type TabId = 'file' | 'home' | 'insert' | 'page-layout' | 'formulas' | 'data' | 'review' | 'view';
 
@@ -48,6 +49,8 @@ export const RibbonPremium: React.FC = () => {
         return <HomeTabPremium />;
       case 'insert':
         return <InsertTab />;
+      case 'page-layout':
+        return <PageLayoutToolbar />;
       case 'formulas':
         return <FormulasTab />;
       case 'data':

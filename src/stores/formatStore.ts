@@ -14,6 +14,8 @@ interface FormatState {
   backgroundColor: string;
   align: 'left' | 'center' | 'right';
   numberFormat: string;
+  textRotation: number;
+  verticalText: boolean;
 
   // Actions to set individual format properties
   setFontFamily: (font: string) => void;
@@ -25,6 +27,7 @@ interface FormatState {
   setBackgroundColor: (color: string) => void;
   setAlign: (align: 'left' | 'center' | 'right') => void;
   setNumberFormat: (format: string) => void;
+  setTextRotation: (angle: number, vertical?: boolean) => void;
 
   // Bulk operations
   applyCurrentFormat: () => void;
@@ -46,6 +49,8 @@ const defaultFormat = {
   backgroundColor: '#FFFFFF',
   align: 'left' as const,
   numberFormat: 'general',
+  textRotation: 0,
+  verticalText: false,
 };
 
 export const useFormatStore = create<FormatState>()(
@@ -109,6 +114,12 @@ export const useFormatStore = create<FormatState>()(
       get().applyFormat({ numberFormat });
     },
 
+    // Set text rotation and apply to selection
+    setTextRotation: (textRotation, verticalText = false) => {
+      set({ textRotation, verticalText });
+      get().applyFormat({ textRotation, verticalText });
+    },
+
     // Apply current format state to the selected cell(s)
     applyCurrentFormat: () => {
       const state = get();
@@ -122,6 +133,8 @@ export const useFormatStore = create<FormatState>()(
         backgroundColor: state.backgroundColor,
         align: state.align,
         numberFormat: state.numberFormat,
+        textRotation: state.textRotation,
+        verticalText: state.verticalText,
       });
     },
 
@@ -163,6 +176,8 @@ export const useFormatStore = create<FormatState>()(
           backgroundColor: format.backgroundColor ?? defaultFormat.backgroundColor,
           align: format.align ?? defaultFormat.align,
           numberFormat: format.numberFormat ?? defaultFormat.numberFormat,
+          textRotation: format.textRotation ?? defaultFormat.textRotation,
+          verticalText: format.verticalText ?? defaultFormat.verticalText,
         });
       } else {
         set({ ...defaultFormat });

@@ -1,0 +1,381 @@
+/* ============================================================
+   SHARE STYLES
+   ============================================================ */
+
+/* Share Button - Outline style */
+.share-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  height: 28px;
+  background: transparent;
+  color: var(--accent-color, #217346);
+  border: 1.5px solid var(--accent-color, #217346);
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.share-button:hover {
+  background: rgba(33, 115, 70, 0.08);
+  border-color: var(--accent-dark, #1a5d38);
+  color: var(--accent-dark, #1a5d38);
+}
+
+.share-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Share Dialog Overlay */
+.share-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Share Dialog */
+.share-dialog {
+  width: 440px;
+  max-width: 90vw;
+  background: var(--bg-primary, #fff);
+  border-radius: 10px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.share-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.share-dialog-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text-muted, #888);
+  transition: all 0.15s;
+}
+
+.close-btn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #333);
+}
+
+.share-dialog-content {
+  padding: 20px;
+}
+
+.share-section {
+  margin-bottom: 20px;
+}
+
+.share-section:last-child {
+  margin-bottom: 0;
+}
+
+.share-section label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #666);
+  margin-bottom: 8px;
+}
+
+/* Invite Row */
+.invite-row {
+  display: flex;
+  gap: 6px;
+}
+
+.invite-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 13px;
+  transition: border-color 0.15s;
+}
+
+.invite-row input:focus {
+  outline: none;
+  border-color: var(--accent-color, #217346);
+}
+
+.invite-row select {
+  padding: 8px 10px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--bg-primary, #fff);
+  cursor: pointer;
+}
+
+.invite-btn {
+  padding: 8px 16px;
+  background: var(--accent-color, #217346);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.invite-btn:hover {
+  background: var(--accent-dark, #1a5d38);
+}
+
+/* Invites List */
+.invites-list {
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.invite-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.invite-item:last-child {
+  border-bottom: none;
+}
+
+.invite-email {
+  flex: 1;
+  font-size: 13px;
+}
+
+.invite-permission {
+  font-size: 11px;
+  color: var(--text-muted, #888);
+  background: var(--bg-primary, #fff);
+  padding: 3px 6px;
+  border-radius: 3px;
+}
+
+.remove-invite {
+  background: none;
+  border: none;
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+}
+
+.remove-invite:hover {
+  color: var(--error-color, #ef4444);
+}
+
+/* Link Row */
+.link-row {
+  display: flex;
+  gap: 6px;
+}
+
+.share-link-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--bg-secondary, #f5f5f5);
+  color: var(--text-secondary, #666);
+  overflow: hidden;
+}
+
+.share-link-input span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  background: var(--bg-secondary, #f0f0f0);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.copy-link-btn:hover {
+  background: var(--bg-hover, #e8e8e8);
+}
+
+.copy-link-btn.copied {
+  background: var(--success-light, #dcfce7);
+  border-color: var(--success-color, #22c55e);
+  color: var(--success-color, #22c55e);
+}
+
+.link-permissions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+.change-permission {
+  background: none;
+  border: none;
+  color: var(--accent-color, #217346);
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.change-permission:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.share-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.cancel-btn {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cancel-btn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.done-btn {
+  padding: 8px 20px;
+  background: var(--accent-color, #217346);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.done-btn:hover {
+  background: var(--accent-dark, #1a5d38);
+}
+
+/* Dark Mode */
+[data-theme='dark'] .share-dialog {
+  background: var(--bg-primary-dark, #2a2a2a);
+}
+
+[data-theme='dark'] .share-dialog-header,
+[data-theme='dark'] .share-dialog-footer {
+  border-color: var(--border-color-dark, #404040);
+}
+
+[data-theme='dark'] .share-dialog-header h2 {
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme='dark'] .invite-row input,
+[data-theme='dark'] .invite-row select {
+  background: var(--bg-secondary-dark, #333);
+  border-color: var(--border-color-dark, #444);
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme='dark'] .invites-list {
+  background: var(--bg-secondary-dark, #333);
+}
+
+[data-theme='dark'] .share-link-input {
+  background: var(--bg-secondary-dark, #333);
+  border-color: var(--border-color-dark, #444);
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme='dark'] .copy-link-btn {
+  background: var(--bg-secondary-dark, #333);
+  border-color: var(--border-color-dark, #444);
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme='dark'] .cancel-btn {
+  border-color: var(--border-color-dark, #444);
+  color: var(--text-primary-dark, #fff);
+}

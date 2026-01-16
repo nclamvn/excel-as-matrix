@@ -1,502 +1,701 @@
-// Phase 5: Pivot Table Store
-// State management for pivot tables with aggregation
+// ============================================================
+// PIVOT STORE — Zustand Store for Pivot Tables
+// ============================================================
 
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import {
   PivotTable,
   PivotField,
-  ValueField,
+  PivotAreaField,
   PivotFilter,
-  PivotResult,
-  Aggregation,
-  CellRange,
-} from '../types/visualization';
+  AggregateFunction,
+  SortOrder,
+  DateGrouping,
+  CalculatedField,
+  DEFAULT_PIVOT_OPTIONS,
+} from '../types/pivot';
 
-interface PivotState {
-  pivotTables: Map<string, PivotTable>;
-  pivotResults: Map<string, PivotResult>;
-  selectedPivotId: string | null;
-  editingPivotId: string | null;
-  expandedGroups: Map<string, Set<string>>;
-  isCreating: boolean;
-  loading: boolean;
-  error: string | null;
-}
+interface PivotStore {
+  // All pivot tables
+  pivotTables: Record<string, PivotTable>;
 
-interface PivotActions {
-  // Pivot CRUD
-  createPivot: (
-    workbookId: string,
-    sheetId: string,
+  // Active pivot for editing
+  activePivotId: string | null;
+
+  // CRUD Operations
+  createPivotTable: (
     name: string,
-    sourceRange: CellRange
+    sourceSheetId: string,
+    sourceRange: string,
+    targetSheetId: string,
+    targetCell: string,
+    fields: PivotField[]
   ) => PivotTable;
-  updatePivot: (pivotId: string, updates: Partial<PivotTable>) => void;
-  deletePivot: (pivotId: string) => void;
 
-  // Field management
-  addRowField: (pivotId: string, field: PivotField) => void;
-  addColumnField: (pivotId: string, field: PivotField) => void;
-  addValueField: (pivotId: string, field: ValueField) => void;
-  addFilterField: (pivotId: string, field: PivotField) => void;
-  removeField: (pivotId: string, fieldId: string, area: 'row' | 'column' | 'value' | 'filter') => void;
+  updatePivotTable: (id: string, updates: Partial<PivotTable>) => void;
+  deletePivotTable: (id: string) => void;
+  getPivotTable: (id: string) => PivotTable | null;
+  getPivotTablesForSheet: (sheetId: string) => PivotTable[];
+
+  // Field Management
+  addFieldToArea: (
+    pivotId: string,
+    area: 'row' | 'column' | 'value' | 'filter',
+    field: PivotAreaField
+  ) => void;
+
+  removeFieldFromArea: (
+    pivotId: string,
+    area: 'row' | 'column' | 'value' | 'filter',
+    fieldId: string
+  ) => void;
+
   moveField: (
     pivotId: string,
     fieldId: string,
     fromArea: 'row' | 'column' | 'value' | 'filter',
     toArea: 'row' | 'column' | 'value' | 'filter',
-    toIndex?: number
+    toIndex: number
   ) => void;
 
-  // Results
-  setPivotResult: (pivotId: string, result: PivotResult) => void;
+  reorderFieldInArea: (
+    pivotId: string,
+    area: 'row' | 'column' | 'value' | 'filter',
+    fromIndex: number,
+    toIndex: number
+  ) => void;
 
-  // Expand/Collapse
-  toggleGroup: (pivotId: string, groupKey: string) => void;
+  // Field Settings
+  setAggregateFunction: (
+    pivotId: string,
+    fieldId: string,
+    func: AggregateFunction
+  ) => void;
+
+  setSortOrder: (
+    pivotId: string,
+    fieldId: string,
+    area: 'row' | 'column',
+    order: SortOrder
+  ) => void;
+
+  setDateGrouping: (
+    pivotId: string,
+    fieldId: string,
+    grouping: DateGrouping | undefined
+  ) => void;
+
+  setNumberFormat: (
+    pivotId: string,
+    fieldId: string,
+    format: string | undefined
+  ) => void;
+
+  setCustomName: (
+    pivotId: string,
+    fieldId: string,
+    name: string | undefined
+  ) => void;
+
+  // Filters
+  setFilter: (pivotId: string, filter: PivotFilter) => void;
+  removeFilter: (pivotId: string, fieldId: string) => void;
+  clearFilters: (pivotId: string) => void;
+
+  // Options
+  setShowGrandTotals: (
+    pivotId: string,
+    rows: boolean,
+    cols: boolean
+  ) => void;
+
+  setShowSubtotals: (
+    pivotId: string,
+    rows: boolean,
+    cols: boolean
+  ) => void;
+
+  setCompactForm: (pivotId: string, compact: boolean) => void;
+  setRepeatLabels: (pivotId: string, repeat: boolean) => void;
+
+  // Calculated Fields
+  addCalculatedField: (pivotId: string, field: CalculatedField) => void;
+  updateCalculatedField: (pivotId: string, fieldId: string, updates: Partial<CalculatedField>) => void;
+  removeCalculatedField: (pivotId: string, fieldId: string) => void;
+
+  // Expansion State
+  toggleRowExpansion: (pivotId: string, rowKey: string) => void;
   expandAll: (pivotId: string) => void;
   collapseAll: (pivotId: string) => void;
 
-  // Filters
-  addFilter: (pivotId: string, filter: PivotFilter) => void;
-  updateFilter: (pivotId: string, filterId: string, updates: Partial<PivotFilter>) => void;
-  removeFilter: (pivotId: string, filterId: string) => void;
+  // Refresh
+  markForRefresh: (pivotId: string) => void;
 
-  // Selection & UI state
-  selectPivot: (pivotId: string | null) => void;
-  startEditing: (pivotId: string | null) => void;
-  setCreating: (creating: boolean) => void;
-
-  // Loading
-  getPivotsBySheet: (sheetId: string) => PivotTable[];
-  getPivotsByWorkbook: (workbookId: string) => PivotTable[];
-
-  // Utility
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  reset: () => void;
+  // Active pivot
+  setActivePivot: (pivotId: string | null) => void;
 }
 
-const initialState: PivotState = {
-  pivotTables: new Map(),
-  pivotResults: new Map(),
-  selectedPivotId: null,
-  editingPivotId: null,
-  expandedGroups: new Map(),
-  isCreating: false,
-  loading: false,
-  error: null,
+// Helper to parse cell reference
+const parseCellRef = (ref: string): { row: number; col: number } => {
+  const match = ref.match(/^([A-Z]+)(\d+)$/i);
+  if (!match) return { row: 0, col: 0 };
+
+  const colStr = match[1].toUpperCase();
+  const row = parseInt(match[2], 10) - 1;
+
+  let col = 0;
+  for (let i = 0; i < colStr.length; i++) {
+    col = col * 26 + (colStr.charCodeAt(i) - 64);
+  }
+  col -= 1;
+
+  return { row, col };
 };
 
-export const usePivotStore = create<PivotState & PivotActions>()(
-  devtools(
+export const usePivotStore = create<PivotStore>()(
+  persist(
     (set, get) => ({
-      ...initialState,
+      pivotTables: {},
+      activePivotId: null,
 
-      createPivot: (workbookId, sheetId, name, sourceRange) => {
+      createPivotTable: (name, sourceSheetId, sourceRange, targetSheetId, targetCell, fields) => {
+        const id = `pivot_${Date.now()}`;
+        const { row, col } = parseCellRef(targetCell);
+
         const pivot: PivotTable = {
-          id: crypto.randomUUID(),
-          workbookId,
-          sheetId,
+          id,
           name,
+          sheetId: targetSheetId,
+          sourceSheetId,
           sourceRange,
-          targetCell: [0, 0],
+          targetCell,
+          targetRow: row,
+          targetCol: col,
+          fields,
           rowFields: [],
           columnFields: [],
           valueFields: [],
           filterFields: [],
           filters: [],
-          options: {
-            showGrandTotalRow: true,
-            showGrandTotalColumn: true,
-            showSubtotalRows: true,
-            showSubtotalColumns: true,
-            repeatRowLabels: false,
-            compactForm: true,
-            showEmptyCells: true,
-            emptyCellValue: '',
-          },
-          style: {
-            headerBackground: '#4472C4',
-            headerForeground: '#FFFFFF',
-            rowBackground: '#FFFFFF',
-            alternateRowBackground: '#F5F5F5',
-            grandTotalBackground: '#E0E0E0',
-            borderColor: '#D0D0D0',
-          },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          calculatedFields: [],
+          lastRefreshed: Date.now(),
+          isExpanded: {},
+          ...DEFAULT_PIVOT_OPTIONS,
         };
 
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          pivotTables.set(pivot.id, pivot);
-          return { pivotTables };
-        });
+        set(state => ({
+          pivotTables: {
+            ...state.pivotTables,
+            [id]: pivot,
+          },
+          activePivotId: id,
+        }));
 
         return pivot;
       },
 
-      updatePivot: (pivotId, updates) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              ...updates,
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
-        });
-      },
+      updatePivotTable: (id, updates) => {
+        set(state => {
+          const existing = state.pivotTables[id];
+          if (!existing) return state;
 
-      deletePivot: (pivotId) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivotResults = new Map(state.pivotResults);
-          const expandedGroups = new Map(state.expandedGroups);
-          pivotTables.delete(pivotId);
-          pivotResults.delete(pivotId);
-          expandedGroups.delete(pivotId);
           return {
-            pivotTables,
-            pivotResults,
-            expandedGroups,
-            selectedPivotId: state.selectedPivotId === pivotId ? null : state.selectedPivotId,
-            editingPivotId: state.editingPivotId === pivotId ? null : state.editingPivotId,
+            pivotTables: {
+              ...state.pivotTables,
+              [id]: { ...existing, ...updates },
+            },
           };
         });
       },
 
-      addRowField: (pivotId, field) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              rowFields: [...pivot.rowFields, field],
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
+      deletePivotTable: (id) => {
+        set(state => {
+          const { [id]: _, ...rest } = state.pivotTables;
+          return {
+            pivotTables: rest,
+            activePivotId: state.activePivotId === id ? null : state.activePivotId,
+          };
         });
       },
 
-      addColumnField: (pivotId, field) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              columnFields: [...pivot.columnFields, field],
-              updatedAt: new Date().toISOString(),
-            });
+      getPivotTable: (id) => {
+        return get().pivotTables[id] || null;
+      },
+
+      getPivotTablesForSheet: (sheetId) => {
+        return Object.values(get().pivotTables).filter(
+          pivot => pivot.sheetId === sheetId
+        );
+      },
+
+      addFieldToArea: (pivotId, area, field) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const areaKey = `${area}Fields` as keyof PivotTable;
+          const currentFields = pivot[areaKey] as PivotAreaField[];
+
+          // Don't add duplicate
+          if (currentFields.some(f => f.fieldId === field.fieldId)) {
+            return state;
           }
-          return { pivotTables };
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                [areaKey]: [...currentFields, field],
+              },
+            },
+          };
         });
       },
 
-      addValueField: (pivotId, field) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              valueFields: [...pivot.valueFields, field],
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
-        });
-      },
+      removeFieldFromArea: (pivotId, area, fieldId) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
 
-      addFilterField: (pivotId, field) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              filterFields: [...pivot.filterFields, field],
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
-        });
-      },
+          const areaKey = `${area}Fields` as keyof PivotTable;
+          const currentFields = pivot[areaKey] as PivotAreaField[];
 
-      removeField: (pivotId, fieldId, area) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            const updated = { ...pivot, updatedAt: new Date().toISOString() };
-            switch (area) {
-              case 'row':
-                updated.rowFields = pivot.rowFields.filter((f) => f.id !== fieldId);
-                break;
-              case 'column':
-                updated.columnFields = pivot.columnFields.filter((f) => f.id !== fieldId);
-                break;
-              case 'value':
-                updated.valueFields = pivot.valueFields.filter((f) => f.id !== fieldId);
-                break;
-              case 'filter':
-                updated.filterFields = pivot.filterFields.filter((f) => f.id !== fieldId);
-                break;
-            }
-            pivotTables.set(pivotId, updated);
-          }
-          return { pivotTables };
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                [areaKey]: currentFields.filter(f => f.fieldId !== fieldId),
+              },
+            },
+          };
         });
       },
 
       moveField: (pivotId, fieldId, fromArea, toArea, toIndex) => {
-        const { pivotTables } = get();
-        const pivot = pivotTables.get(pivotId);
-        if (!pivot) return;
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
 
-        // Find and remove from source
-        let field: PivotField | ValueField | null = null;
-        const updated = { ...pivot };
+          const fromKey = `${fromArea}Fields` as keyof PivotTable;
+          const toKey = `${toArea}Fields` as keyof PivotTable;
 
-        switch (fromArea) {
-          case 'row':
-            field = pivot.rowFields.find((f) => f.id === fieldId) || null;
-            updated.rowFields = pivot.rowFields.filter((f) => f.id !== fieldId);
-            break;
-          case 'column':
-            field = pivot.columnFields.find((f) => f.id === fieldId) || null;
-            updated.columnFields = pivot.columnFields.filter((f) => f.id !== fieldId);
-            break;
-          case 'value':
-            field = pivot.valueFields.find((f) => f.id === fieldId) || null;
-            updated.valueFields = pivot.valueFields.filter((f) => f.id !== fieldId);
-            break;
-          case 'filter':
-            field = pivot.filterFields.find((f) => f.id === fieldId) || null;
-            updated.filterFields = pivot.filterFields.filter((f) => f.id !== fieldId);
-            break;
-        }
+          const fromFields = [...(pivot[fromKey] as PivotAreaField[])];
+          const toFields = fromArea === toArea
+            ? fromFields
+            : [...(pivot[toKey] as PivotAreaField[])];
 
-        if (!field) return;
+          const fieldIndex = fromFields.findIndex(f => f.fieldId === fieldId);
+          if (fieldIndex === -1) return state;
 
-        // Add to destination
-        const targetArray = (() => {
-          switch (toArea) {
-            case 'row': return updated.rowFields;
-            case 'column': return updated.columnFields;
-            case 'value': return updated.valueFields;
-            case 'filter': return updated.filterFields;
+          const [field] = fromFields.splice(fieldIndex, 1);
+
+          // Update aggregate function if moving to/from value area
+          if (toArea === 'value' && !field.aggregateFunction) {
+            field.aggregateFunction = 'sum';
           }
-        })();
 
-        if (toIndex !== undefined && toIndex >= 0) {
-          targetArray.splice(toIndex, 0, field as any);
-        } else {
-          targetArray.push(field as any);
-        }
+          if (fromArea === toArea) {
+            fromFields.splice(toIndex, 0, field);
+            return {
+              pivotTables: {
+                ...state.pivotTables,
+                [pivotId]: {
+                  ...pivot,
+                  [fromKey]: fromFields,
+                },
+              },
+            };
+          }
 
-        set((state) => {
-          const newPivotTables = new Map(state.pivotTables);
-          newPivotTables.set(pivotId, { ...updated, updatedAt: new Date().toISOString() });
-          return { pivotTables: newPivotTables };
+          toFields.splice(toIndex, 0, field);
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                [fromKey]: fromFields,
+                [toKey]: toFields,
+              },
+            },
+          };
         });
       },
 
-      setPivotResult: (pivotId, result) => {
-        set((state) => {
-          const pivotResults = new Map(state.pivotResults);
-          pivotResults.set(pivotId, result);
-          return { pivotResults };
+      reorderFieldInArea: (pivotId, area, fromIndex, toIndex) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const areaKey = `${area}Fields` as keyof PivotTable;
+          const fields = [...(pivot[areaKey] as PivotAreaField[])];
+
+          const [field] = fields.splice(fromIndex, 1);
+          fields.splice(toIndex, 0, field);
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                [areaKey]: fields,
+              },
+            },
+          };
         });
       },
 
-      toggleGroup: (pivotId, groupKey) => {
-        set((state) => {
-          const expandedGroups = new Map(state.expandedGroups);
-          const groups = expandedGroups.get(pivotId) || new Set();
-          const newGroups = new Set(groups);
+      setAggregateFunction: (pivotId, fieldId, func) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
 
-          if (newGroups.has(groupKey)) {
-            newGroups.delete(groupKey);
-          } else {
-            newGroups.add(groupKey);
-          }
+          const valueFields = pivot.valueFields.map(f =>
+            f.fieldId === fieldId ? { ...f, aggregateFunction: func } : f
+          );
 
-          expandedGroups.set(pivotId, newGroups);
-          return { expandedGroups };
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, valueFields },
+            },
+          };
+        });
+      },
+
+      setSortOrder: (pivotId, fieldId, area, order) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const areaKey = `${area}Fields` as keyof PivotTable;
+          const fields = (pivot[areaKey] as PivotAreaField[]).map(f =>
+            f.fieldId === fieldId ? { ...f, sortOrder: order } : f
+          );
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, [areaKey]: fields },
+            },
+          };
+        });
+      },
+
+      setDateGrouping: (pivotId, fieldId, grouping) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const updateFields = (fields: PivotAreaField[]) =>
+            fields.map(f =>
+              f.fieldId === fieldId ? { ...f, dateGrouping: grouping } : f
+            );
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                rowFields: updateFields(pivot.rowFields),
+                columnFields: updateFields(pivot.columnFields),
+              },
+            },
+          };
+        });
+      },
+
+      setNumberFormat: (pivotId, fieldId, format) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const valueFields = pivot.valueFields.map(f =>
+            f.fieldId === fieldId ? { ...f, numberFormat: format } : f
+          );
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, valueFields },
+            },
+          };
+        });
+      },
+
+      setCustomName: (pivotId, fieldId, name) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const updateFields = (fields: PivotAreaField[]) =>
+            fields.map(f =>
+              f.fieldId === fieldId ? { ...f, customName: name } : f
+            );
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                rowFields: updateFields(pivot.rowFields),
+                columnFields: updateFields(pivot.columnFields),
+                valueFields: updateFields(pivot.valueFields),
+                filterFields: updateFields(pivot.filterFields),
+              },
+            },
+          };
+        });
+      },
+
+      setFilter: (pivotId, filter) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          const existing = pivot.filters.findIndex(f => f.fieldId === filter.fieldId);
+          const filters = existing >= 0
+            ? pivot.filters.map((f, i) => i === existing ? filter : f)
+            : [...pivot.filters, filter];
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, filters },
+            },
+          };
+        });
+      },
+
+      removeFilter: (pivotId, fieldId) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                filters: pivot.filters.filter(f => f.fieldId !== fieldId),
+              },
+            },
+          };
+        });
+      },
+
+      clearFilters: (pivotId) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, filters: [] },
+            },
+          };
+        });
+      },
+
+      setShowGrandTotals: (pivotId, rows, cols) => {
+        get().updatePivotTable(pivotId, {
+          showRowGrandTotals: rows,
+          showColGrandTotals: cols,
+        });
+      },
+
+      setShowSubtotals: (pivotId, rows, cols) => {
+        get().updatePivotTable(pivotId, {
+          showRowSubtotals: rows,
+          showColSubtotals: cols,
+        });
+      },
+
+      setCompactForm: (pivotId, compact) => {
+        get().updatePivotTable(pivotId, { compactForm: compact });
+      },
+
+      setRepeatLabels: (pivotId, repeat) => {
+        get().updatePivotTable(pivotId, { repeatLabels: repeat });
+      },
+
+      addCalculatedField: (pivotId, field) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                calculatedFields: [...pivot.calculatedFields, field],
+              },
+            },
+          };
+        });
+      },
+
+      updateCalculatedField: (pivotId, fieldId, updates) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                calculatedFields: pivot.calculatedFields.map(f =>
+                  f.id === fieldId ? { ...f, ...updates } : f
+                ),
+              },
+            },
+          };
+        });
+      },
+
+      removeCalculatedField: (pivotId, fieldId) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                calculatedFields: pivot.calculatedFields.filter(f => f.id !== fieldId),
+              },
+            },
+          };
+        });
+      },
+
+      toggleRowExpansion: (pivotId, rowKey) => {
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: {
+                ...pivot,
+                isExpanded: {
+                  ...pivot.isExpanded,
+                  [rowKey]: !pivot.isExpanded[rowKey],
+                },
+              },
+            },
+          };
         });
       },
 
       expandAll: (pivotId) => {
-        const { pivotResults } = get();
-        const result = pivotResults.get(pivotId);
-        if (!result) return;
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
 
-        const allGroups = new Set(
-          result.rows
-            .filter((r) => r.level > 0)
-            .map((r) => r.groupKey)
-        );
+          // Set all existing keys to true
+          const expanded: Record<string, boolean> = {};
+          Object.keys(pivot.isExpanded).forEach(key => {
+            expanded[key] = true;
+          });
 
-        set((state) => {
-          const expandedGroups = new Map(state.expandedGroups);
-          expandedGroups.set(pivotId, allGroups);
-          return { expandedGroups };
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, isExpanded: expanded },
+            },
+          };
         });
       },
 
       collapseAll: (pivotId) => {
-        set((state) => {
-          const expandedGroups = new Map(state.expandedGroups);
-          expandedGroups.set(pivotId, new Set());
-          return { expandedGroups };
+        set(state => {
+          const pivot = state.pivotTables[pivotId];
+          if (!pivot) return state;
+
+          return {
+            pivotTables: {
+              ...state.pivotTables,
+              [pivotId]: { ...pivot, isExpanded: {} },
+            },
+          };
         });
       },
 
-      addFilter: (pivotId, filter) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              filters: [...pivot.filters, filter],
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
-        });
+      markForRefresh: (pivotId) => {
+        get().updatePivotTable(pivotId, { lastRefreshed: Date.now() });
       },
 
-      updateFilter: (pivotId, filterId, updates) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              filters: pivot.filters.map((f) =>
-                f.fieldId === filterId ? { ...f, ...updates } : f
-              ),
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
-        });
-      },
-
-      removeFilter: (pivotId, filterId) => {
-        set((state) => {
-          const pivotTables = new Map(state.pivotTables);
-          const pivot = pivotTables.get(pivotId);
-          if (pivot) {
-            pivotTables.set(pivotId, {
-              ...pivot,
-              filters: pivot.filters.filter((f) => f.fieldId !== filterId),
-              updatedAt: new Date().toISOString(),
-            });
-          }
-          return { pivotTables };
-        });
-      },
-
-      selectPivot: (pivotId) => {
-        set({ selectedPivotId: pivotId });
-      },
-
-      startEditing: (pivotId) => {
-        set({ editingPivotId: pivotId });
-      },
-
-      setCreating: (creating) => {
-        set({ isCreating: creating });
-      },
-
-      getPivotsBySheet: (sheetId) => {
-        const { pivotTables } = get();
-        return Array.from(pivotTables.values()).filter((p) => p.sheetId === sheetId);
-      },
-
-      getPivotsByWorkbook: (workbookId) => {
-        const { pivotTables } = get();
-        return Array.from(pivotTables.values()).filter((p) => p.workbookId === workbookId);
-      },
-
-      setLoading: (loading) => {
-        set({ loading });
-      },
-
-      setError: (error) => {
-        set({ error });
-      },
-
-      reset: () => {
-        set(initialState);
+      setActivePivot: (pivotId) => {
+        set({ activePivotId: pivotId });
       },
     }),
-    { name: 'pivot-store' }
+    {
+      name: 'excelai-pivot',
+      partialize: (state) => ({
+        pivotTables: state.pivotTables,
+      }),
+    }
   )
 );
 
-// Aggregation functions
-export function aggregate(values: number[], aggregation: Aggregation): number {
+// ============================================================
+// AGGREGATION HELPER FUNCTIONS
+// ============================================================
+
+export function aggregate(values: number[], func: AggregateFunction): number {
   if (values.length === 0) return 0;
 
-  switch (aggregation) {
-    case 'Sum':
+  switch (func) {
+    case 'sum':
       return values.reduce((a, b) => a + b, 0);
-    case 'Count':
+    case 'count':
       return values.length;
-    case 'Average':
+    case 'average':
       return values.reduce((a, b) => a + b, 0) / values.length;
-    case 'Min':
+    case 'min':
       return Math.min(...values);
-    case 'Max':
+    case 'max':
       return Math.max(...values);
-    case 'Product':
+    case 'product':
       return values.reduce((a, b) => a * b, 1);
-    case 'CountNumbers':
-      return values.filter((v) => !isNaN(v)).length;
-    case 'StdDev':
-    case 'StdDevP': {
+    case 'countNumbers':
+      return values.filter(v => !isNaN(v)).length;
+    case 'stdDev': {
+      if (values.length < 2) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
-      const variance = squaredDiffs.reduce((a, b) => a + b, 0) /
-        (aggregation === 'StdDev' ? values.length - 1 : values.length);
+      const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+      const variance = squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1);
       return Math.sqrt(variance);
     }
-    case 'Var':
-    case 'VarP': {
+    case 'variance': {
+      if (values.length < 2) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
-      return squaredDiffs.reduce((a, b) => a + b, 0) /
-        (aggregation === 'Var' ? values.length - 1 : values.length);
+      const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+      return squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1);
     }
     default:
       return values.reduce((a, b) => a + b, 0);
   }
 }
 
-// Format number based on aggregation type
-export function formatPivotValue(value: number, aggregation: Aggregation): string {
+export function formatPivotValue(value: number, func: AggregateFunction): string {
   if (isNaN(value)) return '';
 
-  switch (aggregation) {
-    case 'Count':
-    case 'CountNumbers':
+  switch (func) {
+    case 'count':
+    case 'countNumbers':
       return Math.round(value).toString();
-    case 'Average':
-    case 'StdDev':
-    case 'StdDevP':
-    case 'Var':
-    case 'VarP':
+    case 'average':
+    case 'stdDev':
+    case 'variance':
       return value.toFixed(2);
     default:
       return value.toLocaleString(undefined, {
@@ -506,28 +705,4 @@ export function formatPivotValue(value: number, aggregation: Aggregation): strin
   }
 }
 
-// Create a pivot field
-export function createPivotField(sourceColumn: number, name: string): PivotField {
-  return {
-    id: crypto.randomUUID(),
-    sourceColumn,
-    name,
-    sortOrder: 'None',
-    showSubtotals: true,
-    collapsed: false,
-  };
-}
-
-// Create a value field
-export function createValueField(
-  sourceColumn: number,
-  name: string,
-  aggregation: Aggregation = 'Sum'
-): ValueField {
-  return {
-    id: crypto.randomUUID(),
-    sourceColumn,
-    name,
-    aggregation,
-  };
-}
+export default usePivotStore;

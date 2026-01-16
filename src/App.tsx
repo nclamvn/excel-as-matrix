@@ -20,11 +20,26 @@ import {
   CommandPalette,
   FormulaBar2026,
   SheetTabs2026,
-  StatusBar2026
 } from './components/Modern';
+import { StatusBar2026Enhanced } from './components/Modern/StatusBar2026Enhanced';
 
 // AI Copilot
 import { AICopilotDock } from './components/AI';
+
+// File Tabs
+import { FileTabs } from './components/FileTabs';
+
+// Charts
+import { ChartOverlay } from './components/Charts';
+
+// Shapes
+import { ShapeCanvas, ShapeToolbar } from './components/Shapes';
+
+// Pictures
+import { PictureCanvas, PictureToolbar } from './components/Pictures';
+
+// Print
+import { PrintPreviewDialog } from './components/Print';
 
 // Styles
 import './styles/fonts.css';
@@ -42,6 +57,22 @@ import './styles/data-cleaner.css';
 import './styles/auto-viz.css';
 import './styles/macros.css';
 import './components/FileMenu/FileMenu.css';
+import './components/FileTabs/FileTabs.css';
+import './components/Share/Share.css';
+import './components/Toolbar/AutoSumDropdown/AutoSumDropdown.css';
+import './components/Modern/StatusBar2026Enhanced.css';
+import './components/PageLayout/PageLayout.css';
+import './components/ConditionalFormatting/ConditionalFormatting.css';
+import './components/Review/ReviewTab.css';
+import './components/Review/Comments.css';
+import './components/Review/TrackChanges.css';
+import './components/Review/Protection.css';
+import './components/TextOrientation/TextOrientation.css';
+import './components/Charts/ChartOverlay.css';
+import './components/Shapes/Shapes.css';
+import './components/Pictures/Pictures.css';
+import './components/Print/Print.css';
+import './components/Sparklines/Sparklines.css';
 
 function App() {
   const [showLanding, setShowLanding] = useState(() => {
@@ -50,6 +81,7 @@ function App() {
   });
   const [isInitializing, setIsInitializing] = useState(true);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
 
   const handleEnterApp = useCallback(() => {
     localStorage.setItem('ai-suite-entered', 'true');
@@ -69,7 +101,7 @@ function App() {
   const isAIOpen = useAIStore((state) => state.isOpen);
   const toggleAIPanel = useAIStore((state) => state.togglePanel);
 
-  // Command Palette shortcut (⌘K) and AI Copilot shortcut (⌘J)
+  // Command Palette shortcut (⌘K), AI Copilot shortcut (⌘J), Print shortcut (⌘P)
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
@@ -79,6 +111,11 @@ function App() {
     if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
       e.preventDefault();
       toggleAIPanel();
+    }
+    // Print Preview (⌘P or Ctrl+P)
+    if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
+      e.preventDefault();
+      setShowPrintPreview(true);
     }
   }, [toggleAIPanel]);
 
@@ -208,22 +245,28 @@ function App() {
         {/* Modern Header with Nav */}
         <Header2026 onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
 
+        {/* File Tabs (Browser-style) */}
+        <FileTabs />
+
         {/* Compact Toolbar */}
         <Toolbar2026 />
 
         {/* Formula Bar */}
         <FormulaBar2026 sheetId={activeSheetId} />
 
-        {/* Grid */}
-        <div className="flex-1 overflow-hidden">
+        {/* Grid with Chart, Shape, and Picture Overlay */}
+        <div className="flex-1 overflow-hidden relative">
           <Grid workbookId={workbookId} sheetId={activeSheetId} />
+          <ChartOverlay sheetId={activeSheetId} />
+          <ShapeCanvas sheetId={activeSheetId} />
+          <PictureCanvas sheetId={activeSheetId} />
         </div>
 
         {/* Sheet Tabs */}
         <SheetTabs2026 />
 
-        {/* Status Bar (Green theme) */}
-        <StatusBar2026 />
+        {/* Status Bar (Green theme - Enhanced) */}
+        <StatusBar2026Enhanced />
       </div>
 
       {/* AI Copilot Dock */}
@@ -242,6 +285,19 @@ function App() {
 
       {/* Toast Notifications */}
       <ToastContainer />
+
+      {/* Shape Toolbar (floating, shows when shape selected) */}
+      <ShapeToolbar sheetId={activeSheetId} />
+
+      {/* Picture Toolbar (floating, shows when picture selected) */}
+      <PictureToolbar sheetId={activeSheetId} />
+
+      {/* Print Preview Dialog (⌘P) */}
+      <PrintPreviewDialog
+        sheetId={activeSheetId}
+        isOpen={showPrintPreview}
+        onClose={() => setShowPrintPreview(false)}
+      />
     </div>
   );
 }

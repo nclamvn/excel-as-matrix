@@ -163,12 +163,12 @@ export const FormulasToolbar: React.FC = () => {
         {/* Insert Function */}
         <div className="toolbar-2026__group">
           <button
-            className="toolbar-2026__btn-lg toolbar-2026__btn-lg--wide"
+            className="toolbar-2026__btn"
             onClick={() => setShowFunctionDialog(true)}
             title="Insert Function"
           >
-            <FunctionSquare size={20} />
-            <span>Insert Function</span>
+            <FunctionSquare size={16} />
+            <span>Function</span>
           </button>
         </div>
 
@@ -177,11 +177,11 @@ export const FormulasToolbar: React.FC = () => {
         {/* AutoSum & Quick Functions */}
         <div className="toolbar-2026__group">
           <button
-            className="toolbar-2026__btn-lg"
+            className="toolbar-2026__btn"
             onClick={handleAutoSum}
             title="AutoSum (Alt+=)"
           >
-            <Sigma size={20} />
+            <Sigma size={16} />
             <span>AutoSum</span>
           </button>
           <button

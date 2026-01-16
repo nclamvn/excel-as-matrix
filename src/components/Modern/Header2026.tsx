@@ -4,6 +4,7 @@ import { useWorkbookStore } from '../../stores/workbookStore';
 import { useToolbarStore, TabId } from '../../stores/toolbarStore';
 import { useAIStore } from '../../stores/aiStore';
 import { FileMenu } from '../FileMenu';
+import { ShareButton } from '../Share';
 
 interface Header2026Props {
   onOpenCommandPalette: () => void;
@@ -14,6 +15,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'insert', label: 'Insert' },
   { id: 'formulas', label: 'Formulas' },
   { id: 'data', label: 'Data' },
+  { id: 'review', label: 'Review' },
   { id: 'view', label: 'View' },
 ];
 
@@ -80,6 +82,9 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
           <span>Search commands...</span>
           <kbd>⌘K</kbd>
         </button>
+
+        {/* Share Button */}
+        <ShareButton />
 
         {/* AI Copilot Toggle */}
         <button

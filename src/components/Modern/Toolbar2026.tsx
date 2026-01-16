@@ -5,7 +5,9 @@ import {
   InsertToolbar,
   FormulasToolbar,
   DataToolbar,
+  ReviewToolbar,
   ViewToolbar,
+  PageLayoutToolbar,
 } from './toolbars';
 
 export const Toolbar2026: React.FC = () => {
@@ -17,10 +19,14 @@ export const Toolbar2026: React.FC = () => {
         return <HomeToolbar />;
       case 'insert':
         return <InsertToolbar />;
+      case 'page-layout':
+        return <PageLayoutToolbar />;
       case 'formulas':
         return <FormulasToolbar />;
       case 'data':
         return <DataToolbar />;
+      case 'review':
+        return <ReviewToolbar />;
       case 'view':
         return <ViewToolbar />;
       default:

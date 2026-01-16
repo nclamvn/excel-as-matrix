@@ -114,11 +114,11 @@ export const DataToolbar: React.FC = () => {
       {/* Import/Refresh */}
       <div className="toolbar-2026__group">
         <button
-          className="toolbar-2026__btn-lg"
+          className="toolbar-2026__btn"
           onClick={() => showToast('Import coming soon', 'info')}
           title="Import Data"
         >
-          <Upload size={20} />
+          <Upload size={16} />
           <span>Import</span>
         </button>
         <button

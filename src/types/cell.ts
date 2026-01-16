@@ -12,6 +12,8 @@ export interface CellFormat {
   fontFamily?: string;
   align?: 'left' | 'center' | 'right';
   numberFormat?: string;
+  textRotation?: number;
+  verticalText?: boolean;
 }
 
 export interface CellComment {

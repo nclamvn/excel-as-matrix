@@ -1,0 +1,115 @@
+/* Review Tab */
+.review-tab {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 4px 8px;
+  height: 100%;
+}
+
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color, #e0e0e0);
+  padding-right: 16px;
+  height: 100%;
+}
+
+.ribbon-group:last-of-type {
+  border-right: none;
+}
+
+.ribbon-group-title {
+  font-size: 11px;
+  color: var(--text-muted, #888);
+  text-align: center;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.ribbon-group-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ribbon-btn-large {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 60px;
+  transition: all 0.15s;
+}
+
+.ribbon-btn-large:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  border-color: var(--border-color, #e0e0e0);
+}
+
+.ribbon-btn-large.active {
+  background: var(--accent-light, #e8f5e9);
+  border-color: var(--accent-color, #217346);
+}
+
+.ribbon-btn-large .btn-label {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ribbon-btn-large .btn-sublabel {
+  font-size: 10px;
+  color: var(--text-muted, #888);
+}
+
+.ribbon-btn-small {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.ribbon-btn-small:hover:not(:disabled) {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.ribbon-btn-small:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ribbon-btn-small.active {
+  background: var(--accent-light, #e8f5e9);
+  color: var(--accent-color, #217346);
+}
+
+.ribbon-btn-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .ribbon-group {
+  border-color: #404040;
+}
+
+[data-theme="dark"] .ribbon-btn-large:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .ribbon-btn-small:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}

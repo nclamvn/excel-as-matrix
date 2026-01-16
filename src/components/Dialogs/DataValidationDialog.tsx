@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { X, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, AlertCircle, CheckCircle, Info } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useValidationStore } from '../../stores/validationStore';
+import { ValidationType as ValidationTypeType, ComparisonOperator } from '../../types/cell';
 
 type ValidationType =
   | 'any'
@@ -26,6 +28,18 @@ interface DataValidationDialogProps {
   onClose: () => void;
 }
 
+// Map UI operator to store operator
+const operatorMap: Record<ValidationOperator, ComparisonOperator> = {
+  between: 'between',
+  notBetween: 'notBetween',
+  equalTo: 'equal',
+  notEqualTo: 'notEqual',
+  greaterThan: 'greaterThan',
+  lessThan: 'lessThan',
+  greaterThanOrEqual: 'greaterThanOrEqual',
+  lessThanOrEqual: 'lessThanOrEqual',
+};
+
 export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onClose }) => {
   const [validationType, setValidationType] = useState<ValidationType>('any');
   const [operator, setOperator] = useState<ValidationOperator>('between');
@@ -33,23 +47,121 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
   const [value2, setValue2] = useState('');
   const [listValues, setListValues] = useState('');
   const [showDropdown, setShowDropdown] = useState(true);
+  const [allowBlank, setAllowBlank] = useState(true);
+  const [showInputMessage, setShowInputMessage] = useState(false);
+  const [inputTitle, setInputTitle] = useState('');
+  const [inputMessage, setInputMessage] = useState('');
   const [showError, setShowError] = useState(true);
+  const [errorStyle, setErrorStyle] = useState<'stop' | 'warning' | 'information'>('stop');
   const [errorTitle, setErrorTitle] = useState('Invalid Input');
   const [errorMessage, setErrorMessage] = useState('The value you entered is not valid.');
 
-  const { selectionRange } = useWorkbookStore();
+  const { selectionRange, activeSheetId } = useWorkbookStore();
   const { showToast } = useUIStore();
+  const { addRule, applyToRange } = useValidationStore();
 
   const handleApply = () => {
-    if (!selectionRange) {
+    if (!selectionRange || !activeSheetId) {
       showToast('Please select a range first', 'warning');
       return;
     }
 
-    // For now, just show success toast
-    // Full implementation would store validation rules
+    // Create validation type based on selection
+    let valType: ValidationTypeType;
+    const storeOperator = operatorMap[operator];
+
+    switch (validationType) {
+      case 'any':
+        valType = { type: 'any' };
+        break;
+      case 'wholeNumber':
+        valType = {
+          type: 'wholeNumber',
+          operator: storeOperator,
+          value1: parseFloat(value1) || 0,
+          value2: ['between', 'notBetween'].includes(operator) ? parseFloat(value2) || 0 : undefined,
+        };
+        break;
+      case 'decimal':
+        valType = {
+          type: 'decimal',
+          operator: storeOperator,
+          value1: parseFloat(value1) || 0,
+          value2: ['between', 'notBetween'].includes(operator) ? parseFloat(value2) || 0 : undefined,
+        };
+        break;
+      case 'list':
+        valType = {
+          type: 'list',
+          source: { type: 'values', values: listValues.split(',').map(s => s.trim()).filter(Boolean) },
+          dropdown: showDropdown,
+        };
+        break;
+      case 'textLength':
+        valType = {
+          type: 'textLength',
+          operator: storeOperator,
+          value1: parseInt(value1) || 0,
+          value2: ['between', 'notBetween'].includes(operator) ? parseInt(value2) || 0 : undefined,
+        };
+        break;
+      case 'date':
+        valType = {
+          type: 'date',
+          operator: storeOperator,
+          value1: value1 || new Date().toISOString().split('T')[0],
+          value2: ['between', 'notBetween'].includes(operator) ? value2 : undefined,
+        };
+        break;
+      case 'custom':
+        valType = { type: 'custom', formula: value1 };
+        break;
+      default:
+        valType = { type: 'any' };
+    }
+
+    // Create the rule
+    const ruleId = `rule_${Date.now()}`;
+    addRule({
+      id: ruleId,
+      validationType: valType,
+      allowBlank,
+      inputMessage: showInputMessage ? {
+        title: inputTitle,
+        message: inputMessage,
+        show: true,
+      } : undefined,
+      errorAlert: showError ? {
+        style: errorStyle,
+        title: errorTitle,
+        message: errorMessage,
+        show: true,
+      } : undefined,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    // Apply to selection range
+    applyToRange(
+      ruleId,
+      activeSheetId,
+      selectionRange.start.row,
+      selectionRange.start.col,
+      selectionRange.end.row,
+      selectionRange.end.col
+    );
+
     showToast('Data validation applied', 'success');
     onClose();
+  };
+
+  const handleClear = () => {
+    setValidationType('any');
+    setOperator('between');
+    setValue1('');
+    setValue2('');
+    setListValues('');
+    showToast('Validation cleared', 'info');
   };
 
   const needsOperator = ['wholeNumber', 'decimal', 'date', 'textLength'].includes(validationType);
@@ -160,6 +272,71 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                 </label>
               </>
             )}
+
+            {validationType === 'custom' && (
+              <div className="dialog-field">
+                <label>Formula:</label>
+                <input
+                  type="text"
+                  value={value1}
+                  onChange={e => setValue1(e.target.value)}
+                  placeholder="=A1>0"
+                  className="dialog-input"
+                />
+              </div>
+            )}
+
+            <label className="dialog-checkbox">
+              <input
+                type="checkbox"
+                checked={allowBlank}
+                onChange={e => setAllowBlank(e.target.checked)}
+              />
+              Ignore blank cells
+            </label>
+          </div>
+
+          {/* Input Message */}
+          <div className="dialog-section">
+            <h3 className="dialog-section-title">
+              <Info size={16} />
+              Input Message
+            </h3>
+
+            <label className="dialog-checkbox">
+              <input
+                type="checkbox"
+                checked={showInputMessage}
+                onChange={e => setShowInputMessage(e.target.checked)}
+              />
+              Show input message when cell is selected
+            </label>
+
+            {showInputMessage && (
+              <>
+                <div className="dialog-field">
+                  <label>Title:</label>
+                  <input
+                    type="text"
+                    value={inputTitle}
+                    onChange={e => setInputTitle(e.target.value)}
+                    className="dialog-input"
+                    placeholder="Enter a title"
+                  />
+                </div>
+
+                <div className="dialog-field">
+                  <label>Message:</label>
+                  <textarea
+                    value={inputMessage}
+                    onChange={e => setInputMessage(e.target.value)}
+                    className="dialog-input"
+                    rows={2}
+                    placeholder="Enter a helpful message"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Error Alert */}
@@ -180,6 +357,19 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
 
             {showError && (
               <>
+                <div className="dialog-field">
+                  <label>Style:</label>
+                  <select
+                    value={errorStyle}
+                    onChange={e => setErrorStyle(e.target.value as 'stop' | 'warning' | 'information')}
+                    className="dialog-input"
+                  >
+                    <option value="stop">Stop</option>
+                    <option value="warning">Warning</option>
+                    <option value="information">Information</option>
+                  </select>
+                </div>
+
                 <div className="dialog-field">
                   <label>Title:</label>
                   <input
@@ -205,6 +395,9 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
         </div>
 
         <div className="dialog-footer">
+          <button className="dialog-btn-danger" onClick={handleClear} style={{ marginRight: 'auto' }}>
+            Clear All
+          </button>
           <button className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>

@@ -1,0 +1,335 @@
+/* ============================================================
+   FILE TABS STYLES
+   ============================================================ */
+
+/* Container */
+.file-tabs-container {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  user-select: none;
+}
+
+.file-tabs-scroll {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.file-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.file-tabs-list {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 4px;
+  gap: 2px;
+}
+
+/* Individual Tab */
+.file-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  background: transparent;
+  border: none;
+  border-radius: 5px 5px 0 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  min-width: 80px;
+  max-width: 180px;
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+.file-tab:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #333);
+}
+
+.file-tab--active {
+  background: var(--bg-primary, #fff);
+  color: var(--text-primary, #333);
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.file-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-color, #217346);
+}
+
+/* Home Tab */
+.file-tab--home {
+  min-width: auto;
+  padding: 0 12px;
+  font-weight: 500;
+}
+
+.file-tab--home .tab-icon,
+.file-tab--home .home-icon {
+  color: var(--accent-color, #217346);
+}
+
+/* Pinned Tab */
+.file-tab--pinned {
+  min-width: auto;
+  max-width: 40px;
+  padding: 0 10px;
+}
+
+.file-tab--pinned .tab-name {
+  display: none;
+}
+
+.tab-pin {
+  color: var(--text-muted, #999);
+}
+
+/* Modified Tab */
+.file-tab--modified .tab-modified-dot {
+  color: var(--warning-color, #f59e0b);
+  font-size: 16px;
+  line-height: 1;
+  margin-left: -2px;
+}
+
+/* Dragging */
+.file-tab--dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.file-tab--drop-target {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.file-tab--drop-before::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--accent-color, #217346);
+  border-radius: 1px;
+}
+
+.file-tab--drop-after::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--accent-color, #217346);
+  border-radius: 1px;
+}
+
+/* Tab Icon */
+.tab-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tab-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--excel-green, #217346);
+}
+
+.tab-emoji-icon {
+  font-size: 14px;
+}
+
+/* Tab Name */
+.tab-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Close Button */
+.tab-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--text-muted, #999);
+  opacity: 0;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.file-tab:hover .tab-close-btn,
+.file-tab--active .tab-close-btn {
+  opacity: 1;
+}
+
+.tab-close-btn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.1));
+  color: var(--text-primary, #333);
+}
+
+/* New Tab Button */
+.new-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px;
+  background: transparent;
+  border: 1px dashed var(--border-color, #ddd);
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text-muted, #999);
+  font-size: 12px;
+  transition: all 0.15s ease;
+  margin-left: 4px;
+}
+
+.new-tab-btn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  border-color: var(--accent-color, #217346);
+  color: var(--accent-color, #217346);
+}
+
+.new-tab-text {
+  font-weight: 500;
+}
+
+/* Context Menu */
+.tab-context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 180px;
+  padding: 4px 0;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary, #333);
+  text-align: left;
+  transition: background 0.1s ease;
+}
+
+.context-menu-item:hover:not(:disabled) {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.context-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menu-icon {
+  width: 14px;
+  flex-shrink: 0;
+  color: var(--text-muted, #888);
+}
+
+.menu-label {
+  flex: 1;
+}
+
+.menu-shortcut {
+  font-size: 10px;
+  color: var(--text-muted, #999);
+}
+
+.context-menu-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border-color, #e0e0e0);
+}
+
+/* Dark Mode */
+[data-theme="dark"] .file-tabs-container {
+  background: var(--bg-secondary-dark, #252525);
+  border-color: var(--border-color-dark, #404040);
+}
+
+[data-theme="dark"] .file-tab {
+  color: var(--text-secondary-dark, #aaa);
+}
+
+[data-theme="dark"] .file-tab:hover,
+[data-theme="dark"] .file-tab--active {
+  background: var(--bg-primary-dark, #1e1e1e);
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme="dark"] .tab-context-menu {
+  background: var(--bg-primary-dark, #2a2a2a);
+  border-color: var(--border-color-dark, #404040);
+}
+
+[data-theme="dark"] .context-menu-item {
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme="dark"] .context-menu-item:hover:not(:disabled) {
+  background: var(--bg-hover-dark, rgba(255, 255, 255, 0.1));
+}
+
+[data-theme="dark"] .new-tab-btn {
+  border-color: var(--border-color-dark, #444);
+  color: var(--text-muted-dark, #888);
+}
+
+[data-theme="dark"] .new-tab-btn:hover {
+  border-color: var(--accent-color, #217346);
+  color: var(--accent-color, #217346);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .file-tab {
+    min-width: 60px;
+    max-width: 120px;
+    padding: 0 8px;
+  }
+
+  .new-tab-text {
+    display: none;
+  }
+
+  .new-tab-btn {
+    padding: 0 8px;
+  }
+}

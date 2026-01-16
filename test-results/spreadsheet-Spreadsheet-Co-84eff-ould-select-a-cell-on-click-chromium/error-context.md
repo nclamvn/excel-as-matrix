@@ -1,0 +1,80 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - button "Back to Landing" [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e9]: "|"
+    - button "File" [ref=e10] [cursor=pointer]:
+      - img [ref=e11]
+      - generic [ref=e14]: File
+    - navigation [ref=e15]:
+      - button "Home" [ref=e16] [cursor=pointer]
+      - button "Insert" [ref=e17] [cursor=pointer]
+      - button "Formulas" [ref=e18] [cursor=pointer]
+      - button "Data" [ref=e19] [cursor=pointer]
+      - button "View" [ref=e20] [cursor=pointer]
+    - generic [ref=e21]: Untitled Workbook
+    - generic [ref=e22]:
+      - button "Search commands... ⌘K" [ref=e23] [cursor=pointer]:
+        - img [ref=e24]
+        - generic [ref=e27]: Search commands...
+        - generic [ref=e28]: ⌘K
+      - button "AI Copilot" [ref=e29] [cursor=pointer]:
+        - img [ref=e30]
+        - generic [ref=e32]: AI Copilot
+  - generic [ref=e33]:
+    - generic [ref=e34]:
+      - button "Calibri" [ref=e36] [cursor=pointer]:
+        - generic [ref=e37]: Calibri
+        - img [ref=e38]
+      - button "11" [ref=e41] [cursor=pointer]:
+        - text: "11"
+        - img [ref=e42]
+    - generic [ref=e45]:
+      - button "Bold (⌘B)" [ref=e46] [cursor=pointer]:
+        - img [ref=e47]
+      - button "Italic (⌘I)" [ref=e50] [cursor=pointer]:
+        - img [ref=e51]
+      - button "Underline (⌘U)" [ref=e53] [cursor=pointer]:
+        - img [ref=e54]
+    - generic [ref=e57]:
+      - button "Fill Color" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - button "Text Color" [ref=e66] [cursor=pointer]:
+        - img [ref=e67]
+    - generic [ref=e71]:
+      - button "Align Left" [ref=e72] [cursor=pointer]:
+        - img [ref=e73]
+      - button "Align Center" [ref=e74] [cursor=pointer]:
+        - img [ref=e75]
+      - button "Align Right" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+    - generic [ref=e79]:
+      - button "Currency Format" [ref=e80] [cursor=pointer]:
+        - img [ref=e81]
+      - button "Percent Format" [ref=e83] [cursor=pointer]:
+        - img [ref=e84]
+  - generic [ref=e88]:
+    - generic [ref=e89]: A1
+    - generic [ref=e90]: fx
+    - textbox "Enter value or formula" [ref=e91]
+  - generic [ref=e99]:
+    - generic [ref=e100]:
+      - button "Previous sheets" [ref=e101] [cursor=pointer]:
+        - img [ref=e102]
+      - button "Next sheets" [ref=e104] [cursor=pointer]:
+        - img [ref=e105]
+    - button "Sheet1" [ref=e108] [cursor=pointer]
+    - button "Add sheet" [ref=e109] [cursor=pointer]:
+      - img [ref=e110]
+  - generic [ref=e111]:
+    - generic [ref=e113]: Ready
+    - generic [ref=e115]:
+      - button [ref=e116] [cursor=pointer]:
+        - img [ref=e117]
+      - generic [ref=e118]: 100%
+      - button [ref=e119] [cursor=pointer]:
+        - img [ref=e120]
+```

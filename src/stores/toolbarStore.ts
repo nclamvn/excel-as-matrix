@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type TabId = 'home' | 'insert' | 'formulas' | 'data' | 'view';
+export type TabId = 'home' | 'insert' | 'page-layout' | 'formulas' | 'data' | 'review' | 'view';
 
 interface ToolbarState {
   activeTab: TabId;

@@ -1,0 +1,184 @@
+/* Dialog */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.dialog {
+  width: 480px;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: var(--bg-primary, #fff);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.dialog-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.dialog-footer button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid var(--border-color, #ddd);
+  background: var(--bg-primary, #fff);
+  transition: all 0.15s;
+}
+
+.dialog-footer button:hover {
+  background: var(--bg-hover, #f5f5f5);
+}
+
+.dialog-footer button.primary {
+  background: var(--accent-color, #217346);
+  border-color: var(--accent-color, #217346);
+  color: white;
+}
+
+.dialog-footer button.primary:hover {
+  background: #1a5c38;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-primary, #333);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 13px;
+  background: var(--bg-primary, #fff);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent-color, #217346);
+}
+
+.unprotect-section p {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+.options-section {
+  margin-top: 20px;
+}
+
+.options-section > label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--text-primary, #333);
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.checkbox-option:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.checkbox-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.error-message {
+  padding: 8px 12px;
+  background: var(--error-light, #fef2f2);
+  color: var(--error-color, #ef4444);
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .dialog {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .dialog-header,
+[data-theme="dark"] .dialog-footer {
+  border-color: #404040;
+}
+
+[data-theme="dark"] .form-group input {
+  background: #2a2a2a;
+  border-color: #404040;
+  color: #fff;
+}
+
+[data-theme="dark"] .dialog-footer button {
+  background: #2a2a2a;
+  border-color: #404040;
+  color: #fff;
+}
+
+[data-theme="dark"] .dialog-footer button:hover {
+  background: #333;
+}

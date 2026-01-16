@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { X, BarChart3, LineChart, PieChart } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useChartStore } from '../../stores/chartStore';
+import { ChartType, DEFAULT_CHART_COLORS } from '../../types/visualization';
 
 interface InsertChartDialogProps {
   type: 'bar' | 'line' | 'pie';
   onClose: () => void;
 }
+
+// Map simple type to visualization ChartType
+const mapToChartType = (type: 'bar' | 'line' | 'pie'): ChartType => {
+  switch (type) {
+    case 'bar': return 'Bar';
+    case 'line': return 'Line';
+    case 'pie': return 'Pie';
+    default: return 'Bar';
+  }
+};
 
 export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
   type: initialType,
@@ -14,11 +26,20 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
 }) => {
   const [chartType, setChartType] = useState(initialType);
   const [title, setTitle] = useState('Chart Title');
-  const { selectionRange } = useWorkbookStore();
+
+  const { selectionRange, workbookId, activeSheetId, getCellDisplayValue } = useWorkbookStore();
   const { showToast } = useUIStore();
+  const { createChart, setChartData } = useChartStore();
 
   const colToLetter = (col: number): string => {
-    return String.fromCharCode(65 + col);
+    let result = '';
+    let n = col + 1;
+    while (n > 0) {
+      n -= 1;
+      result = String.fromCharCode(65 + (n % 26)) + result;
+      n = Math.floor(n / 26);
+    }
+    return result;
   };
 
   const getRangeString = () => {
@@ -28,9 +49,89 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
     return start === end ? start : `${start}:${end}`;
   };
 
+  // Extract data from selection
+  const extractedData = useMemo(() => {
+    if (!selectionRange || !activeSheetId) {
+      return { categories: [] as string[], values: [] as number[] };
+    }
+
+    const categories: string[] = [];
+    const values: number[] = [];
+
+    const startRow = selectionRange.start.row;
+    const endRow = selectionRange.end.row;
+    const startCol = selectionRange.start.col;
+    const endCol = selectionRange.end.col;
+
+    // If single column, use row numbers as categories
+    if (startCol === endCol) {
+      for (let row = startRow; row <= endRow; row++) {
+        const value = getCellDisplayValue(activeSheetId, row, startCol);
+        const numValue = parseFloat(String(value)) || 0;
+        categories.push(`Row ${row + 1}`);
+        values.push(numValue);
+      }
+    }
+    // If two columns, first is category, second is value
+    else if (endCol - startCol === 1) {
+      for (let row = startRow; row <= endRow; row++) {
+        const cat = getCellDisplayValue(activeSheetId, row, startCol);
+        const val = getCellDisplayValue(activeSheetId, row, startCol + 1);
+        categories.push(String(cat) || `Item ${row - startRow + 1}`);
+        values.push(parseFloat(String(val)) || 0);
+      }
+    }
+    // Multiple columns - first column is category, rest are values (use first value column)
+    else {
+      for (let row = startRow; row <= endRow; row++) {
+        const cat = getCellDisplayValue(activeSheetId, row, startCol);
+        const val = getCellDisplayValue(activeSheetId, row, startCol + 1);
+        categories.push(String(cat) || `Item ${row - startRow + 1}`);
+        values.push(parseFloat(String(val)) || 0);
+      }
+    }
+
+    return { categories, values };
+  }, [selectionRange, activeSheetId, getCellDisplayValue]);
+
   const handleInsert = () => {
-    console.log(`Creating ${chartType} chart from ${getRangeString()} with title "${title}"`);
-    showToast(`${chartType.charAt(0).toUpperCase() + chartType.slice(1)} chart created from ${getRangeString()}`, 'success');
+    if (!workbookId || !activeSheetId) {
+      showToast('No active sheet', 'error');
+      return;
+    }
+
+    // Create the chart
+    const chart = createChart(workbookId, activeSheetId, title, mapToChartType(chartType));
+
+    // Set chart data
+    if (extractedData.categories.length > 0) {
+      setChartData(chart.id, {
+        chartId: chart.id,
+        chartType: mapToChartType(chartType),
+        categories: extractedData.categories,
+        series: [{
+          id: 'series-1',
+          name: 'Values',
+          values: extractedData.values,
+          color: DEFAULT_CHART_COLORS[0],
+          statistics: {
+            min: Math.min(...extractedData.values),
+            max: Math.max(...extractedData.values),
+            sum: extractedData.values.reduce((a, b) => a + b, 0),
+            avg: extractedData.values.reduce((a, b) => a + b, 0) / extractedData.values.length,
+            count: extractedData.values.length,
+          },
+        }],
+        bounds: {
+          minValue: Math.min(...extractedData.values, 0),
+          maxValue: Math.max(...extractedData.values),
+          suggestedMin: 0,
+          suggestedMax: Math.max(...extractedData.values) * 1.1,
+        },
+      });
+    }
+
+    showToast(`${chartType.charAt(0).toUpperCase() + chartType.slice(1)} chart created!`, 'success');
     onClose();
   };
 

@@ -1628,24 +1628,28 @@
   background: var(--collab-gray-100);
 }
 
-/* Share Button */
+/* Share Button - Outline style */
 .share-button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  background: var(--collab-primary);
-  border: none;
-  border-radius: var(--collab-radius);
-  color: white;
-  font-size: 13px;
+  padding: 4px 12px;
+  height: 28px;
+  background: transparent;
+  border: 1.5px solid var(--accent-color, #217346);
+  border-radius: 5px;
+  color: var(--accent-color, #217346);
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s;
+  box-sizing: border-box;
 }
 
 .share-button:hover {
-  background: #2563eb;
+  background: rgba(33, 115, 70, 0.08);
+  border-color: var(--accent-dark, #1a5d38);
+  color: var(--accent-dark, #1a5d38);
 }
 
 .share-button__count {

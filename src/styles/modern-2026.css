@@ -239,6 +239,7 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
+  height: 28px;
   font-size: var(--text-11);
   color: var(--text-4);
   background: var(--surface-1);
@@ -246,6 +247,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: all var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .header-2026__cmd-hint:hover {
@@ -465,6 +467,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   gap: 1px;
+  overflow: hidden;
 }
 
 .toolbar-2026__btn-lg:hover {
@@ -480,6 +483,10 @@
 .toolbar-2026__btn-lg span {
   font-size: 10px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .toolbar-2026__btn-lg--wide {
@@ -1296,16 +1303,18 @@
   font-family: var(--font-2026);
   font-size: var(--text-14);
   font-weight: 500;
-  color: white;
-  background: var(--green-accent);
-  border: none;
+  color: #ffffff !important;
+  background: #059669 !important;
+  background: var(--green-accent) !important;
+  border: none !important;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .dialog-btn-primary:hover {
-  background: var(--green-accent-hover);
+  background: #047857 !important;
+  background: var(--green-accent-hover) !important;
 }
 
 .dialog-btn-primary:disabled {

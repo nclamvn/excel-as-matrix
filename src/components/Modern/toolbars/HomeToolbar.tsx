@@ -6,6 +6,8 @@ import {
   PaintBucket, Type, ChevronDown
 } from 'lucide-react';
 import { useFormatStore } from '../../../stores/formatStore';
+import { CFDropdown } from '../../ConditionalFormatting';
+import { TextOrientationDropdown } from '../../TextOrientation';
 
 // Color palette
 const COLORS = [
@@ -262,6 +264,9 @@ export const HomeToolbar: React.FC = () => {
         >
           <AlignRight size={15} />
         </button>
+
+        {/* Text Orientation */}
+        <TextOrientationDropdown />
       </div>
 
       <div className="toolbar-2026__divider" />
@@ -282,6 +287,13 @@ export const HomeToolbar: React.FC = () => {
         >
           <Percent size={15} />
         </button>
+      </div>
+
+      <div className="toolbar-2026__divider" />
+
+      {/* Conditional Formatting */}
+      <div className="toolbar-2026__group">
+        <CFDropdown />
       </div>
     </div>
   );

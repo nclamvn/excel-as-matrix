@@ -1,0 +1,820 @@
+/* ============================================================
+   PIVOT TABLE STYLES
+   ============================================================ */
+
+/* ============================================================
+   DIALOG STYLES
+   ============================================================ */
+
+.pivot-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.pivot-dialog {
+  background: var(--bg-primary, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 480px;
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.2s ease-out;
+}
+
+.pivot-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.pivot-dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-dialog-title h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.pivot-dialog-title svg {
+  color: var(--accent-color, #217346);
+}
+
+.pivot-dialog-close {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-secondary, #666);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pivot-dialog-close:hover {
+  background: var(--hover-bg, #f0f0f0);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-dialog-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.pivot-dialog-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.pivot-dialog-section {
+  margin-bottom: 20px;
+}
+
+.pivot-dialog-section h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pivot-dialog-section h3 .success-icon {
+  color: #22c55e;
+}
+
+.pivot-dialog-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pivot-dialog-field label {
+  min-width: 60px;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+.pivot-dialog-input,
+.pivot-dialog-select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  font-size: 13px;
+  background: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-dialog-input:focus,
+.pivot-dialog-select:focus {
+  outline: none;
+  border-color: var(--accent-color, #217346);
+  box-shadow: 0 0 0 2px rgba(33, 115, 70, 0.1);
+}
+
+.pivot-dialog-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pivot-dialog-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+}
+
+.pivot-detected-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.pivot-detected-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.pivot-detected-field .field-name {
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-detected-field .field-type {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.field-type.type-number { background: #dbeafe; color: #1d4ed8; }
+.field-type.type-string { background: #f3e8ff; color: #7c3aed; }
+.field-type.type-date { background: #fef3c7; color: #d97706; }
+.field-type.type-boolean { background: #dcfce7; color: #16a34a; }
+
+.pivot-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.pivot-btn-primary,
+.pivot-btn-secondary {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pivot-btn-primary {
+  background: var(--accent-color, #217346);
+  color: white;
+  border: none;
+}
+
+.pivot-btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover, #1a5c38);
+}
+
+.pivot-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pivot-btn-secondary {
+  background: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #1a1a1a);
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.pivot-btn-secondary:hover {
+  background: var(--hover-bg, #f5f5f5);
+}
+
+/* ============================================================
+   FIELD LIST STYLES
+   ============================================================ */
+
+.pivot-field-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary, #ffffff);
+  border-left: 1px solid var(--border-color, #e0e0e0);
+  width: 280px;
+}
+
+.pivot-fields-section {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.pivot-fields-section h3 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-fields-hint {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  color: var(--text-secondary, #888);
+}
+
+.pivot-available-fields {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.no-fields-message {
+  font-size: 12px;
+  color: var(--text-tertiary, #999);
+  text-align: center;
+  padding: 16px;
+}
+
+.pivot-field-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  background: var(--bg-secondary, #f5f5f5);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: grab;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.pivot-field-item:hover {
+  background: var(--hover-bg, #eaeaea);
+  border-color: var(--accent-color, #217346);
+}
+
+.pivot-field-item.in-area {
+  background: var(--bg-primary, #ffffff);
+}
+
+.pivot-field-item .grip-icon {
+  color: var(--text-tertiary, #999);
+  flex-shrink: 0;
+}
+
+.pivot-field-item .field-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.field-type-badge {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.field-type-badge.type-number { background: #dbeafe; color: #1d4ed8; }
+.field-type-badge.type-string { background: #f3e8ff; color: #7c3aed; }
+.field-type-badge.type-date { background: #fef3c7; color: #d97706; }
+.field-type-badge.type-boolean { background: #dcfce7; color: #16a34a; }
+
+.field-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.field-action-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-tertiary, #999);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-action-btn:hover {
+  background: var(--hover-bg, #e0e0e0);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.field-action-btn.remove:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.field-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 160px;
+}
+
+.dropdown-section {
+  padding: 8px;
+}
+
+.dropdown-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary, #999);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 12px;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dropdown-item:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+.dropdown-item.active {
+  background: var(--accent-light, #e6f4ea);
+  color: var(--accent-color, #217346);
+}
+
+/* ============================================================
+   AREAS GRID
+   ============================================================ */
+
+.pivot-areas-section {
+  flex: 1;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.pivot-areas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 8px;
+  height: 100%;
+}
+
+.pivot-area {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary, #f9f9f9);
+  border: 1px dashed var(--border-color, #ddd);
+  border-radius: 6px;
+  min-height: 80px;
+  transition: all 0.15s ease;
+}
+
+.pivot-area.droppable {
+  border-color: var(--accent-color, #217346);
+  background: var(--accent-light, #e6f4ea);
+}
+
+.pivot-area-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.field-count {
+  background: var(--bg-primary, #ffffff);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+.pivot-area-content {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.pivot-area-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 11px;
+  color: var(--text-tertiary, #aaa);
+}
+
+/* ============================================================
+   PIVOT TABLE RENDERER
+   ============================================================ */
+
+.pivot-table-renderer {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pivot-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.pivot-table-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-refresh-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-secondary, #666);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pivot-refresh-btn:hover {
+  background: var(--hover-bg, #e0e0e0);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-table-scroll {
+  overflow: auto;
+  flex: 1;
+  max-height: 500px;
+}
+
+.pivot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.pivot-cell {
+  padding: 6px 10px;
+  border: 1px solid var(--border-color, #e5e5e5);
+  position: relative;
+}
+
+.pivot-cell.header {
+  background: var(--bg-secondary, #f5f5f5);
+  font-weight: 500;
+  color: var(--text-primary, #1a1a1a);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pivot-cell.data {
+  text-align: right;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.pivot-cell.total {
+  background: var(--bg-tertiary, #e8e8e8);
+  font-weight: 600;
+}
+
+.pivot-cell.subtotal {
+  background: var(--bg-secondary, #f0f0f0);
+  font-style: italic;
+}
+
+.pivot-cell.collapsible {
+  cursor: pointer;
+}
+
+.pivot-cell .expand-btn {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--text-secondary, #666);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  border-radius: 2px;
+}
+
+.pivot-cell .expand-btn:hover {
+  background: var(--hover-bg, #ddd);
+}
+
+.pivot-cell .cell-value {
+  vertical-align: middle;
+}
+
+.pivot-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+[data-theme="dark"] .pivot-dialog {
+  background: #1e1e1e;
+  border: 1px solid #333;
+}
+
+[data-theme="dark"] .pivot-dialog-header {
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-dialog-title {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-dialog-close:hover {
+  background: #333;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-dialog-error {
+  background: #3f1e1e;
+  color: #f87171;
+}
+
+[data-theme="dark"] .pivot-dialog-section h3 {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-dialog-field label {
+  color: #999;
+}
+
+[data-theme="dark"] .pivot-dialog-input,
+[data-theme="dark"] .pivot-dialog-select {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-dialog-input:focus,
+[data-theme="dark"] .pivot-dialog-select:focus {
+  border-color: #4caf50;
+}
+
+[data-theme="dark"] .pivot-dialog-radio {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-detected-fields {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .pivot-detected-field {
+  background: #333;
+  border-color: #444;
+}
+
+[data-theme="dark"] .pivot-detected-field .field-name {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-dialog-footer {
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-btn-primary {
+  background: #4caf50;
+}
+
+[data-theme="dark"] .pivot-btn-primary:hover:not(:disabled) {
+  background: #45a049;
+}
+
+[data-theme="dark"] .pivot-btn-secondary {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-btn-secondary:hover {
+  background: #333;
+}
+
+[data-theme="dark"] .pivot-field-list {
+  background: #1e1e1e;
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-fields-section {
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-fields-section h3 {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-field-item {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+[data-theme="dark"] .pivot-field-item:hover {
+  background: #333;
+  border-color: #4caf50;
+}
+
+[data-theme="dark"] .pivot-field-item.in-area {
+  background: #252525;
+}
+
+[data-theme="dark"] .pivot-field-item .field-name {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .field-dropdown {
+  background: #252525;
+  border-color: #444;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+  background: #333;
+}
+
+[data-theme="dark"] .dropdown-item.active {
+  background: #1a3a1a;
+  color: #4caf50;
+}
+
+[data-theme="dark"] .pivot-area {
+  background: #252525;
+  border-color: #444;
+}
+
+[data-theme="dark"] .pivot-area.droppable {
+  border-color: #4caf50;
+  background: #1a3a1a;
+}
+
+[data-theme="dark"] .pivot-area-header {
+  color: #999;
+  border-color: #444;
+}
+
+[data-theme="dark"] .field-count {
+  background: #333;
+}
+
+[data-theme="dark"] .pivot-table-renderer {
+  background: #1e1e1e;
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-table-header {
+  background: #252525;
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-table-name {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-refresh-btn:hover {
+  background: #333;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-cell {
+  border-color: #333;
+}
+
+[data-theme="dark"] .pivot-cell.header {
+  background: #252525;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-cell.data {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-cell.total {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .pivot-cell.subtotal {
+  background: #282828;
+}
+
+[data-theme="dark"] .pivot-table-footer {
+  background: #252525;
+  border-color: #333;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

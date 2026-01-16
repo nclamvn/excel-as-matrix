@@ -4,7 +4,7 @@
  * Run with: npx tsx src/tests/run-tests.ts
  */
 
-import { runFormulaTests } from './formula-engine.test';
+import { runFormulaTests } from './formula-engine.runner';
 
 console.log('Starting Formula Engine Tests...\n');
 
@@ -34,7 +34,7 @@ const generateReport = () => {
 | # | Test | Formula | Expected | Actual |
 |---|------|---------|----------|--------|
 `;
-    results.results.forEach((r, i) => {
+    results.results.forEach((r: { description: string; formula: string; expected: unknown; actual: unknown }, i: number) => {
       const expected = typeof r.expected === 'object' ? JSON.stringify(r.expected) : String(r.expected);
       const actual = typeof r.actual === 'object' ? JSON.stringify(r.actual) : String(r.actual);
       report += `| ${i + 1} | ${r.description} | \`${r.formula}\` | ${expected} | ${actual} |\n`;

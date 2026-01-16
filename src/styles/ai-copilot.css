@@ -1228,6 +1228,7 @@
   align-items: center;
   gap: 5px;
   padding: 4px 10px;
+  height: 28px;
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
   border: none;
@@ -1236,6 +1237,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s;
+  box-sizing: border-box;
 }
 
 .ai-toggle-btn:hover {

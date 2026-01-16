@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import {
   Table, BarChart3, LineChart, PieChart,
-  Image, Shapes, Link, MessageSquare,
-  Plus, Minus, Rows, Columns
+  Image, Link, MessageSquare,
+  Plus, Minus, Rows, Columns,
+  TrendingUp, Activity, Table2
 } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
 import { InsertChartDialog } from '../../Dialogs/InsertChartDialog';
 import { InsertTableDialog } from '../../Dialogs/InsertTableDialog';
+import { ShapesDropdown } from '../../Shapes';
+import { PictureInsertDialog } from '../../Pictures';
+import { SparklineDialog } from '../../Sparklines';
+import { SparklineType } from '../../../types/sparkline';
+import { CreatePivotDialog } from '../../PivotTable';
 
 export const InsertToolbar: React.FC = () => {
   const [showChartDialog, setShowChartDialog] = useState(false);
   const [showTableDialog, setShowTableDialog] = useState(false);
+  const [showPictureDialog, setShowPictureDialog] = useState(false);
+  const [showSparklineDialog, setShowSparklineDialog] = useState(false);
+  const [showPivotDialog, setShowPivotDialog] = useState(false);
   const [chartType, setChartType] = useState<'bar' | 'line' | 'pie'>('bar');
+  const [sparklineType, setSparklineType] = useState<SparklineType>('line');
 
-  const { insertRow, insertColumn, deleteRow, deleteColumn, selectedCell } = useWorkbookStore();
+  const { insertRow, insertColumn, deleteRow, deleteColumn, selectedCell, activeSheetId } = useWorkbookStore();
   const { showToast } = useUIStore();
 
   const handleInsertRow = () => {
@@ -117,12 +127,20 @@ export const InsertToolbar: React.FC = () => {
         {/* Tables */}
         <div className="toolbar-2026__group">
           <button
-            className="toolbar-2026__btn-lg"
+            className="toolbar-2026__btn"
             onClick={() => setShowTableDialog(true)}
             title="Insert Table"
           >
-            <Table size={20} />
+            <Table size={16} />
             <span>Table</span>
+          </button>
+          <button
+            className="toolbar-2026__btn"
+            onClick={() => setShowPivotDialog(true)}
+            title="Insert PivotTable"
+          >
+            <Table2 size={16} />
+            <span>Pivot</span>
           </button>
         </div>
 
@@ -131,28 +149,58 @@ export const InsertToolbar: React.FC = () => {
         {/* Charts */}
         <div className="toolbar-2026__group">
           <button
-            className="toolbar-2026__btn-lg"
+            className="toolbar-2026__btn"
             onClick={() => handleInsertChart('bar')}
             title="Bar Chart"
           >
-            <BarChart3 size={20} />
+            <BarChart3 size={16} />
             <span>Bar</span>
           </button>
           <button
-            className="toolbar-2026__btn-lg"
+            className="toolbar-2026__btn"
             onClick={() => handleInsertChart('line')}
             title="Line Chart"
           >
-            <LineChart size={20} />
+            <LineChart size={16} />
             <span>Line</span>
           </button>
           <button
-            className="toolbar-2026__btn-lg"
+            className="toolbar-2026__btn"
             onClick={() => handleInsertChart('pie')}
             title="Pie Chart"
           >
-            <PieChart size={20} />
+            <PieChart size={16} />
             <span>Pie</span>
+          </button>
+        </div>
+
+        <div className="toolbar-2026__divider" />
+
+        {/* Sparklines */}
+        <div className="toolbar-2026__group">
+          <button
+            className="toolbar-2026__btn"
+            onClick={() => { setSparklineType('line'); setShowSparklineDialog(true); }}
+            title="Line Sparkline"
+          >
+            <TrendingUp size={16} />
+            <span>Spark</span>
+          </button>
+          <button
+            className="toolbar-2026__btn"
+            onClick={() => { setSparklineType('column'); setShowSparklineDialog(true); }}
+            title="Column Sparkline"
+          >
+            <BarChart3 size={16} />
+            <span>Col</span>
+          </button>
+          <button
+            className="toolbar-2026__btn"
+            onClick={() => { setSparklineType('winloss'); setShowSparklineDialog(true); }}
+            title="Win/Loss Sparkline"
+          >
+            <Activity size={16} />
+            <span>W/L</span>
           </button>
         </div>
 
@@ -161,21 +209,14 @@ export const InsertToolbar: React.FC = () => {
         {/* Media */}
         <div className="toolbar-2026__group">
           <button
-            className="toolbar-2026__btn-lg"
-            onClick={() => showToast('Image insert coming soon', 'info')}
-            title="Insert Image"
+            className="toolbar-2026__btn"
+            onClick={() => setShowPictureDialog(true)}
+            title="Insert Picture"
           >
-            <Image size={20} />
-            <span>Image</span>
+            <Image size={16} />
+            <span>Picture</span>
           </button>
-          <button
-            className="toolbar-2026__btn-lg"
-            onClick={() => showToast('Shapes coming soon', 'info')}
-            title="Insert Shape"
-          >
-            <Shapes size={20} />
-            <span>Shape</span>
-          </button>
+          {activeSheetId && <ShapesDropdown sheetId={activeSheetId} />}
         </div>
 
         <div className="toolbar-2026__divider" />
@@ -214,6 +255,28 @@ export const InsertToolbar: React.FC = () => {
           onClose={() => setShowTableDialog(false)}
         />
       )}
+
+      {activeSheetId && (
+        <PictureInsertDialog
+          sheetId={activeSheetId}
+          isOpen={showPictureDialog}
+          onClose={() => setShowPictureDialog(false)}
+        />
+      )}
+
+      {activeSheetId && (
+        <SparklineDialog
+          sheetId={activeSheetId}
+          isOpen={showSparklineDialog}
+          onClose={() => setShowSparklineDialog(false)}
+          initialType={sparklineType}
+        />
+      )}
+
+      <CreatePivotDialog
+        isOpen={showPivotDialog}
+        onClose={() => setShowPivotDialog(false)}
+      />
     </>
   );
 };

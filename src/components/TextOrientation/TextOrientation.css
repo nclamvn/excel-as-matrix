@@ -1,0 +1,268 @@
+/* Text Orientation Dropdown */
+.text-orientation-dropdown {
+  position: relative;
+}
+
+.orientation-icon {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.rotation-indicator {
+  font-size: 9px;
+  font-weight: bold;
+  transform: rotate(-45deg);
+  display: inline-block;
+  color: var(--accent-color, #217346);
+}
+
+.toolbar-2026__btn--dropdown {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+}
+
+/* Menu */
+.orientation-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  min-width: 240px;
+  padding: 4px 0;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+}
+
+.orientation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+  font-size: 13px;
+}
+
+.orientation-item:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.item-icon {
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted, #666);
+}
+
+.item-label {
+  flex: 1;
+}
+
+.item-preview {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-color, #217346);
+  background: var(--accent-light, #e8f5e9);
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+
+.orientation-menu-divider {
+  height: 1px;
+  background: var(--border-color, #e0e0e0);
+  margin: 4px 0;
+}
+
+/* Dialog */
+.orientation-dialog {
+  width: 400px;
+}
+
+.orientation-preview-section {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.angle-dial {
+  width: 140px;
+  height: 140px;
+  border: 2px solid var(--border-color, #ddd);
+  border-radius: 50%;
+  position: relative;
+  background: var(--bg-secondary, #f5f5f5);
+}
+
+.dial-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 50px;
+  background: var(--accent-color, #217346);
+  transform-origin: bottom center;
+  margin-left: -1px;
+  margin-top: -50px;
+  border-radius: 1px;
+}
+
+.dial-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-color, #217346);
+  margin-left: -15px;
+  margin-top: -30px;
+}
+
+.degree-markers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.degree-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transform-origin: center;
+  transition: all 0.15s;
+}
+
+.degree-marker:hover {
+  color: var(--accent-color, #217346);
+}
+
+.degree-marker.active {
+  color: var(--accent-color, #217346);
+  font-weight: 600;
+}
+
+.angle-input-section {
+  padding: 0 24px;
+  margin-bottom: 16px;
+}
+
+.angle-input-section label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.angle-input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.angle-input-group input[type="range"] {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  background: var(--border-color, #ddd);
+  border-radius: 2px;
+}
+
+.angle-input-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--accent-color, #217346);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.angle-input-group input[type="number"] {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.angle-input-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent-color, #217346);
+}
+
+.preset-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px 24px;
+}
+
+.preset-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 4px;
+  background: var(--bg-primary, #fff);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+.preset-btn:hover {
+  border-color: var(--accent-color, #217346);
+}
+
+.preset-btn.active {
+  background: var(--accent-color, #217346);
+  border-color: var(--accent-color, #217346);
+  color: white;
+}
+
+/* Dark mode */
+[data-theme="dark"] .orientation-menu {
+  background: #1a1a1a;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .orientation-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .angle-dial {
+  background: #2a2a2a;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .angle-input-group input[type="number"] {
+  background: #2a2a2a;
+  border-color: #404040;
+  color: #fff;
+}
+
+[data-theme="dark"] .preset-btn {
+  background: #2a2a2a;
+  border-color: #404040;
+  color: #fff;
+}

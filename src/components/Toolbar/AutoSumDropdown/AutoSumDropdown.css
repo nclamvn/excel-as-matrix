@@ -1,0 +1,164 @@
+/* ============================================================
+   AUTOSUM DROPDOWN STYLES
+   ============================================================ */
+
+.autosum-dropdown {
+  position: relative;
+}
+
+.autosum-btn-group {
+  display: flex;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.autosum-btn-group:hover {
+  border-color: var(--border-color, #ddd);
+}
+
+.autosum-main-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-primary, #333);
+  transition: background 0.15s;
+}
+
+.autosum-main-btn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.autosum-icon {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--accent-color, #217346);
+}
+
+.autosum-label {
+  font-weight: 500;
+}
+
+.autosum-arrow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border-color, #e0e0e0);
+  cursor: pointer;
+  color: var(--text-muted, #888);
+  transition: background 0.15s;
+}
+
+.autosum-arrow-btn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+/* Dropdown Menu */
+.autosum-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 260px;
+  padding: 4px 0;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.autosum-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.autosum-item:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.autosum-item.more-toggle {
+  color: var(--text-muted, #888);
+}
+
+.func-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-color, #217346);
+  flex-shrink: 0;
+}
+
+.func-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.func-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+}
+
+.func-desc {
+  font-size: 10px;
+  color: var(--text-muted, #888);
+}
+
+.func-shortcut {
+  font-size: 10px;
+  color: var(--text-muted, #888);
+  background: var(--bg-secondary, #f5f5f5);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border-color, #e0e0e0);
+}
+
+/* Dark Mode */
+[data-theme="dark"] .autosum-main-btn,
+[data-theme="dark"] .func-name {
+  color: var(--text-primary-dark, #fff);
+}
+
+[data-theme="dark"] .autosum-menu {
+  background: var(--bg-primary-dark, #2a2a2a);
+  border-color: var(--border-color-dark, #404040);
+}
+
+[data-theme="dark"] .autosum-item:hover {
+  background: var(--bg-hover-dark, rgba(255, 255, 255, 0.1));
+}
+
+[data-theme="dark"] .func-icon {
+  background: var(--bg-secondary-dark, #333);
+}
