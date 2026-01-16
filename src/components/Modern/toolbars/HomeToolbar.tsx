@@ -70,11 +70,11 @@ export const HomeToolbar: React.FC = () => {
         <div className="toolbar-2026__dropdown" ref={fontRef}>
           <button
             className="toolbar-2026__select"
-            style={{ width: 120 }}
+            style={{ width: 100 }}
             onClick={() => setShowFontDropdown(!showFontDropdown)}
           >
-            <span style={{ fontFamily }}>{fontFamily}</span>
-            <ChevronDown size={12} />
+            <span style={{ fontFamily, fontSize: '11px' }}>{fontFamily}</span>
+            <ChevronDown size={10} />
           </button>
           {showFontDropdown && (
             <div className="toolbar-2026__dropdown-menu">
@@ -132,21 +132,21 @@ export const HomeToolbar: React.FC = () => {
           onClick={toggleBold}
           title="Bold (⌘B)"
         >
-          <Bold size={16} />
+          <Bold size={15} />
         </button>
         <button
           className={`toolbar-2026__btn ${italic ? 'toolbar-2026__btn--active' : ''}`}
           onClick={toggleItalic}
           title="Italic (⌘I)"
         >
-          <Italic size={16} />
+          <Italic size={15} />
         </button>
         <button
           className={`toolbar-2026__btn ${underline ? 'toolbar-2026__btn--active' : ''}`}
           onClick={toggleUnderline}
           title="Underline (⌘U)"
         >
-          <Underline size={16} />
+          <Underline size={15} />
         </button>
       </div>
 
@@ -161,7 +161,7 @@ export const HomeToolbar: React.FC = () => {
             onClick={() => setShowFillColorPicker(!showFillColorPicker)}
             title="Fill Color"
           >
-            <PaintBucket size={16} />
+            <PaintBucket size={15} />
             <span
               className="toolbar-2026__color-bar"
               style={{ backgroundColor }}
@@ -202,7 +202,7 @@ export const HomeToolbar: React.FC = () => {
             onClick={() => setShowTextColorPicker(!showTextColorPicker)}
             title="Text Color"
           >
-            <Type size={16} />
+            <Type size={15} />
             <span
               className="toolbar-2026__color-bar"
               style={{ backgroundColor: textColor }}
@@ -246,21 +246,21 @@ export const HomeToolbar: React.FC = () => {
           onClick={() => setAlign('left')}
           title="Align Left"
         >
-          <AlignLeft size={16} />
+          <AlignLeft size={15} />
         </button>
         <button
           className={`toolbar-2026__btn ${align === 'center' ? 'toolbar-2026__btn--active' : ''}`}
           onClick={() => setAlign('center')}
           title="Align Center"
         >
-          <AlignCenter size={16} />
+          <AlignCenter size={15} />
         </button>
         <button
           className={`toolbar-2026__btn ${align === 'right' ? 'toolbar-2026__btn--active' : ''}`}
           onClick={() => setAlign('right')}
           title="Align Right"
         >
-          <AlignRight size={16} />
+          <AlignRight size={15} />
         </button>
       </div>
 
@@ -273,14 +273,14 @@ export const HomeToolbar: React.FC = () => {
           onClick={() => setNumberFormat('$#,##0.00')}
           title="Currency Format"
         >
-          <DollarSign size={16} />
+          <DollarSign size={15} />
         </button>
         <button
           className="toolbar-2026__btn"
           onClick={() => setNumberFormat('0.00%')}
           title="Percent Format"
         >
-          <Percent size={16} />
+          <Percent size={15} />
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useRef, useEffect, useCallback } from 'react';
-import { Send, Loader2, AlertCircle, Trash2, Bot, User, X, Sparkles, Calculator, BarChart3, Zap } from 'lucide-react';
+import { ArrowRight, Loader2, AlertCircle, Trash2, Bot, User, X, Calculator, BarChart3, Zap } from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
 import type { AIMessage } from '../../ai/types';
 
@@ -120,11 +120,6 @@ export const ChatPanel: React.FC = () => {
       <div className="ai-chat-messages">
         {messages.length === 0 && !isStreaming && (
           <div className="ai-welcome">
-            {/* Gradient Orb */}
-            <div className="ai-welcome-orb">
-              <Sparkles size={24} />
-            </div>
-
             {/* Title */}
             <h2 className="ai-welcome-title">
               AI Copilot
@@ -223,7 +218,7 @@ export const ChatPanel: React.FC = () => {
             onClick={handleSend}
             disabled={!currentInput.trim() || isLoading}
           >
-            {isLoading ? <Loader2 size={18} className="ai-chat-spinner" /> : <Send size={18} />}
+            {isLoading ? <Loader2 size={18} className="ai-chat-spinner" /> : <ArrowRight size={18} />}
           </button>
         </div>
         <div className="ai-chat-input-footer">

@@ -88,8 +88,8 @@ export const ViewToolbar: React.FC = () => {
           onClick={toggleTheme}
           title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          <span>{isDark ? 'Light' : 'Dark'}</span>
+          {isDark ? <Moon size={16} /> : <Sun size={16} />}
+          <span>{isDark ? 'Dark' : 'Light'}</span>
         </button>
       </div>
     </div>

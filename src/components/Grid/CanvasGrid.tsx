@@ -6,18 +6,52 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
+import { useUIStore } from '../../stores/uiStore';
 import { CellEditor } from './CellEditor';
 import { getCellKey } from '../../types/cell';
+
+// Theme colors
+const THEME_COLORS = {
+  light: {
+    background: '#ffffff',
+    headerBg: '#f5f5f5',
+    gridLine: '#e5e5e5',
+    headerBorder: '#d4d4d4',
+    text: '#171717',
+    headerText: '#525252',
+    selectedHeader: '#059669',
+    selectedHeaderText: '#ffffff',
+    rangeHeader: '#d1fae5',
+    rangeHeaderText: '#059669',
+    selection: '#059669',
+    rangeSelection: 'rgba(5, 150, 105, 0.15)',
+  },
+  dark: {
+    background: '#1a1a1a',
+    headerBg: '#262626',
+    gridLine: '#404040',
+    headerBorder: '#525252',
+    text: '#e5e5e5',
+    headerText: '#a3a3a3',
+    selectedHeader: '#059669',
+    selectedHeaderText: '#ffffff',
+    rangeHeader: '#064e3b',
+    rangeHeaderText: '#6ee7b7',
+    selection: '#10b981',
+    rangeSelection: 'rgba(16, 185, 129, 0.2)',
+  },
+};
 
 interface CanvasGridProps {
   workbookId: string;
   sheetId: string;
 }
 
-const CELL_WIDTH = 100;
-const CELL_HEIGHT = 24;
-const HEADER_WIDTH = 50;
-const HEADER_HEIGHT = 24;
+// Base dimensions (at 100% zoom)
+const BASE_CELL_WIDTH = 100;
+const BASE_CELL_HEIGHT = 24;
+const BASE_HEADER_WIDTH = 50;
+const BASE_HEADER_HEIGHT = 24;
 const MAX_ROWS = 100000;
 const MAX_COLS = 26;
 
@@ -50,9 +84,23 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
   // Store selectors
   const sheet = useWorkbookStore(useCallback((state) => state.sheets[sheetId], [sheetId]));
+  const zoom = useWorkbookStore((state) => state.zoom);
   const getCellFormula = useWorkbookStore((state) => state.getCellFormula);
   const getCellDisplayValue = useWorkbookStore((state) => state.getCellDisplayValue);
   const setCellValue = useWorkbookStore((state) => state.setCellValue);
+
+  // Theme
+  const resolvedTheme = useUIStore((state) => state.resolvedTheme);
+  const colors = THEME_COLORS[resolvedTheme];
+
+  // Calculate scaled dimensions based on zoom
+  const zoomFactor = zoom / 100;
+  const CELL_WIDTH = Math.round(BASE_CELL_WIDTH * zoomFactor);
+  const CELL_HEIGHT = Math.round(BASE_CELL_HEIGHT * zoomFactor);
+  const HEADER_WIDTH = Math.round(BASE_HEADER_WIDTH * zoomFactor);
+  const HEADER_HEIGHT = Math.round(BASE_HEADER_HEIGHT * zoomFactor);
+  const FONT_SIZE = Math.round(13 * zoomFactor);
+  const HEADER_FONT_SIZE = Math.round(12 * zoomFactor);
 
   const selectedCell = useSelectionStore((state) => state.selectedCell);
   const selectionRange = useSelectionStore((state) => state.selectionRange);
@@ -74,7 +122,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     const row = Math.floor(y / CELL_HEIGHT);
     if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) return null;
     return { row, col };
-  }, [scrollLeft, scrollTop]);
+  }, [scrollLeft, scrollTop, CELL_WIDTH, CELL_HEIGHT]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CANVAS RENDERING
@@ -97,7 +145,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.scale(dpr, dpr);
 
     // Clear
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = colors.background;
     ctx.fillRect(0, 0, width, height);
 
     // Calculate visible range
@@ -110,7 +158,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     const offsetY = -(scrollTop % CELL_HEIGHT);
 
     // Draw grid lines
-    ctx.strokeStyle = '#e5e5e5';
+    ctx.strokeStyle = colors.gridLine;
     ctx.lineWidth = 1;
 
     // Vertical lines
@@ -132,7 +180,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     }
 
     // Draw cells
-    ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.font = `${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
     ctx.textBaseline = 'middle';
 
     for (let row = startRow; row < endRow; row++) {
@@ -153,7 +201,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         // Cell text
         const displayValue = cellData.displayValue || String(cellData.value || '');
         if (displayValue) {
-          ctx.fillStyle = cellData.format?.textColor || '#171717';
+          ctx.fillStyle = cellData.format?.textColor || colors.text;
 
           // Text alignment
           let textX = x + 4;
@@ -173,7 +221,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           let fontStyle = '';
           if (cellData.format?.bold) fontStyle += 'bold ';
           if (cellData.format?.italic) fontStyle += 'italic ';
-          ctx.font = `${fontStyle}13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+          ctx.font = `${fontStyle}${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
 
           // Clip text to cell
           ctx.save();
@@ -184,7 +232,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           ctx.restore();
 
           // Reset font
-          ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          ctx.font = `${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
         }
       }
     }
@@ -203,9 +251,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       const selW = (maxCol - minCol + 1) * CELL_WIDTH;
       const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
 
-      ctx.fillStyle = 'rgba(5, 150, 105, 0.1)';
+      ctx.fillStyle = colors.rangeSelection;
       ctx.fillRect(selX, selY, selW, selH);
-      ctx.strokeStyle = '#059669';
+      ctx.strokeStyle = colors.selection;
       ctx.lineWidth = 2;
       ctx.strokeRect(selX, selY, selW, selH);
     }
@@ -221,9 +269,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       const selW = (maxCol - minCol + 1) * CELL_WIDTH;
       const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
 
-      ctx.fillStyle = 'rgba(5, 150, 105, 0.1)';
+      ctx.fillStyle = colors.rangeSelection;
       ctx.fillRect(selX, selY, selW, selH);
-      ctx.strokeStyle = '#059669';
+      ctx.strokeStyle = colors.selection;
       ctx.lineWidth = 2;
       ctx.strokeRect(selX, selY, selW, selH);
     }
@@ -232,11 +280,11 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     if (selectedCell && !isEditing) {
       const x = offsetX + (selectedCell.col - startCol) * CELL_WIDTH;
       const y = offsetY + (selectedCell.row - startRow) * CELL_HEIGHT;
-      ctx.strokeStyle = '#059669';
+      ctx.strokeStyle = colors.selection;
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, CELL_WIDTH, CELL_HEIGHT);
     }
-  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, selectedCell, selectionRange, isEditing]);
+  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, selectedCell, selectionRange, isEditing, CELL_WIDTH, CELL_HEIGHT, FONT_SIZE, colors]);
 
   // Check if column is in selection range
   const isColInRange = useCallback((col: number) => {
@@ -289,14 +337,14 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.scale(dpr, dpr);
 
     // Background
-    ctx.fillStyle = '#f5f5f5';
+    ctx.fillStyle = colors.headerBg;
     ctx.fillRect(0, 0, width, height);
 
     const startCol = Math.floor(scrollLeft / CELL_WIDTH);
     const endCol = Math.min(MAX_COLS, startCol + Math.ceil(width / CELL_WIDTH) + 1);
     const offsetX = -(scrollLeft % CELL_WIDTH);
 
-    ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.font = `${HEADER_FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -306,21 +354,21 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
       // Highlight selected column (dark green) or in-range column (light green)
       if (selectedCell?.col === col) {
-        ctx.fillStyle = '#059669';
+        ctx.fillStyle = colors.selectedHeader;
         ctx.fillRect(x, 0, CELL_WIDTH, height);
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = colors.selectedHeaderText;
       } else if (inRange) {
-        ctx.fillStyle = '#d1fae5'; // Light green background
+        ctx.fillStyle = colors.rangeHeader;
         ctx.fillRect(x, 0, CELL_WIDTH, height);
-        ctx.fillStyle = '#059669'; // Green text
+        ctx.fillStyle = colors.rangeHeaderText;
       } else {
-        ctx.fillStyle = '#737373';
+        ctx.fillStyle = colors.headerText;
       }
 
       ctx.fillText(getColLetter(col), x + CELL_WIDTH / 2, height / 2);
 
       // Border
-      ctx.strokeStyle = '#e5e5e5';
+      ctx.strokeStyle = colors.gridLine;
       ctx.beginPath();
       ctx.moveTo(x + CELL_WIDTH + 0.5, 0);
       ctx.lineTo(x + CELL_WIDTH + 0.5, height);
@@ -328,12 +376,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     }
 
     // Bottom border
-    ctx.strokeStyle = '#d4d4d4';
+    ctx.strokeStyle = colors.headerBorder;
     ctx.beginPath();
     ctx.moveTo(0, height - 0.5);
     ctx.lineTo(width, height - 0.5);
     ctx.stroke();
-  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange]);
+  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange, CELL_WIDTH, HEADER_HEIGHT, HEADER_FONT_SIZE, colors]);
 
   // Render row headers
   const renderRowHeaders = useCallback(() => {
@@ -352,14 +400,14 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.scale(dpr, dpr);
 
     // Background
-    ctx.fillStyle = '#f5f5f5';
+    ctx.fillStyle = colors.headerBg;
     ctx.fillRect(0, 0, width, height);
 
     const startRow = Math.floor(scrollTop / CELL_HEIGHT);
     const endRow = Math.min(MAX_ROWS, startRow + Math.ceil(height / CELL_HEIGHT) + 1);
     const offsetY = -(scrollTop % CELL_HEIGHT);
 
-    ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.font = `${HEADER_FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -369,21 +417,21 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
       // Highlight selected row (dark green) or in-range row (light green)
       if (selectedCell?.row === row) {
-        ctx.fillStyle = '#059669';
+        ctx.fillStyle = colors.selectedHeader;
         ctx.fillRect(0, y, width, CELL_HEIGHT);
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = colors.selectedHeaderText;
       } else if (inRange) {
-        ctx.fillStyle = '#d1fae5'; // Light green background
+        ctx.fillStyle = colors.rangeHeader;
         ctx.fillRect(0, y, width, CELL_HEIGHT);
-        ctx.fillStyle = '#059669'; // Green text
+        ctx.fillStyle = colors.rangeHeaderText;
       } else {
-        ctx.fillStyle = '#737373';
+        ctx.fillStyle = colors.headerText;
       }
 
       ctx.fillText(String(row + 1), width / 2, y + CELL_HEIGHT / 2);
 
       // Border
-      ctx.strokeStyle = '#e5e5e5';
+      ctx.strokeStyle = colors.gridLine;
       ctx.beginPath();
       ctx.moveTo(0, y + CELL_HEIGHT + 0.5);
       ctx.lineTo(width, y + CELL_HEIGHT + 0.5);
@@ -391,12 +439,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     }
 
     // Right border
-    ctx.strokeStyle = '#d4d4d4';
+    ctx.strokeStyle = colors.headerBorder;
     ctx.beginPath();
     ctx.moveTo(width - 0.5, 0);
     ctx.lineTo(width - 0.5, height);
     ctx.stroke();
-  }, [containerSize.height, scrollTop, selectedCell?.row, isRowInRange]);
+  }, [containerSize.height, scrollTop, selectedCell?.row, isRowInRange, CELL_HEIGHT, HEADER_WIDTH, HEADER_FONT_SIZE, colors]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EVENT HANDLERS
@@ -569,7 +617,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   // ═══════════════════════════════════════════════════════════════════════════
 
   return (
-    <div className="relative h-full overflow-hidden" style={{ background: '#f5f5f5' }}>
+    <div className="relative h-full overflow-hidden" style={{ background: colors.headerBg }}>
       {/* Corner */}
       <div
         style={{
@@ -578,9 +626,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           top: 0,
           width: HEADER_WIDTH,
           height: HEADER_HEIGHT,
-          background: '#f5f5f5',
-          borderRight: '1px solid #d4d4d4',
-          borderBottom: '1px solid #d4d4d4',
+          background: colors.headerBg,
+          borderRight: `1px solid ${colors.headerBorder}`,
+          borderBottom: `1px solid ${colors.headerBorder}`,
           zIndex: 3,
         }}
       />
@@ -628,7 +676,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         <div style={{ width: MAX_COLS * CELL_WIDTH, height: MAX_ROWS * CELL_HEIGHT, position: 'relative' }}>
           <canvas
             ref={canvasRef}
-            style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}
+            style={{
+              position: 'absolute',
+              left: scrollLeft,
+              top: scrollTop,
+              pointerEvents: 'none'
+            }}
           />
         </div>
 

@@ -1,12 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
 
 export const StatusBar2026: React.FC = () => {
-  const [zoom, setZoom] = useState(100);
   const { selectedCell, selectionRange } = useSelectionStore();
-  const { activeSheetId, sheets } = useWorkbookStore();
+  const { activeSheetId, sheets, zoom, setZoom } = useWorkbookStore();
 
   const stats = useMemo(() => {
     if (!activeSheetId || !sheets[activeSheetId]) return null;
@@ -61,14 +60,14 @@ export const StatusBar2026: React.FC = () => {
         <div className="status-bar-2026__zoom">
           <button
             className="status-bar-2026__zoom-btn"
-            onClick={() => setZoom(z => Math.max(50, z - 10))}
+            onClick={() => setZoom(Math.max(50, zoom - 10))}
           >
             <Minus />
           </button>
           <span className="status-bar-2026__zoom-value">{zoom}%</span>
           <button
             className="status-bar-2026__zoom-btn"
-            onClick={() => setZoom(z => Math.min(200, z + 10))}
+            onClick={() => setZoom(Math.min(200, zoom + 10))}
           >
             <Plus />
           </button>

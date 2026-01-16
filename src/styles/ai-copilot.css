@@ -241,13 +241,17 @@
 }
 
 :root[data-theme="dark"] .ai-welcome-title {
-  color: #F3F4F6;
+  color: #ffffff;
 }
 
 .ai-welcome-subtitle {
   font-size: 14px;
   color: var(--text-secondary, #6B7280);
   margin: 0 0 28px 0;
+}
+
+:root[data-theme="dark"] .ai-welcome-subtitle {
+  color: #d1d5db;
 }
 
 /* Feature Cards */
@@ -291,6 +295,10 @@
   border-color: #374151;
 }
 
+:root[data-theme="dark"] .ai-feature-card span {
+  color: #e5e7eb;
+}
+
 :root[data-theme="dark"] .ai-feature-card:hover {
   background: rgba(16, 185, 129, 0.1);
 }
@@ -307,6 +315,10 @@
   letter-spacing: 0.05em;
   color: var(--text-muted, #9CA3AF);
   margin: 0 0 12px 0;
+}
+
+:root[data-theme="dark"] .ai-suggestions-label {
+  color: #d1d5db;
 }
 
 .ai-suggestion-pills {
@@ -335,8 +347,8 @@
 }
 
 :root[data-theme="dark"] .ai-suggestion-pill {
-  border-color: #374151;
-  color: #9CA3AF;
+  border-color: #4b5563;
+  color: #e5e7eb;
 }
 
 :root[data-theme="dark"] .ai-suggestion-pill:hover {
@@ -520,12 +532,12 @@
 }
 
 .ai-chat-send-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #059669;
   border-radius: 50%;
-  background: #059669;
-  color: white;
+  background: transparent;
+  color: #059669;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -534,13 +546,30 @@
 }
 
 .ai-chat-send-btn:hover:not(:disabled) {
-  background: #047857;
+  background: #059669;
+  color: white;
   transform: scale(1.05);
 }
 
 .ai-chat-send-btn:disabled {
-  background: #9ca3af;
+  border-color: #6b7280;
+  color: #6b7280;
   cursor: not-allowed;
+}
+
+:root[data-theme="dark"] .ai-chat-send-btn {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+:root[data-theme="dark"] .ai-chat-send-btn:hover:not(:disabled) {
+  background: #10b981;
+  color: white;
+}
+
+:root[data-theme="dark"] .ai-chat-send-btn:disabled {
+  border-color: #4b5563;
+  color: #4b5563;
 }
 
 .ai-chat-input-footer {
@@ -1197,28 +1226,31 @@
 .ai-toggle-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 5px;
+  padding: 4px 10px;
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.12s;
 }
 
 .ai-toggle-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
 
 .ai-toggle-btn--active {
   background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .ai-toggle-btn svg {
+  width: 12px;
+  height: 12px;
   animation: sparkle 2s ease-in-out infinite;
 }
 
