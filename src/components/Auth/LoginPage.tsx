@@ -49,7 +49,7 @@ export const LoginPage: React.FC = () => {
               <span className="text-3xl font-bold text-white">E</span>
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-            <p className="text-gray-500 mt-1">Sign in to Excel-as-Matrix</p>
+            <p className="text-gray-500 mt-1">Sign in to ExcelAI</p>
           </div>
 
           {/* SSO Buttons */}

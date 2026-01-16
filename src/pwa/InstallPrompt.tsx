@@ -38,7 +38,7 @@ export const InstallPrompt: React.FC = () => {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900">Install Excel-as-Matrix</h3>
+              <h3 className="font-semibold text-gray-900">Install ExcelAI</h3>
               <p className="text-sm text-gray-500 mt-1">
                 Install for faster access and offline editing
               </p>

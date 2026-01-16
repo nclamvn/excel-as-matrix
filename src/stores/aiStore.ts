@@ -1,392 +1,315 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// AI COPILOT STORE — State Management for AI Features
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type {
+  AIMessage,
+  AIProposedAction,
+  AIActionHistory,
+  AIConfig,
+  AIContext,
+  AICopilotTab,
+} from '../ai/types';
+import { DEFAULT_AI_CONFIG } from '../ai/types';
+import { getAIRuntime } from '../ai/AIRuntime';
 
-// ===== Types =====
-
-export interface AISession {
-  id: string;
-  workbookId: string;
-  sheetId: string;
-  budgetLimit: string;
-  createdAt: string;
-  expiresAt: string;
-}
-
-export interface AIAction {
-  id: string;
-  sessionId: string;
-  state: 'Proposed' | 'InPreview' | 'Approved' | 'Executing' | 'Completed' | 'Rejected';
-  description: string;
-  reasoning: string;
-  confidence: number;
-  evidenceCount: number;
-  testsCount: number;
-  testsPassed: boolean;
-  trustScore: number;
-  affectedCells: number;
-  createsFormulas: boolean;
-  structuralChanges: boolean;
-  createdAt: string;
-}
-
-export interface AIMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: string;
-  toolCalls?: number;
-  proposedAction?: AIActionSummary;
-  sandboxId?: string;
-  tokensUsed?: number;
-  confidence?: number;
-}
-
-export interface AIActionSummary {
-  id: string;
-  description: string;
-  state: string;
-  affectedCells: number;
-  confidence: number;
-  createsFormulas: boolean;
-}
-
-export interface SelectedRange {
-  sheetId: string;
-  startRow: number;
-  startCol: number;
-  endRow: number;
-  endCol: number;
-}
-
-export interface AIStats {
-  activeSessions: number;
-  totalSessions: number;
-  totalActions: number;
-  pendingActions: number;
-}
-
-// ===== Store State =====
+// ─────────────────────────────────────────────────────────────────────────────
+// Store State Interface
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface AIState {
-  // Session
-  session: AISession | null;
-  isConnecting: boolean;
-  sessionError: string | null;
-
-  // Chat
-  messages: AIMessage[];
-  isProcessing: boolean;
-  currentInput: string;
-
-  // Actions
-  pendingActions: AIAction[];
-  selectedAction: AIAction | null;
-  actionHistory: AIAction[];
-
   // UI State
-  isPanelOpen: boolean;
-  activeTab: 'chat' | 'actions' | 'history';
+  isOpen: boolean;
+  isDocked: boolean;
+  activeTab: AICopilotTab;
 
-  // Stats
-  stats: AIStats | null;
+  // Chat State
+  messages: AIMessage[];
+  isLoading: boolean;
+  isStreaming: boolean;
+  streamingText: string;
+  currentInput: string;
+  error: string | null;
+
+  // Actions State
+  pendingActions: AIProposedAction[];
+  selectedAction: AIProposedAction | null;
+  actionHistory: AIActionHistory[];
+
+  // Context
+  context: AIContext | null;
+
+  // Config
+  config: AIConfig;
 
   // Actions
-  createSession: (workbookId: string, sheetId: string, budgetLimit?: string) => Promise<void>;
-  endSession: () => void;
-  sendMessage: (message: string, selectedRange?: SelectedRange, autoExecute?: boolean) => Promise<void>;
-  setCurrentInput: (input: string) => void;
-  approveAction: (actionId: string) => Promise<void>;
-  rejectAction: (actionId: string, reason: string) => Promise<void>;
-  selectAction: (action: AIAction | null) => void;
   togglePanel: () => void;
-  setActiveTab: (tab: 'chat' | 'actions' | 'history') => void;
+  openPanel: () => void;
+  closePanel: () => void;
+  setDocked: (docked: boolean) => void;
+  setActiveTab: (tab: AICopilotTab) => void;
+
+  // Chat Actions
+  setCurrentInput: (input: string) => void;
+  sendMessage: (content: string) => Promise<void>;
+  streamMessage: (content: string) => Promise<void>;
   clearMessages: () => void;
-  loadStats: () => Promise<void>;
+  clearError: () => void;
+
+  // Action Management
+  selectAction: (action: AIProposedAction | null) => void;
+  approveAction: (actionId: string) => Promise<void>;
+  rejectAction: (actionId: string) => Promise<void>;
+
+  // Config
+  setApiKey: (key: string) => void;
+  updateConfig: (config: Partial<AIConfig>) => void;
+
+  // Reset
   reset: () => void;
 }
 
-// ===== Initial State =====
+// ─────────────────────────────────────────────────────────────────────────────
+// Initial State
+// ─────────────────────────────────────────────────────────────────────────────
 
 const initialState = {
-  session: null as AISession | null,
-  isConnecting: false,
-  sessionError: null as string | null,
+  isOpen: false,
+  isDocked: true,
+  activeTab: 'chat' as AICopilotTab,
   messages: [] as AIMessage[],
-  isProcessing: false,
+  isLoading: false,
+  isStreaming: false,
+  streamingText: '',
   currentInput: '',
-  pendingActions: [] as AIAction[],
-  selectedAction: null as AIAction | null,
-  actionHistory: [] as AIAction[],
-  isPanelOpen: false,
-  activeTab: 'chat' as const,
-  stats: null as AIStats | null,
+  error: null as string | null,
+  pendingActions: [] as AIProposedAction[],
+  selectedAction: null as AIProposedAction | null,
+  actionHistory: [] as AIActionHistory[],
+  context: null as AIContext | null,
+  config: DEFAULT_AI_CONFIG,
 };
 
-// ===== Store =====
+// ─────────────────────────────────────────────────────────────────────────────
+// Store
+// ─────────────────────────────────────────────────────────────────────────────
 
-export const useAIStore = create<AIState>()((set, get) => ({
-  ...initialState,
+export const useAIStore = create<AIState>()(
+  persist(
+    (set, _get) => ({
+      ...initialState,
 
-  createSession: async (workbookId, sheetId, budgetLimit = 'standard') => {
-    set({ isConnecting: true, sessionError: null });
+      // ─────────────────────────────────────────────────────────────────────
+      // Panel Controls
+      // ─────────────────────────────────────────────────────────────────────
 
-    try {
-      const response = await fetch('/api/ai/sessions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workbook_id: workbookId,
-          sheet_id: sheetId,
-          budget_limit: budgetLimit,
-        }),
-      });
+      togglePanel: () => {
+        set((state) => ({ isOpen: !state.isOpen }));
+      },
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create session');
-      }
+      openPanel: () => {
+        set({ isOpen: true });
+      },
 
-      const session = await response.json();
-      set({
-        session: {
-          id: session.id,
-          workbookId: session.workbook_id,
-          sheetId: session.sheet_id,
-          budgetLimit: session.budget_limit,
-          createdAt: session.created_at,
-          expiresAt: session.expires_at,
-        },
-        isConnecting: false,
-        isPanelOpen: true,
-      });
-    } catch (error) {
-      set({
-        isConnecting: false,
-        sessionError: error instanceof Error ? error.message : 'Unknown error',
-      });
-    }
-  },
+      closePanel: () => {
+        set({ isOpen: false });
+      },
 
-  endSession: () => {
-    set({
-      session: null,
-      messages: [],
-      pendingActions: [],
-      selectedAction: null,
-    });
-  },
+      setDocked: (docked) => {
+        set({ isDocked: docked });
+      },
 
-  sendMessage: async (message, selectedRange, autoExecute = false) => {
-    const { session } = get();
-    if (!session) return;
+      setActiveTab: (tab) => {
+        set({ activeTab: tab });
+      },
 
-    // Add user message
-    const userMessage: AIMessage = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: message,
-      timestamp: new Date().toISOString(),
-    };
+      // ─────────────────────────────────────────────────────────────────────
+      // Chat Actions
+      // ─────────────────────────────────────────────────────────────────────
 
-    set((state) => ({
-      messages: [...state.messages, userMessage],
-      isProcessing: true,
-      currentInput: '',
-    }));
+      setCurrentInput: (input) => {
+        set({ currentInput: input });
+      },
 
-    try {
-      const response = await fetch(`/api/ai/sessions/${session.id}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          selected_range: selectedRange ? {
-            sheet_id: selectedRange.sheetId,
-            start_row: selectedRange.startRow,
-            start_col: selectedRange.startCol,
-            end_row: selectedRange.endRow,
-            end_col: selectedRange.endCol,
-          } : undefined,
-          auto_execute: autoExecute,
-        }),
-      });
+      sendMessage: async (content) => {
+        if (!content.trim()) return;
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to send message');
-      }
+        set({ isLoading: true, error: null, currentInput: '' });
 
-      const result = await response.json();
+        try {
+          const runtime = getAIRuntime();
+          await runtime.sendMessage(content);
 
-      // Add assistant message
-      const assistantMessage: AIMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: result.message,
-        timestamp: new Date().toISOString(),
-        toolCalls: result.tool_calls_count,
-        proposedAction: result.proposed_action ? {
-          id: result.proposed_action.id,
-          description: result.proposed_action.description,
-          state: result.proposed_action.state,
-          affectedCells: result.proposed_action.affected_cells,
-          confidence: result.proposed_action.confidence,
-          createsFormulas: result.proposed_action.creates_formulas,
-        } : undefined,
-        sandboxId: result.sandbox_id,
-        tokensUsed: result.tokens_used,
-        confidence: result.confidence,
-      };
-
-      set((state) => ({
-        messages: [...state.messages, assistantMessage],
-        isProcessing: false,
-      }));
-
-      // If there's a proposed action, fetch its details
-      if (result.proposed_action) {
-        const actionResponse = await fetch(`/api/ai/actions/${result.proposed_action.id}`);
-        if (actionResponse.ok) {
-          const actionData = await actionResponse.json();
-          const action: AIAction = {
-            id: actionData.id,
-            sessionId: actionData.session_id,
-            state: actionData.state,
-            description: actionData.description,
-            reasoning: actionData.reasoning,
-            confidence: actionData.confidence,
-            evidenceCount: actionData.evidence_count,
-            testsCount: actionData.tests_count,
-            testsPassed: actionData.tests_passed,
-            trustScore: actionData.trust_score,
-            affectedCells: actionData.affected_cells,
-            createsFormulas: actionData.creates_formulas,
-            structuralChanges: actionData.structural_changes,
-            createdAt: actionData.created_at,
-          };
-
-          set((state) => ({
-            pendingActions: [...state.pendingActions.filter(a => a.id !== action.id), action],
-            selectedAction: action,
-            activeTab: 'actions',
-          }));
+          // Get all messages from runtime conversation
+          const conversation = runtime.getConversation();
+          if (conversation) {
+            set({
+              messages: [...conversation.messages],
+              pendingActions: [...conversation.pendingActions],
+              actionHistory: [...conversation.history],
+              context: conversation.context,
+              isLoading: false,
+            });
+          }
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Failed to send message',
+          });
         }
-      }
-    } catch (error) {
-      // Add error message
-      const errorMessage: AIMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date().toISOString(),
-      };
+      },
 
-      set((state) => ({
-        messages: [...state.messages, errorMessage],
-        isProcessing: false,
-      }));
-    }
-  },
+      streamMessage: async (content) => {
+        if (!content.trim()) return;
 
-  setCurrentInput: (input) => {
-    set({ currentInput: input });
-  },
-
-  approveAction: async (actionId) => {
-    try {
-      const response = await fetch(`/api/ai/actions/${actionId}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: crypto.randomUUID() }), // TODO: Real user ID
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to approve action');
-      }
-
-      // Move action to history
-      set((state) => {
-        const action = state.pendingActions.find(a => a.id === actionId);
-        if (!action) return {};
-
-        const updatedAction = { ...action, state: 'Completed' as const };
-        return {
-          pendingActions: state.pendingActions.filter(a => a.id !== actionId),
-          actionHistory: [...state.actionHistory, updatedAction],
-          selectedAction: null,
-        };
-      });
-    } catch (error) {
-      console.error('Failed to approve action:', error);
-    }
-  },
-
-  rejectAction: async (actionId, reason) => {
-    try {
-      const response = await fetch(`/api/ai/actions/${actionId}/reject`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to reject action');
-      }
-
-      // Move action to history
-      set((state) => {
-        const action = state.pendingActions.find(a => a.id === actionId);
-        if (!action) return {};
-
-        const updatedAction = { ...action, state: 'Rejected' as const };
-        return {
-          pendingActions: state.pendingActions.filter(a => a.id !== actionId),
-          actionHistory: [...state.actionHistory, updatedAction],
-          selectedAction: null,
-        };
-      });
-    } catch (error) {
-      console.error('Failed to reject action:', error);
-    }
-  },
-
-  selectAction: (action) => {
-    set({ selectedAction: action });
-  },
-
-  togglePanel: () => {
-    set((state) => ({ isPanelOpen: !state.isPanelOpen }));
-  },
-
-  setActiveTab: (tab) => {
-    set({ activeTab: tab });
-  },
-
-  clearMessages: () => {
-    set({ messages: [] });
-  },
-
-  loadStats: async () => {
-    try {
-      const response = await fetch('/api/ai/stats');
-      if (response.ok) {
-        const data = await response.json();
         set({
-          stats: {
-            activeSessions: data.active_sessions,
-            totalSessions: data.total_sessions,
-            totalActions: data.total_actions,
-            pendingActions: data.pending_actions,
-          },
+          isLoading: true,
+          isStreaming: true,
+          streamingText: '',
+          error: null,
+          currentInput: '',
         });
-      }
-    } catch (error) {
-      console.error('Failed to load AI stats:', error);
-    }
-  },
 
-  reset: () => {
-    set(initialState);
-  },
-}));
+        try {
+          const runtime = getAIRuntime();
+
+          for await (const chunk of runtime.streamMessage(content)) {
+            if (chunk.type === 'text') {
+              set((state) => ({
+                streamingText: state.streamingText + chunk.content,
+              }));
+            } else if (chunk.type === 'done') {
+              // Get final state from runtime
+              const conversation = runtime.getConversation();
+              if (conversation) {
+                set({
+                  messages: [...conversation.messages],
+                  pendingActions: [...conversation.pendingActions],
+                  actionHistory: [...conversation.history],
+                  context: conversation.context,
+                  isLoading: false,
+                  isStreaming: false,
+                  streamingText: '',
+                });
+              }
+            }
+          }
+        } catch (error) {
+          set({
+            isLoading: false,
+            isStreaming: false,
+            streamingText: '',
+            error: error instanceof Error ? error.message : 'Failed to stream message',
+          });
+        }
+      },
+
+      clearMessages: () => {
+        const runtime = getAIRuntime();
+        runtime.clearConversation();
+        set({
+          messages: [],
+          pendingActions: [],
+          actionHistory: [],
+          context: null,
+        });
+      },
+
+      clearError: () => {
+        set({ error: null });
+      },
+
+      // ─────────────────────────────────────────────────────────────────────
+      // Action Management
+      // ─────────────────────────────────────────────────────────────────────
+
+      selectAction: (action) => {
+        set({ selectedAction: action });
+      },
+
+      approveAction: async (actionId) => {
+        const runtime = getAIRuntime();
+        const success = await runtime.approveAction(actionId);
+
+        if (success) {
+          const conversation = runtime.getConversation();
+          if (conversation) {
+            set({
+              pendingActions: [...conversation.pendingActions],
+              actionHistory: [...conversation.history],
+              selectedAction: null,
+            });
+          }
+        }
+      },
+
+      rejectAction: async (actionId) => {
+        const runtime = getAIRuntime();
+        const success = await runtime.rejectAction(actionId);
+
+        if (success) {
+          const conversation = runtime.getConversation();
+          if (conversation) {
+            set({
+              pendingActions: [...conversation.pendingActions],
+              selectedAction: null,
+            });
+          }
+        }
+      },
+
+      // ─────────────────────────────────────────────────────────────────────
+      // Configuration
+      // ─────────────────────────────────────────────────────────────────────
+
+      setApiKey: (key) => {
+        const runtime = getAIRuntime();
+        runtime.setApiKey(key);
+        set((state) => ({
+          config: { ...state.config, apiKey: key, mockMode: false },
+        }));
+      },
+
+      updateConfig: (newConfig) => {
+        const runtime = getAIRuntime();
+        runtime.updateConfig(newConfig);
+        set((state) => ({
+          config: { ...state.config, ...newConfig },
+        }));
+      },
+
+      // ─────────────────────────────────────────────────────────────────────
+      // Reset
+      // ─────────────────────────────────────────────────────────────────────
+
+      reset: () => {
+        const runtime = getAIRuntime();
+        runtime.clearConversation();
+        set(initialState);
+      },
+    }),
+    {
+      name: 'ai-copilot-storage',
+      partialize: (state) => ({
+        // Only persist these fields
+        isDocked: state.isDocked,
+        config: {
+          ...state.config,
+          apiKey: undefined, // Never persist API key
+        },
+      }),
+    }
+  )
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Selectors
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const selectIsAIOpen = (state: AIState) => state.isOpen;
+export const selectAIMessages = (state: AIState) => state.messages;
+export const selectIsAILoading = (state: AIState) => state.isLoading;
+export const selectAIPendingActions = (state: AIState) => state.pendingActions;
+export const selectAIConfig = (state: AIState) => state.config;

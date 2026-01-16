@@ -18,7 +18,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'Excel-as-Matrix',
+        name: 'ExcelAI',
         short_name: 'ExcelAI',
         description: 'AI-Native Spreadsheet Platform - Works Offline',
         theme_color: '#3b82f6',

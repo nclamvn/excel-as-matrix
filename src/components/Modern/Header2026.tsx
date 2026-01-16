@@ -1,7 +1,8 @@
 import React from 'react';
-import { FileSpreadsheet, Search } from 'lucide-react';
+import { FileSpreadsheet, Search, Sparkles } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useToolbarStore, TabId } from '../../stores/toolbarStore';
+import { useAIStore } from '../../stores/aiStore';
 
 interface Header2026Props {
   onOpenCommandPalette: () => void;
@@ -18,6 +19,8 @@ const TABS: { id: TabId; label: string }[] = [
 export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) => {
   const { workbookName } = useWorkbookStore();
   const { activeTab, setActiveTab } = useToolbarStore();
+  const isAIOpen = useAIStore((state) => state.isOpen);
+  const toggleAIPanel = useAIStore((state) => state.togglePanel);
 
   return (
     <header className="header-2026">
@@ -54,6 +57,16 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
           <Search style={{ width: 14, height: 14 }} />
           <span>Search commands...</span>
           <kbd>⌘K</kbd>
+        </button>
+
+        {/* AI Copilot Toggle */}
+        <button
+          className={`ai-toggle-btn ${isAIOpen ? 'ai-toggle-btn--active' : ''}`}
+          onClick={toggleAIPanel}
+          title="AI Copilot"
+        >
+          <Sparkles size={14} />
+          <span>AI Copilot</span>
         </button>
       </div>
     </header>

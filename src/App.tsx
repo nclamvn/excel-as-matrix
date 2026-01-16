@@ -3,8 +3,12 @@ import { Grid } from './components/Grid/Grid';
 import { ToastContainer } from './components/Toast/Toast';
 import { useWorkbookStore } from './stores/workbookStore';
 import { useSelectionStore } from './stores/selectionStore';
+import { useAIStore } from './stores/aiStore';
 import { apiClient } from './api/client';
 import { shortcutManager } from './shortcuts';
+
+// Landing Page
+import { LandingPage } from './components/Landing';
 
 // Lazy load dialogs for better initial load
 const FindReplaceDialog = lazy(() => import('./components/FindReplace').then(m => ({ default: m.FindReplaceDialog })));
@@ -19,14 +23,37 @@ import {
   StatusBar2026
 } from './components/Modern';
 
+// AI Copilot
+import { AICopilotDock } from './components/AI';
+
 // Styles
 import './styles/fonts.css';
 import './styles/variables.css';
 import './styles/modern-2026.css';
+import './styles/ai-copilot.css';
+import './styles/sandbox.css';
+import './styles/trust-ui.css';
+import './styles/conversation.css';
+import './styles/semantic-types.css';
+import './styles/collaboration.css';
+import './styles/nl-formula.css';
+import './styles/proactive.css';
+import './styles/data-cleaner.css';
+import './styles/auto-viz.css';
+import './styles/macros.css';
 
 function App() {
+  const [showLanding, setShowLanding] = useState(() => {
+    // Check localStorage to see if user has entered app before
+    return localStorage.getItem('ai-suite-entered') !== 'true';
+  });
   const [isInitializing, setIsInitializing] = useState(true);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  const handleEnterApp = useCallback(() => {
+    localStorage.setItem('ai-suite-entered', 'true');
+    setShowLanding(false);
+  }, []);
 
   const {
     workbookId,
@@ -38,13 +65,21 @@ function App() {
     setLoading,
   } = useWorkbookStore();
 
-  // Command Palette shortcut (⌘K)
+  const isAIOpen = useAIStore((state) => state.isOpen);
+  const toggleAIPanel = useAIStore((state) => state.togglePanel);
+
+  // Command Palette shortcut (⌘K) and AI Copilot shortcut (⌘J)
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       setIsCommandPaletteOpen(true);
     }
-  }, []);
+    // AI Copilot toggle (⌘J or Ctrl+J)
+    if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+      e.preventDefault();
+      toggleAIPanel();
+    }
+  }, [toggleAIPanel]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -129,6 +164,11 @@ function App() {
     initialize();
   }, []);
 
+  // Show landing page if user hasn't entered app yet
+  if (showLanding) {
+    return <LandingPage onEnterApp={handleEnterApp} />;
+  }
+
   if (isInitializing) {
     return (
       <div className="h-full flex items-center justify-center bg-gray-50">
@@ -156,25 +196,37 @@ function App() {
 
   return (
     <div className="h-full flex flex-col" style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
-      {/* Modern Header with Nav */}
-      <Header2026 onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
+      {/* Main Content - adjusts when AI panel is open */}
+      <div
+        className="h-full flex flex-col"
+        style={{
+          marginRight: isAIOpen ? '380px' : '0',
+          transition: 'margin-right 0.2s ease',
+        }}
+      >
+        {/* Modern Header with Nav */}
+        <Header2026 onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
 
-      {/* Compact Toolbar */}
-      <Toolbar2026 />
+        {/* Compact Toolbar */}
+        <Toolbar2026 />
 
-      {/* Formula Bar */}
-      <FormulaBar2026 sheetId={activeSheetId} />
+        {/* Formula Bar */}
+        <FormulaBar2026 sheetId={activeSheetId} />
 
-      {/* Grid */}
-      <div className="flex-1 overflow-hidden">
-        <Grid workbookId={workbookId} sheetId={activeSheetId} />
+        {/* Grid */}
+        <div className="flex-1 overflow-hidden">
+          <Grid workbookId={workbookId} sheetId={activeSheetId} />
+        </div>
+
+        {/* Sheet Tabs */}
+        <SheetTabs2026 />
+
+        {/* Status Bar (Green theme) */}
+        <StatusBar2026 />
       </div>
 
-      {/* Sheet Tabs */}
-      <SheetTabs2026 />
-
-      {/* Status Bar (Green theme) */}
-      <StatusBar2026 />
+      {/* AI Copilot Dock */}
+      <AICopilotDock />
 
       {/* Command Palette (⌘K) */}
       <CommandPalette
