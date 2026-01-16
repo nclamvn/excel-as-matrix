@@ -41,6 +41,7 @@ import './styles/proactive.css';
 import './styles/data-cleaner.css';
 import './styles/auto-viz.css';
 import './styles/macros.css';
+import './components/FileMenu/FileMenu.css';
 
 function App() {
   const [showLanding, setShowLanding] = useState(() => {

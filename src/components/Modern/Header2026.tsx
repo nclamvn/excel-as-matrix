@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FileSpreadsheet, Search, Sparkles } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useToolbarStore, TabId } from '../../stores/toolbarStore';
 import { useAIStore } from '../../stores/aiStore';
+import { FileMenu } from '../FileMenu';
 
 interface Header2026Props {
   onOpenCommandPalette: () => void;
@@ -17,22 +18,28 @@ const TABS: { id: TabId; label: string }[] = [
 ];
 
 export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) => {
+  const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const { workbookName } = useWorkbookStore();
   const { activeTab, setActiveTab } = useToolbarStore();
   const isAIOpen = useAIStore((state) => state.isOpen);
   const toggleAIPanel = useAIStore((state) => state.togglePanel);
 
   return (
-    <header className="header-2026">
-      {/* Brand */}
-      <div className="header-2026__brand">
-        <FileSpreadsheet />
-        <span>Excel</span>
-      </div>
+    <>
+      <header className="header-2026">
+        {/* Brand / File Menu Button */}
+        <button
+          className="header-2026__brand"
+          onClick={() => setIsFileMenuOpen(true)}
+          title="File Menu"
+        >
+          <FileSpreadsheet />
+          <span>File</span>
+        </button>
 
-      {/* Navigation */}
-      <nav className="header-2026__nav">
-        {TABS.map((tab) => (
+        {/* Navigation */}
+        <nav className="header-2026__nav">
+          {TABS.map((tab) => (
           <button
             key={tab.id}
             className={`header-2026__nav-item ${activeTab === tab.id ? 'header-2026__nav-item--active' : ''}`}
@@ -70,5 +77,12 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
         </button>
       </div>
     </header>
+
+      {/* File Menu Modal */}
+      <FileMenu
+        isOpen={isFileMenuOpen}
+        onClose={() => setIsFileMenuOpen(false)}
+      />
+    </>
   );
 };
