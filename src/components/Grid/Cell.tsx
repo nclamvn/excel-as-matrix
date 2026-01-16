@@ -12,7 +12,7 @@ interface CellProps {
   isSelected: boolean;
   isInRange: boolean;
   onMouseDown: (e: React.MouseEvent) => void;
-  onMouseEnter: () => void;
+  onMouseEnter: (e: React.MouseEvent) => void;
   onDoubleClick: () => void;
   style: React.CSSProperties;
 }

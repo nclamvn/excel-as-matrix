@@ -95,23 +95,52 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
 
   // Handle cell mouse enter (during drag)
   const handleCellMouseEnter = useCallback(
-    (row: number, col: number) => {
-      if (isDragging && dragStart) {
+    (row: number, col: number, e: React.MouseEvent) => {
+      // Only extend selection if mouse button is actually pressed (buttons === 1 means left button)
+      if (isDragging && dragStart && e.buttons === 1) {
         selectRange(dragStart, { row, col });
+      } else if (isDragging && e.buttons !== 1) {
+        // Mouse button was released but we didn't catch the event - reset dragging
+        setIsDragging(false);
+        setDragStart(null);
       }
     },
     [isDragging, dragStart, selectRange]
   );
 
-  // Handle mouse up (end drag)
+  // Handle mouse up (end drag) - using multiple event listeners for reliability
   useEffect(() => {
     const handleMouseUp = () => {
-      setIsDragging(false);
-      setDragStart(null);
+      if (isDragging) {
+        setIsDragging(false);
+        setDragStart(null);
+      }
     };
 
+    // Listen on both window and document for reliability
     window.addEventListener('mouseup', handleMouseUp);
-    return () => window.removeEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    // Also reset on blur (user switches tabs/windows)
+    window.addEventListener('blur', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('blur', handleMouseUp);
+    };
+  }, [isDragging]);
+
+  // Reset dragging when mouse leaves the grid container
+  const handleMouseLeave = useCallback(() => {
+    // Don't reset immediately - allow dragging outside briefly
+    // The mouseup event will handle the final reset
+  }, []);
+
+  // Direct mouseup handler on container as backup
+  const handleContainerMouseUp = useCallback(() => {
+    setIsDragging(false);
+    setDragStart(null);
   }, []);
 
   // Handle cell double-click (enter edit mode)
@@ -264,7 +293,7 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
             isSelected={selectedCell?.row === row && selectedCell?.col === col}
             isInRange={isInRange(row, col)}
             onMouseDown={(e) => handleCellMouseDown(row, col, e)}
-            onMouseEnter={() => handleCellMouseEnter(row, col)}
+            onMouseEnter={(e) => handleCellMouseEnter(row, col, e)}
             onDoubleClick={() => handleCellDoubleClick(row, col)}
             style={{
               position: 'absolute',
@@ -309,6 +338,8 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
           bottom: 0,
         }}
         onScroll={handleScroll}
+        onMouseUp={handleContainerMouseUp}
+        onMouseLeave={handleMouseLeave}
       >
         {/* Virtual content size */}
         <div
