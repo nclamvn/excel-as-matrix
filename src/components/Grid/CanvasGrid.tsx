@@ -238,6 +238,40 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     }
   }, [containerSize, scrollTop, scrollLeft, sheet?.cells, selectedCell, selectionRange, isEditing]);
 
+  // Check if column is in selection range
+  const isColInRange = useCallback((col: number) => {
+    // Check live drag selection
+    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+      const minCol = Math.min(dragStartRef.current.col, dragEndRef.current.col);
+      const maxCol = Math.max(dragStartRef.current.col, dragEndRef.current.col);
+      return col >= minCol && col <= maxCol;
+    }
+    // Check committed selection range
+    if (selectionRange) {
+      const minCol = Math.min(selectionRange.start.col, selectionRange.end.col);
+      const maxCol = Math.max(selectionRange.start.col, selectionRange.end.col);
+      return col >= minCol && col <= maxCol;
+    }
+    return false;
+  }, [selectionRange]);
+
+  // Check if row is in selection range
+  const isRowInRange = useCallback((row: number) => {
+    // Check live drag selection
+    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+      const minRow = Math.min(dragStartRef.current.row, dragEndRef.current.row);
+      const maxRow = Math.max(dragStartRef.current.row, dragEndRef.current.row);
+      return row >= minRow && row <= maxRow;
+    }
+    // Check committed selection range
+    if (selectionRange) {
+      const minRow = Math.min(selectionRange.start.row, selectionRange.end.row);
+      const maxRow = Math.max(selectionRange.start.row, selectionRange.end.row);
+      return row >= minRow && row <= maxRow;
+    }
+    return false;
+  }, [selectionRange]);
+
   // Render column headers
   const renderColumnHeaders = useCallback(() => {
     const canvas = headerCanvasRef.current;
@@ -268,12 +302,17 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     for (let col = startCol; col < endCol; col++) {
       const x = offsetX + (col - startCol) * CELL_WIDTH;
+      const inRange = isColInRange(col);
 
-      // Highlight selected column
+      // Highlight selected column (dark green) or in-range column (light green)
       if (selectedCell?.col === col) {
         ctx.fillStyle = '#059669';
         ctx.fillRect(x, 0, CELL_WIDTH, height);
         ctx.fillStyle = '#ffffff';
+      } else if (inRange) {
+        ctx.fillStyle = '#d1fae5'; // Light green background
+        ctx.fillRect(x, 0, CELL_WIDTH, height);
+        ctx.fillStyle = '#059669'; // Green text
       } else {
         ctx.fillStyle = '#737373';
       }
@@ -294,7 +333,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.moveTo(0, height - 0.5);
     ctx.lineTo(width, height - 0.5);
     ctx.stroke();
-  }, [containerSize.width, scrollLeft, selectedCell?.col]);
+  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange]);
 
   // Render row headers
   const renderRowHeaders = useCallback(() => {
@@ -326,12 +365,17 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     for (let row = startRow; row < endRow; row++) {
       const y = offsetY + (row - startRow) * CELL_HEIGHT;
+      const inRange = isRowInRange(row);
 
-      // Highlight selected row
+      // Highlight selected row (dark green) or in-range row (light green)
       if (selectedCell?.row === row) {
         ctx.fillStyle = '#059669';
         ctx.fillRect(0, y, width, CELL_HEIGHT);
         ctx.fillStyle = '#ffffff';
+      } else if (inRange) {
+        ctx.fillStyle = '#d1fae5'; // Light green background
+        ctx.fillRect(0, y, width, CELL_HEIGHT);
+        ctx.fillStyle = '#059669'; // Green text
       } else {
         ctx.fillStyle = '#737373';
       }
@@ -352,7 +396,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.moveTo(width - 0.5, 0);
     ctx.lineTo(width - 0.5, height);
     ctx.stroke();
-  }, [containerSize.height, scrollTop, selectedCell?.row]);
+  }, [containerSize.height, scrollTop, selectedCell?.row, isRowInRange]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EVENT HANDLERS
@@ -380,9 +424,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     if (cell && dragEndRef.current &&
         (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)) {
       dragEndRef.current = cell;
-      renderGrid(); // Direct re-render - very fast
+      // Re-render all canvases for instant feedback
+      renderGrid();
+      renderColumnHeaders();
+      renderRowHeaders();
     }
-  }, [getCellFromMouse, renderGrid]);
+  }, [getCellFromMouse, renderGrid, renderColumnHeaders, renderRowHeaders]);
 
   const handleMouseUp = useCallback(() => {
     if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
@@ -396,7 +443,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     dragStartRef.current = null;
     dragEndRef.current = null;
     renderGrid();
-  }, [selectRange, renderGrid]);
+    renderColumnHeaders();
+    renderRowHeaders();
+  }, [selectRange, renderGrid, renderColumnHeaders, renderRowHeaders]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     const cell = getCellFromMouse(e.clientX, e.clientY);
