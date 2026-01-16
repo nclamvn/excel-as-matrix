@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
-import { Grid } from './components/Grid/Grid';
+import { CanvasGrid as Grid } from './components/Grid/CanvasGrid';
 import { ToastContainer } from './components/Toast/Toast';
 import { useWorkbookStore } from './stores/workbookStore';
 import { useSelectionStore } from './stores/selectionStore';

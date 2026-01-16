@@ -1,0 +1,609 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// CANVAS GRID - High Performance Spreadsheet Rendering
+// Uses HTML5 Canvas for instant feedback like Excel/WPS
+// ═══════════════════════════════════════════════════════════════════════════
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useWorkbookStore } from '../../stores/workbookStore';
+import { useSelectionStore } from '../../stores/selectionStore';
+import { CellEditor } from './CellEditor';
+import { getCellKey } from '../../types/cell';
+
+interface CanvasGridProps {
+  workbookId: string;
+  sheetId: string;
+}
+
+const CELL_WIDTH = 100;
+const CELL_HEIGHT = 24;
+const HEADER_WIDTH = 50;
+const HEADER_HEIGHT = 24;
+const MAX_ROWS = 100000;
+const MAX_COLS = 26;
+
+// Column letter helper
+const getColLetter = (col: number): string => {
+  let letter = '';
+  let temp = col;
+  while (temp >= 0) {
+    letter = String.fromCharCode(65 + (temp % 26)) + letter;
+    temp = Math.floor(temp / 26) - 1;
+  }
+  return letter;
+};
+
+export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const headerCanvasRef = useRef<HTMLCanvasElement>(null);
+  const rowHeaderCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const [scrollTop, setScrollTop] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  // Drag state - local for performance
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef<{ row: number; col: number } | null>(null);
+  const dragEndRef = useRef<{ row: number; col: number } | null>(null);
+  // Force render not needed - canvas updates directly
+
+  // Store selectors
+  const sheet = useWorkbookStore(useCallback((state) => state.sheets[sheetId], [sheetId]));
+  const getCellFormula = useWorkbookStore((state) => state.getCellFormula);
+  const getCellDisplayValue = useWorkbookStore((state) => state.getCellDisplayValue);
+  const setCellValue = useWorkbookStore((state) => state.setCellValue);
+
+  const selectedCell = useSelectionStore((state) => state.selectedCell);
+  const selectionRange = useSelectionStore((state) => state.selectionRange);
+  const isEditing = useSelectionStore((state) => state.isEditing);
+  const setSelectedCell = useSelectionStore((state) => state.setSelectedCell);
+  const setSelectionRange = useSelectionStore((state) => state.setSelectionRange);
+  const setIsEditing = useSelectionStore((state) => state.setIsEditing);
+  const moveSelection = useSelectionStore((state) => state.moveSelection);
+  const expandSelection = useSelectionStore((state) => state.expandSelection);
+  const selectRange = useSelectionStore((state) => state.selectRange);
+
+  // Get cell position from mouse coordinates
+  const getCellFromMouse = useCallback((clientX: number, clientY: number) => {
+    if (!containerRef.current) return null;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = clientX - rect.left + scrollLeft;
+    const y = clientY - rect.top + scrollTop;
+    const col = Math.floor(x / CELL_WIDTH);
+    const row = Math.floor(y / CELL_HEIGHT);
+    if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) return null;
+    return { row, col };
+  }, [scrollLeft, scrollTop]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CANVAS RENDERING
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const renderGrid = useCallback(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = containerSize.width;
+    const height = containerSize.height;
+
+    // Set canvas size with DPR for sharp rendering
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.scale(dpr, dpr);
+
+    // Clear
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Calculate visible range
+    const startRow = Math.floor(scrollTop / CELL_HEIGHT);
+    const startCol = Math.floor(scrollLeft / CELL_WIDTH);
+    const endRow = Math.min(MAX_ROWS, startRow + Math.ceil(height / CELL_HEIGHT) + 1);
+    const endCol = Math.min(MAX_COLS, startCol + Math.ceil(width / CELL_WIDTH) + 1);
+
+    const offsetX = -(scrollLeft % CELL_WIDTH);
+    const offsetY = -(scrollTop % CELL_HEIGHT);
+
+    // Draw grid lines
+    ctx.strokeStyle = '#e5e5e5';
+    ctx.lineWidth = 1;
+
+    // Vertical lines
+    for (let col = startCol; col <= endCol; col++) {
+      const x = offsetX + (col - startCol) * CELL_WIDTH + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
+
+    // Horizontal lines
+    for (let row = startRow; row <= endRow; row++) {
+      const y = offsetY + (row - startRow) * CELL_HEIGHT + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+
+    // Draw cells
+    ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textBaseline = 'middle';
+
+    for (let row = startRow; row < endRow; row++) {
+      for (let col = startCol; col < endCol; col++) {
+        const key = getCellKey(row, col);
+        const cellData = sheet?.cells[key];
+        if (!cellData) continue;
+
+        const x = offsetX + (col - startCol) * CELL_WIDTH;
+        const y = offsetY + (row - startRow) * CELL_HEIGHT;
+
+        // Cell background if formatted
+        if (cellData.format?.backgroundColor) {
+          ctx.fillStyle = cellData.format.backgroundColor;
+          ctx.fillRect(x + 1, y + 1, CELL_WIDTH - 2, CELL_HEIGHT - 2);
+        }
+
+        // Cell text
+        const displayValue = cellData.displayValue || String(cellData.value || '');
+        if (displayValue) {
+          ctx.fillStyle = cellData.format?.textColor || '#171717';
+
+          // Text alignment
+          let textX = x + 4;
+          const textY = y + CELL_HEIGHT / 2;
+
+          if (cellData.format?.align === 'center') {
+            ctx.textAlign = 'center';
+            textX = x + CELL_WIDTH / 2;
+          } else if (cellData.format?.align === 'right') {
+            ctx.textAlign = 'right';
+            textX = x + CELL_WIDTH - 4;
+          } else {
+            ctx.textAlign = 'left';
+          }
+
+          // Bold/Italic
+          let fontStyle = '';
+          if (cellData.format?.bold) fontStyle += 'bold ';
+          if (cellData.format?.italic) fontStyle += 'italic ';
+          ctx.font = `${fontStyle}13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+
+          // Clip text to cell
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(x + 1, y + 1, CELL_WIDTH - 2, CELL_HEIGHT - 2);
+          ctx.clip();
+          ctx.fillText(displayValue, textX, textY);
+          ctx.restore();
+
+          // Reset font
+          ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        }
+      }
+    }
+
+    // Draw drag selection (live)
+    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+      const ds = dragStartRef.current;
+      const de = dragEndRef.current;
+      const minRow = Math.min(ds.row, de.row);
+      const maxRow = Math.max(ds.row, de.row);
+      const minCol = Math.min(ds.col, de.col);
+      const maxCol = Math.max(ds.col, de.col);
+
+      const selX = offsetX + (minCol - startCol) * CELL_WIDTH;
+      const selY = offsetY + (minRow - startRow) * CELL_HEIGHT;
+      const selW = (maxCol - minCol + 1) * CELL_WIDTH;
+      const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
+
+      ctx.fillStyle = 'rgba(5, 150, 105, 0.1)';
+      ctx.fillRect(selX, selY, selW, selH);
+      ctx.strokeStyle = '#059669';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(selX, selY, selW, selH);
+    }
+    // Draw committed selection range
+    else if (selectionRange) {
+      const minRow = Math.min(selectionRange.start.row, selectionRange.end.row);
+      const maxRow = Math.max(selectionRange.start.row, selectionRange.end.row);
+      const minCol = Math.min(selectionRange.start.col, selectionRange.end.col);
+      const maxCol = Math.max(selectionRange.start.col, selectionRange.end.col);
+
+      const selX = offsetX + (minCol - startCol) * CELL_WIDTH;
+      const selY = offsetY + (minRow - startRow) * CELL_HEIGHT;
+      const selW = (maxCol - minCol + 1) * CELL_WIDTH;
+      const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
+
+      ctx.fillStyle = 'rgba(5, 150, 105, 0.1)';
+      ctx.fillRect(selX, selY, selW, selH);
+      ctx.strokeStyle = '#059669';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(selX, selY, selW, selH);
+    }
+
+    // Draw selected cell highlight
+    if (selectedCell && !isEditing) {
+      const x = offsetX + (selectedCell.col - startCol) * CELL_WIDTH;
+      const y = offsetY + (selectedCell.row - startRow) * CELL_HEIGHT;
+      ctx.strokeStyle = '#059669';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, CELL_WIDTH, CELL_HEIGHT);
+    }
+  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, selectedCell, selectionRange, isEditing]);
+
+  // Render column headers
+  const renderColumnHeaders = useCallback(() => {
+    const canvas = headerCanvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = containerSize.width;
+    const height = HEADER_HEIGHT;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.scale(dpr, dpr);
+
+    // Background
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, width, height);
+
+    const startCol = Math.floor(scrollLeft / CELL_WIDTH);
+    const endCol = Math.min(MAX_COLS, startCol + Math.ceil(width / CELL_WIDTH) + 1);
+    const offsetX = -(scrollLeft % CELL_WIDTH);
+
+    ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let col = startCol; col < endCol; col++) {
+      const x = offsetX + (col - startCol) * CELL_WIDTH;
+
+      // Highlight selected column
+      if (selectedCell?.col === col) {
+        ctx.fillStyle = '#059669';
+        ctx.fillRect(x, 0, CELL_WIDTH, height);
+        ctx.fillStyle = '#ffffff';
+      } else {
+        ctx.fillStyle = '#737373';
+      }
+
+      ctx.fillText(getColLetter(col), x + CELL_WIDTH / 2, height / 2);
+
+      // Border
+      ctx.strokeStyle = '#e5e5e5';
+      ctx.beginPath();
+      ctx.moveTo(x + CELL_WIDTH + 0.5, 0);
+      ctx.lineTo(x + CELL_WIDTH + 0.5, height);
+      ctx.stroke();
+    }
+
+    // Bottom border
+    ctx.strokeStyle = '#d4d4d4';
+    ctx.beginPath();
+    ctx.moveTo(0, height - 0.5);
+    ctx.lineTo(width, height - 0.5);
+    ctx.stroke();
+  }, [containerSize.width, scrollLeft, selectedCell?.col]);
+
+  // Render row headers
+  const renderRowHeaders = useCallback(() => {
+    const canvas = rowHeaderCanvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = HEADER_WIDTH;
+    const height = containerSize.height;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.scale(dpr, dpr);
+
+    // Background
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, width, height);
+
+    const startRow = Math.floor(scrollTop / CELL_HEIGHT);
+    const endRow = Math.min(MAX_ROWS, startRow + Math.ceil(height / CELL_HEIGHT) + 1);
+    const offsetY = -(scrollTop % CELL_HEIGHT);
+
+    ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let row = startRow; row < endRow; row++) {
+      const y = offsetY + (row - startRow) * CELL_HEIGHT;
+
+      // Highlight selected row
+      if (selectedCell?.row === row) {
+        ctx.fillStyle = '#059669';
+        ctx.fillRect(0, y, width, CELL_HEIGHT);
+        ctx.fillStyle = '#ffffff';
+      } else {
+        ctx.fillStyle = '#737373';
+      }
+
+      ctx.fillText(String(row + 1), width / 2, y + CELL_HEIGHT / 2);
+
+      // Border
+      ctx.strokeStyle = '#e5e5e5';
+      ctx.beginPath();
+      ctx.moveTo(0, y + CELL_HEIGHT + 0.5);
+      ctx.lineTo(width, y + CELL_HEIGHT + 0.5);
+      ctx.stroke();
+    }
+
+    // Right border
+    ctx.strokeStyle = '#d4d4d4';
+    ctx.beginPath();
+    ctx.moveTo(width - 0.5, 0);
+    ctx.lineTo(width - 0.5, height);
+    ctx.stroke();
+  }, [containerSize.height, scrollTop, selectedCell?.row]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EVENT HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    const cell = getCellFromMouse(e.clientX, e.clientY);
+    if (!cell) return;
+
+    if (e.shiftKey && selectedCell) {
+      selectRange(selectedCell, cell);
+    } else {
+      setSelectedCell(cell);
+      setSelectionRange(null);
+      isDraggingRef.current = true;
+      dragStartRef.current = cell;
+      dragEndRef.current = cell;
+    }
+  }, [getCellFromMouse, selectedCell, selectRange, setSelectedCell, setSelectionRange]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDraggingRef.current || e.buttons !== 1) return;
+
+    const cell = getCellFromMouse(e.clientX, e.clientY);
+    if (cell && dragEndRef.current &&
+        (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)) {
+      dragEndRef.current = cell;
+      renderGrid(); // Direct re-render - very fast
+    }
+  }, [getCellFromMouse, renderGrid]);
+
+  const handleMouseUp = useCallback(() => {
+    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+      const ds = dragStartRef.current;
+      const de = dragEndRef.current;
+      if (ds.row !== de.row || ds.col !== de.col) {
+        selectRange(ds, de);
+      }
+    }
+    isDraggingRef.current = false;
+    dragStartRef.current = null;
+    dragEndRef.current = null;
+    renderGrid();
+  }, [selectRange, renderGrid]);
+
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    const cell = getCellFromMouse(e.clientX, e.clientY);
+    if (cell) {
+      setSelectedCell(cell);
+      setIsEditing(true);
+    }
+  }, [getCellFromMouse, setSelectedCell, setIsEditing]);
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    setScrollTop(target.scrollTop);
+    setScrollLeft(target.scrollLeft);
+  }, []);
+
+  // Cell edit handlers
+  const handleCellSubmit = useCallback((value: string) => {
+    if (!selectedCell || !sheetId) return;
+    setIsEditing(false);
+    setCellValue(sheetId, selectedCell.row, selectedCell.col, value);
+    moveSelection('down');
+  }, [selectedCell, sheetId, setIsEditing, setCellValue, moveSelection]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // KEYBOARD HANDLING
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedCell || isEditing) return;
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          e.shiftKey ? expandSelection('up') : moveSelection('up');
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          e.shiftKey ? expandSelection('down') : moveSelection('down');
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          e.shiftKey ? expandSelection('left') : moveSelection('left');
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          e.shiftKey ? expandSelection('right') : moveSelection('right');
+          break;
+        case 'Tab':
+          e.preventDefault();
+          e.shiftKey ? moveSelection('left') : moveSelection('right');
+          break;
+        case 'Enter':
+          e.preventDefault();
+          e.shiftKey ? moveSelection('up') : setIsEditing(true);
+          break;
+        case 'F2':
+          e.preventDefault();
+          setIsEditing(true);
+          break;
+        case 'Delete':
+        case 'Backspace':
+          e.preventDefault();
+          handleCellSubmit('');
+          break;
+        case 'Escape':
+          e.preventDefault();
+          setSelectionRange(null);
+          break;
+        default:
+          if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            setIsEditing(true);
+          }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCell, isEditing, moveSelection, expandSelection, setIsEditing, setSelectionRange, handleCellSubmit]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EFFECTS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Handle resize
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        setContainerSize({
+          width: containerRef.current.clientWidth,
+          height: containerRef.current.clientHeight,
+        });
+      }
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  // Global mouseup handler
+  useEffect(() => {
+    const globalMouseUp = () => {
+      if (isDraggingRef.current) {
+        handleMouseUp();
+      }
+    };
+    window.addEventListener('mouseup', globalMouseUp);
+    return () => window.removeEventListener('mouseup', globalMouseUp);
+  }, [handleMouseUp]);
+
+  // Render on state changes
+  useEffect(() => {
+    renderGrid();
+    renderColumnHeaders();
+    renderRowHeaders();
+  }, [renderGrid, renderColumnHeaders, renderRowHeaders]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // RENDER
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  return (
+    <div className="relative h-full overflow-hidden" style={{ background: '#f5f5f5' }}>
+      {/* Corner */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: HEADER_WIDTH,
+          height: HEADER_HEIGHT,
+          background: '#f5f5f5',
+          borderRight: '1px solid #d4d4d4',
+          borderBottom: '1px solid #d4d4d4',
+          zIndex: 3,
+        }}
+      />
+
+      {/* Column headers */}
+      <canvas
+        ref={headerCanvasRef}
+        style={{
+          position: 'absolute',
+          left: HEADER_WIDTH,
+          top: 0,
+          zIndex: 2,
+        }}
+      />
+
+      {/* Row headers */}
+      <canvas
+        ref={rowHeaderCanvasRef}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: HEADER_HEIGHT,
+          zIndex: 2,
+        }}
+      />
+
+      {/* Main grid */}
+      <div
+        ref={containerRef}
+        style={{
+          position: 'absolute',
+          left: HEADER_WIDTH,
+          top: HEADER_HEIGHT,
+          right: 0,
+          bottom: 0,
+          overflow: 'auto',
+        }}
+        onScroll={handleScroll}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onDoubleClick={handleDoubleClick}
+      >
+        {/* Scrollable area */}
+        <div style={{ width: MAX_COLS * CELL_WIDTH, height: MAX_ROWS * CELL_HEIGHT, position: 'relative' }}>
+          <canvas
+            ref={canvasRef}
+            style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}
+          />
+        </div>
+
+        {/* Cell editor overlay */}
+        {isEditing && selectedCell && (
+          <CellEditor
+            row={selectedCell.row}
+            col={selectedCell.col}
+            initialValue={
+              getCellFormula(sheetId, selectedCell.row, selectedCell.col) ||
+              getCellDisplayValue(sheetId, selectedCell.row, selectedCell.col) ||
+              ''
+            }
+            cellWidth={CELL_WIDTH}
+            cellHeight={CELL_HEIGHT}
+            headerWidth={-scrollLeft}
+            headerHeight={-scrollTop}
+            onSubmit={handleCellSubmit}
+            onCancel={() => setIsEditing(false)}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CanvasGrid;
