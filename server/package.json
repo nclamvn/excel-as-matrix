@@ -1,0 +1,18 @@
+{
+  "name": "excel-as-matrix-server",
+  "version": "1.0.0",
+  "description": "WebSocket collaboration server for Excel-as-Matrix",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10"
+  }
+}

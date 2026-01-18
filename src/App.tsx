@@ -7,6 +7,9 @@ import { useAIStore } from './stores/aiStore';
 import { apiClient } from './api/client';
 import { shortcutManager } from './shortcuts';
 
+// Error Boundary
+import { ErrorBoundary } from './components/ErrorBoundary';
+
 // Landing Page
 import { LandingPage } from './components/Landing';
 
@@ -233,75 +236,137 @@ function App() {
   }
 
   return (
-    <div className="h-full flex flex-col" style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
-      {/* Main Content - adjusts when AI panel is open */}
-      <div
-        className="h-full flex flex-col"
-        style={{
-          marginRight: isAIOpen ? '380px' : '0',
-          transition: 'margin-right 0.2s ease',
-        }}
-      >
-        {/* Modern Header with Nav */}
-        <Header2026 onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
+    <ErrorBoundary
+      fallback={(error, reset) => (
+        <div className="h-full flex items-center justify-center bg-gray-50">
+          <div className="max-w-md p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Application Error</h2>
+            <p className="text-gray-700 mb-4">
+              The application encountered an unexpected error. This has been logged and we'll look into it.
+            </p>
+            <details className="mb-4">
+              <summary className="cursor-pointer font-semibold text-gray-900 mb-2">Error Details</summary>
+              <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto max-h-48">
+                {error.toString()}
+              </pre>
+            </details>
+            <button
+              onClick={reset}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+            >
+              Reload Application
+            </button>
+          </div>
+        </div>
+      )}
+    >
+      <div className="h-full flex flex-col" style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
+        {/* Main Content - adjusts when AI panel is open */}
+        <div
+          className="h-full flex flex-col"
+          style={{
+            marginRight: isAIOpen ? '380px' : '0',
+            transition: 'margin-right 0.2s ease',
+          }}
+        >
+          {/* Modern Header with Nav */}
+          <ErrorBoundary>
+            <Header2026 onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
+          </ErrorBoundary>
 
-        {/* File Tabs (Browser-style) */}
-        <FileTabs />
+          {/* File Tabs (Browser-style) */}
+          <ErrorBoundary>
+            <FileTabs />
+          </ErrorBoundary>
 
-        {/* Compact Toolbar */}
-        <Toolbar2026 />
+          {/* Compact Toolbar */}
+          <ErrorBoundary>
+            <Toolbar2026 />
+          </ErrorBoundary>
 
-        {/* Formula Bar */}
-        <FormulaBar2026 sheetId={activeSheetId} />
+          {/* Formula Bar */}
+          <ErrorBoundary>
+            <FormulaBar2026 sheetId={activeSheetId} />
+          </ErrorBoundary>
 
-        {/* Grid with Chart, Shape, and Picture Overlay */}
-        <div className="flex-1 overflow-hidden relative">
-          <Grid workbookId={workbookId} sheetId={activeSheetId} />
-          <ChartOverlay sheetId={activeSheetId} />
-          <ShapeCanvas sheetId={activeSheetId} />
-          <PictureCanvas sheetId={activeSheetId} />
+          {/* Grid with Chart, Shape, and Picture Overlay */}
+          <div className="flex-1 overflow-hidden relative">
+            <ErrorBoundary fallback={<div className="p-4 text-red-600">Grid failed to load</div>}>
+              <Grid workbookId={workbookId} sheetId={activeSheetId} />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
+              <ChartOverlay sheetId={activeSheetId} />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
+              <ShapeCanvas sheetId={activeSheetId} />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
+              <PictureCanvas sheetId={activeSheetId} />
+            </ErrorBoundary>
+          </div>
+
+          {/* Sheet Tabs */}
+          <ErrorBoundary>
+            <SheetTabs2026 />
+          </ErrorBoundary>
+
+          {/* Status Bar (Green theme - Enhanced) */}
+          <ErrorBoundary>
+            <StatusBar2026Enhanced />
+          </ErrorBoundary>
         </div>
 
-        {/* Sheet Tabs */}
-        <SheetTabs2026 />
+        {/* AI Copilot Dock */}
+        <ErrorBoundary>
+          <AICopilotDock />
+        </ErrorBoundary>
 
-        {/* Status Bar (Green theme - Enhanced) */}
-        <StatusBar2026Enhanced />
+        {/* Command Palette (⌘K) */}
+        <ErrorBoundary>
+          <CommandPalette
+            isOpen={isCommandPaletteOpen}
+            onClose={() => setIsCommandPaletteOpen(false)}
+          />
+        </ErrorBoundary>
+
+        {/* Find/Replace Dialog (lazy loaded) */}
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            <FindReplaceDialog />
+          </Suspense>
+        </ErrorBoundary>
+
+        {/* Toast Notifications */}
+        <ToastContainer />
+
+        {/* Shape Toolbar (floating, shows when shape selected) */}
+        <ErrorBoundary>
+          <ShapeToolbar sheetId={activeSheetId} />
+        </ErrorBoundary>
+
+        {/* Picture Toolbar (floating, shows when picture selected) */}
+        <ErrorBoundary>
+          <PictureToolbar sheetId={activeSheetId} />
+        </ErrorBoundary>
+
+        {/* Print Preview Dialog (⌘P) */}
+        <ErrorBoundary>
+          <PrintPreviewDialog
+            sheetId={activeSheetId}
+            isOpen={showPrintPreview}
+            onClose={() => setShowPrintPreview(false)}
+          />
+        </ErrorBoundary>
+
+        {/* Proactive AI Notifications */}
+        <ErrorBoundary>
+          <ProactiveAINotifications />
+        </ErrorBoundary>
       </div>
-
-      {/* AI Copilot Dock */}
-      <AICopilotDock />
-
-      {/* Command Palette (⌘K) */}
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-      />
-
-      {/* Find/Replace Dialog (lazy loaded) */}
-      <Suspense fallback={null}>
-        <FindReplaceDialog />
-      </Suspense>
-
-      {/* Toast Notifications */}
-      <ToastContainer />
-
-      {/* Shape Toolbar (floating, shows when shape selected) */}
-      <ShapeToolbar sheetId={activeSheetId} />
-
-      {/* Picture Toolbar (floating, shows when picture selected) */}
-      <PictureToolbar sheetId={activeSheetId} />
-
-      {/* Print Preview Dialog (⌘P) */}
-      <PrintPreviewDialog
-        sheetId={activeSheetId}
-        isOpen={showPrintPreview}
-        onClose={() => setShowPrintPreview(false)}
-      />
-
-      {/* Proactive AI Notifications */}
-      <ProactiveAINotifications />
-    </div>
+    </ErrorBoundary>
   );
 }
 
