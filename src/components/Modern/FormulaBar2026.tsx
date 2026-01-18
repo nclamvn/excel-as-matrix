@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { colToLetter } from '../../types/cell';
+import { InlineAISuggestions, FormulaBarAIHint } from '../AI/InlineAISuggestions';
 
 interface FormulaBar2026Props {
   sheetId: string;
@@ -62,22 +63,34 @@ export const FormulaBar2026: React.FC<FormulaBar2026Props> = ({ sheetId }) => {
   };
 
   return (
-    <div className="formula-bar-2026">
-      <div className="formula-bar-2026__cell">{cellRef}</div>
-      <span className="formula-bar-2026__fx">fx</span>
-      <input
-        ref={inputRef}
-        type="text"
-        className="formula-bar-2026__input"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          setIsEditing(true);
-        }}
-        onKeyDown={handleKeyDown}
-        onBlur={() => isEditing && commitValue()}
-        placeholder="Enter value or formula"
-      />
+    <div className="formula-bar-2026-wrapper">
+      <div className="formula-bar-2026">
+        <div className="formula-bar-2026__cell">{cellRef}</div>
+        <span className="formula-bar-2026__fx">fx</span>
+        <input
+          ref={inputRef}
+          type="text"
+          className="formula-bar-2026__input"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setIsEditing(true);
+          }}
+          onKeyDown={handleKeyDown}
+          onBlur={() => isEditing && commitValue()}
+          placeholder="Enter value or formula"
+        />
+      </div>
+      {/* AI-powered formula hints */}
+      <FormulaBarAIHint formula={value} />
+      {/* Inline AI suggestions for errors and optimizations */}
+      {selectedCell && (
+        <InlineAISuggestions
+          formula={value}
+          cellRow={selectedCell.row}
+          cellCol={selectedCell.col}
+        />
+      )}
     </div>
   );
 };

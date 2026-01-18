@@ -279,104 +279,104 @@ export class WorkflowExecutor {
    */
   private actionHandlers: Record<string, (params: Record<string, unknown>) => Promise<unknown>> = {
     // Data operations
-    copy_range: async (params) => {
-      console.log('Copy range:', params.range);
+    copy_range: async (_params) => {
+      // TODO: Implement copy range action
       return { copied: true };
     },
 
-    paste_range: async (params) => {
-      console.log('Paste to:', params.range);
+    paste_range: async (_params) => {
+      // TODO: Implement paste action
       return { pasted: true };
     },
 
-    clear_range: async (params) => {
-      console.log('Clear range:', params.range);
+    clear_range: async (_params) => {
+      // TODO: Implement clear action
       return { cleared: true };
     },
 
-    filter_data: async (params) => {
-      console.log('Filter:', params);
+    filter_data: async (_params) => {
+      // TODO: Implement filter action
       return { filtered: true };
     },
 
-    sort_data: async (params) => {
-      console.log('Sort:', params);
+    sort_data: async (_params) => {
+      // TODO: Implement sort action
       return { sorted: true };
     },
 
-    remove_duplicates: async (params) => {
-      console.log('Remove duplicates:', params);
+    remove_duplicates: async (_params) => {
+      // TODO: Implement remove duplicates action
       return { removed: true };
     },
 
     // Formulas
-    apply_formula: async (params) => {
-      console.log('Apply formula:', params);
+    apply_formula: async (_params) => {
+      // TODO: Implement apply formula action
       return { applied: true };
     },
 
     // Format
-    format_cells: async (params) => {
-      console.log('Format cells:', params);
+    format_cells: async (_params) => {
+      // TODO: Implement format cells action
       return { formatted: true };
     },
 
     // Charts
-    create_chart: async (params) => {
-      console.log('Create chart:', params);
+    create_chart: async (_params) => {
+      // TODO: Implement create chart action
       return { chartId: `chart_${Date.now()}` };
     },
 
     // Export
     export_pdf: async (params) => {
-      console.log('Export PDF:', params.filename);
+      // TODO: Implement export PDF action
       return { exported: true, filename: params.filename };
     },
 
     export_excel: async (params) => {
-      console.log('Export Excel:', params.filename);
+      // TODO: Implement export Excel action
       return { exported: true, filename: params.filename };
     },
 
     export_csv: async (params) => {
-      console.log('Export CSV:', params.filename);
+      // TODO: Implement export CSV action
       return { exported: true, filename: params.filename };
     },
 
     // Notifications
-    send_email: async (params) => {
-      console.log('Send email:', params.to, params.subject);
+    send_email: async (_params) => {
+      // TODO: Implement send email action
       return { sent: true };
     },
 
-    send_slack: async (params) => {
-      console.log('Send Slack:', params.channel, params.message);
+    send_slack: async (_params) => {
+      // TODO: Implement send Slack action
       return { sent: true };
     },
 
-    show_notification: async (params) => {
-      console.log('Notification:', params.message);
+    show_notification: async (_params) => {
+      // TODO: Implement notification action
       return { shown: true };
     },
 
     // AI actions
-    ai_clean_data: async (params) => {
-      console.log('AI clean:', params.range);
+    ai_clean_data: async (_params) => {
+      // TODO: Implement AI clean action
       return { cleaned: true };
     },
 
-    ai_create_chart: async (params) => {
-      console.log('AI chart:', params);
+    ai_create_chart: async (_params) => {
+      // TODO: Implement AI chart action
       return { chartId: `ai_chart_${Date.now()}` };
     },
 
-    ai_formula: async (params) => {
-      console.log('AI formula:', params);
+    ai_formula: async (_params) => {
+      // TODO: Implement AI formula action
       return { formula: '=SUM(A1:A10)' };
     },
 
-    ai_analyze: async (params) => {
-      console.log('AI analyze:', params);
+    ai_analyze: async (_params) => {
+      // TODO: Implement AI analyze action
       return { insights: [] };
     },
   };

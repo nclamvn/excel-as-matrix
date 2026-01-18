@@ -10,6 +10,9 @@ import {
   Filter,
   ArrowUpDown,
   Calculator,
+  Plus,
+  Pencil,
+  Layers,
 } from 'lucide-react';
 import { usePivotStore } from '../../stores/pivotStore';
 import {
@@ -17,8 +20,11 @@ import {
   PivotField,
   PivotAreaField,
   AggregateFunction,
+  CalculatedField,
   AGGREGATE_LABELS,
 } from '../../types/pivot';
+import { CalculatedFieldDialog } from './CalculatedFieldDialog';
+import { GroupingDialog } from './GroupingDialog';
 import './PivotTable.css';
 
 interface PivotFieldListProps {
@@ -52,6 +58,12 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
     fromArea?: AreaType;
   } | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  // Dialog states
+  const [showCalculatedFieldDialog, setShowCalculatedFieldDialog] = useState(false);
+  const [editingCalculatedField, setEditingCalculatedField] = useState<CalculatedField | undefined>(undefined);
+  const [showGroupingDialog, setShowGroupingDialog] = useState(false);
+  const [groupingField, setGroupingField] = useState<{ field: PivotAreaField; area: 'row' | 'column' } | null>(null);
 
   // Get fields not yet added to any area
   const availableFields = pivot.fields.filter(field => {
@@ -231,6 +243,22 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     No Sort
                   </button>
                 </div>
+                <div className="dropdown-section">
+                  <span className="dropdown-label">
+                    <Layers size={12} />
+                    Grouping
+                  </span>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      setGroupingField({ field: areaField, area });
+                      setShowGroupingDialog(true);
+                      setActiveDropdown(null);
+                    }}
+                  >
+                    Group...
+                  </button>
+                </div>
               </>
             )}
 
@@ -282,6 +310,29 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
     );
   };
 
+  // Render calculated field item
+  const renderCalculatedField = (calcField: CalculatedField) => (
+    <div
+      key={calcField.id}
+      className="pivot-field-item calculated"
+    >
+      <Calculator size={14} className="calc-icon" />
+      <span className="field-name">{calcField.name}</span>
+      <div className="field-actions">
+        <button
+          className="field-action-btn"
+          onClick={() => {
+            setEditingCalculatedField(calcField);
+            setShowCalculatedFieldDialog(true);
+          }}
+          title="Edit calculated field"
+        >
+          <Pencil size={14} />
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="pivot-field-list">
       <div className="pivot-fields-section">
@@ -300,6 +351,35 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         </div>
       </div>
 
+      {/* Calculated Fields Section */}
+      <div className="pivot-calculated-section">
+        <div className="section-header">
+          <h3>
+            <Calculator size={14} />
+            Calculated Fields
+          </h3>
+          <button
+            className="add-calc-field-btn"
+            onClick={() => {
+              setEditingCalculatedField(undefined);
+              setShowCalculatedFieldDialog(true);
+            }}
+            title="Add calculated field"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+        <div className="calculated-fields-list">
+          {pivot.calculatedFields.length === 0 ? (
+            <div className="no-calc-fields-message">
+              No calculated fields
+            </div>
+          ) : (
+            pivot.calculatedFields.map(renderCalculatedField)
+          )}
+        </div>
+      </div>
+
       <div className="pivot-areas-section">
         <div className="pivot-areas-grid">
           {renderArea('filter')}
@@ -308,6 +388,31 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
           {renderArea('value')}
         </div>
       </div>
+
+      {/* Calculated Field Dialog */}
+      <CalculatedFieldDialog
+        isOpen={showCalculatedFieldDialog}
+        onClose={() => {
+          setShowCalculatedFieldDialog(false);
+          setEditingCalculatedField(undefined);
+          onFieldsChange?.();
+        }}
+        pivot={pivot}
+        editingField={editingCalculatedField}
+      />
+
+      {/* Grouping Dialog */}
+      <GroupingDialog
+        isOpen={showGroupingDialog}
+        onClose={() => {
+          setShowGroupingDialog(false);
+          setGroupingField(null);
+          onFieldsChange?.();
+        }}
+        pivot={pivot}
+        field={groupingField?.field || null}
+        area={groupingField?.area || 'row'}
+      />
     </div>
   );
 };

@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useUIStore } from '../../stores/uiStore';
+import { UnhideSheetDialog } from '../Dialogs/UnhideSheetDialog';
+import { ProtectSheetDialog } from '../Dialogs/ProtectSheetDialog';
 
 interface SheetContextMenuProps {
   x: number;
@@ -22,10 +24,12 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState('');
+  const [showUnhideDialog, setShowUnhideDialog] = useState(false);
+  const [showProtectDialog, setShowProtectDialog] = useState(false);
 
   const {
     addSheet, deleteSheet, renameSheet, duplicateSheet,
-    moveSheet, setTabColor, sheets, sheetOrder
+    moveSheet, setTabColor, hideSheet, sheets, sheetOrder
   } = useWorkbookStore();
   const { showToast } = useUIStore();
 
@@ -94,6 +98,31 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
     showToast('Tab color changed', 'success');
   };
 
+  const handleHide = () => {
+    // Check if there are other visible sheets
+    const visibleSheets = Object.values(sheets).filter((s) => !s.hidden);
+    if (visibleSheets.length <= 1) {
+      showToast('Cannot hide the only visible sheet', 'warning');
+      return;
+    }
+    hideSheet(sheetId);
+    showToast('Sheet hidden', 'success');
+    onClose();
+  };
+
+  const handleUnhide = () => {
+    const hiddenSheets = Object.values(sheets).filter((s) => s.hidden);
+    if (hiddenSheets.length === 0) {
+      showToast('No hidden sheets', 'info');
+      return;
+    }
+    setShowUnhideDialog(true);
+  };
+
+  const handleProtect = () => {
+    setShowProtectDialog(true);
+  };
+
   const menuItems = [
     { id: 'insert', label: 'Insert...', icon: Plus, action: handleInsert },
     { id: 'delete', label: 'Delete', icon: Trash2, action: handleDelete },
@@ -103,11 +132,11 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
     { id: 'move-right', label: 'Move Right', icon: ArrowRight, action: handleMoveRight },
     { id: 'divider2', divider: true },
     { id: 'duplicate', label: 'Duplicate', icon: Copy, action: handleDuplicate },
-    { id: 'hide', label: 'Hide', icon: EyeOff, action: () => showToast('Hide sheet coming soon', 'info') },
-    { id: 'unhide', label: 'Unhide...', icon: Eye, action: () => showToast('Unhide coming soon', 'info') },
+    { id: 'hide', label: 'Hide', icon: EyeOff, action: handleHide },
+    { id: 'unhide', label: 'Unhide...', icon: Eye, action: handleUnhide },
     { id: 'divider3', divider: true },
     { id: 'tab-color', label: 'Tab Color', icon: Palette, action: handleSetColor },
-    { id: 'protect', label: 'Protect Sheet...', icon: Lock, action: () => showToast('Sheet protection coming soon', 'info') },
+    { id: 'protect', label: 'Protect Sheet...', icon: Lock, action: handleProtect },
   ];
 
   if (isRenaming) {
@@ -140,28 +169,59 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
   }
 
   return (
-    <div
-      ref={ref}
-      className="sheet-context-menu"
-      style={{ left: x, top: y }}
-    >
-      {menuItems.map((item) =>
-        item.divider ? (
-          <div key={item.id} className="menu-divider" />
-        ) : (
-          <button
-            key={item.id}
-            className="menu-item"
-            onClick={() => {
-              item.action?.();
-              onClose();
-            }}
-          >
-            {item.icon && <item.icon className="w-4 h-4" />}
-            <span>{item.label}</span>
-          </button>
-        )
+    <>
+      <div
+        ref={ref}
+        className="sheet-context-menu"
+        style={{ left: x, top: y }}
+      >
+        {menuItems.map((item) =>
+          item.divider ? (
+            <div key={item.id} className="menu-divider" />
+          ) : (
+            <button
+              key={item.id}
+              className="menu-item"
+              onClick={() => {
+                // For hide, don't close immediately (handler will close)
+                if (item.id === 'hide') {
+                  item.action?.();
+                } else if (item.id === 'unhide' || item.id === 'protect') {
+                  // Don't close - dialog will handle it
+                  item.action?.();
+                } else {
+                  item.action?.();
+                  onClose();
+                }
+              }}
+            >
+              {item.icon && <item.icon className="w-4 h-4" />}
+              <span>{item.label}</span>
+            </button>
+          )
+        )}
+      </div>
+
+      {/* Unhide Sheet Dialog */}
+      {showUnhideDialog && (
+        <UnhideSheetDialog
+          onClose={() => {
+            setShowUnhideDialog(false);
+            onClose();
+          }}
+        />
       )}
-    </div>
+
+      {/* Protect Sheet Dialog */}
+      {showProtectDialog && (
+        <ProtectSheetDialog
+          sheetId={sheetId}
+          onClose={() => {
+            setShowProtectDialog(false);
+            onClose();
+          }}
+        />
+      )}
+    </>
   );
 };

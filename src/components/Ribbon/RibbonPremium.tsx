@@ -7,6 +7,7 @@ import { FormulasTab } from './tabs/FormulasTab';
 import { DataTab } from './tabs/DataTab';
 import { ViewTab } from './tabs/ViewTab';
 import { PageLayoutToolbar } from '../Modern/toolbars/PageLayoutToolbar';
+import { FileMenu } from '../FileMenu';
 
 type TabId = 'file' | 'home' | 'insert' | 'page-layout' | 'formulas' | 'data' | 'review' | 'view';
 
@@ -30,11 +31,11 @@ const tabs: Tab[] = [
 export const RibbonPremium: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('home');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
 
   const handleTabClick = (tabId: TabId) => {
     if (tabId === 'file') {
-      // TODO: Open file menu
-      console.log('Open File menu');
+      setIsFileMenuOpen(true);
       return;
     }
     setActiveTab(tabId);
@@ -101,6 +102,9 @@ export const RibbonPremium: React.FC = () => {
       <div className={`ribbon-content ${isCollapsed ? 'ribbon-content--collapsed' : ''}`}>
         {renderTabContent()}
       </div>
+
+      {/* File Menu */}
+      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} />
     </div>
   );
 };

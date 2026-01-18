@@ -10,6 +10,7 @@ import {
   PivotCellData,
   PivotResult,
   DateGrouping,
+  CalculatedField,
   AGGREGATE_LABELS,
 } from '../../types/pivot';
 import { aggregate, formatPivotValue } from '../../stores/pivotStore';
@@ -126,6 +127,52 @@ export function sortValues(values: any[], order: 'asc' | 'desc' | 'none'): any[]
       ? strA.localeCompare(strB)
       : strB.localeCompare(strA);
   });
+}
+
+/**
+ * Evaluate a calculated field formula for a data row
+ */
+export function evaluateCalculatedField(
+  formula: string,
+  row: DataRow,
+  fields: PivotField[],
+  calculatedFields: CalculatedField[]
+): number {
+  try {
+    // Replace field references with actual values
+    let evalFormula = formula;
+
+    // First, resolve regular fields
+    for (const field of fields) {
+      const pattern = new RegExp(`\\[${escapeRegExp(field.name)}\\]`, 'gi');
+      const value = typeof row[field.id] === 'number' ? row[field.id] : 0;
+      evalFormula = evalFormula.replace(pattern, String(value));
+    }
+
+    // Then resolve other calculated fields (recursive dependency)
+    for (const calcField of calculatedFields) {
+      const pattern = new RegExp(`\\[${escapeRegExp(calcField.name)}\\]`, 'gi');
+      if (pattern.test(evalFormula)) {
+        // Recursively evaluate the referenced calculated field
+        const value = evaluateCalculatedField(calcField.formula, row, fields, calculatedFields);
+        evalFormula = evalFormula.replace(pattern, String(value));
+      }
+    }
+
+    // Evaluate the expression safely
+    // eslint-disable-next-line no-new-func
+    const result = new Function(`return ${evalFormula}`)();
+    return typeof result === 'number' && !isNaN(result) ? result : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Escape special regex characters in a string
+ */
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // ============================================================
@@ -607,8 +654,21 @@ export class PivotEngine {
    * Calculate grand total
    */
   private calculateGrandTotal(valueField: PivotAreaField): number {
+    // Check if this is a calculated field
+    const calcField = this.pivot.calculatedFields.find(cf => cf.id === valueField.fieldId);
+
     const values = this.filteredData
-      .map(row => row[valueField.fieldId])
+      .map(row => {
+        if (calcField) {
+          return evaluateCalculatedField(
+            calcField.formula,
+            row,
+            this.pivot.fields,
+            this.pivot.calculatedFields
+          );
+        }
+        return row[valueField.fieldId];
+      })
       .filter(v => typeof v === 'number' && !isNaN(v));
     return aggregate(values, valueField.aggregateFunction || 'sum');
   }
@@ -621,6 +681,9 @@ export class PivotEngine {
     colPath: string[],
     fieldId: string
   ): number[] {
+    // Check if this is a calculated field
+    const calcField = this.pivot.calculatedFields.find(cf => cf.id === fieldId);
+
     return this.filteredData
       .filter(row => {
         // Match row path
@@ -645,7 +708,18 @@ export class PivotEngine {
 
         return true;
       })
-      .map(row => row[fieldId])
+      .map(row => {
+        // If it's a calculated field, evaluate the formula
+        if (calcField) {
+          return evaluateCalculatedField(
+            calcField.formula,
+            row,
+            this.pivot.fields,
+            this.pivot.calculatedFields
+          );
+        }
+        return row[fieldId];
+      })
       .filter(v => typeof v === 'number' && !isNaN(v));
   }
 

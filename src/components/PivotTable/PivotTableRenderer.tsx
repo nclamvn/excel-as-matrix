@@ -2,12 +2,17 @@
 // PIVOT TABLE RENDERER — Renders the Pivot Table Grid
 // ============================================================
 
-import React, { useMemo, useCallback } from 'react';
-import { ChevronDown, ChevronRight, RefreshCw } from 'lucide-react';
+import React, { useState, useMemo, useCallback } from 'react';
+import { ChevronDown, ChevronRight, RefreshCw, BarChart2, Filter, Calendar } from 'lucide-react';
 import { usePivotStore } from '../../stores/pivotStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { useSlicerStore } from '../../stores/slicerStore';
 import { PivotTable, PivotResult, PivotCellData } from '../../types/pivot';
 import { calculatePivot } from './pivotEngine';
+import { PivotChartDialog } from './PivotChartDialog';
+import { InsertSlicerDialog } from './InsertSlicerDialog';
+import { Slicer } from './Slicer';
+import { Timeline } from './Timeline';
 import './PivotTable.css';
 
 interface PivotTableRendererProps {
@@ -21,6 +26,18 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
 }) => {
   const { toggleRowExpansion, markForRefresh } = usePivotStore();
   const { getCellValue } = useWorkbookStore();
+  const { getSlicersForPivot, getTimelinesForPivot } = useSlicerStore();
+
+  const [showChartDialog, setShowChartDialog] = useState(false);
+  const [showSlicerDialog, setShowSlicerDialog] = useState(false);
+  const [showTimelineDialog, setShowTimelineDialog] = useState(false);
+
+  // Get slicers and timelines for this pivot
+  const slicers = getSlicersForPivot(pivot.id);
+  const timelines = getTimelinesForPivot(pivot.id);
+
+  // Check if there are any date fields for timeline
+  const hasDateFields = pivot.fields.some(f => f.dataType === 'date');
 
   // Get source data from the workbook
   const sourceData = useMemo(() => {
@@ -118,13 +135,38 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
     <div className="pivot-table-renderer">
       <div className="pivot-table-header">
         <span className="pivot-table-name">{pivot.name}</span>
-        <button
-          className="pivot-refresh-btn"
-          onClick={handleRefresh}
-          title="Refresh pivot table"
-        >
-          <RefreshCw size={14} />
-        </button>
+        <div className="pivot-header-actions">
+          <button
+            className="pivot-action-btn"
+            onClick={() => setShowSlicerDialog(true)}
+            title="Insert Slicer"
+          >
+            <Filter size={14} />
+          </button>
+          {hasDateFields && (
+            <button
+              className="pivot-action-btn"
+              onClick={() => setShowTimelineDialog(true)}
+              title="Insert Timeline"
+            >
+              <Calendar size={14} />
+            </button>
+          )}
+          <button
+            className="pivot-chart-btn"
+            onClick={() => setShowChartDialog(true)}
+            title="Create Pivot Chart"
+          >
+            <BarChart2 size={14} />
+          </button>
+          <button
+            className="pivot-refresh-btn"
+            onClick={handleRefresh}
+            title="Refresh pivot table"
+          >
+            <RefreshCw size={14} />
+          </button>
+        </div>
       </div>
 
       <div className="pivot-table-scroll">
@@ -147,6 +189,45 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
           Last refreshed: {new Date(pivot.lastRefreshed).toLocaleTimeString()}
         </span>
       </div>
+
+      {/* Slicers */}
+      {slicers.map(slicer => (
+        <Slicer
+          key={slicer.id}
+          slicer={slicer}
+          pivot={pivot}
+        />
+      ))}
+
+      {/* Timelines */}
+      {timelines.map(timeline => (
+        <Timeline
+          key={timeline.id}
+          timeline={timeline}
+          pivot={pivot}
+        />
+      ))}
+
+      {/* Dialogs */}
+      <PivotChartDialog
+        isOpen={showChartDialog}
+        onClose={() => setShowChartDialog(false)}
+        pivot={pivot}
+      />
+
+      <InsertSlicerDialog
+        isOpen={showSlicerDialog}
+        onClose={() => setShowSlicerDialog(false)}
+        pivot={pivot}
+        mode="slicer"
+      />
+
+      <InsertSlicerDialog
+        isOpen={showTimelineDialog}
+        onClose={() => setShowTimelineDialog(false)}
+        pivot={pivot}
+        mode="timeline"
+      />
     </div>
   );
 };

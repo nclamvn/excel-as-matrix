@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RibbonGroup } from '../RibbonGroup';
 import { RibbonDropdown } from '../RibbonDropdown';
-import { Table, Palette, BarChart3 } from 'lucide-react';
+import { Table, Palette, BarChart3, Highlighter, TrendingUp, BarChart, PaintBucket, Shapes, Plus, Trash2, Settings } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
+import { ConditionalFormattingDialog } from '../../Dialogs/ConditionalFormattingDialog';
 
 export const StylesGroup: React.FC = () => {
   const { applyFormat, clearFormat } = useWorkbookStore();
   const { showToast } = useUIStore();
+  const [showCFDialog, setShowCFDialog] = useState(false);
 
   const applyStyle = (styleName: string, format: Parameters<typeof applyFormat>[0]) => {
     applyFormat(format);
@@ -22,15 +24,15 @@ export const StylesGroup: React.FC = () => {
           label="Conditional Formatting"
           size="large"
           options={[
-            { id: 'highlight', label: 'Highlight Cell Rules', onClick: () => showToast('Conditional formatting coming soon', 'info') },
-            { id: 'top-bottom', label: 'Top/Bottom Rules', onClick: () => showToast('Top/Bottom rules coming soon', 'info') },
-            { id: 'data-bars', label: 'Data Bars', onClick: () => showToast('Data bars coming soon', 'info') },
-            { id: 'color-scales', label: 'Color Scales', onClick: () => showToast('Color scales coming soon', 'info') },
-            { id: 'icon-sets', label: 'Icon Sets', onClick: () => showToast('Icon sets coming soon', 'info') },
+            { id: 'highlight', label: 'Highlight Cell Rules', icon: Highlighter, onClick: () => setShowCFDialog(true) },
+            { id: 'top-bottom', label: 'Top/Bottom Rules', icon: TrendingUp, onClick: () => setShowCFDialog(true) },
+            { id: 'data-bars', label: 'Data Bars', icon: BarChart, onClick: () => setShowCFDialog(true) },
+            { id: 'color-scales', label: 'Color Scales', icon: PaintBucket, onClick: () => setShowCFDialog(true) },
+            { id: 'icon-sets', label: 'Icon Sets', icon: Shapes, onClick: () => setShowCFDialog(true) },
             { id: 'divider', label: '', onClick: () => {}, divider: true },
-            { id: 'new-rule', label: 'New Rule...', onClick: () => showToast('New rule dialog coming soon', 'info') },
-            { id: 'clear-rules', label: 'Clear Rules', onClick: () => { clearFormat(); showToast('Rules cleared', 'success'); } },
-            { id: 'manage-rules', label: 'Manage Rules...', onClick: () => showToast('Manage rules coming soon', 'info') },
+            { id: 'new-rule', label: 'New Rule...', icon: Plus, onClick: () => setShowCFDialog(true) },
+            { id: 'clear-rules', label: 'Clear Rules', icon: Trash2, onClick: () => { clearFormat(); showToast('Rules cleared', 'success'); } },
+            { id: 'manage-rules', label: 'Manage Rules...', icon: Settings, onClick: () => setShowCFDialog(true) },
           ]}
         />
         <RibbonDropdown
@@ -55,6 +57,11 @@ export const StylesGroup: React.FC = () => {
           ]}
         />
       </div>
+
+      {/* Conditional Formatting Dialog */}
+      {showCFDialog && (
+        <ConditionalFormattingDialog onClose={() => setShowCFDialog(false)} />
+      )}
     </RibbonGroup>
   );
 };

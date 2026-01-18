@@ -210,7 +210,6 @@ export class WebSocketClient {
       const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
 
       setTimeout(() => {
-        console.log(`[WebSocket] Reconnecting... (attempt ${this.reconnectAttempts})`);
         this.connect().catch(() => {});
       }, delay);
     } else {

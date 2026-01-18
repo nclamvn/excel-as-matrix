@@ -60,11 +60,11 @@ export const CellEditor: React.FC<CellEditorProps> = ({
       onChange={(e) => setValue(e.target.value)}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
-      className="absolute z-20 px-1 font-mono text-sm border-2 border-blue-500 outline-none"
+      className="absolute z-20 px-1 font-mono text-sm border-2 border-blue-500 outline-none bg-white dark:bg-neutral-800 dark:text-white dark:border-blue-400"
       style={{
         left: headerWidth + col * cellWidth,
         top: headerHeight + row * cellHeight,
-        width: Math.max(cellWidth, 200),
+        width: cellWidth,
         height: cellHeight,
         boxSizing: 'border-box',
       }}

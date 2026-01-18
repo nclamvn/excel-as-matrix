@@ -1,0 +1,140 @@
+{
+  "workbookId": "sample-workbook-001",
+  "workbookName": "Sample Test Workbook",
+  "sheets": [
+    {
+      "id": "sheet-1",
+      "name": "Sales Data",
+      "index": 0,
+      "cells": {
+        "0:0": { "value": "Product", "displayValue": "Product", "format": { "bold": true, "backgroundColor": "#e5e7eb" } },
+        "0:1": { "value": "Q1", "displayValue": "Q1", "format": { "bold": true, "backgroundColor": "#e5e7eb" } },
+        "0:2": { "value": "Q2", "displayValue": "Q2", "format": { "bold": true, "backgroundColor": "#e5e7eb" } },
+        "0:3": { "value": "Q3", "displayValue": "Q3", "format": { "bold": true, "backgroundColor": "#e5e7eb" } },
+        "0:4": { "value": "Q4", "displayValue": "Q4", "format": { "bold": true, "backgroundColor": "#e5e7eb" } },
+        "0:5": { "value": "Total", "displayValue": "Total", "format": { "bold": true, "backgroundColor": "#e5e7eb" } },
+
+        "1:0": { "value": "Product A", "displayValue": "Product A" },
+        "1:1": { "value": 1200, "displayValue": "1200" },
+        "1:2": { "value": 1350, "displayValue": "1350" },
+        "1:3": { "value": 1100, "displayValue": "1100" },
+        "1:4": { "value": 1500, "displayValue": "1500" },
+        "1:5": { "formula": "=SUM(B2:E2)", "value": 5150, "displayValue": "5150" },
+
+        "2:0": { "value": "Product B", "displayValue": "Product B" },
+        "2:1": { "value": 800, "displayValue": "800" },
+        "2:2": { "value": 950, "displayValue": "950" },
+        "2:3": { "value": 1050, "displayValue": "1050" },
+        "2:4": { "value": 1200, "displayValue": "1200" },
+        "2:5": { "formula": "=SUM(B3:E3)", "value": 4000, "displayValue": "4000" },
+
+        "3:0": { "value": "Product C", "displayValue": "Product C" },
+        "3:1": { "value": 500, "displayValue": "500" },
+        "3:2": { "value": 600, "displayValue": "600" },
+        "3:3": { "value": 700, "displayValue": "700" },
+        "3:4": { "value": 850, "displayValue": "850" },
+        "3:5": { "formula": "=SUM(B4:E4)", "value": 2650, "displayValue": "2650" },
+
+        "4:0": { "value": "Product D", "displayValue": "Product D" },
+        "4:1": { "value": 2000, "displayValue": "2000" },
+        "4:2": { "value": 2200, "displayValue": "2200" },
+        "4:3": { "value": 1800, "displayValue": "1800" },
+        "4:4": { "value": 2500, "displayValue": "2500" },
+        "4:5": { "formula": "=SUM(B5:E5)", "value": 8500, "displayValue": "8500" },
+
+        "5:0": { "value": "Total", "displayValue": "Total", "format": { "bold": true } },
+        "5:1": { "formula": "=SUM(B2:B5)", "value": 4500, "displayValue": "4500", "format": { "bold": true } },
+        "5:2": { "formula": "=SUM(C2:C5)", "value": 5100, "displayValue": "5100", "format": { "bold": true } },
+        "5:3": { "formula": "=SUM(D2:D5)", "value": 4650, "displayValue": "4650", "format": { "bold": true } },
+        "5:4": { "formula": "=SUM(E2:E5)", "value": 6050, "displayValue": "6050", "format": { "bold": true } },
+        "5:5": { "formula": "=SUM(B6:E6)", "value": 20300, "displayValue": "20300", "format": { "bold": true, "backgroundColor": "#fef3c7" } },
+
+        "7:0": { "value": "Average", "displayValue": "Average" },
+        "7:1": { "formula": "=AVERAGE(B2:B5)", "value": 1125, "displayValue": "1125" },
+        "7:2": { "formula": "=AVERAGE(C2:C5)", "value": 1275, "displayValue": "1275" },
+        "7:3": { "formula": "=AVERAGE(D2:D5)", "value": 1162.5, "displayValue": "1162.5" },
+        "7:4": { "formula": "=AVERAGE(E2:E5)", "value": 1512.5, "displayValue": "1512.5" },
+
+        "8:0": { "value": "Max", "displayValue": "Max" },
+        "8:1": { "formula": "=MAX(B2:B5)", "value": 2000, "displayValue": "2000" },
+
+        "9:0": { "value": "Min", "displayValue": "Min" },
+        "9:1": { "formula": "=MIN(B2:B5)", "value": 500, "displayValue": "500" }
+      },
+      "columnWidths": { "0": 120, "1": 80, "2": 80, "3": 80, "4": 80, "5": 100 }
+    },
+    {
+      "id": "sheet-2",
+      "name": "Employee Data",
+      "index": 1,
+      "cells": {
+        "0:0": { "value": "Name", "displayValue": "Name", "format": { "bold": true } },
+        "0:1": { "value": "Department", "displayValue": "Department", "format": { "bold": true } },
+        "0:2": { "value": "Salary", "displayValue": "Salary", "format": { "bold": true } },
+        "0:3": { "value": "Start Date", "displayValue": "Start Date", "format": { "bold": true } },
+
+        "1:0": { "value": "John Smith", "displayValue": "John Smith" },
+        "1:1": { "value": "Engineering", "displayValue": "Engineering" },
+        "1:2": { "value": 85000, "displayValue": "$85,000", "format": { "numberFormat": "currency" } },
+        "1:3": { "value": "2020-01-15", "displayValue": "2020-01-15" },
+
+        "2:0": { "value": "Jane Doe", "displayValue": "Jane Doe" },
+        "2:1": { "value": "Marketing", "displayValue": "Marketing" },
+        "2:2": { "value": 72000, "displayValue": "$72,000", "format": { "numberFormat": "currency" } },
+        "2:3": { "value": "2019-06-01", "displayValue": "2019-06-01" },
+
+        "3:0": { "value": "Bob Johnson", "displayValue": "Bob Johnson" },
+        "3:1": { "value": "Engineering", "displayValue": "Engineering" },
+        "3:2": { "value": 95000, "displayValue": "$95,000", "format": { "numberFormat": "currency" } },
+        "3:3": { "value": "2018-03-20", "displayValue": "2018-03-20" },
+
+        "4:0": { "value": "Alice Williams", "displayValue": "Alice Williams" },
+        "4:1": { "value": "Sales", "displayValue": "Sales" },
+        "4:2": { "value": 68000, "displayValue": "$68,000", "format": { "numberFormat": "currency" } },
+        "4:3": { "value": "2021-09-10", "displayValue": "2021-09-10" },
+
+        "6:0": { "value": "Total Salary", "displayValue": "Total Salary", "format": { "bold": true } },
+        "6:2": { "formula": "=SUM(C2:C5)", "value": 320000, "displayValue": "$320,000", "format": { "bold": true, "numberFormat": "currency" } },
+
+        "7:0": { "value": "Average Salary", "displayValue": "Average Salary" },
+        "7:2": { "formula": "=AVERAGE(C2:C5)", "value": 80000, "displayValue": "$80,000", "format": { "numberFormat": "currency" } }
+      },
+      "columnWidths": { "0": 150, "1": 120, "2": 100, "3": 100 }
+    },
+    {
+      "id": "sheet-3",
+      "name": "Formulas",
+      "index": 2,
+      "cells": {
+        "0:0": { "value": "Formula Examples", "displayValue": "Formula Examples", "format": { "bold": true, "fontSize": 14 } },
+
+        "2:0": { "value": "Basic Math", "displayValue": "Basic Math", "format": { "bold": true } },
+        "2:1": { "value": 10, "displayValue": "10" },
+        "2:2": { "value": 5, "displayValue": "5" },
+        "2:3": { "formula": "=B3+C3", "value": 15, "displayValue": "15" },
+        "2:4": { "value": "Sum", "displayValue": "Sum" },
+
+        "3:0": { "value": "Multiplication", "displayValue": "Multiplication" },
+        "3:3": { "formula": "=B3*C3", "value": 50, "displayValue": "50" },
+        "3:4": { "value": "Product", "displayValue": "Product" },
+
+        "4:0": { "value": "Division", "displayValue": "Division" },
+        "4:3": { "formula": "=B3/C3", "value": 2, "displayValue": "2" },
+        "4:4": { "value": "Quotient", "displayValue": "Quotient" },
+
+        "6:0": { "value": "Conditional", "displayValue": "Conditional", "format": { "bold": true } },
+        "6:1": { "value": 75, "displayValue": "75" },
+        "6:3": { "formula": "=IF(B7>=70,\"Pass\",\"Fail\")", "value": "Pass", "displayValue": "Pass" },
+
+        "8:0": { "value": "Text Functions", "displayValue": "Text Functions", "format": { "bold": true } },
+        "8:1": { "value": "hello world", "displayValue": "hello world" },
+        "9:0": { "value": "UPPER", "displayValue": "UPPER" },
+        "9:3": { "formula": "=UPPER(B9)", "value": "HELLO WORLD", "displayValue": "HELLO WORLD" },
+        "10:0": { "value": "LEN", "displayValue": "LEN" },
+        "10:3": { "formula": "=LEN(B9)", "value": 11, "displayValue": "11" }
+      }
+    }
+  ],
+  "sheetOrder": ["sheet-1", "sheet-2", "sheet-3"],
+  "activeSheetId": "sheet-1"
+}

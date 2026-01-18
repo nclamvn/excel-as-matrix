@@ -27,3 +27,8 @@ export { ConversationFlow, StateBadge, StateTimeline, StateIndicator } from './C
 export { ClarificationDialog, InlineClarification, QuickSuggestions } from './ClarificationDialog';
 export { TaskProgress, CompactProgress, StepList, ProgressSummary } from './TaskProgress';
 export { FeedbackPrompt, MiniFeedback, FeedbackCard } from './FeedbackPrompt';
+
+// Contextual AI Components (Phase 5 Enhancement)
+export { FloatingAIButton } from './FloatingAIButton';
+export { InlineAISuggestions, FormulaBarAIHint } from './InlineAISuggestions';
+export { ProactiveAINotifications, useAINotificationStore, useProactiveAITriggers, generateInsight } from './ProactiveAINotifications';

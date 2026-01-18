@@ -16,11 +16,12 @@ interface UseKeyboardShortcutsOptions {
   onOpenDialog?: (dialog: DialogType) => void;
   onSave?: () => void;
   onExport?: () => void;
+  onPasteSpecial?: () => void;
   enabled?: boolean;
 }
 
 export const useKeyboardShortcuts = (options: UseKeyboardShortcutsOptions = {}) => {
-  const { onOpenDialog, onSave, onExport, enabled = true } = options;
+  const { onOpenDialog, onSave, onExport, onPasteSpecial, enabled = true } = options;
 
   const {
     undo,
@@ -33,6 +34,8 @@ export const useKeyboardShortcuts = (options: UseKeyboardShortcutsOptions = {}) 
     deleteColumn,
     insertRow,
     insertColumn,
+    fillDown,
+    fillRight,
   } = useWorkbookStore();
 
   const { moveSelection, isEditing } = useSelectionStore();
@@ -94,7 +97,11 @@ export const useKeyboardShortcuts = (options: UseKeyboardShortcutsOptions = {}) 
 
           case 'v':
             e.preventDefault();
-            paste();
+            if (e.shiftKey) {
+              onPasteSpecial?.();
+            } else {
+              paste();
+            }
             break;
 
           // Formatting
@@ -111,6 +118,17 @@ export const useKeyboardShortcuts = (options: UseKeyboardShortcutsOptions = {}) 
           case 'u':
             e.preventDefault();
             applyFormat({ underline: true });
+            break;
+
+          // Fill operations
+          case 'd':
+            e.preventDefault();
+            fillDown();
+            break;
+
+          case 'r':
+            e.preventDefault();
+            fillRight();
             break;
 
           // Dialogs
@@ -298,9 +316,12 @@ export const useKeyboardShortcuts = (options: UseKeyboardShortcutsOptions = {}) 
       insertColumn,
       deleteRow,
       deleteColumn,
+      fillDown,
+      fillRight,
       onOpenDialog,
       onSave,
       onExport,
+      onPasteSpecial,
       isEditing,
     ]
   );
@@ -321,12 +342,15 @@ export const KEYBOARD_SHORTCUTS = [
   { keys: ['Ctrl', 'C'], description: 'Copy' },
   { keys: ['Ctrl', 'X'], description: 'Cut' },
   { keys: ['Ctrl', 'V'], description: 'Paste' },
+  { keys: ['Ctrl', 'Shift', 'V'], description: 'Paste Special' },
   { keys: ['Ctrl', 'Z'], description: 'Undo' },
   { keys: ['Ctrl', 'Y'], description: 'Redo' },
   { keys: ['Ctrl', 'Shift', 'Z'], description: 'Redo' },
   { keys: ['Ctrl', 'B'], description: 'Bold' },
   { keys: ['Ctrl', 'I'], description: 'Italic' },
   { keys: ['Ctrl', 'U'], description: 'Underline' },
+  { keys: ['Ctrl', 'D'], description: 'Fill Down' },
+  { keys: ['Ctrl', 'R'], description: 'Fill Right' },
   { keys: ['Ctrl', 'F'], description: 'Find' },
   { keys: ['Ctrl', 'H'], description: 'Find & Replace' },
   { keys: ['Ctrl', 'P'], description: 'Print' },

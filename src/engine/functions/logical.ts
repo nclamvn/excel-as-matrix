@@ -207,7 +207,9 @@ export const logicalFunctions: FunctionDef[] = [
     minArgs: 1,
     maxArgs: 1,
     fn: (args: FormulaValue[]): FormulaValue => {
-      return isBlank(args[0]);
+      // ISBLANK returns TRUE only for null/undefined, not empty strings
+      // An empty string "" is a value, not blank
+      return args[0] === null || args[0] === undefined;
     },
   },
 
@@ -316,6 +318,21 @@ export const logicalFunctions: FunctionDef[] = [
         '#N/A': 7,
       };
       return errorTypes[args[0].type] || 8;
+    },
+  },
+
+  // N - convert value to number
+  {
+    name: 'N',
+    minArgs: 1,
+    maxArgs: 1,
+    fn: (args: FormulaValue[]): FormulaValue => {
+      const val = args[0];
+      if (typeof val === 'number') return val;
+      if (typeof val === 'boolean') return val ? 1 : 0;
+      if (val instanceof FormulaError) return val;
+      // Strings and other values return 0
+      return 0;
     },
   },
 ];

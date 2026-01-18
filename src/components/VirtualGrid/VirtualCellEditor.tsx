@@ -1,4 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
+import { FormulaAutocomplete } from '../FormulaAutocomplete';
+import type { AutocompleteSuggestion } from '../FormulaAutocomplete';
+import { nlFormulaEngine } from '../../nlformula';
+import type { InterpretationResult } from '../../nlformula/types';
+import { FormulaPreview } from '../NLFormula/FormulaPreview';
+import { useNLFormulaContext } from '../../hooks/useNLFormulaContext';
 
 export interface VirtualCellEditorProps {
   row: number;
@@ -25,6 +31,18 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = useState(initialValue);
   const [isMultiline, setIsMultiline] = useState(false);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
+
+  // NL Formula state
+  const [nlInterpretation, setNlInterpretation] = useState<InterpretationResult | null>(null);
+  const [isInterpreting, setIsInterpreting] = useState(false);
+  const nlContext = useNLFormulaContext(row, col);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  // Check if input is natural language
+  const isNaturalLanguage = nlFormulaEngine.isNaturalLanguage(value);
+  const isFormula = value.startsWith('=');
 
   // Focus input on mount
   useEffect(() => {
@@ -37,6 +55,42 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
   // Handle key events
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      // Let autocomplete handle arrow keys and tab/enter when visible
+      if (showAutocomplete && value.startsWith('=')) {
+        if (['ArrowDown', 'ArrowUp', 'Tab', 'Enter'].includes(e.key)) {
+          // Let the FormulaAutocomplete handle these
+          return;
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setShowAutocomplete(false);
+          return;
+        }
+      }
+
+      // Handle NL interpretation
+      if (nlInterpretation?.success && nlInterpretation.formula) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          // Accept the interpreted formula
+          onSubmit(nlInterpretation.formula);
+          return;
+        }
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          // Insert the formula into the input (user can edit before submitting)
+          setValue(nlInterpretation.formula);
+          setNlInterpretation(null);
+          return;
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          // Dismiss the interpretation
+          setNlInterpretation(null);
+          return;
+        }
+      }
+
       switch (e.key) {
         case 'Enter':
           if (e.shiftKey) {
@@ -59,24 +113,118 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
           break;
       }
     },
-    [value, onSubmit, onCancel]
+    [value, onSubmit, onCancel, showAutocomplete, nlInterpretation]
   );
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, []);
 
   // Handle input change
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
+    setCursorPosition(e.target.selectionStart || 0);
+
+    // Show autocomplete for formula input
+    if (newValue.startsWith('=')) {
+      setShowAutocomplete(true);
+      setNlInterpretation(null);
+    } else {
+      setShowAutocomplete(false);
+
+      // Clear previous debounce timer
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+
+      // Check for natural language and interpret
+      if (nlFormulaEngine.isNaturalLanguage(newValue) && nlContext) {
+        setIsInterpreting(true);
+        debounceTimer.current = setTimeout(async () => {
+          try {
+            const result = await nlFormulaEngine.interpret({
+              text: newValue,
+              language: 'auto',
+              context: nlContext,
+            });
+            setNlInterpretation(result);
+          } catch {
+            setNlInterpretation(null);
+          } finally {
+            setIsInterpreting(false);
+          }
+        }, 300);
+      } else {
+        setNlInterpretation(null);
+        setIsInterpreting(false);
+      }
+    }
 
     // Auto-expand if content has newlines
     if (newValue.includes('\n')) {
       setIsMultiline(true);
     }
+  }, [nlContext]);
+
+  // Handle cursor position updates
+  const handleSelect = useCallback((e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const target = e.target as HTMLTextAreaElement;
+    setCursorPosition(target.selectionStart || 0);
   }, []);
+
+  // Handle autocomplete selection
+  const handleAutocompleteSelect = useCallback((_suggestion: AutocompleteSuggestion, insertText: string) => {
+    // Find the word being typed and replace it
+    const beforeCursor = value.slice(0, cursorPosition);
+    const afterCursor = value.slice(cursorPosition);
+
+    // Find start of current word
+    const match = beforeCursor.match(/([A-Za-z_][A-Za-z0-9_]*)$/);
+    const wordStart = match ? cursorPosition - match[1].length : cursorPosition;
+
+    // Build new value
+    const newValue = value.slice(0, wordStart) + insertText + afterCursor;
+    setValue(newValue);
+    setShowAutocomplete(false);
+
+    // Move cursor after inserted text
+    const newCursorPos = wordStart + insertText.length;
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  }, [value, cursorPosition]);
 
   // Handle blur (submit)
   const handleBlur = useCallback(() => {
+    // Don't submit if user is interacting with the formula preview
+    if (nlInterpretation) {
+      return;
+    }
     onSubmit(value);
-  }, [value, onSubmit]);
+  }, [value, onSubmit, nlInterpretation]);
+
+  // Handle accept NL interpretation
+  const handleAcceptInterpretation = useCallback(() => {
+    if (nlInterpretation?.formula) {
+      onSubmit(nlInterpretation.formula);
+      setNlInterpretation(null);
+    }
+  }, [nlInterpretation, onSubmit]);
+
+  // Handle dismiss NL interpretation
+  const handleDismissInterpretation = useCallback(() => {
+    setNlInterpretation(null);
+    inputRef.current?.focus();
+  }, []);
 
   // Calculate expanded height for multiline
   const expandedHeight = isMultiline ? Math.max(position.height, 72) : position.height;
@@ -87,7 +235,7 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
       style={{
         left: position.left,
         top: position.top,
-        width: Math.max(position.width, 150), // Minimum width for editing
+        width: position.width, // Use exact cell width, no minimum
         minHeight: expandedHeight,
       }}
     >
@@ -97,7 +245,9 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        className="w-full border-2 border-blue-500 outline-none resize-none bg-white"
+        onSelect={handleSelect}
+        onClick={handleSelect}
+        className="w-full border-2 border-blue-500 outline-none resize-none bg-white dark:bg-neutral-800 dark:text-white dark:border-blue-400"
         style={{
           minHeight: expandedHeight,
           padding: '2px 4px',
@@ -105,6 +255,7 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
           fontFamily: 'system-ui, -apple-system, sans-serif',
           lineHeight: '18px',
           boxSizing: 'border-box',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
         }}
         data-row={row}
         data-col={col}
@@ -112,11 +263,51 @@ export const VirtualCellEditor = memo<VirtualCellEditorProps>(({
         autoComplete="off"
       />
 
-      {/* Formula hint */}
-      {value.startsWith('=') && (
-        <div className="absolute left-0 top-full mt-1 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg max-w-xs">
-          <span className="text-yellow-300">Formula: </span>
-          {value.slice(1) || 'Enter formula...'}
+      {/* NL Mode Indicator */}
+      {isNaturalLanguage && !isFormula && (
+        <div
+          className="absolute -top-6 left-0 px-2 py-0.5 text-xs font-medium rounded-t"
+          style={{
+            backgroundColor: '#2563eb',
+            color: 'white',
+          }}
+        >
+          {isInterpreting ? 'Interpreting...' : 'NL Mode'}
+        </div>
+      )}
+
+      {/* Formula Autocomplete */}
+      {showAutocomplete && value.startsWith('=') && (
+        <FormulaAutocomplete
+          formula={value}
+          cursorPosition={cursorPosition}
+          onSelect={handleAutocompleteSelect}
+          onClose={() => setShowAutocomplete(false)}
+          position={{
+            left: 0,
+            top: expandedHeight + 4,
+          }}
+        />
+      )}
+
+      {/* NL Formula Preview */}
+      {nlInterpretation && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: expandedHeight + 4,
+            minWidth: 320,
+            maxWidth: 400,
+            zIndex: 50,
+          }}
+        >
+          <FormulaPreview
+            interpretation={nlInterpretation}
+            onAccept={handleAcceptInterpretation}
+            onDismiss={handleDismissInterpretation}
+            originalInput={value}
+          />
         </div>
       )}
     </div>

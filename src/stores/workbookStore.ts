@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { CellData, Sheet, getCellKey, CellValue, CellFormat, CellRange } from '../types/cell';
 import { formulaEngine, FormulaValue, CellDataProvider } from '../engine';
+import { FillSeriesConfig, applyFillSeries } from '../utils/fillSeriesUtils';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -97,6 +98,12 @@ interface WorkbookState {
   copy: () => void;
   cut: () => void;
   paste: (mode?: 'all' | 'values' | 'formulas' | 'formatting') => void;
+  pasteSpecial: (options: {
+    mode: 'all' | 'values' | 'formulas' | 'formatting';
+    operation?: 'none' | 'add' | 'subtract' | 'multiply' | 'divide';
+    skipBlanks?: boolean;
+    transpose?: boolean;
+  }) => void;
 
   // === HISTORY ACTIONS ===
   pushHistory: () => void;
@@ -122,6 +129,9 @@ interface WorkbookState {
   // === FILL ACTIONS ===
   fillDown: () => void;
   fillRight: () => void;
+  fillUp: () => void;
+  fillLeft: () => void;
+  fillSeries: (config: FillSeriesConfig) => void;
 
   // === HIDE/UNHIDE ACTIONS ===
   hideRow: (index?: number) => void;
@@ -802,20 +812,167 @@ export const useWorkbookStore = create<WorkbookState>()(
         const { start, end } = clipboard.range;
         const sourceSheet = sheets[clipboard.sourceSheetId];
         if (sourceSheet) {
-          const sourceCells = { ...sourceSheet.cells };
-          for (let row = start.row; row <= end.row; row++) {
-            for (let col = start.col; col <= end.col; col++) {
-              delete sourceCells[getCellKey(row, col)];
+          // If same sheet, delete source cells from newCells directly
+          if (clipboard.sourceSheetId === activeSheetId) {
+            for (let row = start.row; row <= end.row; row++) {
+              for (let col = start.col; col <= end.col; col++) {
+                delete newCells[getCellKey(row, col)];
+              }
             }
+            set({
+              sheets: {
+                ...sheets,
+                [activeSheetId]: { ...sheet, cells: newCells },
+              },
+              clipboard: null,
+            });
+          } else {
+            // Different sheets - delete from source, update target
+            const sourceCells = { ...sourceSheet.cells };
+            for (let row = start.row; row <= end.row; row++) {
+              for (let col = start.col; col <= end.col; col++) {
+                delete sourceCells[getCellKey(row, col)];
+              }
+            }
+            set({
+              sheets: {
+                ...sheets,
+                [clipboard.sourceSheetId]: { ...sourceSheet, cells: sourceCells },
+                [activeSheetId]: { ...sheet, cells: newCells },
+              },
+              clipboard: null,
+            });
           }
-          set({
-            sheets: {
-              ...sheets,
-              [clipboard.sourceSheetId]: { ...sourceSheet, cells: sourceCells },
-              [activeSheetId]: { ...sheet, cells: newCells },
-            },
-            clipboard: null,
-          });
+          return;
+        }
+      }
+
+      set({
+        sheets: { ...sheets, [activeSheetId]: { ...sheet, cells: newCells } },
+      });
+    },
+
+    pasteSpecial: (options) => {
+      const state = get();
+      const { clipboard, selectedCell, activeSheetId, sheets } = state;
+      if (!clipboard || !selectedCell || !activeSheetId) return;
+
+      const sheet = sheets[activeSheetId];
+      if (!sheet) return;
+
+      state.pushHistory();
+
+      const newCells = { ...sheet.cells };
+      const { row: startRow, col: startCol } = selectedCell;
+      const { mode, operation = 'none', skipBlanks = false, transpose = false } = options;
+
+      // Get clipboard dimensions
+      const clipboardEntries = Object.entries(clipboard.cells);
+      if (clipboardEntries.length === 0) return;
+
+      // Calculate clipboard bounds
+      let maxRelRow = 0;
+      let maxRelCol = 0;
+      clipboardEntries.forEach(([key]) => {
+        const [relRow, relCol] = key.split(':').map(Number);
+        maxRelRow = Math.max(maxRelRow, relRow);
+        maxRelCol = Math.max(maxRelCol, relCol);
+      });
+
+      clipboardEntries.forEach(([key, cell]) => {
+        const [relRow, relCol] = key.split(':').map(Number);
+
+        // Apply transpose if needed
+        const targetRelRow = transpose ? relCol : relRow;
+        const targetRelCol = transpose ? relRow : relCol;
+
+        const targetRow = startRow + targetRelRow;
+        const targetCol = startCol + targetRelCol;
+        const targetKey = getCellKey(targetRow, targetCol);
+        const existing = newCells[targetKey] || { value: null, formula: null, displayValue: '' };
+
+        // Skip blanks if option is set
+        if (skipBlanks && (cell.value === null || cell.value === '' || cell.value === undefined)) {
+          return;
+        }
+
+        let newCell: CellData;
+        switch (mode) {
+          case 'values':
+            let newValue = cell.value;
+
+            // Apply operation if target has a numeric value
+            if (operation !== 'none' && typeof existing.value === 'number' && typeof cell.value === 'number') {
+              switch (operation) {
+                case 'add':
+                  newValue = existing.value + cell.value;
+                  break;
+                case 'subtract':
+                  newValue = existing.value - cell.value;
+                  break;
+                case 'multiply':
+                  newValue = existing.value * cell.value;
+                  break;
+                case 'divide':
+                  newValue = cell.value !== 0 ? existing.value / cell.value : '#DIV/0!';
+                  break;
+              }
+            }
+
+            newCell = { ...existing, value: newValue, formula: null, displayValue: String(newValue ?? '') };
+            break;
+
+          case 'formulas':
+            newCell = { ...existing, formula: cell.formula, value: cell.value, displayValue: cell.displayValue || String(cell.value ?? '') };
+            break;
+
+          case 'formatting':
+            newCell = { ...existing, format: cell.format };
+            break;
+
+          default: // 'all'
+            newCell = { ...cell };
+        }
+
+        newCells[targetKey] = newCell;
+      });
+
+      // Clear source cells if cut
+      if (clipboard.mode === 'cut') {
+        const { start, end } = clipboard.range;
+        const sourceSheet = sheets[clipboard.sourceSheetId];
+        if (sourceSheet) {
+          // If same sheet, delete source cells from newCells directly
+          if (clipboard.sourceSheetId === activeSheetId) {
+            for (let row = start.row; row <= end.row; row++) {
+              for (let col = start.col; col <= end.col; col++) {
+                delete newCells[getCellKey(row, col)];
+              }
+            }
+            set({
+              sheets: {
+                ...sheets,
+                [activeSheetId]: { ...sheet, cells: newCells },
+              },
+              clipboard: null,
+            });
+          } else {
+            // Different sheets - delete from source, update target
+            const sourceCells = { ...sourceSheet.cells };
+            for (let row = start.row; row <= end.row; row++) {
+              for (let col = start.col; col <= end.col; col++) {
+                delete sourceCells[getCellKey(row, col)];
+              }
+            }
+            set({
+              sheets: {
+                ...sheets,
+                [clipboard.sourceSheetId]: { ...sourceSheet, cells: sourceCells },
+                [activeSheetId]: { ...sheet, cells: newCells },
+              },
+              clipboard: null,
+            });
+          }
           return;
         }
       }
@@ -1027,6 +1184,163 @@ export const useWorkbookStore = create<WorkbookState>()(
               ...sourceCell,
               // Adjust formula references if it's a formula
               formula: sourceCell.formula ? adjustFormulaCol(sourceCell.formula, col - start.col) : null,
+            };
+          }
+        }
+      }
+
+      set({
+        sheets: { ...sheets, [activeSheetId]: { ...sheet, cells: newCells } },
+      });
+    },
+
+    fillUp: () => {
+      const state = get();
+      const { activeSheetId, selectionRange, sheets } = state;
+      if (!activeSheetId || !selectionRange) return;
+
+      const sheet = sheets[activeSheetId];
+      if (!sheet) return;
+
+      const { start, end } = selectionRange;
+      if (start.row === end.row) return; // Need at least 2 rows
+
+      state.pushHistory();
+
+      const newCells = { ...sheet.cells };
+
+      // Copy last row's values to all other rows in selection (from bottom to top)
+      for (let col = start.col; col <= end.col; col++) {
+        const sourceKey = getCellKey(end.row, col);
+        const sourceCell = sheet.cells[sourceKey];
+
+        if (sourceCell) {
+          for (let row = end.row - 1; row >= start.row; row--) {
+            const targetKey = getCellKey(row, col);
+            newCells[targetKey] = {
+              ...sourceCell,
+              // Adjust formula references if it's a formula
+              formula: sourceCell.formula ? adjustFormulaRow(sourceCell.formula, row - end.row) : null,
+            };
+          }
+        }
+      }
+
+      set({
+        sheets: { ...sheets, [activeSheetId]: { ...sheet, cells: newCells } },
+      });
+    },
+
+    fillLeft: () => {
+      const state = get();
+      const { activeSheetId, selectionRange, sheets } = state;
+      if (!activeSheetId || !selectionRange) return;
+
+      const sheet = sheets[activeSheetId];
+      if (!sheet) return;
+
+      const { start, end } = selectionRange;
+      if (start.col === end.col) return; // Need at least 2 columns
+
+      state.pushHistory();
+
+      const newCells = { ...sheet.cells };
+
+      // Copy last column's values to all other columns in selection (from right to left)
+      for (let row = start.row; row <= end.row; row++) {
+        const sourceKey = getCellKey(row, end.col);
+        const sourceCell = sheet.cells[sourceKey];
+
+        if (sourceCell) {
+          for (let col = end.col - 1; col >= start.col; col--) {
+            const targetKey = getCellKey(row, col);
+            newCells[targetKey] = {
+              ...sourceCell,
+              // Adjust formula references if it's a formula
+              formula: sourceCell.formula ? adjustFormulaCol(sourceCell.formula, col - end.col) : null,
+            };
+          }
+        }
+      }
+
+      set({
+        sheets: { ...sheets, [activeSheetId]: { ...sheet, cells: newCells } },
+      });
+    },
+
+    fillSeries: (config: FillSeriesConfig) => {
+      const state = get();
+      const { activeSheetId, selectionRange, sheets } = state;
+      if (!activeSheetId || !selectionRange) return;
+
+      const sheet = sheets[activeSheetId];
+      if (!sheet) return;
+
+      const { start, end } = selectionRange;
+
+      state.pushHistory();
+
+      const newCells = { ...sheet.cells };
+
+      if (config.direction === 'columns') {
+        // Fill down columns
+        for (let col = start.col; col <= end.col; col++) {
+          // Get source values from the first cell(s)
+          const sourceValues: CellValue[] = [];
+          const sourceCell = sheet.cells[getCellKey(start.row, col)];
+          if (sourceCell) {
+            sourceValues.push(sourceCell.value);
+          }
+
+          if (sourceValues.length === 0) continue;
+
+          // Calculate how many cells to fill
+          const count = end.row - start.row;
+          if (count <= 0) continue;
+
+          // Generate fill values
+          const fillValues = applyFillSeries(sourceValues, count, config);
+
+          // Apply fill values
+          for (let i = 0; i < count; i++) {
+            const targetKey = getCellKey(start.row + 1 + i, col);
+            const existing = newCells[targetKey] || { value: null, formula: null, displayValue: '' };
+            newCells[targetKey] = {
+              ...existing,
+              value: fillValues[i],
+              displayValue: String(fillValues[i] ?? ''),
+              formula: null,
+            };
+          }
+        }
+      } else {
+        // Fill across rows
+        for (let row = start.row; row <= end.row; row++) {
+          // Get source values from the first cell(s)
+          const sourceValues: CellValue[] = [];
+          const sourceCell = sheet.cells[getCellKey(row, start.col)];
+          if (sourceCell) {
+            sourceValues.push(sourceCell.value);
+          }
+
+          if (sourceValues.length === 0) continue;
+
+          // Calculate how many cells to fill
+          const count = end.col - start.col;
+          if (count <= 0) continue;
+
+          // Generate fill values
+          const fillValues = applyFillSeries(sourceValues, count, config);
+
+          // Apply fill values
+          for (let i = 0; i < count; i++) {
+            const targetKey = getCellKey(row, start.col + 1 + i);
+            const existing = newCells[targetKey] || { value: null, formula: null, displayValue: '' };
+            newCells[targetKey] = {
+              ...existing,
+              value: fillValues[i],
+              displayValue: String(fillValues[i] ?? ''),
+              formula: null,
             };
           }
         }

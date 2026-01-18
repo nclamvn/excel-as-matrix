@@ -674,7 +674,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
   };
 
   // Import data rows to current sheet
-  const importDataToSheet = (rows: string[][], fileName: string) => {
+  const importDataToSheet = (rows: string[][], _fileName: string) => {
     if (!activeSheetId || rows.length === 0) return;
 
     // Create updates for all cells
@@ -697,8 +697,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     // Batch update cells (don't call setWorkbook as it resets sheets)
     batchUpdateCells(activeSheetId, updates);
 
-    const baseName = fileName.replace(/\.[^/.]+$/, '');
-    console.log(`Imported ${rows.length} rows, ${updates.length} cells from ${baseName}`);
+    // Import complete
   };
 
   // Import ExcelAI JSON format
@@ -737,7 +736,6 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       }
     }
 
-    console.log(`Imported workbook "${name}" with ${data.sheets.length} sheets`);
   };
 
   const convertToCSV = (data: { sheets?: Array<{ cells?: Record<string, { value?: unknown; displayValue?: string }> }> }): string => {
@@ -789,7 +787,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
                     key={file.id}
                     file={file}
                     onClick={() => {
-                      console.log('Open file:', file.name);
+                      // TODO: Implement open recent file
                       onClose();
                     }}
                   />

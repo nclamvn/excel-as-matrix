@@ -11,7 +11,7 @@ import { IconSetsPreview } from './IconSetsPreview';
 import { HighlightRules } from './HighlightRules';
 import { TopBottomRules } from './TopBottomRules';
 import { CFRuleDialog } from './CFRuleDialog';
-import { CFManageRules } from './CFManageRules';
+import { ManageRulesDialog } from './ManageRulesDialog';
 import {
   ChevronDown,
   Circle,
@@ -229,7 +229,14 @@ export const CFDropdown: React.FC = () => {
       )}
 
       {showManageRules && (
-        <CFManageRules onClose={() => setShowManageRules(false)} />
+        <ManageRulesDialog
+          isOpen={showManageRules}
+          onClose={() => setShowManageRules(false)}
+          onAddRule={() => {
+            setShowManageRules(false);
+            setShowNewRuleDialog(true);
+          }}
+        />
       )}
     </div>
   );

@@ -189,9 +189,7 @@ export class MacroStorage {
 
   private migrateMacros(data: StorageData): Macro[] {
     // Handle migrations from older versions
-    console.log(`Migrating macros from version ${data.version} to ${STORAGE_VERSION}`);
-
-    // For now, just return deserialized macros
+    // Add migration logic as versions change
     // Add migration logic as versions change
     return data.macros.map(m => this.deserializeMacro(m));
   }

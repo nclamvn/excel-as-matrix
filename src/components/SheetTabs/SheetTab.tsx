@@ -7,15 +7,17 @@ interface SheetTabProps {
   isActive: boolean;
   onClick: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
+  onRename?: (id: string, newName: string) => void;
 }
 
 export const SheetTab: React.FC<SheetTabProps> = ({
-  id: _id,
+  id,
   name,
   color,
   isActive,
   onClick,
   onContextMenu,
+  onRename,
 }) => {
   const [isEditing, setEditing] = useState(false);
   const [editName, setEditName] = useState(name);
@@ -25,15 +27,21 @@ export const SheetTab: React.FC<SheetTabProps> = ({
     setEditName(name);
   };
 
-  const handleBlur = () => {
+  const handleSaveName = () => {
     setEditing(false);
-    // TODO: Save name change via workbookStore
+    const trimmedName = editName.trim();
+    if (trimmedName && trimmedName !== name) {
+      onRename?.(id, trimmedName);
+    }
+  };
+
+  const handleBlur = () => {
+    handleSaveName();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      setEditing(false);
-      // TODO: Save name change
+      handleSaveName();
     } else if (e.key === 'Escape') {
       setEditing(false);
       setEditName(name);

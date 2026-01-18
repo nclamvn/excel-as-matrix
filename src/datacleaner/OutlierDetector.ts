@@ -291,4 +291,191 @@ export class OutlierDetector {
   updateConfig(config: Partial<OutlierConfig>): void {
     this.config = { ...this.config, ...config };
   }
+
+  // ===========================================================================
+  // OUTLIER HANDLING ACTIONS
+  // ===========================================================================
+
+  /**
+   * Get suggested actions for detected outliers
+   */
+  getSuggestedActions(outlierInfo: OutlierInfo): OutlierAction[] {
+    const actions: OutlierAction[] = [];
+    const bounds = this.getBounds(outlierInfo.stats);
+
+    // Cap/Winsorize option
+    actions.push({
+      type: 'cap',
+      label: 'Cap to bounds',
+      description: `Cap values to [${bounds.lower.toFixed(2)}, ${bounds.upper.toFixed(2)}]`,
+      affectedCells: outlierInfo.outliers.length,
+      severity: 'safe',
+    });
+
+    // Replace with median option
+    actions.push({
+      type: 'replace_median',
+      label: 'Replace with median',
+      description: `Replace with ${outlierInfo.stats.median.toFixed(2)}`,
+      affectedCells: outlierInfo.outliers.length,
+      severity: 'moderate',
+    });
+
+    // Replace with mean option
+    actions.push({
+      type: 'replace_mean',
+      label: 'Replace with mean',
+      description: `Replace with ${outlierInfo.stats.mean.toFixed(2)}`,
+      affectedCells: outlierInfo.outliers.length,
+      severity: 'moderate',
+    });
+
+    // Remove rows option
+    actions.push({
+      type: 'remove',
+      label: 'Remove rows',
+      description: `Delete ${outlierInfo.outliers.length} rows with outliers`,
+      affectedCells: outlierInfo.outliers.length,
+      severity: 'destructive',
+    });
+
+    // Flag only option
+    actions.push({
+      type: 'flag',
+      label: 'Flag for review',
+      description: 'Add visual highlight without modifying data',
+      affectedCells: outlierInfo.outliers.length,
+      severity: 'safe',
+    });
+
+    return actions;
+  }
+
+  /**
+   * Apply cap/winsorization - cap outliers to bounds
+   */
+  applyCap(
+    data: CleanerSheetData,
+    outlierInfo: OutlierInfo
+  ): CellChange[] {
+    const changes: CellChange[] = [];
+    const bounds = this.getBounds(outlierInfo.stats);
+
+    for (const outlier of outlierInfo.outliers) {
+      const oldValue = outlier.value;
+      let newValue: number;
+
+      if (outlier.direction === 'high') {
+        newValue = bounds.upper;
+      } else {
+        newValue = bounds.lower;
+      }
+
+      // Only add change if value actually changes
+      if (oldValue !== newValue) {
+        const ref = this.getCellRef(outlier.row, outlierInfo.column);
+        changes.push({
+          row: outlier.row,
+          col: outlierInfo.column,
+          ref,
+          type: 'modified',
+          oldValue: String(oldValue),
+          newValue: String(Number(newValue.toFixed(2))),
+        });
+
+        // Update the data
+        if (data.cells[outlier.row]?.[outlierInfo.column]) {
+          data.cells[outlier.row][outlierInfo.column].value = Number(newValue.toFixed(2));
+        }
+      }
+    }
+
+    return changes;
+  }
+
+  /**
+   * Replace outliers with median
+   */
+  applyReplaceWithMedian(
+    data: CleanerSheetData,
+    outlierInfo: OutlierInfo
+  ): CellChange[] {
+    return this.applyReplaceWith(data, outlierInfo, outlierInfo.stats.median);
+  }
+
+  /**
+   * Replace outliers with mean
+   */
+  applyReplaceWithMean(
+    data: CleanerSheetData,
+    outlierInfo: OutlierInfo
+  ): CellChange[] {
+    return this.applyReplaceWith(data, outlierInfo, outlierInfo.stats.mean);
+  }
+
+  /**
+   * Replace outliers with a specific value
+   */
+  private applyReplaceWith(
+    data: CleanerSheetData,
+    outlierInfo: OutlierInfo,
+    replacementValue: number
+  ): CellChange[] {
+    const changes: CellChange[] = [];
+    const newValue = Number(replacementValue.toFixed(2));
+
+    for (const outlier of outlierInfo.outliers) {
+      const ref = this.getCellRef(outlier.row, outlierInfo.column);
+      changes.push({
+        row: outlier.row,
+        col: outlierInfo.column,
+        ref,
+        type: 'modified',
+        oldValue: String(outlier.value),
+        newValue: String(newValue),
+      });
+
+      // Update the data
+      if (data.cells[outlier.row]?.[outlierInfo.column]) {
+        data.cells[outlier.row][outlierInfo.column].value = newValue;
+      }
+    }
+
+    return changes;
+  }
+
+  /**
+   * Get rows to remove (for outlier removal)
+   */
+  getRowsToRemove(outlierInfo: OutlierInfo): number[] {
+    return outlierInfo.outliers.map(o => o.row).sort((a, b) => b - a); // Descending order
+  }
+
+  /**
+   * Get cell reference from row and column
+   */
+  private getCellRef(row: number, col: number): string {
+    return `${this.colToLetter(col)}${row + 1}`;
+  }
+}
+
+// ===========================================================================
+// ADDITIONAL TYPES FOR OUTLIER HANDLING
+// ===========================================================================
+
+export interface OutlierAction {
+  type: 'cap' | 'replace_median' | 'replace_mean' | 'remove' | 'flag';
+  label: string;
+  description: string;
+  affectedCells: number;
+  severity: 'safe' | 'moderate' | 'destructive';
+}
+
+export interface CellChange {
+  row: number;
+  col: number;
+  ref: string;
+  type: 'modified' | 'deleted' | 'filled' | 'flagged';
+  oldValue: string;
+  newValue: string;
 }

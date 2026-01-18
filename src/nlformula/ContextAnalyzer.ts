@@ -23,9 +23,10 @@ export class ContextAnalyzer {
    * Enrich headers with additional metadata
    */
   private enrichHeaders(headers: ColumnHeader[]): ColumnHeader[] {
+    if (!headers || !Array.isArray(headers)) return [];
     return headers.map((header) => ({
       ...header,
-      dataType: this.inferDataType(header.sampleValues),
+      dataType: header.dataType || this.inferDataType(header.sampleValues),
     }));
   }
 
@@ -35,7 +36,7 @@ export class ContextAnalyzer {
   private inferDataType(
     samples: unknown[]
   ): 'number' | 'text' | 'date' | 'currency' | 'mixed' {
-    if (samples.length === 0) return 'text';
+    if (!samples || !Array.isArray(samples) || samples.length === 0) return 'text';
 
     const types = samples.map((v) => this.detectValueType(v));
     const uniqueTypes = [...new Set(types)];
@@ -87,9 +88,22 @@ export class ContextAnalyzer {
     range: DataRange,
     headers: ColumnHeader[]
   ): DataRange {
+    const defaultRange: DataRange = {
+      startRow: 0,
+      endRow: 100,
+      startCol: 0,
+      endCol: 26,
+      hasHeaders: true,
+      rowCount: 100,
+      colCount: 26,
+    };
+
+    if (!range) return defaultRange;
+
+    const headersLength = headers && Array.isArray(headers) ? headers.length : 0;
     return {
       ...range,
-      hasHeaders: headers.length > 0 && range.startRow === 0,
+      hasHeaders: headersLength > 0 && range.startRow === 0,
     };
   }
 
@@ -100,21 +114,23 @@ export class ContextAnalyzer {
     identifier: string,
     headers: ColumnHeader[]
   ): ColumnHeader | undefined {
+    if (!headers || !Array.isArray(headers) || !identifier) return undefined;
+
     // Check by letter
     const byLetter = headers.find(
-      (h) => h.colLetter.toUpperCase() === identifier.toUpperCase()
+      (h) => h.colLetter?.toUpperCase() === identifier.toUpperCase()
     );
     if (byLetter) return byLetter;
 
     // Check by name (case-insensitive)
     const byName = headers.find(
-      (h) => h.name.toLowerCase() === identifier.toLowerCase()
+      (h) => h.name?.toLowerCase() === identifier.toLowerCase()
     );
     if (byName) return byName;
 
     // Check by partial name match
     const byPartial = headers.find((h) =>
-      h.name.toLowerCase().includes(identifier.toLowerCase())
+      h.name?.toLowerCase().includes(identifier.toLowerCase())
     );
     return byPartial;
   }
@@ -123,20 +139,22 @@ export class ContextAnalyzer {
    * Suggest columns based on input
    */
   suggestColumns(input: string, headers: ColumnHeader[]): ColumnHeader[] {
+    if (!headers || !Array.isArray(headers) || !input) return [];
+
     const lower = input.toLowerCase();
 
     return headers
       .filter(
         (h) =>
-          h.name.toLowerCase().includes(lower) ||
-          h.colLetter.toLowerCase().includes(lower)
+          h.name?.toLowerCase().includes(lower) ||
+          h.colLetter?.toLowerCase().includes(lower)
       )
       .sort((a, b) => {
         // Exact match first
-        if (a.name.toLowerCase() === lower) return -1;
-        if (b.name.toLowerCase() === lower) return 1;
+        if (a.name?.toLowerCase() === lower) return -1;
+        if (b.name?.toLowerCase() === lower) return 1;
         // Then by position
-        return a.col - b.col;
+        return (a.col || 0) - (b.col || 0);
       });
   }
 
@@ -144,6 +162,7 @@ export class ContextAnalyzer {
    * Get numeric columns
    */
   getNumericColumns(headers: ColumnHeader[]): ColumnHeader[] {
+    if (!headers || !Array.isArray(headers)) return [];
     return headers.filter(
       (h) => h.dataType === 'number' || h.dataType === 'currency'
     );
@@ -153,6 +172,7 @@ export class ContextAnalyzer {
    * Get text columns
    */
   getTextColumns(headers: ColumnHeader[]): ColumnHeader[] {
+    if (!headers || !Array.isArray(headers)) return [];
     return headers.filter((h) => h.dataType === 'text');
   }
 
@@ -160,6 +180,7 @@ export class ContextAnalyzer {
    * Get date columns
    */
   getDateColumns(headers: ColumnHeader[]): ColumnHeader[] {
+    if (!headers || !Array.isArray(headers)) return [];
     return headers.filter((h) => h.dataType === 'date');
   }
 

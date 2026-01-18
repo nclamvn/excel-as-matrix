@@ -42,6 +42,25 @@ export interface CellRange {
   end: CellPosition;
 }
 
+export interface SheetProtection {
+  password?: string; // Hashed password
+  selectLockedCells?: boolean;
+  selectUnlockedCells?: boolean;
+  formatCells?: boolean;
+  formatColumns?: boolean;
+  formatRows?: boolean;
+  insertColumns?: boolean;
+  insertRows?: boolean;
+  insertHyperlinks?: boolean;
+  deleteColumns?: boolean;
+  deleteRows?: boolean;
+  sort?: boolean;
+  useAutoFilter?: boolean;
+  usePivotTableReports?: boolean;
+  editObjects?: boolean;
+  editScenarios?: boolean;
+}
+
 export interface Sheet {
   id: string;
   name: string;
@@ -49,6 +68,8 @@ export interface Sheet {
   cells: Record<string, CellData>; // key: "row:col"
   tabColor?: string;
   hidden?: boolean;
+  protected?: boolean;
+  protection?: SheetProtection;
   hiddenRows?: Set<number>;
   hiddenColumns?: Set<number>;
   rowHeights?: Record<number, number>;

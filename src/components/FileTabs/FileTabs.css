@@ -313,8 +313,37 @@
 }
 
 [data-theme="dark"] .new-tab-btn:hover {
-  border-color: var(--accent-color, #217346);
-  color: var(--accent-color, #217346);
+  border-color: var(--green-accent, #10b981);
+  color: var(--green-accent, #10b981);
+}
+
+[data-theme="dark"] .tab-close-btn {
+  color: var(--text-3, #737373);
+}
+
+[data-theme="dark"] .tab-close-btn:hover {
+  background: var(--surface-2, rgba(255, 255, 255, 0.1));
+  color: var(--text-0, #fafafa);
+}
+
+[data-theme="dark"] .tab-pin {
+  color: var(--text-3, #737373);
+}
+
+[data-theme="dark"] .menu-icon {
+  color: var(--text-3, #737373);
+}
+
+[data-theme="dark"] .menu-label {
+  color: var(--text-1, #e5e5e5);
+}
+
+[data-theme="dark"] .menu-shortcut {
+  color: var(--text-3, #737373);
+}
+
+[data-theme="dark"] .context-menu-divider {
+  background: var(--surface-3, #404040);
 }
 
 /* Responsive */

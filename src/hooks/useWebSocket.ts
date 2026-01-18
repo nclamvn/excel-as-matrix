@@ -218,7 +218,6 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
       wsRef.current = new WebSocket(url);
 
       wsRef.current.onopen = () => {
-        console.log('WebSocket connected');
         setConnectionStatus('connected');
         setReconnectAttempts(0);
         clearRemoteUsers();
@@ -244,7 +243,6 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
       wsRef.current.onmessage = handleMessage;
 
       wsRef.current.onclose = (event) => {
-        console.log('WebSocket closed:', event.code, event.reason);
         stopPing();
 
         if (event.code !== 1000) {

@@ -13,6 +13,7 @@ export type TokenType =
   | 'RPAREN'
   | 'COMMA'
   | 'COLON'
+  | 'ERROR'
   | 'EOF';
 
 export interface Token {
@@ -26,6 +27,7 @@ export type ASTNodeType =
   | 'Number'
   | 'String'
   | 'Boolean'
+  | 'Error'
   | 'CellRef'
   | 'RangeRef'
   | 'FunctionCall'
@@ -50,6 +52,11 @@ export interface StringNode extends ASTNode {
 export interface BooleanNode extends ASTNode {
   type: 'Boolean';
   value: boolean;
+}
+
+export interface ErrorNode extends ASTNode {
+  type: 'Error';
+  errorType: FormulaErrorType;
 }
 
 export interface CellRefNode extends ASTNode {
@@ -94,6 +101,8 @@ export interface CellReference {
   colAbsolute: boolean;
   rowAbsolute: boolean;
   sheetName?: string;
+  isColumnRef?: boolean; // True if this is a column-only reference (e.g., A:A)
+  isRowRef?: boolean;    // True if this is a row-only reference (e.g., 1:1)
 }
 
 // Range reference
@@ -102,8 +111,16 @@ export interface RangeReference {
   end: CellReference;
 }
 
+// LAMBDA function runtime representation
+export interface LambdaFunction {
+  parameters: string[];
+  body: FormulaValue | (() => FormulaValue);
+  evaluate: (args: FormulaValue[], context: EvalContext) => FormulaValue;
+  __isLambda: true;
+}
+
 // Formula values
-export type FormulaValue = number | string | boolean | null | FormulaError | FormulaValue[][];
+export type FormulaValue = number | string | boolean | null | FormulaError | FormulaValue[][] | LambdaFunction;
 
 // Formula errors
 export type FormulaErrorType =

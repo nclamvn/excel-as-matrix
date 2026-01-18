@@ -83,6 +83,7 @@ export function isText(val: FormulaValue): val is string {
 }
 
 // Get numbers from values, ignoring non-numbers
+// Note: String numbers passed directly as arguments are counted (Excel behavior for direct args)
 export function getNumbers(values: FormulaValue[]): number[] {
   const flat = flattenValues(values);
   const result: number[] = [];
@@ -90,6 +91,12 @@ export function getNumbers(values: FormulaValue[]): number[] {
   for (const val of flat) {
     if (typeof val === 'number' && !isNaN(val)) {
       result.push(val);
+    } else if (typeof val === 'string') {
+      // Try to parse string as number (for direct string arguments)
+      const parsed = parseFloat(val);
+      if (!isNaN(parsed) && val.trim() !== '') {
+        result.push(parsed);
+      }
     }
   }
 
@@ -166,4 +173,10 @@ export function dateToSerial(date: Date): number {
   const start = new Date(1900, 0, 1);
   const diff = date.getTime() - start.getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24)) + 2; // +2 for Excel compatibility
+}
+
+// Convert Excel serial number to Date
+export function serialToDate(serial: number): Date {
+  // Excel serial date (days since 1900-01-01)
+  return new Date(1900, 0, serial - 1);
 }

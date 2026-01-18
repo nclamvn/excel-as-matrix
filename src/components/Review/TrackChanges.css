@@ -160,15 +160,48 @@
 
 /* Dark mode */
 [data-theme="dark"] .changes-panel {
-  background: #1a1a1a;
-  border-color: #404040;
+  background: var(--surface-1, #1a1a1a);
+  border-color: var(--surface-3, #404040);
+  color: var(--text-1, #e5e5e5);
 }
 
 [data-theme="dark"] .change-item {
-  background: #2a2a2a;
-  border-color: #404040;
+  background: var(--surface-2, #2a2a2a);
+  border-color: var(--surface-3, #404040);
 }
 
 [data-theme="dark"] .change-icon {
-  background: #333;
+  background: var(--surface-3, #333);
+  color: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .change-type {
+  color: var(--text-0, #fafafa);
+}
+
+[data-theme="dark"] .change-time {
+  color: var(--text-3, #737373);
+}
+
+[data-theme="dark"] .arrow {
+  color: var(--text-3, #737373);
+}
+
+[data-theme="dark"] .change-actions button {
+  background: var(--surface-2, #2a2a2a);
+  border-color: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .change-actions button:hover {
+  background: var(--surface-3, #333);
+}
+
+[data-theme="dark"] .change-actions .accept-btn:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #4ade80;
+}
+
+[data-theme="dark"] .change-actions .reject-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #f87171;
 }

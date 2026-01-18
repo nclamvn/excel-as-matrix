@@ -1683,3 +1683,31 @@
 .proactive-settings__button--secondary:hover {
   background: var(--proactive-bg-secondary);
 }
+
+/* -----------------------------------------------------------------------------
+   Dark Mode Support
+   ----------------------------------------------------------------------------- */
+
+[data-theme="dark"] {
+  --proactive-bg: var(--surface-1, #1e1e1e);
+  --proactive-bg-secondary: var(--surface-2, #2a2a2a);
+  --proactive-border: var(--surface-3, #404040);
+  --proactive-text: var(--text-0, #fafafa);
+  --proactive-text-secondary: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .proactive-panel {
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .toggle-switch {
+  background: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .toggle-switch__thumb {
+  background: var(--text-1, #e5e5e5);
+}
+
+[data-theme="dark"] .proactive-settings__button--primary:hover:not(:disabled) {
+  background: #3b82f6;
+}

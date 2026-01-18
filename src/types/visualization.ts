@@ -759,3 +759,517 @@ export const DEFAULT_CHART_COLORS = [
   '#9C755F',
   '#BAB0AC',
 ];
+
+// ============== CHART TEMPLATES ==============
+
+export type ChartTemplateCategory =
+  | 'basic'
+  | 'comparison'
+  | 'trend'
+  | 'distribution'
+  | 'composition'
+  | 'financial'
+  | 'custom';
+
+export interface ChartTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: ChartTemplateCategory;
+  chartType: ChartType;
+  thumbnail: string;  // Icon or preview image reference
+  colorScheme: string[];
+  style: ChartStyle;
+  legendConfig: LegendConfig;
+  axesConfig: AxesConfig;
+  isBuiltIn: boolean;
+  createdAt?: string;
+}
+
+export interface ColorScheme {
+  id: string;
+  name: string;
+  colors: string[];
+  isDark: boolean;
+}
+
+// Built-in color schemes
+export const CHART_COLOR_SCHEMES: ColorScheme[] = [
+  {
+    id: 'default',
+    name: 'Default',
+    colors: ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948'],
+    isDark: false,
+  },
+  {
+    id: 'ocean',
+    name: 'Ocean',
+    colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#03045E', '#023E8A'],
+    isDark: false,
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset',
+    colors: ['#FF6B6B', '#FFA07A', '#FFD93D', '#FF8C42', '#E74C3C', '#C0392B'],
+    isDark: false,
+  },
+  {
+    id: 'forest',
+    name: 'Forest',
+    colors: ['#2D6A4F', '#40916C', '#52B788', '#74C69D', '#95D5B2', '#B7E4C7'],
+    isDark: false,
+  },
+  {
+    id: 'corporate',
+    name: 'Corporate',
+    colors: ['#2C3E50', '#3498DB', '#1ABC9C', '#9B59B6', '#E74C3C', '#F39C12'],
+    isDark: false,
+  },
+  {
+    id: 'pastel',
+    name: 'Pastel',
+    colors: ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E3C8F0'],
+    isDark: false,
+  },
+  {
+    id: 'vibrant',
+    name: 'Vibrant',
+    colors: ['#FF0080', '#FF8C00', '#40E0D0', '#8A2BE2', '#00FF7F', '#FFD700'],
+    isDark: false,
+  },
+  {
+    id: 'monochrome-blue',
+    name: 'Monochrome Blue',
+    colors: ['#03045E', '#023E8A', '#0077B6', '#0096C7', '#00B4D8', '#48CAE4'],
+    isDark: false,
+  },
+  {
+    id: 'dark-mode',
+    name: 'Dark Mode',
+    colors: ['#BB86FC', '#03DAC6', '#CF6679', '#FFC107', '#8BC34A', '#FF5722'],
+    isDark: true,
+  },
+  {
+    id: 'earth',
+    name: 'Earth Tones',
+    colors: ['#8B4513', '#CD853F', '#DEB887', '#D2691E', '#A0522D', '#BC8F8F'],
+    isDark: false,
+  },
+];
+
+// Built-in chart templates
+export const BUILT_IN_CHART_TEMPLATES: Omit<ChartTemplate, 'createdAt'>[] = [
+  // Basic Charts
+  {
+    id: 'basic-column',
+    name: 'Basic Column Chart',
+    description: 'Simple vertical bar chart for comparing values across categories',
+    category: 'basic',
+    chartType: 'ColumnClustered',
+    thumbnail: 'column',
+    colorScheme: CHART_COLOR_SCHEMES[0].colors,
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'basic-bar',
+    name: 'Basic Bar Chart',
+    description: 'Horizontal bar chart for ranking or comparison',
+    category: 'basic',
+    chartType: 'Bar',
+    thumbnail: 'bar',
+    colorScheme: CHART_COLOR_SCHEMES[0].colors,
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Right',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'basic-line',
+    name: 'Basic Line Chart',
+    description: 'Line chart for showing trends over time',
+    category: 'trend',
+    chartType: 'Line',
+    thumbnail: 'line',
+    colorScheme: CHART_COLOR_SCHEMES[0].colors,
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'basic-pie',
+    name: 'Basic Pie Chart',
+    description: 'Pie chart for showing proportions of a whole',
+    category: 'composition',
+    chartType: 'Pie',
+    thumbnail: 'pie',
+    colorScheme: CHART_COLOR_SCHEMES[0].colors,
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: true,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Right',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: false, gridlines: false, labelsVisible: false, labelRotation: 0 },
+      yAxis: { visible: false, gridlines: false, labelsVisible: false, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'basic-doughnut',
+    name: 'Doughnut Chart',
+    description: 'Doughnut chart with center space for key metrics',
+    category: 'composition',
+    chartType: 'Doughnut',
+    thumbnail: 'doughnut',
+    colorScheme: CHART_COLOR_SCHEMES[5].colors, // Pastel
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: true,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Right',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: false, gridlines: false, labelsVisible: false, labelRotation: 0 },
+      yAxis: { visible: false, gridlines: false, labelsVisible: false, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  // Comparison Charts
+  {
+    id: 'stacked-column',
+    name: 'Stacked Column Chart',
+    description: 'Stacked columns for showing composition over categories',
+    category: 'comparison',
+    chartType: 'ColumnStacked',
+    thumbnail: 'stacked-column',
+    colorScheme: CHART_COLOR_SCHEMES[1].colors, // Ocean
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  // Trend Charts
+  {
+    id: 'area-chart',
+    name: 'Area Chart',
+    description: 'Filled area chart for emphasizing volume over time',
+    category: 'trend',
+    chartType: 'Area',
+    thumbnail: 'area',
+    colorScheme: CHART_COLOR_SCHEMES[1].colors, // Ocean
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'stacked-area',
+    name: 'Stacked Area Chart',
+    description: 'Stacked areas for showing cumulative trends',
+    category: 'trend',
+    chartType: 'AreaStacked',
+    thumbnail: 'stacked-area',
+    colorScheme: CHART_COLOR_SCHEMES[3].colors, // Forest
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  // Distribution Charts
+  {
+    id: 'scatter-plot',
+    name: 'Scatter Plot',
+    description: 'Scatter plot for showing correlation between variables',
+    category: 'distribution',
+    chartType: 'Scatter',
+    thumbnail: 'scatter',
+    colorScheme: CHART_COLOR_SCHEMES[6].colors, // Vibrant
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'bubble-chart',
+    name: 'Bubble Chart',
+    description: 'Bubble chart for visualizing three dimensions of data',
+    category: 'distribution',
+    chartType: 'Bubble',
+    thumbnail: 'bubble',
+    colorScheme: CHART_COLOR_SCHEMES[5].colors, // Pastel
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  // Combo Charts
+  {
+    id: 'combo-bar-line',
+    name: 'Combo Chart (Bar + Line)',
+    description: 'Combined bar and line chart for dual metrics',
+    category: 'comparison',
+    chartType: 'Combo',
+    thumbnail: 'combo',
+    colorScheme: CHART_COLOR_SCHEMES[4].colors, // Corporate
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+      y2Axis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'radar-chart',
+    name: 'Radar Chart',
+    description: 'Radar/Spider chart for comparing multiple attributes',
+    category: 'comparison',
+    chartType: 'Radar',
+    thumbnail: 'radar',
+    colorScheme: CHART_COLOR_SCHEMES[0].colors,
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  // Financial Charts
+  {
+    id: 'waterfall',
+    name: 'Waterfall Chart',
+    description: 'Waterfall chart for showing cumulative effect of values',
+    category: 'financial',
+    chartType: 'ColumnClustered',
+    thumbnail: 'waterfall',
+    colorScheme: ['#2ECC71', '#E74C3C', '#3498DB', '#95A5A6', '#2ECC71', '#E74C3C'],
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E0E0E0',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: false,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  // Dark Mode Templates
+  {
+    id: 'dark-column',
+    name: 'Dark Column Chart',
+    description: 'Column chart optimized for dark mode',
+    category: 'basic',
+    chartType: 'ColumnClustered',
+    thumbnail: 'column',
+    colorScheme: CHART_COLOR_SCHEMES[8].colors, // Dark Mode
+    style: {
+      backgroundColor: '#1E1E1E',
+      borderColor: '#333333',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+  {
+    id: 'dark-line',
+    name: 'Dark Line Chart',
+    description: 'Line chart optimized for dark mode',
+    category: 'trend',
+    chartType: 'Line',
+    thumbnail: 'line',
+    colorScheme: CHART_COLOR_SCHEMES[8].colors, // Dark Mode
+    style: {
+      backgroundColor: '#1E1E1E',
+      borderColor: '#333333',
+      borderWidth: 1,
+      shadow: false,
+      roundedCorners: true,
+      animation: true,
+    },
+    legendConfig: {
+      visible: true,
+      position: 'Bottom',
+      fontSize: 12,
+    },
+    axesConfig: {
+      xAxis: { visible: true, gridlines: false, labelsVisible: true, labelRotation: 0 },
+      yAxis: { visible: true, gridlines: true, labelsVisible: true, labelRotation: 0 },
+    },
+    isBuiltIn: true,
+  },
+];

@@ -16,12 +16,12 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
+      includeAssets: ['favicon.ico', 'pwa-192x192.svg', 'pwa-512x512.svg'],
       manifest: {
         name: 'ExcelAI',
         short_name: 'ExcelAI',
         description: 'AI-Native Spreadsheet Platform - Works Offline',
-        theme_color: '#3b82f6',
+        theme_color: '#217346',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'any',
@@ -29,15 +29,15 @@ export default defineConfig({
         scope: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'pwa-192x192.svg',
             sizes: '192x192',
-            type: 'image/png',
+            type: 'image/svg+xml',
             purpose: 'any maskable',
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'pwa-512x512.svg',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/svg+xml',
             purpose: 'any maskable',
           },
         ],
@@ -116,14 +116,8 @@ export default defineConfig({
         changeOrigin: true,
         timeout: 600000, // 10 minutes for large file uploads
         configure: (proxy) => {
-          proxy.on('error', (err) => {
-            console.log('proxy error', err);
-          });
-          proxy.on('proxyReq', (proxyReq, req) => {
-            console.log('Sending Request:', req.method, req.url);
-          });
-          proxy.on('proxyRes', (proxyRes, req) => {
-            console.log('Received Response:', proxyRes.statusCode, req.url);
+          proxy.on('error', () => {
+            // Proxy error handled silently
           });
         },
       },

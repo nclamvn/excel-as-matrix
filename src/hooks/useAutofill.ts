@@ -2,52 +2,52 @@ import { useCallback } from 'react';
 import { useWorkbookStore } from '../stores/workbookStore';
 import { useUndoStore } from '../stores/undoStore';
 import { CellValue } from '../types/cell';
+import { detectPattern as detectPatternUtil, generateSeriesValues, DetectedPattern } from '../utils/fillSeriesUtils';
 
 export type FillDirection = 'down' | 'up' | 'left' | 'right';
 
 export interface FillPattern {
-  type: 'copy' | 'series' | 'date' | 'custom';
+  type: 'copy' | 'series' | 'date' | 'dayName' | 'monthName' | 'quarter' | 'textWithNumber' | 'custom';
   step?: number;
   format?: string;
+  detectedPattern?: DetectedPattern;
 }
 
 export function useAutofill() {
   const detectPattern = useCallback((values: CellValue[]): FillPattern => {
-    if (values.length < 2) {
-      return { type: 'copy' };
+    // Use the new pattern detection utility
+    const detected = detectPatternUtil(values);
+
+    // Map the detected pattern type to our FillPattern format
+    switch (detected.type) {
+      case 'linear':
+        return { type: 'series', step: detected.step ?? 1, detectedPattern: detected };
+      case 'growth':
+        return { type: 'series', step: detected.step ?? 2, detectedPattern: detected };
+      case 'date':
+        return { type: 'date', step: detected.step ?? 1, detectedPattern: detected };
+      case 'dayName':
+        return { type: 'dayName', step: detected.step ?? 1, detectedPattern: detected };
+      case 'monthName':
+        return { type: 'monthName', step: detected.step ?? 1, detectedPattern: detected };
+      case 'quarter':
+        return { type: 'quarter', step: detected.step ?? 1, detectedPattern: detected };
+      case 'textWithNumber':
+        return { type: 'textWithNumber', step: detected.step ?? 1, detectedPattern: detected };
+      case 'copy':
+      default:
+        return { type: 'copy', detectedPattern: detected };
     }
-
-    const numbers = values.map((v) => parseFloat(String(v))).filter((n) => !isNaN(n));
-    if (numbers.length === values.length && numbers.length >= 2) {
-      const diffs: number[] = [];
-      for (let i = 1; i < numbers.length; i++) {
-        diffs.push(numbers[i] - numbers[i - 1]);
-      }
-
-      const allSame = diffs.every((d) => Math.abs(d - diffs[0]) < 0.0001);
-      if (allSame) {
-        return { type: 'series', step: diffs[0] };
-      }
-    }
-
-    const dates = values.map((v) => new Date(String(v))).filter((d) => !isNaN(d.getTime()));
-    if (dates.length === values.length && dates.length >= 2) {
-      const dayDiffs: number[] = [];
-      for (let i = 1; i < dates.length; i++) {
-        dayDiffs.push((dates[i].getTime() - dates[i - 1].getTime()) / (1000 * 60 * 60 * 24));
-      }
-
-      const allSame = dayDiffs.every((d) => Math.abs(d - dayDiffs[0]) < 0.1);
-      if (allSame) {
-        return { type: 'date', step: dayDiffs[0] };
-      }
-    }
-
-    return { type: 'copy' };
   }, []);
 
   const generateFillValues = useCallback(
     (sourceValues: CellValue[], pattern: FillPattern, count: number): CellValue[] => {
+      // If we have a detected pattern from the new utility, use it
+      if (pattern.detectedPattern) {
+        return generateSeriesValues(sourceValues, pattern.detectedPattern, count);
+      }
+
+      // Fallback to legacy behavior for backward compatibility
       const result: CellValue[] = [];
 
       switch (pattern.type) {

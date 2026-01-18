@@ -24,7 +24,7 @@ import {
 import { StatusBar2026Enhanced } from './components/Modern/StatusBar2026Enhanced';
 
 // AI Copilot
-import { AICopilotDock } from './components/AI';
+import { AICopilotDock, ProactiveAINotifications } from './components/AI';
 
 // File Tabs
 import { FileTabs } from './components/FileTabs';
@@ -298,6 +298,9 @@ function App() {
         isOpen={showPrintPreview}
         onClose={() => setShowPrintPreview(false)}
       />
+
+      {/* Proactive AI Notifications */}
+      <ProactiveAINotifications />
     </div>
   );
 }

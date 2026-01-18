@@ -112,15 +112,18 @@ export const textFunctions: FunctionDef[] = [
     },
   },
 
-  // PROPER - capitalize each word
+  // PROPER - capitalize each word (after any non-letter character)
   {
     name: 'PROPER',
     minArgs: 1,
     maxArgs: 1,
     fn: (args: FormulaValue[]): FormulaValue => {
       const text = toString(args[0]);
-      return text.replace(/\w\S*/g, (txt) => {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      // Capitalize first letter and any letter after a non-letter character
+      return text.replace(/(^|[^a-zA-Z])([a-zA-Z])/g, (_match, prefix, letter) => {
+        return prefix + letter.toUpperCase();
+      }).replace(/([a-zA-Z])([a-zA-Z]+)/g, (_match, first, rest) => {
+        return first + rest.toLowerCase();
       });
     },
   },
@@ -268,20 +271,65 @@ export const textFunctions: FunctionDef[] = [
       const format = toString(args[1]);
       if (isError(value)) return value;
 
-      // Basic format handling
-      if (format.includes('#') || format.includes('0')) {
-        // Number format
-        const decimals = (format.match(/0+$/)?.[0] || '').length;
-        return (value as number).toFixed(decimals);
+      const num = value as number;
+
+      // Check for percentage format (e.g., "0%", "0.00%")
+      if (format.includes('%')) {
+        const percentValue = num * 100;
+        const decimalMatch = format.match(/0\.(0+)%/);
+        const decimals = decimalMatch ? decimalMatch[1].length : 0;
+        const formatted = percentValue.toFixed(decimals);
+        // Add thousands separator if format has comma
+        if (format.includes(',')) {
+          return parseFloat(formatted).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
+        }
+        return formatted + '%';
       }
 
+      // Check for currency format (e.g., "$#,##0.00")
+      const currencyMatch = format.match(/^(\$)?/);
+      const hasCurrency = currencyMatch && currencyMatch[1];
+      const hasComma = format.includes(',');
+
+      // Check for leading zeros format (e.g., "000")
+      const leadingZerosMatch = format.match(/^0+$/);
+      if (leadingZerosMatch) {
+        const width = leadingZerosMatch[0].length;
+        const intPart = Math.floor(Math.abs(num));
+        const sign = num < 0 ? '-' : '';
+        return sign + intPart.toString().padStart(width, '0');
+      }
+
+      // Number format with possible thousands separator and decimals
+      if (format.includes('#') || format.includes('0')) {
+        // Count decimal places
+        const decimalMatch = format.match(/\.([0#]+)(?!.*\.)/);
+        const decimals = decimalMatch ? decimalMatch[1].replace(/#/g, '').length : 0;
+
+        let formatted: string;
+        if (hasComma) {
+          formatted = num.toLocaleString('en-US', {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
+          });
+        } else {
+          formatted = num.toFixed(decimals);
+        }
+
+        if (hasCurrency) {
+          formatted = '$' + formatted;
+        }
+
+        return formatted;
+      }
+
+      // Date format
       if (format.toLowerCase().includes('yy') || format.toLowerCase().includes('mm') || format.toLowerCase().includes('dd')) {
-        // Date format - basic implementation
-        const date = new Date(1900, 0, (value as number) - 1);
+        const date = new Date(1900, 0, num - 1);
         return date.toLocaleDateString();
       }
 
-      return String(value);
+      return String(num);
     },
   },
 

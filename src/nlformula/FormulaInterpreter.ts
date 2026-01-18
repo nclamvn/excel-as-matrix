@@ -17,9 +17,111 @@ import type {
  */
 export class FormulaInterpreter {
   private parser: NLParser;
+  private static readonly FUZZY_THRESHOLD = 0.6; // Minimum similarity for fuzzy match
 
   constructor() {
     this.parser = new NLParser();
+  }
+
+  // ===========================================================================
+  // FUZZY MATCHING UTILITIES
+  // ===========================================================================
+
+  /**
+   * Calculate Levenshtein distance between two strings
+   */
+  private levenshteinDistance(a: string, b: string): number {
+    const matrix: number[][] = [];
+
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            matrix[i][j - 1] + 1,     // insertion
+            matrix[i - 1][j] + 1      // deletion
+          );
+        }
+      }
+    }
+
+    return matrix[b.length][a.length];
+  }
+
+  /**
+   * Calculate similarity ratio between two strings (0-1)
+   */
+  private calculateSimilarity(a: string, b: string): number {
+    const normalizedA = a.toLowerCase().trim();
+    const normalizedB = b.toLowerCase().trim();
+
+    if (normalizedA === normalizedB) return 1;
+    if (!normalizedA || !normalizedB) return 0;
+
+    const distance = this.levenshteinDistance(normalizedA, normalizedB);
+    const maxLength = Math.max(normalizedA.length, normalizedB.length);
+
+    return 1 - distance / maxLength;
+  }
+
+  /**
+   * Find best matching header using fuzzy matching
+   * Returns the header with highest similarity above threshold
+   */
+  private findBestHeaderMatch(
+    input: string,
+    headers: CellContext['headers']
+  ): { header: CellContext['headers'][0]; similarity: number } | null {
+    if (!input || !headers || !headers.length) return null;
+
+    const normalizedInput = input.toLowerCase().trim();
+    let bestMatch: { header: CellContext['headers'][0]; similarity: number } | null = null;
+
+    for (const header of headers) {
+      // Check exact match first (case-insensitive)
+      if (header.name.toLowerCase() === normalizedInput) {
+        return { header, similarity: 1 };
+      }
+
+      // Check if input is contained in header name or vice versa (partial match)
+      const headerLower = header.name.toLowerCase();
+      if (headerLower.includes(normalizedInput) || normalizedInput.includes(headerLower)) {
+        const containSimilarity = Math.max(
+          normalizedInput.length / headerLower.length,
+          headerLower.length / normalizedInput.length
+        ) * 0.85; // Slight penalty for partial matches
+
+        if (!bestMatch || containSimilarity > bestMatch.similarity) {
+          bestMatch = { header, similarity: containSimilarity };
+        }
+      }
+
+      // Calculate Levenshtein-based similarity
+      const similarity = this.calculateSimilarity(normalizedInput, header.name);
+
+      if (similarity >= FormulaInterpreter.FUZZY_THRESHOLD) {
+        if (!bestMatch || similarity > bestMatch.similarity) {
+          bestMatch = { header, similarity };
+        }
+      }
+
+      // Also check against column letter
+      if (header.colLetter.toLowerCase() === normalizedInput) {
+        return { header, similarity: 1 };
+      }
+    }
+
+    return bestMatch;
   }
 
   /**
@@ -290,14 +392,48 @@ export class FormulaInterpreter {
     context: CellContext
   ): string {
     const lookupValue = this.resolveValue(entities.lookupValue as string, context);
-    const tableRange = this.resolveRange(entities.tableRange as string, context);
+    const exactMatch = modifiers.exactMatch !== false ? 'FALSE' : 'TRUE';
+
+    // If we have explicit lookup and return columns (e.g., "lookup Apple in A return B")
+    if (entities.lookupColumn && entities.returnColumn) {
+      const lookupCol = this.resolveRange(entities.lookupColumn as string, context);
+      const returnCol = this.resolveRange(entities.returnColumn as string, context);
+
+      // Extract column letters for table range
+      const lookupLetter = lookupCol.split(':')[0].replace(/\d+/g, '');
+      const returnLetter = returnCol.split(':')[0].replace(/\d+/g, '');
+
+      // Determine table range (from lookup column to return column)
+      const tableRange = `${lookupLetter}:${returnLetter}`;
+
+      // Calculate column index (relative position)
+      const lookupColNum = this.letterToColNum(lookupLetter);
+      const returnColNum = this.letterToColNum(returnLetter);
+      const colIndex = Math.abs(returnColNum - lookupColNum) + 1;
+
+      return `VLOOKUP(${lookupValue},${tableRange},${colIndex},${exactMatch})`;
+    }
+
+    // Fallback to tableRange if provided
+    const tableRange = this.resolveRange(entities.tableRange as string || 'A:B', context);
     const colIndex = this.resolveColumnIndex(
       entities.returnColumn as string,
       context
     );
-    const exactMatch = modifiers.exactMatch !== false ? 'FALSE' : 'TRUE';
 
     return `VLOOKUP(${lookupValue},${tableRange},${colIndex},${exactMatch})`;
+  }
+
+  /**
+   * Convert column letter to number (A=1, B=2, ..., Z=26, AA=27, etc.)
+   */
+  private letterToColNum(letter: string): number {
+    let col = 0;
+    const upper = letter.toUpperCase();
+    for (let i = 0; i < upper.length; i++) {
+      col = col * 26 + (upper.charCodeAt(i) - 64);
+    }
+    return col;
   }
 
   private buildIndexMatch(
@@ -399,16 +535,14 @@ export class FormulaInterpreter {
       return `${input}:${input}`;
     }
 
-    // If column name, find matching header
-    const header = context.headers.find(
-      (h) => h.name.toLowerCase() === input.toLowerCase()
-    );
+    // Use fuzzy matching to find best header match
+    const match = this.findBestHeaderMatch(input, context.headers);
 
-    if (header) {
-      return `${header.colLetter}:${header.colLetter}`;
+    if (match) {
+      return `${match.header.colLetter}:${match.header.colLetter}`;
     }
 
-    // Return as-is
+    // Return as-is if no match found
     return input;
   }
 
@@ -425,14 +559,12 @@ export class FormulaInterpreter {
       return input;
     }
 
-    // If column name, assume current row
-    const header = context.headers.find(
-      (h) => h.name.toLowerCase() === input.toLowerCase()
-    );
+    // Use fuzzy matching to find best header match
+    const match = this.findBestHeaderMatch(input, context.headers);
 
-    if (header) {
+    if (match) {
       const row = context.cellRef.match(/\d+/)?.[0] || '1';
-      return `${header.colLetter}${row}`;
+      return `${match.header.colLetter}${row}`;
     }
 
     // String literal
@@ -449,13 +581,11 @@ export class FormulaInterpreter {
       return Number(input);
     }
 
-    // If column name
-    const header = context.headers.find(
-      (h) => h.name.toLowerCase() === input.toLowerCase()
-    );
+    // Use fuzzy matching to find best header match
+    const match = this.findBestHeaderMatch(input, context.headers);
 
-    if (header) {
-      return header.col + 1; // 1-indexed for VLOOKUP
+    if (match) {
+      return match.header.col + 1; // 1-indexed for VLOOKUP
     }
 
     return 2; // Default

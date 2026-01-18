@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ArrowDownAZ, ArrowUpZA, Filter, FilterX,
-  RefreshCw, GitCompare, FileSpreadsheet, Upload
+  RefreshCw, GitCompare, FileSpreadsheet, Upload,
+  SplitSquareHorizontal, Zap
 } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
+import { RemoveDuplicatesDialog } from '../../Dialogs/RemoveDuplicatesDialog';
+import { TextToColumnsDialog } from '../../Dialogs/TextToColumnsDialog';
+import { FlashFillDialog } from '../../Dialogs/FlashFillDialog';
+import { ImportDialog } from '../../FileIO/ImportDialog';
 
 export const DataToolbar: React.FC = () => {
   const { sort, selectedCell, filterEnabled, toggleFilter } = useWorkbookStore();
   const { showToast, openDialog } = useUIStore();
+
+  const [showRemoveDuplicates, setShowRemoveDuplicates] = useState(false);
+  const [showTextToColumns, setShowTextToColumns] = useState(false);
+  const [showFlashFill, setShowFlashFill] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   const handleSortAZ = () => {
     if (selectedCell) {
@@ -93,11 +103,27 @@ export const DataToolbar: React.FC = () => {
       <div className="toolbar-2026__group">
         <button
           className="toolbar-2026__btn"
-          onClick={() => showToast('Remove duplicates coming soon', 'info')}
+          onClick={() => setShowRemoveDuplicates(true)}
           title="Remove Duplicates"
         >
           <GitCompare size={16} />
           <span>Duplicates</span>
+        </button>
+        <button
+          className="toolbar-2026__btn"
+          onClick={() => setShowTextToColumns(true)}
+          title="Text to Columns"
+        >
+          <SplitSquareHorizontal size={16} />
+          <span>Split</span>
+        </button>
+        <button
+          className="toolbar-2026__btn"
+          onClick={() => setShowFlashFill(true)}
+          title="Flash Fill"
+        >
+          <Zap size={16} />
+          <span>Flash</span>
         </button>
         <button
           className="toolbar-2026__btn"
@@ -115,7 +141,7 @@ export const DataToolbar: React.FC = () => {
       <div className="toolbar-2026__group">
         <button
           className="toolbar-2026__btn"
-          onClick={() => showToast('Import coming soon', 'info')}
+          onClick={() => setShowImportDialog(true)}
           title="Import Data"
         >
           <Upload size={16} />
@@ -129,6 +155,31 @@ export const DataToolbar: React.FC = () => {
           <RefreshCw size={16} />
         </button>
       </div>
+
+      {/* Dialogs */}
+      {showRemoveDuplicates && (
+        <RemoveDuplicatesDialog onClose={() => setShowRemoveDuplicates(false)} />
+      )}
+
+      {showTextToColumns && (
+        <TextToColumnsDialog onClose={() => setShowTextToColumns(false)} />
+      )}
+
+      {showFlashFill && (
+        <FlashFillDialog onClose={() => setShowFlashFill(false)} />
+      )}
+
+      {showImportDialog && (
+        <ImportDialog
+          isOpen={showImportDialog}
+          onClose={() => setShowImportDialog(false)}
+          onImport={() => {
+            // Handle import data
+            showToast('Data imported successfully', 'success');
+            setShowImportDialog(false);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import {
   NumberNode,
   StringNode,
   BooleanNode,
+  ErrorNode,
   CellRefNode,
   RangeRefNode,
   FunctionCallNode,
@@ -16,6 +17,7 @@ import {
 } from './types';
 import { getFunction } from './functions';
 import { toNumber, toString, isError } from './functions/utils';
+import { parseCellRef } from './FormulaParser';
 
 export class FormulaEvaluator {
   private dependencies: CellDependency[] = [];
@@ -39,6 +41,9 @@ export class FormulaEvaluator {
 
       case 'Boolean':
         return (node as BooleanNode).value;
+
+      case 'Error':
+        return new FormulaError((node as ErrorNode).errorType);
 
       case 'CellRef':
         return this.evalCellRef(node as CellRefNode, context);
@@ -97,6 +102,12 @@ export class FormulaEvaluator {
   }
 
   private evalFunctionCall(node: FunctionCallNode, context: EvalContext): FormulaValue {
+    // Special handling for functions that need reference information (before checking registry)
+    const refFunctions = ['ROW', 'COLUMN', 'ROWS', 'COLUMNS', 'ADDRESS', 'INDIRECT', 'OFFSET'];
+    if (refFunctions.includes(node.name)) {
+      return this.evalRefFunction(node, context);
+    }
+
     const fnDef = getFunction(node.name);
 
     if (!fnDef) {
@@ -129,6 +140,198 @@ export class FormulaEvaluator {
       }
       return new FormulaError('#ERROR!', String(err));
     }
+  }
+
+  // Handle functions that need reference information
+  private evalRefFunction(node: FunctionCallNode, context: EvalContext): FormulaValue {
+    switch (node.name) {
+      case 'ROW': {
+        if (node.args.length === 0) {
+          return context.currentCell ? context.currentCell.row + 1 : 1;
+        }
+        const arg = node.args[0];
+        if (arg.type === 'CellRef') {
+          const ref = (arg as CellRefNode).ref;
+          this.dependencies.push({ sheetId: ref.sheetName || context.sheetId, row: ref.row, col: ref.col });
+          return ref.row + 1; // 1-indexed
+        }
+        if (arg.type === 'RangeRef') {
+          const range = arg as RangeRefNode;
+          return Math.min(range.start.row, range.end.row) + 1;
+        }
+        return new FormulaError('#VALUE!');
+      }
+
+      case 'COLUMN': {
+        if (node.args.length === 0) {
+          return context.currentCell ? context.currentCell.col + 1 : 1;
+        }
+        const arg = node.args[0];
+        if (arg.type === 'CellRef') {
+          const ref = (arg as CellRefNode).ref;
+          this.dependencies.push({ sheetId: ref.sheetName || context.sheetId, row: ref.row, col: ref.col });
+          return ref.col + 1; // 1-indexed
+        }
+        if (arg.type === 'RangeRef') {
+          const range = arg as RangeRefNode;
+          return Math.min(range.start.col, range.end.col) + 1;
+        }
+        return new FormulaError('#VALUE!');
+      }
+
+      case 'ROWS': {
+        if (node.args.length === 0) {
+          return new FormulaError('#VALUE!');
+        }
+        const arg = node.args[0];
+        if (arg.type === 'RangeRef') {
+          const range = arg as RangeRefNode;
+          return Math.abs(range.end.row - range.start.row) + 1;
+        }
+        if (arg.type === 'CellRef') {
+          return 1;
+        }
+        // For arrays
+        const val = this.evalNode(arg, context);
+        if (Array.isArray(val)) return val.length;
+        return 1;
+      }
+
+      case 'COLUMNS': {
+        if (node.args.length === 0) {
+          return new FormulaError('#VALUE!');
+        }
+        const arg = node.args[0];
+        if (arg.type === 'RangeRef') {
+          const range = arg as RangeRefNode;
+          return Math.abs(range.end.col - range.start.col) + 1;
+        }
+        if (arg.type === 'CellRef') {
+          return 1;
+        }
+        // For arrays
+        const val = this.evalNode(arg, context);
+        if (Array.isArray(val) && Array.isArray(val[0])) return val[0].length;
+        return 1;
+      }
+
+      case 'ADDRESS': {
+        const rowNum = this.evalNode(node.args[0], context);
+        const colNum = this.evalNode(node.args[1], context);
+        const absNum = node.args[2] ? this.evalNode(node.args[2], context) : 1;
+        // A1 style parameter (not currently used but may be needed for R1C1 style)
+        void (node.args[3] ? this.evalNode(node.args[3], context) : true);
+        const sheetText = node.args[4] ? this.evalNode(node.args[4], context) : '';
+
+        if (isError(rowNum)) return rowNum;
+        if (isError(colNum)) return colNum;
+
+        const row = rowNum as number;
+        const col = colNum as number;
+        const abs = (absNum as number) || 1;
+        const sheet = sheetText ? `${sheetText}!` : '';
+
+        // Convert column number to letter
+        const colLetter = this.numberToColLetter(col);
+
+        let result = '';
+        switch (abs) {
+          case 1: result = `$${colLetter}$${row}`; break; // Absolute
+          case 2: result = `${colLetter}$${row}`; break;   // Row absolute
+          case 3: result = `$${colLetter}${row}`; break;   // Column absolute
+          case 4: result = `${colLetter}${row}`; break;    // Relative
+          default: result = `$${colLetter}$${row}`;
+        }
+
+        return sheet + result;
+      }
+
+      case 'INDIRECT': {
+        const refText = this.evalNode(node.args[0], context);
+        if (isError(refText)) return refText;
+        if (typeof refText !== 'string') {
+          return new FormulaError('#REF!');
+        }
+
+        // Parse the reference string
+        try {
+          const ref = parseCellRef(refText);
+          this.dependencies.push({ sheetId: ref.sheetName || context.sheetId, row: ref.row, col: ref.col });
+          return context.getCellValue(ref);
+        } catch {
+          return new FormulaError('#REF!', 'Invalid reference');
+        }
+      }
+
+      case 'OFFSET': {
+        if (node.args.length < 3) {
+          return new FormulaError('#VALUE!');
+        }
+
+        const arg = node.args[0];
+        let baseRow: number, baseCol: number;
+
+        if (arg.type === 'CellRef') {
+          const ref = (arg as CellRefNode).ref;
+          baseRow = ref.row;
+          baseCol = ref.col;
+        } else if (arg.type === 'RangeRef') {
+          const range = arg as RangeRefNode;
+          baseRow = Math.min(range.start.row, range.end.row);
+          baseCol = Math.min(range.start.col, range.end.col);
+        } else {
+          return new FormulaError('#VALUE!');
+        }
+
+        const rowOffset = this.evalNode(node.args[1], context);
+        const colOffset = this.evalNode(node.args[2], context);
+        const height = node.args[3] ? this.evalNode(node.args[3], context) : 1;
+        const width = node.args[4] ? this.evalNode(node.args[4], context) : 1;
+
+        if (isError(rowOffset)) return rowOffset;
+        if (isError(colOffset)) return colOffset;
+
+        const newRow = baseRow + (rowOffset as number);
+        const newCol = baseCol + (colOffset as number);
+        const h = (height as number) || 1;
+        const w = (width as number) || 1;
+
+        if (newRow < 0 || newCol < 0) {
+          return new FormulaError('#REF!');
+        }
+
+        // Track dependencies
+        for (let r = 0; r < h; r++) {
+          for (let c = 0; c < w; c++) {
+            this.dependencies.push({ sheetId: context.sheetId, row: newRow + r, col: newCol + c });
+          }
+        }
+
+        // Return single cell or range
+        if (h === 1 && w === 1) {
+          return context.getCellValue({ row: newRow, col: newCol, colAbsolute: false, rowAbsolute: false });
+        }
+
+        return context.getRangeValues(
+          { row: newRow, col: newCol, colAbsolute: false, rowAbsolute: false },
+          { row: newRow + h - 1, col: newCol + w - 1, colAbsolute: false, rowAbsolute: false }
+        );
+      }
+
+      default:
+        return new FormulaError('#NAME?');
+    }
+  }
+
+  // Helper to convert column number to letter
+  private numberToColLetter(num: number): string {
+    let result = '';
+    while (num > 0) {
+      const remainder = (num - 1) % 26;
+      result = String.fromCharCode(65 + remainder) + result;
+      num = Math.floor((num - 1) / 26);
+    }
+    return result;
   }
 
   private evalBinaryOp(node: BinaryOpNode, context: EvalContext): FormulaValue {
@@ -269,7 +472,8 @@ export class FormulaEvaluator {
     }
 
     if (typeof a === 'string' && typeof b === 'string') {
-      return a.toLowerCase().localeCompare(b.toLowerCase());
+      // Case-sensitive string comparison
+      return a.localeCompare(b);
     }
 
     if (typeof a === 'boolean' && typeof b === 'boolean') {

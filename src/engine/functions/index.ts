@@ -5,6 +5,9 @@ import { logicalFunctions } from './logical';
 import { dateFunctions } from './date';
 import { statisticalFunctions } from './statistical';
 import { lookupFunctions } from './lookup';
+import { financialFunctions } from './financial';
+import { arrayFunctions } from './array';
+import { lambdaFunctions } from './lambda';
 
 // Combine all functions
 const allFunctions: FunctionDef[] = [
@@ -14,6 +17,9 @@ const allFunctions: FunctionDef[] = [
   ...dateFunctions,
   ...statisticalFunctions,
   ...lookupFunctions,
+  ...financialFunctions,
+  ...arrayFunctions,
+  ...lambdaFunctions,
 ];
 
 // Create lookup map for fast function resolution
@@ -39,7 +45,7 @@ export function getAllFunctionNames(): string[] {
 }
 
 // Export individual function groups
-export { mathFunctions, textFunctions, logicalFunctions, dateFunctions, statisticalFunctions, lookupFunctions };
+export { mathFunctions, textFunctions, logicalFunctions, dateFunctions, statisticalFunctions, lookupFunctions, financialFunctions, arrayFunctions, lambdaFunctions };
 
 // Export utils
 export * from './utils';

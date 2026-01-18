@@ -10,6 +10,7 @@ import {
 import { parseFormula, numberToColLetter } from './FormulaParser';
 import { FormulaEvaluator } from './FormulaEvaluator';
 import { toString } from './functions/utils';
+import { LRUCache } from '../utils/LRUCache';
 
 // Type for cell data provider
 export interface CellDataProvider {
@@ -20,7 +21,8 @@ export interface CellDataProvider {
 // Main Formula Engine
 export class FormulaEngine {
   private evaluator = new FormulaEvaluator();
-  private cache = new Map<CellKey, FormulaResult>();
+  // LRU cache with 50,000 cell limit to prevent memory bloat in large spreadsheets
+  private cache = new LRUCache<CellKey, FormulaResult>(50000);
   private dependencyGraph = new Map<CellKey, Set<CellKey>>();
   private reverseDependencyGraph = new Map<CellKey, Set<CellKey>>();
 
@@ -273,6 +275,17 @@ export class FormulaEngine {
       row: parseInt(parts[1], 10),
       col: parseInt(parts[2], 10),
     };
+  }
+
+  // Get cache statistics for performance monitoring
+  getCacheStats(): {
+    size: number;
+    maxSize: number;
+    hits: number;
+    misses: number;
+    hitRate: number;
+  } {
+    return this.cache.getStats();
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, memo } from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 
 interface StatusBarProps {
@@ -11,7 +11,7 @@ interface StatusBarProps {
   onZoomChange?: (zoom: number) => void;
 }
 
-export const StatusBar: React.FC<StatusBarProps> = ({ selection, onZoomChange }) => {
+export const StatusBar: React.FC<StatusBarProps> = memo(({ selection, onZoomChange }) => {
   const [zoom, setZoom] = useState(100);
   const { sheets, activeSheetId } = useWorkbookStore();
 
@@ -89,21 +89,25 @@ export const StatusBar: React.FC<StatusBarProps> = ({ selection, onZoomChange })
       </div>
     </div>
   );
-};
+});
 
-const StatItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+StatusBar.displayName = 'StatusBar';
+
+const StatItem = memo<{ label: string; value: string }>(({ label, value }) => (
   <div className="flex items-center gap-1">
     <span className="text-gray-500">{label}:</span>
     <span className="font-medium">{value}</span>
   </div>
-);
+));
+
+StatItem.displayName = 'StatItem';
 
 interface ZoomControlProps {
   zoom: number;
   onZoomChange: (zoom: number) => void;
 }
 
-const ZoomControl: React.FC<ZoomControlProps> = ({ zoom, onZoomChange }) => {
+const ZoomControl = memo<ZoomControlProps>(({ zoom, onZoomChange }) => {
   return (
     <div className="flex items-center gap-2">
       <button
@@ -129,6 +133,8 @@ const ZoomControl: React.FC<ZoomControlProps> = ({ zoom, onZoomChange }) => {
       />
     </div>
   );
-};
+});
+
+ZoomControl.displayName = 'ZoomControl';
 
 export default StatusBar;

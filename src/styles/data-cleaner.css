@@ -2676,3 +2676,63 @@
   height: 40px;
   font-size: 20px;
 }
+
+/* -----------------------------------------------------------------------------
+   Dark Mode Support
+   ----------------------------------------------------------------------------- */
+
+[data-theme="dark"] {
+  --color-bg: var(--surface-1, #1e1e1e);
+  --color-bg-secondary: var(--surface-2, #2a2a2a);
+  --color-bg-hover: var(--surface-3, #404040);
+  --color-border: var(--surface-3, #404040);
+  --color-text: var(--text-0, #fafafa);
+  --color-text-secondary: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .data-cleaner-panel {
+  background: var(--surface-1, #1e1e1e);
+  border-color: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .data-cleaner-panel__header {
+  border-color: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .data-cleaner-panel__title {
+  color: var(--text-0, #fafafa);
+}
+
+[data-theme="dark"] .data-cleaner-panel__action {
+  background: var(--surface-2, #2a2a2a);
+  color: var(--text-1, #e5e5e5);
+}
+
+[data-theme="dark"] .data-cleaner-panel__action:hover:not(:disabled) {
+  background: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .data-cleaner-panel__stats {
+  background: var(--surface-2, #2a2a2a);
+  border-color: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .data-cleaner-panel__stat-value {
+  color: var(--text-0, #fafafa);
+}
+
+[data-theme="dark"] .data-cleaner-panel__stat-label {
+  color: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .compact-history-bar__status {
+  color: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .mini-score__bar {
+  background: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .mini-score__label {
+  color: var(--text-2, #a3a3a3);
+}

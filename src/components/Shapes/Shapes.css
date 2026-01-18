@@ -377,33 +377,78 @@
 [data-theme="dark"] .shapes-submenu,
 [data-theme="dark"] .shape-toolbar,
 [data-theme="dark"] .color-picker {
-  background: var(--bg-primary-dark, #1e1e1e);
-  border-color: var(--border-color-dark, #404040);
+  background: var(--surface-1, #1e1e1e);
+  border-color: var(--surface-3, #404040);
+  color: var(--text-1, #e5e5e5);
 }
 
 [data-theme="dark"] .resize-handle,
 [data-theme="dark"] .rotate-handle {
-  background: var(--bg-primary-dark, #1e1e1e);
+  background: var(--surface-1, #1e1e1e);
 }
 
 [data-theme="dark"] .section-title {
-  color: var(--text-muted-dark, #888);
+  color: var(--text-3, #737373);
 }
 
 [data-theme="dark"] .category-label,
 [data-theme="dark"] .submenu-title {
-  color: var(--text-primary-dark, #e0e0e0);
+  color: var(--text-0, #fafafa);
 }
 
 [data-theme="dark"] .shape-name {
-  color: var(--text-secondary-dark, #aaa);
+  color: var(--text-2, #a3a3a3);
 }
 
 [data-theme="dark"] .shape-item:hover {
-  background: var(--bg-hover-dark, rgba(255, 255, 255, 0.1));
+  background: var(--surface-2, #2a2a2a);
+  border-color: var(--surface-3, #404040);
 }
 
 [data-theme="dark"] .category-item:hover,
 [data-theme="dark"] .category-item.active {
-  background: var(--bg-hover-dark, rgba(255, 255, 255, 0.1));
+  background: var(--surface-2, #2a2a2a);
+}
+
+[data-theme="dark"] .shape-toolbar .toolbar-btn {
+  color: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .shape-toolbar .toolbar-btn:hover {
+  background: var(--surface-2, #2a2a2a);
+  color: var(--text-0, #fafafa);
+}
+
+[data-theme="dark"] .color-picker-title {
+  color: var(--text-1, #e5e5e5);
+}
+
+[data-theme="dark"] .color-swatch {
+  border-color: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .no-fill-btn {
+  background: var(--surface-2, #2a2a2a);
+  border-color: var(--surface-3, #404040);
+  color: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .no-fill-btn:hover {
+  background: var(--surface-3, #333333);
+}
+
+[data-theme="dark"] .stroke-width-section {
+  border-color: var(--surface-3, #404040);
+}
+
+[data-theme="dark"] .stroke-width-section label {
+  color: var(--text-2, #a3a3a3);
+}
+
+[data-theme="dark"] .stroke-width-section span {
+  color: var(--text-1, #e5e5e5);
+}
+
+[data-theme="dark"] .shapes-section {
+  border-color: var(--surface-3, #404040);
 }

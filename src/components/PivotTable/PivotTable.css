@@ -800,6 +800,500 @@
 }
 
 /* ============================================================
+   CALCULATED FIELD DIALOG
+   ============================================================ */
+
+.calculated-field-dialog {
+  width: 560px;
+}
+
+.section-header-with-help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.help-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-tertiary, #999);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-btn:hover {
+  background: var(--hover-bg, #f0f0f0);
+  color: var(--accent-color, #217346);
+}
+
+.formula-help {
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.formula-help p {
+  margin: 0 0 8px 0;
+  color: var(--text-secondary, #666);
+}
+
+.formula-help ul {
+  margin: 4px 0 0 0;
+  padding-left: 20px;
+}
+
+.formula-help li {
+  margin-bottom: 4px;
+  color: var(--text-secondary, #666);
+}
+
+.formula-help code {
+  background: var(--bg-primary, #ffffff);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 11px;
+  color: var(--accent-color, #217346);
+}
+
+.formula-input-container {
+  position: relative;
+}
+
+.pivot-dialog-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'SF Mono', Monaco, monospace;
+  background: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #1a1a1a);
+  resize: vertical;
+  min-height: 60px;
+}
+
+.pivot-dialog-textarea:focus {
+  outline: none;
+  border-color: var(--accent-color, #217346);
+  box-shadow: 0 0 0 2px rgba(33, 115, 70, 0.1);
+}
+
+.pivot-dialog-textarea.valid {
+  border-color: #22c55e;
+}
+
+.pivot-dialog-textarea.invalid {
+  border-color: #ef4444;
+}
+
+.formula-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.formula-status.valid {
+  color: #22c55e;
+}
+
+.formula-status.invalid {
+  color: #ef4444;
+}
+
+.section-hint {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+  margin-bottom: 10px;
+}
+
+.available-fields-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+}
+
+.field-insert-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.field-insert-btn:hover {
+  border-color: var(--accent-color, #217346);
+  background: var(--accent-light, #e6f4ea);
+}
+
+.field-insert-btn svg {
+  color: var(--text-tertiary, #999);
+}
+
+.field-insert-btn:hover svg {
+  color: var(--accent-color, #217346);
+}
+
+.pivot-btn-danger {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.pivot-btn-danger:hover {
+  background: #fecaca;
+}
+
+.footer-spacer {
+  flex: 1;
+}
+
+/* ============================================================
+   GROUPING DIALOG
+   ============================================================ */
+
+.grouping-dialog {
+  width: 420px;
+}
+
+.grouping-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.grouping-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.grouping-option:hover {
+  background: var(--hover-bg, #eaeaea);
+}
+
+.grouping-option input[type="radio"] {
+  margin-top: 2px;
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.option-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.option-description {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+}
+
+.number-grouping-config {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+}
+
+.config-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.config-row:last-child {
+  margin-bottom: 0;
+}
+
+.config-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.config-field label {
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+}
+
+.config-field input {
+  padding: 6px 10px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 13px;
+  background: var(--bg-primary, #ffffff);
+}
+
+.grouping-preview {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.grouping-preview h4 {
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+}
+
+.preview-ranges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preview-range {
+  padding: 4px 8px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.preview-more {
+  color: var(--text-tertiary, #999);
+  font-size: 11px;
+}
+
+.no-grouping-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary, #666);
+}
+
+.no-grouping-message svg {
+  color: var(--text-tertiary, #999);
+}
+
+.no-grouping-message p {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* ============================================================
+   CALCULATED FIELDS SECTION
+   ============================================================ */
+
+.pivot-calculated-section {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.pivot-calculated-section .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pivot-calculated-section .section-header h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-calc-field-btn {
+  background: var(--accent-light, #e6f4ea);
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: var(--accent-color, #217346);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.add-calc-field-btn:hover {
+  background: var(--accent-color, #217346);
+  color: white;
+}
+
+.calculated-fields-list {
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.no-calc-fields-message {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+  text-align: center;
+  padding: 8px;
+}
+
+.pivot-field-item.calculated {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.pivot-field-item.calculated:hover {
+  background: #fde68a;
+  border-color: #d97706;
+}
+
+.pivot-field-item.calculated .calc-icon {
+  color: #d97706;
+}
+
+/* ============================================================
+   DARK MODE - CALCULATED FIELD DIALOG
+   ============================================================ */
+
+[data-theme="dark"] .formula-help {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .formula-help code {
+  background: #333;
+  color: #4caf50;
+}
+
+[data-theme="dark"] .pivot-dialog-textarea {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .pivot-dialog-textarea:focus {
+  border-color: #4caf50;
+}
+
+[data-theme="dark"] .available-fields-grid {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .field-insert-btn {
+  background: #333;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .field-insert-btn:hover {
+  background: #1a3a1a;
+  border-color: #4caf50;
+}
+
+[data-theme="dark"] .pivot-btn-danger {
+  background: #3f1e1e;
+  color: #f87171;
+}
+
+[data-theme="dark"] .pivot-btn-danger:hover {
+  background: #5a2a2a;
+}
+
+/* ============================================================
+   DARK MODE - GROUPING DIALOG
+   ============================================================ */
+
+[data-theme="dark"] .grouping-option {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .grouping-option:hover {
+  background: #333;
+}
+
+[data-theme="dark"] .option-label {
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .number-grouping-config {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .config-field input {
+  background: #333;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+[data-theme="dark"] .preview-range {
+  background: #333;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+/* ============================================================
+   DARK MODE - CALCULATED FIELDS SECTION
+   ============================================================ */
+
+[data-theme="dark"] .pivot-calculated-section {
+  border-color: #333;
+}
+
+[data-theme="dark"] .add-calc-field-btn {
+  background: #1a3a1a;
+  color: #4caf50;
+}
+
+[data-theme="dark"] .add-calc-field-btn:hover {
+  background: #4caf50;
+  color: white;
+}
+
+[data-theme="dark"] .pivot-field-item.calculated {
+  background: #3d2e00;
+  border-color: #f59e0b;
+}
+
+[data-theme="dark"] .pivot-field-item.calculated:hover {
+  background: #4a3800;
+  border-color: #fbbf24;
+}
+
+[data-theme="dark"] .pivot-field-item.calculated .calc-icon {
+  color: #fbbf24;
+}
+
+/* ============================================================
    ANIMATIONS
    ============================================================ */
 
@@ -817,4 +1311,735 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ============================================================
+   PIVOT CHART DIALOG
+   ============================================================ */
+
+.pivot-chart-dialog {
+  width: 560px;
+}
+
+.chart-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.chart-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: var(--bg-secondary, #f5f5f5);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--text-secondary, #666);
+}
+
+.chart-type-btn:hover {
+  background: var(--hover-bg, #e8e8e8);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.chart-type-btn.selected {
+  border-color: var(--accent-color, #217346);
+  background: #e8f5e9;
+  color: var(--accent-color, #217346);
+}
+
+.chart-type-btn.recommended::after {
+  content: '★';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 10px;
+  color: #f59e0b;
+}
+
+.chart-type-btn {
+  position: relative;
+}
+
+.chart-type-btn span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.chart-type-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.chart-type-btn svg.rotate-90 {
+  transform: rotate(90deg);
+}
+
+.config-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+}
+
+.config-option input[type="radio"] {
+  accent-color: var(--accent-color, #217346);
+}
+
+.value-field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.value-field-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+  padding: 6px 10px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 6px;
+}
+
+.value-field-option:hover {
+  background: var(--hover-bg, #e8e8e8);
+}
+
+.value-field-option input[type="checkbox"] {
+  accent-color: var(--accent-color, #217346);
+}
+
+.field-aggregate {
+  color: var(--text-secondary, #666);
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.chart-preview {
+  background: var(--bg-secondary, #f5f5f5);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 150px;
+}
+
+.preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preview-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preview-summary strong {
+  color: var(--text-primary, #1a1a1a);
+  font-size: 14px;
+}
+
+.preview-stats {
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+.preview-data {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+.preview-categories strong,
+.preview-series strong {
+  color: var(--text-primary, #1a1a1a);
+  margin-right: 6px;
+}
+
+.series-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  color: white;
+  margin-left: 6px;
+}
+
+.preview-mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 60px;
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.preview-bar {
+  flex: 1;
+  min-width: 10px;
+  max-width: 30px;
+  border-radius: 2px 2px 0 0;
+  transition: height 0.2s ease;
+}
+
+.preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .chart-type-btn {
+  background: var(--bg-tertiary, #2d2d2d);
+  color: var(--text-secondary, #888);
+}
+
+[data-theme="dark"] .chart-type-btn:hover {
+  background: var(--hover-bg, #3d3d3d);
+  color: var(--text-primary, #e0e0e0);
+}
+
+[data-theme="dark"] .chart-type-btn.selected {
+  border-color: #4ade80;
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+[data-theme="dark"] .value-field-option {
+  background: var(--bg-tertiary, #2d2d2d);
+}
+
+[data-theme="dark"] .value-field-option:hover {
+  background: var(--hover-bg, #3d3d3d);
+}
+
+[data-theme="dark"] .chart-preview {
+  background: var(--bg-tertiary, #2d2d2d);
+  border-color: var(--border-color, #404040);
+}
+
+[data-theme="dark"] .preview-mini-chart {
+  background: var(--bg-secondary, #1e1e1e);
+}
+
+/* ============================================================
+   PIVOT TABLE HEADER ACTIONS
+   ============================================================ */
+
+.pivot-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pivot-action-btn,
+.pivot-chart-btn,
+.pivot-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary, #666);
+  transition: all 0.15s ease;
+}
+
+.pivot-action-btn:hover,
+.pivot-chart-btn:hover,
+.pivot-refresh-btn:hover {
+  background: var(--hover-bg, #e8e8e8);
+  color: var(--accent-color, #217346);
+}
+
+.pivot-action-btn:active,
+.pivot-chart-btn:active,
+.pivot-refresh-btn:active {
+  transform: scale(0.95);
+}
+
+[data-theme="dark"] .pivot-action-btn:hover,
+[data-theme="dark"] .pivot-chart-btn:hover,
+[data-theme="dark"] .pivot-refresh-btn:hover {
+  background: var(--hover-bg, #3d3d3d);
+  color: #4ade80;
+}
+
+/* ============================================================
+   SLICER STYLES
+   ============================================================ */
+
+.slicer {
+  position: absolute;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.slicer.dragging {
+  cursor: grabbing;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+}
+
+.slicer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: grab;
+  user-select: none;
+}
+
+.slicer-title {
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slicer-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.slicer-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.slicer-action-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.slicer-menu {
+  position: absolute;
+  top: 100%;
+  right: 8px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 300;
+  min-width: 160px;
+  padding: 4px;
+}
+
+.slicer-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+  text-align: left;
+}
+
+.slicer-menu button:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+.slicer-menu button.danger {
+  color: #dc2626;
+}
+
+.slicer-menu button.danger:hover {
+  background: #fee2e2;
+}
+
+.slicer-menu .menu-divider {
+  height: 1px;
+  background: var(--border-color, #e0e0e0);
+  margin: 4px 0;
+}
+
+.slicer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.slicer-values {
+  display: grid;
+  gap: 4px;
+}
+
+.slicer-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.1s ease;
+}
+
+.slicer-value:hover {
+  filter: brightness(0.95);
+}
+
+.slicer-value.unselected {
+  opacity: 0.6;
+}
+
+.slicer-value .value-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slicer-value .check-icon {
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.slicer-footer {
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  background: var(--bg-secondary, #f5f5f5);
+}
+
+/* ============================================================
+   TIMELINE STYLES
+   ============================================================ */
+
+.timeline {
+  position: absolute;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+  border-radius: 6px;
+}
+
+.timeline.dragging {
+  cursor: grabbing;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: grab;
+  user-select: none;
+}
+
+.timeline-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.timeline-level select {
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.timeline-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.timeline-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.timeline-action-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.timeline-menu {
+  position: absolute;
+  top: 100%;
+  right: 8px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 300;
+  min-width: 160px;
+  padding: 4px;
+}
+
+.timeline-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+}
+
+.timeline-menu button:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+.timeline-menu button.danger {
+  color: #dc2626;
+}
+
+.timeline-body {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+  flex: 1;
+}
+
+.timeline-scroll-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 32px;
+  background: var(--bg-secondary, #f5f5f5);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary, #666);
+  flex-shrink: 0;
+}
+
+.timeline-scroll-btn:hover {
+  background: var(--hover-bg, #e8e8e8);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.timeline-periods {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.timeline-period {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.timeline-period:hover {
+  filter: brightness(0.95);
+}
+
+.timeline-period.selected {
+  font-weight: 600;
+}
+
+.timeline-selection-info {
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+  text-align: center;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  background: var(--bg-secondary, #f5f5f5);
+}
+
+/* ============================================================
+   INSERT SLICER DIALOG
+   ============================================================ */
+
+.insert-slicer-dialog {
+  width: 400px;
+}
+
+.field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.field-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-secondary, #f5f5f5);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.field-item:hover {
+  background: var(--hover-bg, #e8e8e8);
+}
+
+.field-item.selected {
+  border-color: var(--accent-color, #217346);
+  background: #e8f5e9;
+}
+
+.field-item input[type="checkbox"] {
+  accent-color: var(--accent-color, #217346);
+}
+
+.field-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.field-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.field-type {
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+  text-transform: capitalize;
+}
+
+.field-item .check-icon {
+  color: var(--accent-color, #217346);
+}
+
+.no-fields-message {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+}
+
+.selection-summary {
+  padding: 12px;
+  background: #e8f5e9;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #166534;
+  text-align: center;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .slicer,
+[data-theme="dark"] .timeline {
+  background: var(--bg-primary, #1e1e1e);
+  border-color: var(--border-color, #404040);
+}
+
+[data-theme="dark"] .slicer-menu,
+[data-theme="dark"] .timeline-menu {
+  background: var(--bg-secondary, #2d2d2d);
+  border-color: var(--border-color, #404040);
+}
+
+[data-theme="dark"] .slicer-menu button,
+[data-theme="dark"] .timeline-menu button {
+  color: var(--text-primary, #e0e0e0);
+}
+
+[data-theme="dark"] .slicer-menu button:hover,
+[data-theme="dark"] .timeline-menu button:hover {
+  background: var(--hover-bg, #3d3d3d);
+}
+
+[data-theme="dark"] .slicer-footer,
+[data-theme="dark"] .timeline-selection-info {
+  background: var(--bg-tertiary, #2d2d2d);
+  border-color: var(--border-color, #404040);
+}
+
+[data-theme="dark"] .field-item {
+  background: var(--bg-tertiary, #2d2d2d);
+}
+
+[data-theme="dark"] .field-item:hover {
+  background: var(--hover-bg, #3d3d3d);
+}
+
+[data-theme="dark"] .field-item.selected {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #4ade80;
+}
+
+[data-theme="dark"] .selection-summary {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
 }

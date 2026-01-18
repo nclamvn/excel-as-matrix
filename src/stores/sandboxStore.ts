@@ -86,7 +86,9 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(`/api/ai/sandboxes/${sandboxId}`);
+      const response = await fetch(`/api/ai/sandboxes/${sandboxId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+      });
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to load sandbox');
@@ -116,7 +118,9 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
 
   loadDiffs: async (sandboxId) => {
     try {
-      const response = await fetch(`/api/ai/sandboxes/${sandboxId}/diffs`);
+      const response = await fetch(`/api/ai/sandboxes/${sandboxId}/diffs`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+      });
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to load diffs');
@@ -154,7 +158,10 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
     try {
       const response = await fetch(`/api/ai/sandboxes/${sandboxId}/pr`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
       });
 
       if (!response.ok) {
@@ -188,8 +195,10 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
     try {
       const response = await fetch(`/api/ai/sandboxes/${sandboxId}/merge`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: crypto.randomUUID() }), // TODO: Real user ID
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
       });
 
       if (!response.ok) {

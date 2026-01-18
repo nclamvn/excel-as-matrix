@@ -17,7 +17,8 @@ type DialogType =
   | 'print'
   | 'pageSetup'
   | 'preferences'
-  | 'about';
+  | 'about'
+  | 'fillSeries';
 
 // Sidebar panel types
 type SidebarPanel =

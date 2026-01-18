@@ -9,6 +9,7 @@ import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
 import { InsertChartDialog } from '../../Dialogs/InsertChartDialog';
 import { InsertTableDialog } from '../../Dialogs/InsertTableDialog';
+import { CommentDialog } from '../../Dialogs/CommentDialog';
 import { ShapesDropdown } from '../../Shapes';
 import { PictureInsertDialog } from '../../Pictures';
 import { SparklineDialog } from '../../Sparklines';
@@ -21,10 +22,11 @@ export const InsertToolbar: React.FC = () => {
   const [showPictureDialog, setShowPictureDialog] = useState(false);
   const [showSparklineDialog, setShowSparklineDialog] = useState(false);
   const [showPivotDialog, setShowPivotDialog] = useState(false);
+  const [showCommentDialog, setShowCommentDialog] = useState(false);
   const [chartType, setChartType] = useState<'bar' | 'line' | 'pie'>('bar');
   const [sparklineType, setSparklineType] = useState<SparklineType>('line');
 
-  const { insertRow, insertColumn, deleteRow, deleteColumn, selectedCell, activeSheetId } = useWorkbookStore();
+  const { insertRow, insertColumn, deleteRow, deleteColumn, selectedCell, activeSheetId, getComment } = useWorkbookStore();
   const { showToast } = useUIStore();
 
   const handleInsertRow = () => {
@@ -79,6 +81,25 @@ export const InsertToolbar: React.FC = () => {
         showToast('Link inserted', 'success');
       }
     }
+  };
+
+  const handleInsertComment = () => {
+    if (!selectedCell) {
+      showToast('Select a cell first', 'warning');
+      return;
+    }
+
+    // Check if cell already has a comment
+    const existingComment = getComment(selectedCell.row, selectedCell.col);
+    if (existingComment) {
+      const editComment = confirm('This cell already has a comment. Do you want to edit it?');
+      if (editComment) {
+        setShowCommentDialog(true);
+      }
+      return;
+    }
+
+    setShowCommentDialog(true);
   };
 
   return (
@@ -233,7 +254,7 @@ export const InsertToolbar: React.FC = () => {
           </button>
           <button
             className="toolbar-2026__btn"
-            onClick={() => showToast('Comments coming soon', 'info')}
+            onClick={handleInsertComment}
             title="Insert Comment"
           >
             <MessageSquare size={16} />
@@ -277,6 +298,14 @@ export const InsertToolbar: React.FC = () => {
         isOpen={showPivotDialog}
         onClose={() => setShowPivotDialog(false)}
       />
+
+      {showCommentDialog && selectedCell && (
+        <CommentDialog
+          row={selectedCell.row}
+          col={selectedCell.col}
+          onClose={() => setShowCommentDialog(false)}
+        />
+      )}
     </>
   );
 };

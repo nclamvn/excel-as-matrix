@@ -9,6 +9,7 @@ import { useSelectionStore } from '../../stores/selectionStore';
 import { useUIStore } from '../../stores/uiStore';
 import { CellEditor } from './CellEditor';
 import { getCellKey } from '../../types/cell';
+import { FloatingAIButton } from '../AI/FloatingAIButton';
 
 // Theme colors
 const THEME_COLORS = {
@@ -701,6 +702,15 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             headerHeight={-scrollTop}
             onSubmit={handleCellSubmit}
             onCancel={() => setIsEditing(false)}
+          />
+        )}
+
+        {/* Floating AI button - context-aware quick access */}
+        {!isEditing && (
+          <FloatingAIButton
+            gridRef={containerRef}
+            cellWidth={CELL_WIDTH}
+            cellHeight={CELL_HEIGHT}
           />
         )}
       </div>

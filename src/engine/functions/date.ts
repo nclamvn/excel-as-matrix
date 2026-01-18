@@ -1,5 +1,5 @@
 import { FunctionDef, FormulaValue, FormulaError } from '../types';
-import { toNumber, isError, dateToSerial, parseDate } from './utils';
+import { toNumber, isError, dateToSerial, parseDate, serialToDate } from './utils';
 
 export const dateFunctions: FunctionDef[] = [
   // TODAY - current date as serial
@@ -383,6 +383,118 @@ export const dateFunctions: FunctionDef[] = [
       const seconds = match[3] ? parseInt(match[3], 10) : 0;
 
       return (hours * 3600 + minutes * 60 + seconds) / 86400;
+    },
+  },
+
+  // DAYS360 - calculate days between dates using 360-day year
+  {
+    name: 'DAYS360',
+    minArgs: 2,
+    maxArgs: 3,
+    fn: (args: FormulaValue[]): FormulaValue => {
+      const startDate = serialToDate(toNumber(args[0]) as number);
+      const endDate = serialToDate(toNumber(args[1]) as number);
+      const method = args[2] === true || args[2] === 1; // false = US/NASD, true = European
+
+      let startDay = startDate.getDate();
+      let startMonth = startDate.getMonth() + 1;
+      let startYear = startDate.getFullYear();
+
+      let endDay = endDate.getDate();
+      let endMonth = endDate.getMonth() + 1;
+      let endYear = endDate.getFullYear();
+
+      if (method) {
+        // European method
+        if (startDay === 31) startDay = 30;
+        if (endDay === 31) endDay = 30;
+      } else {
+        // US/NASD method
+        const startLastDay = new Date(startYear, startDate.getMonth() + 1, 0).getDate();
+        const endLastDay = new Date(endYear, endDate.getMonth() + 1, 0).getDate();
+
+        if (startDay === startLastDay) {
+          startDay = 30;
+        }
+        if (endDay === endLastDay) {
+          if (startDay < 30) {
+            endDay = 1;
+            endMonth++;
+            if (endMonth > 12) {
+              endMonth = 1;
+              endYear++;
+            }
+          } else {
+            endDay = 30;
+          }
+        }
+      }
+
+      return (endYear - startYear) * 360 + (endMonth - startMonth) * 30 + (endDay - startDay);
+    },
+  },
+
+  // YEARFRAC - calculate fraction of year between dates
+  {
+    name: 'YEARFRAC',
+    minArgs: 2,
+    maxArgs: 3,
+    fn: (args: FormulaValue[]): FormulaValue => {
+      const startSerial = toNumber(args[0]) as number;
+      const endSerial = toNumber(args[1]) as number;
+      const basis = args[2] !== undefined ? (toNumber(args[2]) as number) : 0;
+
+      const startDate = serialToDate(startSerial);
+      const endDate = serialToDate(endSerial);
+      const days = Math.abs(endSerial - startSerial);
+
+      switch (basis) {
+        case 0: // US (NASD) 30/360
+          return days / 360;
+        case 1: { // Actual/actual
+          const startYear = startDate.getFullYear();
+          const endYear = endDate.getFullYear();
+          if (startYear === endYear) {
+            const daysInYear = (startYear % 4 === 0 && (startYear % 100 !== 0 || startYear % 400 === 0)) ? 366 : 365;
+            return days / daysInYear;
+          }
+          // Average days per year for multi-year spans
+          let totalDays = 0;
+          for (let y = startYear; y <= endYear; y++) {
+            totalDays += (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 366 : 365;
+          }
+          return days / (totalDays / (endYear - startYear + 1));
+        }
+        case 2: // Actual/360
+          return days / 360;
+        case 3: // Actual/365
+          return days / 365;
+        case 4: // European 30/360
+          return days / 360;
+        default:
+          return new FormulaError('#NUM!');
+      }
+    },
+  },
+
+  // ISOWEEKNUM - return ISO week number
+  {
+    name: 'ISOWEEKNUM',
+    minArgs: 1,
+    maxArgs: 1,
+    fn: (args: FormulaValue[]): FormulaValue => {
+      const serial = toNumber(args[0]);
+      if (isError(serial)) return serial;
+
+      const date = serialToDate(serial as number);
+
+      // Calculate ISO week number
+      const thursday = new Date(date.getTime());
+      thursday.setDate(date.getDate() + 4 - (date.getDay() || 7));
+      const yearStart = new Date(thursday.getFullYear(), 0, 1);
+      const weekNum = Math.ceil((((thursday.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+
+      return weekNum;
     },
   },
 ];

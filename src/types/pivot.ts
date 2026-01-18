@@ -133,3 +133,105 @@ export const DEFAULT_PIVOT_OPTIONS = {
   compactForm: true,
   repeatLabels: false,
 };
+
+// ============================================================
+// SLICER TYPES
+// ============================================================
+
+export interface Slicer {
+  id: string;
+  pivotId: string;
+  fieldId: string;
+  name: string;
+
+  // Position and size
+  position: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+
+  // Selection state
+  selectedValues: any[];
+  multiSelect: boolean;
+
+  // Display options
+  columns: number;        // Number of columns in the slicer
+  showHeader: boolean;
+  sortOrder: SortOrder;
+
+  // Style
+  style: SlicerStyle;
+}
+
+export interface SlicerStyle {
+  headerColor: string;
+  headerTextColor: string;
+  selectedColor: string;
+  selectedTextColor: string;
+  unselectedColor: string;
+  unselectedTextColor: string;
+  borderColor: string;
+  borderRadius: number;
+}
+
+export const DEFAULT_SLICER_STYLE: SlicerStyle = {
+  headerColor: '#217346',
+  headerTextColor: '#ffffff',
+  selectedColor: '#217346',
+  selectedTextColor: '#ffffff',
+  unselectedColor: '#f5f5f5',
+  unselectedTextColor: '#333333',
+  borderColor: '#e0e0e0',
+  borderRadius: 4,
+};
+
+// ============================================================
+// TIMELINE TYPES
+// ============================================================
+
+export type TimelineLevel = 'years' | 'quarters' | 'months' | 'days';
+
+export interface Timeline {
+  id: string;
+  pivotId: string;
+  fieldId: string;
+  name: string;
+
+  // Position and size
+  position: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+
+  // Time range selection
+  level: TimelineLevel;
+  startDate: Date | null;
+  endDate: Date | null;
+
+  // Display options
+  showHeader: boolean;
+  showScrollbar: boolean;
+
+  // Style
+  style: TimelineStyle;
+}
+
+export interface TimelineStyle {
+  headerColor: string;
+  headerTextColor: string;
+  selectedColor: string;
+  unselectedColor: string;
+  borderColor: string;
+}
+
+export const DEFAULT_TIMELINE_STYLE: TimelineStyle = {
+  headerColor: '#217346',
+  headerTextColor: '#ffffff',
+  selectedColor: '#217346',
+  unselectedColor: '#f0f0f0',
+  borderColor: '#e0e0e0',
+};

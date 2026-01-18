@@ -42,7 +42,7 @@ export function usePWA(): PWAState & PWAActions {
         setUpdateAvailable(true);
       },
       onOfflineReady() {
-        console.log('App ready for offline use');
+        // App is ready for offline use
       },
       onRegistered(r) {
         if (r) {

@@ -181,9 +181,10 @@ export const VirtualGrid: React.FC<VirtualGridProps> = memo(({
   const handleCellDoubleClick = useCallback(
     (row: number, col: number) => {
       setSelectedCell({ row, col });
+      setSelectionRange(null); // Clear any existing range selection
       setIsEditing(true);
     },
-    [setSelectedCell, setIsEditing]
+    [setSelectedCell, setSelectionRange, setIsEditing]
   );
 
   // Handle cell edit submit

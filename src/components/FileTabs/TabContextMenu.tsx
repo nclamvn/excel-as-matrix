@@ -154,7 +154,8 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
         className="context-menu-item"
         onClick={() =>
           handleAction(() => {
-            console.log('Open in new window:', tabId);
+            // TODO: Implement open in new window
+            window.open(`${window.location.pathname}?tab=${tabId}`, '_blank');
           })
         }
       >

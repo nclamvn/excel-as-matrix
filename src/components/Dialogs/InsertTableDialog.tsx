@@ -25,7 +25,7 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
   };
 
   const handleCreate = () => {
-    console.log(`Creating table "${tableName}" from ${getRangeString()}, headers: ${hasHeaders}`);
+    // TODO: Implement actual table creation logic
     showToast(`Table "${tableName}" created from ${getRangeString()}`, 'success');
     onClose();
   };

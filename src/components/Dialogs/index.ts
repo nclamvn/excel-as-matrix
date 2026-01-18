@@ -1,3 +1,17 @@
 export { InsertFunctionDialog } from './InsertFunctionDialog';
 export { InsertChartDialog } from './InsertChartDialog';
 export { InsertTableDialog } from './InsertTableDialog';
+export { FillSeriesDialog } from './FillSeriesDialog';
+export { GoToDialog } from './GoToDialog';
+export { GoToSpecialDialog } from './GoToSpecialDialog';
+export { PasteSpecialDialog } from './PasteSpecialDialog';
+export { CustomSortDialog } from './CustomSortDialog';
+export { ConditionalFormattingDialog } from './ConditionalFormattingDialog';
+export { InsertCellsDialog } from './InsertCellsDialog';
+export { DeleteCellsDialog } from './DeleteCellsDialog';
+export { UnhideSheetDialog } from './UnhideSheetDialog';
+export { ProtectSheetDialog } from './ProtectSheetDialog';
+export { CommentDialog } from './CommentDialog';
+export { RemoveDuplicatesDialog } from './RemoveDuplicatesDialog';
+export { TextToColumnsDialog } from './TextToColumnsDialog';
+export { FlashFillDialog } from './FlashFillDialog';

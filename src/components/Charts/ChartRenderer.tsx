@@ -9,8 +9,12 @@ import {
   Cell as PieCell,
   AreaChart,
   Area,
+  ScatterChart,
+  Scatter,
+  ComposedChart,
   XAxis,
   YAxis,
+  ZAxis,
   CartesianGrid,
   Tooltip,
   Legend,
@@ -21,7 +25,7 @@ import {
 // TYPES
 // ═══════════════════════════════════════════════════════════════════════════
 
-export type ChartType = 'bar' | 'line' | 'pie' | 'area' | 'column';
+export type ChartType = 'bar' | 'line' | 'pie' | 'area' | 'column' | 'scatter' | 'combo' | 'bubble';
 
 export interface ChartData {
   name: string;
@@ -191,6 +195,118 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
             />
             {showLegend && <Legend wrapperStyle={{ fontSize: '12px' }} />}
           </PieChart>
+        );
+
+      case 'scatter':
+        return (
+          <ScatterChart>
+            {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />}
+            <XAxis
+              dataKey="x"
+              type="number"
+              name="X"
+              tick={{ fontSize: 12 }}
+              domain={['auto', 'auto']}
+            />
+            <YAxis
+              dataKey="y"
+              type="number"
+              name="Y"
+              tick={{ fontSize: 12 }}
+              domain={['auto', 'auto']}
+            />
+            <ZAxis dataKey="z" range={[60, 400]} name="Size" />
+            <Tooltip
+              cursor={{ strokeDasharray: '3 3' }}
+              contentStyle={{
+                background: '#fff',
+                border: '1px solid #e5e5e5',
+                borderRadius: '6px',
+                fontSize: '13px',
+              }}
+            />
+            {showLegend && <Legend wrapperStyle={{ fontSize: '12px' }} />}
+            <Scatter
+              name="Data"
+              data={data.map((d, i) => ({
+                x: i,
+                y: d.value,
+                z: d.value,
+                name: d.name,
+              }))}
+              fill={colors[0]}
+            />
+          </ScatterChart>
+        );
+
+      case 'bubble':
+        return (
+          <ScatterChart>
+            {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />}
+            <XAxis
+              dataKey="x"
+              type="number"
+              name="X"
+              tick={{ fontSize: 12 }}
+              domain={['auto', 'auto']}
+            />
+            <YAxis
+              dataKey="y"
+              type="number"
+              name="Y"
+              tick={{ fontSize: 12 }}
+              domain={['auto', 'auto']}
+            />
+            <ZAxis dataKey="z" range={[60, 600]} name="Size" />
+            <Tooltip
+              cursor={{ strokeDasharray: '3 3' }}
+              contentStyle={{
+                background: '#fff',
+                border: '1px solid #e5e5e5',
+                borderRadius: '6px',
+                fontSize: '13px',
+              }}
+            />
+            {showLegend && <Legend wrapperStyle={{ fontSize: '12px' }} />}
+            <Scatter
+              name="Data"
+              data={data.map((d, i) => ({
+                x: i,
+                y: d.value,
+                z: Math.abs(d.value) * 10,
+                name: d.name,
+              }))}
+              fill={colors[0]}
+              fillOpacity={0.6}
+            />
+          </ScatterChart>
+        );
+
+      case 'combo':
+        return (
+          <ComposedChart data={data}>
+            {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />}
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{
+                background: '#fff',
+                border: '1px solid #e5e5e5',
+                borderRadius: '6px',
+                fontSize: '13px',
+              }}
+            />
+            {showLegend && <Legend wrapperStyle={{ fontSize: '12px' }} />}
+            <Bar dataKey="value" fill={colors[0]} radius={[4, 4, 0, 0]} name="Bar" />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke={colors[1] || colors[0]}
+              strokeWidth={2}
+              dot={{ fill: colors[1] || colors[0], strokeWidth: 2 }}
+              name="Line"
+            />
+          </ComposedChart>
         );
 
       default:
