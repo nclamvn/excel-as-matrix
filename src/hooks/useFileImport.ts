@@ -2,10 +2,18 @@ import { useState, useCallback } from 'react';
 import { useWorkbookStore } from '../stores/workbookStore';
 import { apiClient } from '../api/client';
 
+// Typed cell value for import - matches Excel/CSV value types
+type ImportedCellPrimitive = string | number | boolean | null | undefined;
+
+interface ImportedCellValue {
+  type: 'Empty' | 'String' | 'Number' | 'Bool' | 'DateTime' | 'Error';
+  value?: ImportedCellPrimitive;
+}
+
 interface ImportedCell {
   row: number;
   col: number;
-  value: { type: string; value?: any };
+  value: ImportedCellValue;
   formula?: string;
 }
 
@@ -78,22 +86,22 @@ export function useFileImport(): UseFileImportReturn {
 
   const { addSheet, setWorkbook, batchUpdateCells } = useWorkbookStore();
 
-  const parseCellValue = (value: { type: string; value?: any }): string => {
+  const parseCellValue = (value: ImportedCellValue): string => {
     switch (value.type) {
       case 'Empty':
         return '';
       case 'String':
-        return value.value || '';
+        return String(value.value ?? '');
       case 'Number':
-        return String(value.value);
+        return String(value.value ?? '');
       case 'Bool':
         return value.value ? 'TRUE' : 'FALSE';
       case 'DateTime':
-        return value.value || '';
+        return String(value.value ?? '');
       case 'Error':
         return '#ERROR!';
       default:
-        return String(value.value || '');
+        return String(value.value ?? '');
     }
   };
 

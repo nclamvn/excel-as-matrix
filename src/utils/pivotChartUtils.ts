@@ -3,7 +3,7 @@
 // Functions to convert pivot table data to chart data
 // ============================================================
 
-import { PivotTable, PivotAreaField } from '../types/pivot';
+import { PivotTable, PivotAreaField, PivotCellValue } from '../types/pivot';
 import { ChartType, ChartData, SeriesData, DEFAULT_CHART_COLORS } from '../types/visualization';
 import { aggregate } from '../stores/pivotStore';
 
@@ -27,7 +27,7 @@ export interface PivotChartData {
  */
 export function extractPivotChartData(
   pivot: PivotTable,
-  sourceData: any[][],
+  sourceData: PivotCellValue[][],
   config: PivotChartConfig
 ): PivotChartData {
   const { chartType, useRowsAsCategories, selectedValueFields } = config;
@@ -104,7 +104,7 @@ export function extractPivotChartData(
 function getFieldUniqueValues(
   pivot: PivotTable,
   area: 'row' | 'column',
-  sourceData: any[][]
+  sourceData: PivotCellValue[][]
 ): string[] {
   const areaFields = area === 'row' ? pivot.rowFields : pivot.columnFields;
   if (areaFields.length === 0) return [];
@@ -130,7 +130,7 @@ function getFieldUniqueValues(
 /**
  * Format a value based on grouping settings
  */
-function formatGroupValue(value: any, field: PivotAreaField): string {
+function formatGroupValue(value: PivotCellValue, field: PivotAreaField): string {
   if (field.dateGrouping && value instanceof Date) {
     switch (field.dateGrouping) {
       case 'years':
@@ -153,7 +153,7 @@ function formatGroupValue(value: any, field: PivotAreaField): string {
  */
 function buildSeriesFromValues(
   pivot: PivotTable,
-  sourceData: any[][],
+  sourceData: PivotCellValue[][],
   valueField: PivotAreaField,
   categories: string[],
   useRowsAsCategories: boolean
@@ -169,7 +169,7 @@ function buildSeriesFromValues(
   if (!categoryField) {
     // No grouping - aggregate all values
     const allValues = sourceData.slice(1)
-      .map(row => parseFloat(row[valueColIndex]) || 0);
+      .map(row => parseFloat(String(row[valueColIndex] ?? '')) || 0);
     return [aggregate(allValues, valueField.aggregateFunction || 'sum')];
   }
 
@@ -185,7 +185,7 @@ function buildSeriesFromValues(
   for (let i = 1; i < sourceData.length; i++) {
     const row = sourceData[i];
     const categoryValue = formatGroupValue(row[categoryColIndex], categoryField);
-    const numValue = parseFloat(row[valueColIndex]) || 0;
+    const numValue = parseFloat(String(row[valueColIndex] ?? '')) || 0;
 
     if (valuesByCategory.has(categoryValue)) {
       valuesByCategory.get(categoryValue)!.push(numValue);
@@ -204,7 +204,7 @@ function buildSeriesFromValues(
  */
 function buildSeriesForLabel(
   pivot: PivotTable,
-  sourceData: any[][],
+  sourceData: PivotCellValue[][],
   valueField: PivotAreaField,
   categories: string[],
   seriesLabel: string,
@@ -240,7 +240,7 @@ function buildSeriesForLabel(
     const row = sourceData[i];
     const categoryValue = formatGroupValue(row[categoryColIndex], categoryField);
     const seriesValue = formatGroupValue(row[seriesColIndex], seriesField);
-    const numValue = parseFloat(row[valueColIndex]) || 0;
+    const numValue = parseFloat(String(row[valueColIndex] ?? '')) || 0;
 
     if (seriesValue === seriesLabel && valuesByCategory.has(categoryValue)) {
       valuesByCategory.get(categoryValue)!.push(numValue);

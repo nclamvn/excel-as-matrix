@@ -119,9 +119,37 @@ export function useProactiveAI() {
   /**
    * Handle format apply callback from Proactive Engine
    */
-  const handleFormatApply = useCallback((_cells: string[], _format: unknown) => {
-    // TODO: Implement format application when cell format support is added
-  }, []);
+  const handleFormatApply = useCallback((cells: string[], format: unknown) => {
+    if (!activeSheetId || !cells.length) return;
+
+    // Parse cell references and find the range
+    const parsedCells = cells.map(cell => {
+      const match = cell.match(/^([A-Z]+)(\d+)$/i);
+      if (!match) return null;
+
+      let col = 0;
+      const colStr = match[1].toUpperCase();
+      for (let i = 0; i < colStr.length; i++) {
+        col = col * 26 + (colStr.charCodeAt(i) - 64);
+      }
+      return { row: parseInt(match[2]) - 1, col: col - 1 };
+    }).filter(Boolean) as { row: number; col: number }[];
+
+    if (parsedCells.length === 0) return;
+
+    // Find bounding range
+    const minRow = Math.min(...parsedCells.map(c => c.row));
+    const maxRow = Math.max(...parsedCells.map(c => c.row));
+    const minCol = Math.min(...parsedCells.map(c => c.col));
+    const maxCol = Math.max(...parsedCells.map(c => c.col));
+
+    // Apply format to the range
+    const { applyFormatToRange } = useWorkbookStore.getState();
+    applyFormatToRange(
+      { start: { row: minRow, col: minCol }, end: { row: maxRow, col: maxCol } },
+      format as Record<string, unknown>
+    );
+  }, [activeSheetId]);
 
   /**
    * Setup event listener for scan results

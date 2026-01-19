@@ -13,7 +13,7 @@ import {
 import { useSlicerStore } from '../../stores/slicerStore';
 import { usePivotStore } from '../../stores/pivotStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
-import { Slicer as SlicerType, PivotTable } from '../../types/pivot';
+import { Slicer as SlicerType, PivotTable, PivotCellValue } from '../../types/pivot';
 import './PivotTable.css';
 
 interface SlicerProps {
@@ -79,14 +79,14 @@ export const Slicer: React.FC<SlicerProps> = ({
   }, [pivot, slicer.fieldId, slicer.sortOrder, getCellValue]);
 
   // Check if a value is selected
-  const isSelected = useCallback((value: any) => {
+  const isSelected = useCallback((value: PivotCellValue) => {
     // If no selection, all values are "selected" (no filter)
     if (slicer.selectedValues.length === 0) return true;
     return slicer.selectedValues.includes(value);
   }, [slicer.selectedValues]);
 
   // Handle value click
-  const handleValueClick = (value: any) => {
+  const handleValueClick = (value: PivotCellValue) => {
     toggleSlicerValue(slicer.id, value);
 
     // Update pivot filter

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useChartStore } from '../../stores/chartStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
-import { PivotTable } from '../../types/pivot';
+import { PivotTable, PivotCellValue } from '../../types/pivot';
 import { ChartType, DEFAULT_CHART_COLORS } from '../../types/visualization';
 import {
   extractPivotChartData,
@@ -117,7 +117,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
 
   // Get source data using getCellValue
   const sourceData = useMemo(() => {
-    const data: any[][] = [];
+    const data: PivotCellValue[][] = [];
 
     // Parse source range
     const rangeMatch = pivot.sourceRange.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/i);
@@ -129,7 +129,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
     const endRow = parseInt(rangeMatch[4], 10) - 1;
 
     for (let r = startRow; r <= endRow; r++) {
-      const row: any[] = [];
+      const row: PivotCellValue[] = [];
       for (let c = startCol; c <= endCol; c++) {
         row.push(getCellValue(pivot.sourceSheetId, r, c) ?? '');
       }

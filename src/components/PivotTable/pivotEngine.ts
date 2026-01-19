@@ -9,6 +9,7 @@ import {
   PivotFilter,
   PivotCellData,
   PivotResult,
+  PivotCellValue,
   DateGrouping,
   CalculatedField,
   AGGREGATE_LABELS,
@@ -20,12 +21,12 @@ import { aggregate, formatPivotValue } from '../../stores/pivotStore';
 // ============================================================
 
 interface DataRow {
-  [key: string]: any;
+  [key: string]: PivotCellValue;
 }
 
 interface GroupNode {
   key: string;
-  values: any[];
+  values: DataRow[];
   children: Map<string, GroupNode>;
   aggregatedValues: Map<string, number>;
 }
@@ -37,25 +38,34 @@ interface GroupNode {
 /**
  * Get unique values from a column
  */
-export function getUniqueValues(data: DataRow[], fieldId: string): any[] {
-  const unique = new Set<any>();
+export function getUniqueValues(data: DataRow[], fieldId: string): PivotCellValue[] {
+  const unique = new Set<PivotCellValue>();
   data.forEach(row => {
     if (row[fieldId] !== undefined && row[fieldId] !== null) {
       unique.add(row[fieldId]);
     }
   });
-  return Array.from(unique).sort();
+  return Array.from(unique).sort((a, b) => {
+    if (a === null) return -1;
+    if (b === null) return 1;
+    return String(a).localeCompare(String(b));
+  });
 }
 
 /**
  * Apply date grouping to a value
  */
-export function applyDateGrouping(value: any, grouping?: DateGrouping): string {
-  if (!grouping || !(value instanceof Date) && isNaN(Date.parse(value))) {
+export function applyDateGrouping(value: PivotCellValue, grouping?: DateGrouping): string {
+  if (value === null || value === undefined) return '';
+
+  const isValidDateString = typeof value === 'string' && !isNaN(Date.parse(value));
+  const isValidDateNumber = typeof value === 'number' && !isNaN(value);
+
+  if (!grouping || (!(value instanceof Date) && !isValidDateString && !isValidDateNumber)) {
     return String(value);
   }
 
-  const date = value instanceof Date ? value : new Date(value);
+  const date = value instanceof Date ? value : new Date(value as string | number);
 
   switch (grouping) {
     case 'years':
@@ -110,7 +120,7 @@ export function filterData(data: DataRow[], filters: PivotFilter[]): DataRow[] {
 /**
  * Sort data based on field sort order
  */
-export function sortValues(values: any[], order: 'asc' | 'desc' | 'none'): any[] {
+export function sortValues<T extends PivotCellValue>(values: T[], order: 'asc' | 'desc' | 'none'): T[] {
   if (order === 'none') return values;
 
   return [...values].sort((a, b) => {
@@ -184,7 +194,7 @@ export class PivotEngine {
   private data: DataRow[];
   private filteredData: DataRow[];
 
-  constructor(pivot: PivotTable, sourceData: any[][]) {
+  constructor(pivot: PivotTable, sourceData: PivotCellValue[][]) {
     this.pivot = pivot;
     this.data = this.convertToDataRows(sourceData);
     this.filteredData = filterData(this.data, pivot.filters);
@@ -193,7 +203,7 @@ export class PivotEngine {
   /**
    * Convert 2D array data to row objects using pivot fields
    */
-  private convertToDataRows(sourceData: any[][]): DataRow[] {
+  private convertToDataRows(sourceData: PivotCellValue[][]): DataRow[] {
     if (sourceData.length === 0) return [];
 
     // First row is headers - skip it
@@ -669,7 +679,7 @@ export class PivotEngine {
         }
         return row[valueField.fieldId];
       })
-      .filter(v => typeof v === 'number' && !isNaN(v));
+      .filter((v): v is number => typeof v === 'number' && !isNaN(v));
     return aggregate(values, valueField.aggregateFunction || 'sum');
   }
 
@@ -720,7 +730,7 @@ export class PivotEngine {
         }
         return row[fieldId];
       })
-      .filter(v => typeof v === 'number' && !isNaN(v));
+      .filter((v): v is number => typeof v === 'number' && !isNaN(v));
   }
 
   /**
@@ -773,7 +783,7 @@ export class PivotEngine {
 /**
  * Create and run the pivot engine
  */
-export function calculatePivot(pivot: PivotTable, sourceData: any[][]): PivotResult {
+export function calculatePivot(pivot: PivotTable, sourceData: PivotCellValue[][]): PivotResult {
   const engine = new PivotEngine(pivot, sourceData);
   return engine.calculate();
 }

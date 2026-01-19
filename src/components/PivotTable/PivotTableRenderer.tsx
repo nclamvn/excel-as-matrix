@@ -7,7 +7,7 @@ import { ChevronDown, ChevronRight, RefreshCw, BarChart2, Filter, Calendar } fro
 import { usePivotStore } from '../../stores/pivotStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSlicerStore } from '../../stores/slicerStore';
-import { PivotTable, PivotResult, PivotCellData } from '../../types/pivot';
+import { PivotTable, PivotResult, PivotCellData, PivotCellValue } from '../../types/pivot';
 import { calculatePivot } from './pivotEngine';
 import { PivotChartDialog } from './PivotChartDialog';
 import { InsertSlicerDialog } from './InsertSlicerDialog';
@@ -49,9 +49,9 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
     const endCol = match[3].toUpperCase().charCodeAt(0) - 65;
     const endRow = parseInt(match[4], 10) - 1;
 
-    const data: any[][] = [];
+    const data: PivotCellValue[][] = [];
     for (let row = startRow; row <= endRow; row++) {
-      const rowData: any[] = [];
+      const rowData: PivotCellValue[] = [];
       for (let col = startCol; col <= endCol; col++) {
         rowData.push(getCellValue(pivot.sourceSheetId, row, col));
       }

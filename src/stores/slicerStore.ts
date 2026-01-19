@@ -11,6 +11,7 @@ import {
   TimelineStyle,
   TimelineLevel,
   SortOrder,
+  PivotCellValue,
   DEFAULT_SLICER_STYLE,
   DEFAULT_TIMELINE_STYLE,
 } from '../types/pivot';
@@ -39,10 +40,10 @@ interface SlicerStore {
   getSlicersForPivot: (pivotId: string) => Slicer[];
 
   // Slicer selection
-  toggleSlicerValue: (slicerId: string, value: any) => void;
-  setSlicerValues: (slicerId: string, values: any[]) => void;
+  toggleSlicerValue: (slicerId: string, value: PivotCellValue) => void;
+  setSlicerValues: (slicerId: string, values: PivotCellValue[]) => void;
   clearSlicerSelection: (slicerId: string) => void;
-  selectAllSlicerValues: (slicerId: string, allValues: any[]) => void;
+  selectAllSlicerValues: (slicerId: string, allValues: PivotCellValue[]) => void;
 
   // Slicer options
   setSlicerColumns: (slicerId: string, columns: number) => void;
@@ -153,7 +154,7 @@ export const useSlicerStore = create<SlicerStore>()(
           const slicer = state.slicers[slicerId];
           if (!slicer) return state;
 
-          let newValues: any[];
+          let newValues: PivotCellValue[];
           if (slicer.multiSelect) {
             // Toggle value in/out of selection
             if (slicer.selectedValues.includes(value)) {

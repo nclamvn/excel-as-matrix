@@ -13,14 +13,17 @@ export type ChangeType =
   | 'sheetDelete'
   | 'sheetRename';
 
+// Cell values can be string, number, boolean, null, or objects (for format changes)
+export type CellChangeValue = string | number | boolean | null | Record<string, unknown>;
+
 export interface CellChange {
   id: string;
   type: ChangeType;
   sheetId: string;
   cellRef?: string;
   range?: string;
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: CellChangeValue;
+  newValue?: CellChangeValue;
   authorId: string;
   timestamp: string;
   status: 'pending' | 'accepted' | 'rejected';

@@ -34,6 +34,53 @@ interface UseFileExportReturn {
   progress: number;
 }
 
+// Export request body types
+interface XlsxExportRequest {
+  format: 'xlsx';
+  workbook: ReturnType<typeof Object>;
+  filename: string;
+  options: {
+    include_formulas: boolean;
+    include_formatting: boolean;
+    default_column_width: number;
+    default_row_height: number;
+  };
+}
+
+interface CsvExportRequest {
+  format: 'csv' | 'tsv';
+  csv_data: {
+    rows: { index: number; cells: string[] }[];
+    column_count: number;
+  };
+  filename: string;
+  options: {
+    delimiter: 'comma' | 'semicolon' | 'tab';
+    include_header: boolean;
+    line_ending: 'crlf' | 'lf';
+    quote_style: 'necessary' | 'all';
+  };
+}
+
+interface PdfExportRequest {
+  format: 'pdf';
+  sheets: { name: string; cells: { row: number; col: number; value: string }[] }[];
+  filename: string;
+  options: {
+    page_size: 'a4' | 'letter' | 'legal';
+    orientation: 'portrait' | 'landscape';
+    margin: number;
+    font_size: number;
+    header_font_size: number;
+    include_grid_lines: boolean;
+    include_sheet_name: boolean;
+    include_page_numbers: boolean;
+    title: string | null;
+  };
+}
+
+type ExportRequestBody = XlsxExportRequest | CsvExportRequest | PdfExportRequest;
+
 export function useFileExport(): UseFileExportReturn {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -188,13 +235,13 @@ export function useFileExport(): UseFileExportReturn {
       setProgress(0);
 
       try {
-        let requestBody: any;
+        let requestBody: ExportRequestBody | undefined;
 
         setProgress(20);
 
         if (options.format === 'xlsx') {
           requestBody = {
-            format: 'xlsx',
+            format: 'xlsx' as const,
             workbook: buildExportData(options.selectedSheets, options.includeFormulas),
             filename: options.filename,
             options: {
@@ -211,16 +258,16 @@ export function useFileExport(): UseFileExportReturn {
           }
 
           requestBody = {
-            format: options.format,
+            format: options.format as 'csv' | 'tsv',
             csv_data: csvData,
             filename: options.filename,
             options: {
-              delimiter: options.format === 'tsv' ? 'tab' :
-                options.delimiter === '\t' ? 'tab' :
-                options.delimiter === ';' ? 'semicolon' : 'comma',
+              delimiter: options.format === 'tsv' ? 'tab' as const :
+                options.delimiter === '\t' ? 'tab' as const :
+                options.delimiter === ';' ? 'semicolon' as const : 'comma' as const,
               include_header: options.includeHeader,
-              line_ending: 'crlf',
-              quote_style: 'necessary',
+              line_ending: 'crlf' as const,
+              quote_style: 'necessary' as const,
             },
           };
         } else if (options.format === 'pdf') {
@@ -230,7 +277,7 @@ export function useFileExport(): UseFileExportReturn {
           }
 
           requestBody = {
-            format: 'pdf',
+            format: 'pdf' as const,
             sheets: pdfSheets,
             filename: options.filename,
             options: {

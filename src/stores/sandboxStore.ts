@@ -23,6 +23,19 @@ export interface DiffEntry {
   newFormula: string | null;
 }
 
+// API response format for diff entries (snake_case from backend)
+interface ApiDiffEntry {
+  sheet_id: string;
+  row: number;
+  col: number;
+  cell_ref: string;
+  change_type: DiffEntry['changeType'];
+  old_value: string | null;
+  new_value: string | null;
+  old_formula: string | null;
+  new_formula: string | null;
+}
+
 export interface PullRequest {
   id: string;
   sandboxId: string;
@@ -126,8 +139,8 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
         throw new Error(error.error || 'Failed to load diffs');
       }
 
-      const data = await response.json();
-      const diffs: DiffEntry[] = data.map((d: any) => ({
+      const data: ApiDiffEntry[] = await response.json();
+      const diffs: DiffEntry[] = data.map((d) => ({
         sheetId: d.sheet_id,
         row: d.row,
         col: d.col,

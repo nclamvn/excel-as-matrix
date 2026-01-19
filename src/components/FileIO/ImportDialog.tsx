@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { FileDropZone } from './FileDropZone';
 
+// Typed cell value for import
+type ImportedCellPrimitive = string | number | boolean | null | undefined;
+
+interface ImportedCellValue {
+  type: 'Empty' | 'String' | 'Number' | 'Bool' | 'DateTime' | 'Error';
+  value?: ImportedCellPrimitive;
+}
+
 interface ImportedSheet {
   name: string;
   cells: Array<{
     row: number;
     col: number;
-    value: { type: string; value?: any };
+    value: ImportedCellValue;
   }>;
   row_count: number;
   col_count: number;
@@ -153,12 +161,12 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
     );
   };
 
-  const renderCellValue = (value: { type: string; value?: any }): string => {
+  const renderCellValue = (value: ImportedCellValue): string => {
     if (value.type === 'Empty') return '';
-    if (value.type === 'String') return value.value || '';
-    if (value.type === 'Number') return String(value.value);
+    if (value.type === 'String') return String(value.value ?? '');
+    if (value.type === 'Number') return String(value.value ?? '');
     if (value.type === 'Bool') return value.value ? 'TRUE' : 'FALSE';
-    return String(value.value || '');
+    return String(value.value ?? '');
   };
 
   if (!isOpen) return null;

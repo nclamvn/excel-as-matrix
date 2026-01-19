@@ -39,9 +39,12 @@ export interface PivotAreaField {
   customName?: string;
 }
 
+// Pivot cell value can be string, number, boolean, Date, or null
+export type PivotCellValue = string | number | boolean | Date | null;
+
 export interface PivotFilter {
   fieldId: string;
-  selectedValues: any[];
+  selectedValues: PivotCellValue[];
   excludeMode: boolean;
 }
 
@@ -94,7 +97,7 @@ export interface CalculatedField {
 }
 
 export interface PivotCellData {
-  value: any;
+  value: PivotCellValue;
   formattedValue: string;
   isHeader: boolean;
   isTotal: boolean;
@@ -153,7 +156,7 @@ export interface Slicer {
   };
 
   // Selection state
-  selectedValues: any[];
+  selectedValues: PivotCellValue[];
   multiSelect: boolean;
 
   // Display options

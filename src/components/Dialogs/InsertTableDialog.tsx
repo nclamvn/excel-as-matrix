@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { useTableStore } from '../../stores/tableStore';
 import { useUIStore } from '../../stores/uiStore';
+import { Table, TableColumn, TableStyle } from '../../types/cell';
 
 interface InsertTableDialogProps {
   onClose: () => void;
@@ -10,11 +12,19 @@ interface InsertTableDialogProps {
 export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose }) => {
   const [hasHeaders, setHasHeaders] = useState(true);
   const [tableName, setTableName] = useState('Table1');
-  const { selectionRange } = useWorkbookStore();
+  const { selectionRange, activeSheetId, sheets, applyFormatToRange } = useWorkbookStore();
+  const { addTable, getTableByName } = useTableStore();
   const { showToast } = useUIStore();
 
   const colToLetter = (col: number): string => {
-    return String.fromCharCode(65 + col);
+    let result = '';
+    let num = col + 1;
+    while (num > 0) {
+      const remainder = (num - 1) % 26;
+      result = String.fromCharCode(65 + remainder) + result;
+      num = Math.floor((num - 1) / 26);
+    }
+    return result;
   };
 
   const getRangeString = () => {
@@ -25,8 +35,107 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
   };
 
   const handleCreate = () => {
-    // TODO: Implement actual table creation logic
-    showToast(`Table "${tableName}" created from ${getRangeString()}`, 'success');
+    if (!activeSheetId || !selectionRange) {
+      showToast('Please select a range first', 'error');
+      return;
+    }
+
+    // Check if table name already exists
+    if (getTableByName(tableName)) {
+      showToast(`Table "${tableName}" already exists`, 'error');
+      return;
+    }
+
+    const sheet = sheets[activeSheetId];
+    if (!sheet) return;
+
+    // Calculate columns from selection
+    const numCols = selectionRange.end.col - selectionRange.start.col + 1;
+    const columns: TableColumn[] = [];
+
+    for (let i = 0; i < numCols; i++) {
+      const colIndex = selectionRange.start.col + i;
+      let columnName = `Column${i + 1}`;
+
+      // If has headers, get the header name from the first row
+      if (hasHeaders) {
+        const headerKey = `${selectionRange.start.row}:${colIndex}`;
+        const headerCell = sheet.cells[headerKey];
+        if (headerCell && headerCell.value) {
+          columnName = String(headerCell.value);
+        }
+      }
+
+      columns.push({
+        id: `col-${Date.now()}-${i}`,
+        name: columnName,
+        index: i,
+        hidden: false,
+      });
+    }
+
+    // Calculate row count (excluding header if present)
+    const totalRows = selectionRange.end.row - selectionRange.start.row + 1;
+    const dataRows = hasHeaders ? totalRows - 1 : totalRows;
+
+    // Create default table style
+    const style: TableStyle = {
+      name: 'TableStyleMedium2',
+      headerBackgroundColor: '#4472C4',
+      headerTextColor: '#FFFFFF',
+      alternateRowColor: '#D6DCE5',
+    };
+
+    // Create the table
+    const table: Table = {
+      id: `table-${Date.now()}`,
+      name: tableName,
+      sheetId: activeSheetId,
+      startRow: selectionRange.start.row,
+      startCol: selectionRange.start.col,
+      columns,
+      rowCount: dataRows,
+      hasHeaderRow: hasHeaders,
+      hasTotalRow: false,
+      style,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Add table to store
+    addTable(table);
+
+    // Apply formatting to the table
+    // Header row formatting
+    if (hasHeaders) {
+      applyFormatToRange(
+        {
+          start: { row: selectionRange.start.row, col: selectionRange.start.col },
+          end: { row: selectionRange.start.row, col: selectionRange.end.col }
+        },
+        {
+          bold: true,
+          backgroundColor: style.headerBackgroundColor,
+          textColor: style.headerTextColor,
+        }
+      );
+    }
+
+    // Apply alternate row colors
+    const dataStartRow = hasHeaders ? selectionRange.start.row + 1 : selectionRange.start.row;
+    for (let row = dataStartRow; row <= selectionRange.end.row; row++) {
+      if ((row - dataStartRow) % 2 === 1) {
+        applyFormatToRange(
+          {
+            start: { row, col: selectionRange.start.col },
+            end: { row, col: selectionRange.end.col }
+          },
+          { backgroundColor: style.alternateRowColor }
+        );
+      }
+    }
+
+    showToast(`Table "${tableName}" created with ${columns.length} columns and ${dataRows} data rows`, 'success');
     onClose();
   };
 

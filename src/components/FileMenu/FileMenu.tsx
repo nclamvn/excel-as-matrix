@@ -42,6 +42,7 @@ interface RecentFile {
   path: string;
   lastOpened: Date;
   thumbnail?: string;
+  workbookData?: string; // JSON stringified workbook data for quick restore
 }
 
 interface MenuItem {
@@ -111,8 +112,19 @@ const useRecentFiles = () => {
         id: Date.now().toString(),
         lastOpened: new Date()
       };
+      // Remove any existing entry with the same name and add the new one
       const updated = [newFile, ...prev.filter(f => f.name !== file.name)].slice(0, 10);
-      localStorage.setItem('excelai-recent-files', JSON.stringify(updated));
+      // Store in localStorage (limit data size to prevent quota issues)
+      try {
+        localStorage.setItem('excelai-recent-files', JSON.stringify(updated));
+      } catch (e) {
+        // If localStorage is full, remove oldest files and try again
+        const reducedFiles = updated.slice(0, 5).map(f => ({
+          ...f,
+          workbookData: undefined // Remove data to save space
+        }));
+        localStorage.setItem('excelai-recent-files', JSON.stringify(reducedFiles));
+      }
       return updated;
     });
   }, []);
@@ -609,8 +621,20 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
           importDataToSheet(rows, file.name);
         }
 
-        // Add to recent files
-        addRecentFile({ name: file.name, path: 'Local File' });
+        // Add to recent files with workbook data for restore
+        // Capture current workbook state after import
+        setTimeout(() => {
+          const currentSheets = useWorkbookStore.getState().sheets;
+          const sheetOrder = useWorkbookStore.getState().sheetOrder;
+          const workbookData = JSON.stringify({
+            name: file.name.replace(/\.[^/.]+$/, ''),
+            sheets: sheetOrder.map(id => ({
+              name: currentSheets[id]?.name,
+              cells: currentSheets[id]?.cells || {}
+            }))
+          });
+          addRecentFile({ name: file.name, path: 'Local File', workbookData });
+        }, 100);
 
       } catch (err) {
         console.error('Error parsing file:', err);
@@ -787,7 +811,36 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
                     key={file.id}
                     file={file}
                     onClick={() => {
-                      // TODO: Implement open recent file
+                      // Load recent file from stored data
+                      if (file.workbookData) {
+                        try {
+                          const data = JSON.parse(file.workbookData);
+                          if (data.sheets && Array.isArray(data.sheets)) {
+                            const workbookId = `local-${Date.now()}`;
+                            const name = data.name || file.name.replace(/\.[^/.]+$/, '');
+
+                            setWorkbook(workbookId, name);
+
+                            for (let i = 0; i < data.sheets.length; i++) {
+                              const sheetData = data.sheets[i];
+                              const sheetId = `sheet-${Date.now()}-${i}`;
+
+                              addSheet({
+                                id: sheetId,
+                                name: sheetData.name || `Sheet${i + 1}`,
+                                index: i,
+                                cells: sheetData.cells || {}
+                              });
+                            }
+                          }
+                        } catch (err) {
+                          console.error('Error loading recent file:', err);
+                          alert('Could not load file. Please open it again from disk.');
+                        }
+                      } else {
+                        // Demo files or files without saved data
+                        alert('This file needs to be opened again from disk.\nClick "Browse Files" to select your file.');
+                      }
                       onClose();
                     }}
                   />

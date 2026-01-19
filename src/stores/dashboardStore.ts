@@ -25,6 +25,11 @@ interface DashboardState {
   error: string | null;
 }
 
+// Type for persisted dashboard state (serialized to localStorage)
+interface PersistedDashboardState {
+  dashboards?: [string, Dashboard][];
+}
+
 interface DashboardActions {
   // Dashboard CRUD
   createDashboard: (workbookId: string, name: string) => Dashboard;
@@ -427,10 +432,13 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         partialize: (state) => ({
           dashboards: Array.from(state.dashboards.entries()),
         }),
-        merge: (persisted: any, current) => ({
-          ...current,
-          dashboards: new Map(persisted?.dashboards || []),
-        }),
+        merge: (persistedState: unknown, current) => {
+          const persisted = persistedState as PersistedDashboardState | undefined;
+          return {
+            ...current,
+            dashboards: new Map(persisted?.dashboards || []),
+          };
+        },
       }
     ),
     { name: 'dashboard-store' }
