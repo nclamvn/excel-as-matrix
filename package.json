@@ -17,6 +17,7 @@
     "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.96.0",
     "@tanstack/react-virtual": "^3.13.18",
     "@types/lodash-es": "^4.17.12",
     "file-saver": "^2.0.5",

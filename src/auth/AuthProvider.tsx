@@ -1,7 +1,8 @@
 // Phase 11: Authentication Provider
-// React context for auth state management
+// React context for auth state management with Supabase SSO support
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
 
 // Types
 export interface User {
@@ -47,10 +48,49 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     error: null,
   });
 
-  // Check existing auth on mount
+  // Check existing auth on mount (REST token first, then Supabase SSO)
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Listen for Supabase auth state changes (SSO session detection)
+  useEffect(() => {
+    if (!supabase) return;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session && !state.isAuthenticated) {
+          // User signed in via Supabase (SSO) — set auth state
+          const supaUser = session.user;
+          setState({
+            user: {
+              id: supaUser.id,
+              email: supaUser.email || '',
+              name: supaUser.user_metadata?.full_name || supaUser.user_metadata?.name || supaUser.email?.split('@')[0] || '',
+              roles: ['Member'],
+              permissions: ['workbooks:*'],
+              orgId: supaUser.user_metadata?.org_id,
+              picture: supaUser.user_metadata?.avatar_url,
+            },
+            isAuthenticated: true,
+            isLoading: false,
+            accessToken: session.access_token,
+            error: null,
+          });
+        } else if (event === 'SIGNED_OUT' && !localStorage.getItem('accessToken')) {
+          setState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            accessToken: null,
+            error: null,
+          });
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [state.isAuthenticated]);
 
   // Token refresh interval
   useEffect(() => {
@@ -65,29 +105,55 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const checkAuth = async () => {
     try {
+      // 1. Check existing REST token first
       const token = localStorage.getItem('accessToken');
-      if (!token) {
-        setState(prev => ({ ...prev, isLoading: false }));
-        return;
-      }
-
-      const response = await fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.ok) {
-        const user = await response.json();
-        setState({
-          user,
-          isAuthenticated: true,
-          isLoading: false,
-          accessToken: token,
-          error: null,
+      if (token) {
+        const response = await fetch('/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
         });
-      } else {
-        // Try refresh token
+
+        if (response.ok) {
+          const user = await response.json();
+          setState({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+            accessToken: token,
+            error: null,
+          });
+          return;
+        }
+        // Token invalid — try refresh
         await refreshToken();
+        if (localStorage.getItem('accessToken')) return; // refresh succeeded
       }
+
+      // 2. Check Supabase session (SSO)
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const supaUser = session.user;
+          setState({
+            user: {
+              id: supaUser.id,
+              email: supaUser.email || '',
+              name: supaUser.user_metadata?.full_name || supaUser.user_metadata?.name || supaUser.email?.split('@')[0] || '',
+              roles: ['Member'],
+              permissions: ['workbooks:*'],
+              orgId: supaUser.user_metadata?.org_id,
+              picture: supaUser.user_metadata?.avatar_url,
+            },
+            isAuthenticated: true,
+            isLoading: false,
+            accessToken: session.access_token,
+            error: null,
+          });
+          return;
+        }
+      }
+
+      // 3. No auth found
+      setState(prev => ({ ...prev, isLoading: false }));
     } catch {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
