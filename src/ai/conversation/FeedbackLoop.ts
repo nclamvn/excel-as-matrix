@@ -8,6 +8,7 @@ import type {
   FeedbackCategory,
   ConversationContext,
 } from './types';
+import { loggers } from '@/utils/logger';
 
 // -----------------------------------------------------------------------------
 // Feedback Record
@@ -271,7 +272,7 @@ export class FeedbackLoop {
         }));
       }
     } catch {
-      console.error('Failed to import feedback data');
+      loggers.ai.error('Failed to import feedback data');
     }
   }
 

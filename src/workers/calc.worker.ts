@@ -9,6 +9,8 @@
  * - Statistical functions
  */
 
+import { loggers } from '@/utils/logger';
+
 // Message types
 export type CalcWorkerMessage =
   | { type: 'EVALUATE_FORMULA'; id: string; formula: string; context: FormulaContext }
@@ -535,7 +537,7 @@ function topologicalSort(dependencies: Record<string, string[]>): string[] {
 
   // Check for cycles
   if (result.length !== inDegree.size) {
-    console.warn('Circular reference detected in formulas');
+    loggers.worker.warn('Circular reference detected in formulas');
   }
 
   return result;

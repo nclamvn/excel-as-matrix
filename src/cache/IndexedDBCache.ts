@@ -5,6 +5,8 @@
  * enabling offline access and faster load times.
  */
 
+import { loggers } from '@/utils/logger';
+
 const DB_NAME = 'excel-claude-code';
 const DB_VERSION = 1;
 
@@ -107,7 +109,7 @@ export class IndexedDBCache {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
 
       request.onerror = () => {
-        console.error('Failed to open IndexedDB:', request.error);
+        loggers.cache.error('Failed to open IndexedDB:', request.error);
         reject(request.error);
       };
 

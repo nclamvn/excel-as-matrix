@@ -4,6 +4,7 @@
 import React from 'react';
 import { Building2, KeyRound } from 'lucide-react';
 import { useAuth } from '../../auth/AuthProvider';
+import { loggers } from '@/utils/logger';
 
 // Google Icon Component
 const GoogleIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -52,7 +53,7 @@ export const SSOButtons: React.FC<SSOButtonsProps> = ({
     try {
       await loginWithSSO(provider);
     } catch (error) {
-      console.error('SSO login failed:', error);
+      loggers.auth.error('SSO login failed:', error);
     }
   };
 

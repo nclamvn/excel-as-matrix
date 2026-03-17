@@ -3,6 +3,7 @@ import { X, Check } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useValidationStore } from '../../stores/validationStore';
 import { getCellKey } from '../../types/cell';
 
 interface GoToSpecialDialogProps {
@@ -119,7 +120,7 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
 
           case 'dataValidation':
             // Check for data validation (would need to be added to CellData if needed)
-            matches = !!(cell && (cell as any).validation);
+            matches = !!(cell && useValidationStore.getState().getRuleForCell(activeSheetId, row, col));
             break;
 
           case 'lastCell':

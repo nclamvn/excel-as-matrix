@@ -200,7 +200,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                 </label>
                 <select
                   value={delimiter}
-                  onChange={(e) => setDelimiter(e.target.value as any)}
+                  onChange={(e) => setDelimiter(e.target.value as ',' | '\t' | ';')}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value=",">Comma (,)</option>
@@ -229,7 +229,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                   </label>
                   <select
                     value={pageSize}
-                    onChange={(e) => setPageSize(e.target.value as any)}
+                    onChange={(e) => setPageSize(e.target.value as 'a4' | 'letter' | 'legal')}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="a4">A4</option>
@@ -243,7 +243,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                   </label>
                   <select
                     value={orientation}
-                    onChange={(e) => setOrientation(e.target.value as any)}
+                    onChange={(e) => setOrientation(e.target.value as 'portrait' | 'landscape')}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="portrait">Portrait</option>

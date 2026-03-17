@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { WorkbookPermission, WorkbookRole } from '../../types/auth';
 import { getAuthHeaders } from '../../stores/authStore';
+import { loggers } from '@/utils/logger';
 
 interface PermissionsPanelProps {
   workbookId: string;
@@ -35,7 +36,7 @@ const PermissionsPanel: React.FC<PermissionsPanelProps> = ({
           onPermissionsChange(data);
         }
       } catch (e) {
-        console.error('Failed to fetch permissions:', e);
+        loggers.ui.error('Failed to fetch permissions:', e);
       }
     };
     fetchPermissions();
@@ -313,7 +314,7 @@ const GeneralAccessControl: React.FC<GeneralAccessControlProps> = ({
         });
         onPermissionsChange(permissions.filter((p) => p.granteeType !== 'Anyone'));
       } catch (e) {
-        console.error('Failed to update access:', e);
+        loggers.ui.error('Failed to update access:', e);
       }
     } else if (!restricted && !anyonePermission) {
       // Add "Anyone" permission
@@ -338,7 +339,7 @@ const GeneralAccessControl: React.FC<GeneralAccessControlProps> = ({
         };
         onPermissionsChange([...permissions, newPerm]);
       } catch (e) {
-        console.error('Failed to update access:', e);
+        loggers.ui.error('Failed to update access:', e);
       }
     }
   };

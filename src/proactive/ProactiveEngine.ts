@@ -2,6 +2,7 @@
 // PROACTIVE ENGINE — Main orchestrator for proactive AI
 // =============================================================================
 
+import { loggers } from '@/utils/logger';
 import { DataScanner } from './DataScanner';
 import { InsightDetector } from './InsightDetector';
 import { FormulaOptimizer } from './FormulaOptimizer';
@@ -348,7 +349,7 @@ export class ProactiveEngine {
       try {
         handler(event);
       } catch (error) {
-        console.error('Event handler error:', error);
+        loggers.proactive.error('Event handler error:', error);
       }
     }
   }

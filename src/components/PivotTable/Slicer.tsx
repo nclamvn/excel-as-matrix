@@ -56,7 +56,7 @@ export const Slicer: React.FC<SlicerProps> = ({
     const endRow = parseInt(rangeMatch[4], 10) - 1;
 
     const colIndex = fieldDef.sourceColumn;
-    const values = new Set<any>();
+    const values = new Set<PivotCellValue>();
 
     // Skip header row
     for (let r = startRow + 1; r <= endRow; r++) {

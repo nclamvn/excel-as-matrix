@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { getCellKey } from '../../types/cell';
+import { loggers } from '@/utils/logger';
 import './FileMenu.css';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -78,7 +79,7 @@ const useRecentFiles = () => {
           lastOpened: new Date(f.lastOpened)
         })));
       } catch (e) {
-        console.error('Failed to parse recent files:', e);
+        loggers.ui.error('Failed to parse recent files:', e);
       }
     } else {
       // Demo data
@@ -593,15 +594,15 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     }
 
     const fileName = file.name.toLowerCase();
-    console.log('[FileMenu] handleFileOpen called:', fileName, file.size, 'bytes');
+    loggers.ui.debug('[FileMenu] handleFileOpen called:', fileName, file.size, 'bytes');
 
     try {
       if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
         // Parse XLSX/XLS using SheetJS (binary format — must use ArrayBuffer)
-        console.log('[FileMenu] XLSX branch — using importExcelFile');
+        loggers.ui.debug('[FileMenu] XLSX branch — using importExcelFile');
         const { importExcelFile } = await import('../../utils/excelIO');
         const result = await importExcelFile(file);
-        console.log('[FileMenu] Parsed:', result.sheets.length, 'sheets, first sheet cells:', Object.keys(result.sheets[0]?.cells || {}).length);
+        loggers.ui.debug('[FileMenu] Parsed:', result.sheets.length, 'sheets, first sheet cells:', Object.keys(result.sheets[0]?.cells || {}).length);
 
         const workbookId = `local-${Date.now()}`;
         const name = file.name.replace(/\.[^/.]+$/, '');
@@ -674,7 +675,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       }, 100);
 
     } catch (err) {
-      console.error('Error parsing file:', err);
+      loggers.ui.error('Error parsing file:', err);
       alert('Lỗi khi đọc file. Vui lòng kiểm tra định dạng file.');
     }
 
@@ -869,7 +870,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
                             }
                           }
                         } catch (err) {
-                          console.error('Error loading recent file:', err);
+                          loggers.ui.error('Error loading recent file:', err);
                           alert('Could not load file. Please open it again from disk.');
                         }
                       } else {

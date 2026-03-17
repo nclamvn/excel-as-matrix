@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import type { AIMessage, AIToolCall, AIConfig, AITool } from '../ai/types';
+import { loggers } from '@/utils/logger';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -81,10 +82,29 @@ export class ClaudeAPIClient {
   private apiKey: string | null = null;
   private config: AIConfig;
   private baseUrl = 'https://api.anthropic.com/v1';
+  private proxyUrl = '/api/ai'; // Server-side proxy (hides API key)
+  private useProxy = false; // Will be set to true when server proxy is available
 
   constructor(config: AIConfig) {
     this.config = config;
     this.apiKey = config.apiKey || null;
+    // Check if server proxy is available
+    this.checkProxyAvailability();
+  }
+
+  private async checkProxyAvailability(): Promise<void> {
+    try {
+      const response = await fetch(`${this.proxyUrl}/status`, { signal: AbortSignal.timeout(2000) });
+      if (response.ok) {
+        const data = await response.json();
+        this.useProxy = data.configured === true;
+        if (this.useProxy) {
+          this.config.mockMode = false;
+        }
+      }
+    } catch {
+      // Server not available — keep current mode
+    }
   }
 
   setApiKey(key: string) {
@@ -94,6 +114,11 @@ export class ClaudeAPIClient {
 
   updateConfig(config: Partial<AIConfig>) {
     this.config = { ...this.config, ...config };
+  }
+
+  /** Returns true if either API key is set or server proxy is configured */
+  get isReady(): boolean {
+    return this.useProxy || !!this.apiKey;
   }
 
   // Convert our tools to Claude format
@@ -128,8 +153,8 @@ export class ClaudeAPIClient {
     toolCalls: AIToolCall[];
     tokensUsed: number;
   }> {
-    // Mock mode - return simulated response
-    if (this.config.mockMode || !this.apiKey) {
+    // Mock mode - return simulated response (only when no proxy AND no API key)
+    if (this.config.mockMode || (!this.apiKey && !this.useProxy)) {
       const lastMessage = messages[messages.length - 1];
       const mockResponse = getMockResponse(lastMessage?.content || '');
 
@@ -143,7 +168,7 @@ export class ClaudeAPIClient {
       };
     }
 
-    // Real API call
+    // Real API call — use server proxy when available, direct API otherwise
     try {
       const claudeMessages: ClaudeMessage[] = messages
         .filter((m) => m.role !== 'system')
@@ -152,22 +177,36 @@ export class ClaudeAPIClient {
           content: m.content,
         }));
 
-      const response = await fetch(`${this.baseUrl}/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: this.config.model,
-          max_tokens: this.config.maxTokens,
-          temperature: this.config.temperature,
-          system: systemPrompt,
-          messages: claudeMessages,
-          tools: this.toolsToClaude(tools),
-        }),
-      });
+      const requestBody = {
+        model: this.config.model,
+        max_tokens: this.config.maxTokens,
+        temperature: this.config.temperature,
+        system: systemPrompt,
+        messages: claudeMessages,
+        tools: this.toolsToClaude(tools),
+      };
+
+      let response: Response;
+
+      if (this.useProxy) {
+        // Use server proxy (API key is server-side)
+        response = await fetch(`${this.proxyUrl}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+        });
+      } else {
+        // Direct API call (API key in browser — less secure)
+        response = await fetch(`${this.baseUrl}/messages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': this.apiKey!,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify(requestBody),
+        });
+      }
 
       if (!response.ok) {
         const error = await response.json();
@@ -200,7 +239,7 @@ export class ClaudeAPIClient {
         tokensUsed: data.usage.input_tokens + data.usage.output_tokens,
       };
     } catch (error) {
-      console.error('Claude API error:', error);
+      loggers.api.error('Claude API error:', error);
       throw error;
     }
   }
@@ -211,8 +250,8 @@ export class ClaudeAPIClient {
     tools: AITool[],
     systemPrompt: string
   ): AsyncGenerator<{ type: 'text' | 'tool'; content: string | AIToolCall }> {
-    // Mock mode - simulate streaming
-    if (this.config.mockMode || !this.apiKey) {
+    // Mock mode - simulate streaming (only when no proxy AND no API key)
+    if (this.config.mockMode || (!this.apiKey && !this.useProxy)) {
       const lastMessage = messages[messages.length - 1];
       const mockResponse = getMockResponse(lastMessage?.content || '');
 

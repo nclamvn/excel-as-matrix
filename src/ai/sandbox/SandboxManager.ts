@@ -2,6 +2,7 @@
 // SANDBOX MANAGER — Main orchestration for sandbox workflow (Blueprint §2.2.3)
 // =============================================================================
 
+import { loggers } from '@/utils/logger';
 import type {
   Sandbox,
   SandboxStatus,
@@ -248,7 +249,7 @@ export class SandboxManager {
     if (!sandbox) {
       return {
         success: false,
-        sandbox: null as any,
+        sandbox: null,
         appliedChanges: 0,
         errors: [`Sandbox not found: ${sandboxId}`],
       };
@@ -435,7 +436,7 @@ export class SandboxManager {
       try {
         listener(event);
       } catch (error) {
-        console.error('Sandbox event listener error:', error);
+        loggers.ai.error('Sandbox event listener error:', error);
       }
     }
   }

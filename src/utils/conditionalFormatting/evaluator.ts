@@ -8,6 +8,7 @@ import {
   CFColorScale,
   CFIconSet,
 } from '../../types/conditionalFormatting';
+import { logger } from '@/utils/logger';
 
 interface CellData {
   value: unknown;
@@ -226,7 +227,7 @@ const evaluateAverageRule = (rule: CFRule, value: number, stats: RangeStats): bo
 // Custom formula rule evaluation
 const evaluateFormulaRule = (_rule: CFRule): boolean => {
   // This would need integration with the formula engine
-  console.warn('Formula-based conditional formatting not yet implemented');
+  logger.warn('Formula-based conditional formatting not yet implemented');
   return false;
 };
 

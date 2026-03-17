@@ -19,6 +19,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../../auth/AuthProvider';
+import { loggers } from '@/utils/logger';
 
 interface User {
   id: string;
@@ -73,7 +74,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
         setUsers(data.users);
       }
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      loggers.admin.error('Failed to fetch users:', error);
     } finally {
       setLoading(false);
     }
@@ -97,7 +98,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
         fetchUsers();
       }
     } catch (error) {
-      console.error(`Failed to ${action} user:`, error);
+      loggers.admin.error(`Failed to ${action} user:`, error);
     }
     setActionMenuUser(null);
   };
@@ -117,7 +118,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
         fetchUsers();
       }
     } catch (error) {
-      console.error('Failed to delete user:', error);
+      loggers.admin.error('Failed to delete user:', error);
     }
   };
 
@@ -142,7 +143,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
         fetchUsers();
       }
     } catch (error) {
-      console.error('Bulk action failed:', error);
+      loggers.admin.error('Bulk action failed:', error);
     }
   };
 

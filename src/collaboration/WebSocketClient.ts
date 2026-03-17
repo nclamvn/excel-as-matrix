@@ -2,6 +2,7 @@
 // WEBSOCKET CLIENT — Real-time connection (Blueprint §6.1)
 // =============================================================================
 
+import { loggers } from '@/utils/logger';
 import type {
   SyncMessage,
   SyncMessageType,
@@ -77,7 +78,7 @@ export class WebSocketClient {
             const message = JSON.parse(event.data) as SyncMessage;
             this.handleMessage(message);
           } catch (e) {
-            console.error('[WebSocket] Failed to parse message:', e);
+            loggers.websocket.error('Failed to parse message:', e);
           }
         };
       } catch (error) {
@@ -196,7 +197,7 @@ export class WebSocketClient {
         try {
           handler(message);
         } catch (e) {
-          console.error('[WebSocket] Handler error:', e);
+          loggers.websocket.error('Handler error:', e);
         }
       });
     }
@@ -214,7 +215,7 @@ export class WebSocketClient {
       }, delay);
     } else {
       this.setStatus('disconnected');
-      console.error('[WebSocket] Max reconnect attempts reached');
+      loggers.websocket.error('Max reconnect attempts reached');
     }
   }
 

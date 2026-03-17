@@ -8,6 +8,7 @@ import { CellRenderer, CellData } from './CellRenderer';
 import { VirtualHeaders } from './VirtualHeaders';
 import { VirtualCellEditor } from './VirtualCellEditor';
 import { getCellKey } from '../../types/cell';
+import { loggers } from '@/utils/logger';
 
 export interface VirtualGridProps {
   workbookId: string;
@@ -221,7 +222,7 @@ export const VirtualGrid: React.FC<VirtualGridProps> = memo(({
           moveSelection('down');
         }
       } catch (error) {
-        console.error('Failed to update cell:', error);
+        loggers.ui.error('Failed to update cell:', error);
       } finally {
         setLoadingCells((prev) => {
           const next = new Set(prev);

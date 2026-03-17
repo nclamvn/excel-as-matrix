@@ -6,6 +6,7 @@ import { useSelectionStore } from './stores/selectionStore';
 import { useAIStore } from './stores/aiStore';
 import { useSyncStore } from './stores/syncStore';
 import { apiClient } from './api/client';
+import { logger } from './utils/logger';
 import { shortcutManager } from './shortcuts';
 
 // Landing Page
@@ -187,7 +188,7 @@ function App() {
 
         setIsInitializing(false);
       } catch (err) {
-        console.warn('Backend not available, using local mode:', err);
+        logger.warn('Backend not available, using local mode:', err);
         setBackendAvailableStore(false);
         // Fallback to local mode
         initializeLocal();

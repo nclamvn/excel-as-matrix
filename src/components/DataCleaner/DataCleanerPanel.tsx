@@ -12,6 +12,7 @@ import type {
 import { QualityScoreCard } from './QualityScoreCard';
 import { IssuesList } from './IssuesList';
 import { CleaningProgress } from './CleaningProgress';
+import { loggers } from '@/utils/logger';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -69,7 +70,7 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
       setPendingChanges(changes);
       setCleaningProgress(100);
     } catch (error) {
-      console.error('Cleaning failed:', error);
+      loggers.ui.error('Cleaning failed:', error);
     } finally {
       setIsCleaning(false);
     }

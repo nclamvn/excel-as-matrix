@@ -7,6 +7,8 @@
 
 // ============ Types ============
 
+import { logger } from '@/utils/logger';
+
 export interface PerformanceMetric {
   name: string;
   value: number;
@@ -69,7 +71,7 @@ export class PerformanceMonitor {
   endTimer(name: string): TimingResult | null {
     const startTime = this.timers.get(name);
     if (startTime === undefined) {
-      console.warn(`Timer "${name}" was not started`);
+      logger.warn(`Timer "${name}" was not started`);
       return null;
     }
 

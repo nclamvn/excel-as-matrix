@@ -272,7 +272,7 @@ export interface CreateSandboxResult {
  */
 export interface MergeSandboxResult {
   success: boolean;
-  sandbox: Sandbox;
+  sandbox: Sandbox | null;
   appliedChanges: number;
   rollbackInfo?: RollbackInfo;
   errors?: string[];

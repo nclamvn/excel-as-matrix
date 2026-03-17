@@ -3,6 +3,7 @@
 // =============================================================================
 
 import type { Macro } from './types';
+import { loggers } from '@/utils/logger';
 
 const STORAGE_KEY = 'excel_ai_macros';
 const STORAGE_VERSION = 1;
@@ -30,7 +31,7 @@ export class MacroStorage {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to save macros:', error);
+      loggers.macro.error('Failed to save macros:', error);
     }
   }
 
@@ -51,7 +52,7 @@ export class MacroStorage {
 
       return data.macros.map(m => this.deserializeMacro(m));
     } catch (error) {
-      console.error('Failed to load macros:', error);
+      loggers.macro.error('Failed to load macros:', error);
       return [];
     }
   }
@@ -133,7 +134,7 @@ export class MacroStorage {
 
       return importedMacros.length;
     } catch (error) {
-      console.error('Failed to import macros:', error);
+      loggers.macro.error('Failed to import macros:', error);
       return 0;
     }
   }

@@ -8,6 +8,7 @@ import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useUIStore } from '../../stores/uiStore';
 import { useProtectionStore } from '../../stores/protectionStore';
+import { loggers } from '@/utils/logger';
 import { useValidationStore } from '../../stores/validationStore';
 import { CellEditor } from './CellEditor';
 import { getCellKey } from '../../types/cell';
@@ -781,7 +782,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       }
       showToast(`${file.name} imported successfully`, 'info');
     } catch (err) {
-      console.error('Drop import error:', err);
+      loggers.ui.error('Drop import error:', err);
       showToast('Failed to import file. Please check the format.', 'warning');
     }
   }, [setWorkbook, addSheet, batchUpdateCells, showToast]);

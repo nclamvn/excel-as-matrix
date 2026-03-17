@@ -1,4 +1,5 @@
 import { Shortcut, ALL_SHORTCUTS } from './shortcuts';
+import { loggers } from '@/utils/logger';
 
 export type ShortcutHandler = (shortcut: Shortcut, event: KeyboardEvent) => void;
 
@@ -59,7 +60,7 @@ export class ShortcutManager {
 
     const conflict = this.findConflict(newKeys, shortcutId);
     if (conflict) {
-      console.warn(`Shortcut conflict: ${newKeys} is already used by ${conflict.id}`);
+      loggers.shortcuts.warn(`Shortcut conflict: ${newKeys} is already used by ${conflict.id}`);
       return false;
     }
 
@@ -187,7 +188,7 @@ export class ShortcutManager {
         this.customMappings = new Map(Object.entries(mappings));
       }
     } catch (e) {
-      console.warn('Failed to load custom shortcuts:', e);
+      loggers.shortcuts.warn('Failed to load custom shortcuts:', e);
     }
   }
 
@@ -196,7 +197,7 @@ export class ShortcutManager {
       const mappings = Object.fromEntries(this.customMappings);
       localStorage.setItem('excel-shortcuts', JSON.stringify(mappings));
     } catch (e) {
-      console.warn('Failed to save custom shortcuts:', e);
+      loggers.shortcuts.warn('Failed to save custom shortcuts:', e);
     }
   }
 

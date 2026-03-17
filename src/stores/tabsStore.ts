@@ -5,6 +5,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { FileTab, DragState, TabCloseResult } from '../types/tabs';
+import { loggers } from '@/utils/logger';
 
 // Simple ID generator
 const generateId = () => Math.random().toString(36).substring(2, 10);
@@ -87,7 +88,7 @@ export const useTabsStore = create<TabsStore>()(
         const state = get();
 
         if (state.tabs.length >= state.maxTabs) {
-          console.warn('Maximum tabs reached');
+          loggers.store.warn('Maximum tabs reached');
           return '';
         }
 

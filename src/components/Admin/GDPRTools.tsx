@@ -18,6 +18,7 @@ import {
   Eye,
   X,
 } from 'lucide-react';
+import { loggers } from '@/utils/logger';
 
 interface DataSubjectRequest {
   id: string;
@@ -92,7 +93,7 @@ export const GDPRTools: React.FC = () => {
         setRequests(data.requests);
       }
     } catch (error) {
-      console.error('Failed to fetch DSR requests:', error);
+      loggers.admin.error('Failed to fetch DSR requests:', error);
     } finally {
       setLoading(false);
     }
@@ -112,7 +113,7 @@ export const GDPRTools: React.FC = () => {
         setConsents(data.consents);
       }
     } catch (error) {
-      console.error('Failed to fetch consent records:', error);
+      loggers.admin.error('Failed to fetch consent records:', error);
     } finally {
       setLoading(false);
     }
@@ -134,7 +135,7 @@ export const GDPRTools: React.FC = () => {
         setSelectedRequest(null);
       }
     } catch (error) {
-      console.error(`Failed to ${action} request:`, error);
+      loggers.admin.error(`Failed to ${action} request:`, error);
     }
   };
 
@@ -501,7 +502,7 @@ const BulkExportPanel: React.FC = () => {
         setSuccess(true);
       }
     } catch (error) {
-      console.error('Export failed:', error);
+      loggers.admin.error('Export failed:', error);
     } finally {
       setExporting(false);
     }

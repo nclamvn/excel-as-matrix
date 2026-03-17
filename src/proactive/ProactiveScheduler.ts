@@ -3,6 +3,7 @@
 // =============================================================================
 
 import type { ScanConfig, SheetData } from './types';
+import { loggers } from '@/utils/logger';
 
 /**
  * Schedules and manages background scans
@@ -86,7 +87,7 @@ export class ProactiveScheduler {
     // Skip if data is too large
     const cellCount = data.rowCount * data.colCount;
     if (cellCount > this.config.maxCellsToScan) {
-      console.warn('Skipping scan: data too large');
+      loggers.proactive.warn('Skipping scan: data too large');
       return;
     }
 
@@ -95,7 +96,7 @@ export class ProactiveScheduler {
     try {
       await this.scanCallback(data);
     } catch (error) {
-      console.error('Scan failed:', error);
+      loggers.proactive.error('Scan failed:', error);
     }
   }
 

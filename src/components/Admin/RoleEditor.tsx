@@ -14,6 +14,7 @@ import {
   Save,
   Users,
 } from 'lucide-react';
+import { loggers } from '@/utils/logger';
 
 interface Role {
   id: string;
@@ -134,7 +135,7 @@ export const RoleEditor: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('Failed to fetch roles:', error);
+      loggers.admin.error('Failed to fetch roles:', error);
     } finally {
       setLoading(false);
     }
@@ -224,7 +225,7 @@ export const RoleEditor: React.FC = () => {
         fetchRoles();
       }
     } catch (error) {
-      console.error('Failed to delete role:', error);
+      loggers.admin.error('Failed to delete role:', error);
     }
   };
 
@@ -543,7 +544,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({ onClose, onSuccess })
         setRoles(data.roles);
       }
     } catch (error) {
-      console.error('Failed to fetch roles:', error);
+      loggers.admin.error('Failed to fetch roles:', error);
     }
   };
 

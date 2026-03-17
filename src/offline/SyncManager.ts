@@ -1,7 +1,10 @@
 // Phase 10: Sync Manager
 // Orchestrates synchronization between local IndexedDB and server
+// Supports both REST API and Supabase direct sync
 
 import { offlineDB, PendingChange, ConflictInfo, CellValue } from './OfflineDB';
+import { supabaseStorage } from '../lib/supabaseStorage';
+import { loggers } from '@/utils/logger';
 
 // === Types ===
 
@@ -228,6 +231,25 @@ class SyncManager {
     change: PendingChange,
     timeout: number
   ): Promise<{ success: boolean; conflict?: ConflictInfo }> {
+    // Use Supabase direct sync when available
+    if (supabaseStorage.isAvailable && change.type === 'cell' && change.data && change.sheetId) {
+      try {
+        await supabaseStorage.upsertCell({
+          sheetId: change.sheetId,
+          row: change.data.row as number,
+          col: change.data.col as number,
+          value: change.data.value as unknown,
+          formula: (change.data.formula as string) || null,
+          displayValue: String(change.data.value ?? ''),
+        });
+        return { success: true };
+      } catch (error) {
+        // Fall through to REST API on Supabase error
+        loggers.sync.warn('Supabase push failed, falling back to REST:', error);
+      }
+    }
+
+    // Fallback: REST API
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -270,6 +292,45 @@ class SyncManager {
     const syncState = await offlineDB.getSyncState(workbookId);
     const since = syncState?.lastSyncedAt || 0;
 
+    // Try Supabase first
+    if (supabaseStorage.isAvailable) {
+      try {
+        // Get all sheets for this workbook to pull cells from each
+        const sheets = await supabaseStorage.getSheets(workbookId);
+        const sinceISO = new Date(since).toISOString();
+
+        for (const sheet of sheets) {
+          const serverCells = await supabaseStorage.getCellsSince(sheet.id, sinceISO);
+
+          for (const sc of serverCells) {
+            const cellId = offlineDB.generateCellId(sheet.id, sc.row_index, sc.col_index);
+            const localCell = await offlineDB.getCell(cellId);
+            const serverTimestamp = new Date(sc.updated_at).getTime();
+
+            if (!localCell || !localCell.dirty || serverTimestamp > localCell.updatedAt) {
+              await offlineDB.saveCell({
+                id: cellId,
+                sheetId: sheet.id,
+                workbookId,
+                row: sc.row_index,
+                col: sc.col_index,
+                value: sc.value as string | number | boolean | null,
+                formula: sc.formula,
+                displayValue: sc.display_value,
+                updatedAt: serverTimestamp,
+                dirty: false,
+                version: sc.version,
+              });
+            }
+          }
+        }
+        return;
+      } catch (error) {
+        loggers.sync.warn('Supabase pull failed, falling back to REST:', error);
+      }
+    }
+
+    // Fallback: REST API
     try {
       const response = await fetch(`/api/sync/pull?workbookId=${workbookId}&since=${since}`);
       if (!response.ok) return;
@@ -277,12 +338,10 @@ class SyncManager {
       const data = await response.json();
       const serverCells: ServerCellData[] = data.cells || [];
 
-      // Update local cells with server data
       for (const serverCell of serverCells) {
         const cellId = offlineDB.generateCellId(serverCell.sheetId, serverCell.row, serverCell.col);
         const localCell = await offlineDB.getCell(cellId);
 
-        // Only update if not dirty or server is newer
         if (!localCell || !localCell.dirty || serverCell.updatedAt > localCell.updatedAt) {
           await offlineDB.saveCell({
             id: cellId,
@@ -300,7 +359,7 @@ class SyncManager {
         }
       }
     } catch (error) {
-      console.error('Failed to pull changes:', error);
+      loggers.sync.error('Failed to pull changes:', error);
     }
   }
 

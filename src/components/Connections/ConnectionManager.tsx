@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useConnectionStore, ConnectionType, ConnectionStatus, ConnectionConfig } from '../../stores/connectionStore';
 import * as connectionApi from '../../api/connectionApi';
+import { loggers } from '@/utils/logger';
 
 interface ConnectionManagerProps {
   isOpen: boolean;
@@ -332,7 +333,7 @@ const QueryList: React.FC = () => {
       const result = await connectionApi.executeQuery(queryId);
       setLastQueryResult(result);
     } catch (err) {
-      console.error('Query execution failed:', err);
+      loggers.ui.error('Query execution failed:', err);
     }
   };
 
@@ -398,7 +399,7 @@ const ScheduleList: React.FC = () => {
       }
       updateJob(jobId, { enabled });
     } catch (err) {
-      console.error('Toggle failed:', err);
+      loggers.ui.error('Toggle failed:', err);
     }
   };
 
@@ -407,7 +408,7 @@ const ScheduleList: React.FC = () => {
       await connectionApi.triggerJob(jobId);
       updateJob(jobId, { lastRun: new Date().toISOString() });
     } catch (err) {
-      console.error('Trigger failed:', err);
+      loggers.ui.error('Trigger failed:', err);
     }
   };
 

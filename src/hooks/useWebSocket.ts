@@ -1,5 +1,6 @@
 // Phase 4: WebSocket Hook - Real-time Collaboration
 import { useEffect, useRef, useCallback } from 'react';
+import { loggers } from '@/utils/logger';
 import { usePresenceStore } from '../stores/presenceStore';
 import { useAuthStore } from '../stores/authStore';
 import {
@@ -83,7 +84,7 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
 
         // Set pong timeout
         pongTimeoutRef.current = setTimeout(() => {
-          console.warn('Pong timeout, reconnecting...');
+          loggers.websocket.warn('Pong timeout, reconnecting...');
           wsRef.current?.close();
         }, PONG_TIMEOUT);
       }
@@ -219,7 +220,7 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
         }
       }
     } catch (e) {
-      console.error('Failed to parse WebSocket message:', e);
+      loggers.websocket.error('Failed to parse WebSocket message:', e);
     }
   }, [
     workbookId,
@@ -291,12 +292,12 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
       };
 
       wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        loggers.websocket.error('WebSocket error:', error);
         setConnectionStatus('error');
         setError('Connection error');
       };
     } catch (e) {
-      console.error('Failed to create WebSocket:', e);
+      loggers.websocket.error('Failed to create WebSocket:', e);
       setConnectionStatus('error');
       setError('Failed to connect');
     }

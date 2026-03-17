@@ -16,6 +16,7 @@ import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { getAIRuntime } from '../../ai/AIRuntime';
 import type { AssembledContext } from '../../ai/types';
+import { loggers } from '@/utils/logger';
 
 // -----------------------------------------------------------------------------
 // Helper to convert column number to letter
@@ -158,7 +159,7 @@ export const ContextPanel: React.FC = () => {
       const context = await runtime.assembleContext('Show current context');
       setAssembledContext(context);
     } catch (error) {
-      console.error('Failed to refresh context:', error);
+      loggers.ui.error('Failed to refresh context:', error);
     } finally {
       setIsRefreshing(false);
     }

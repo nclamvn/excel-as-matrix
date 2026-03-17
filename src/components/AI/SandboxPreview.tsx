@@ -9,6 +9,7 @@ import { sandboxManager } from '../../ai/sandbox';
 import { RiskBadge, RiskDetails, RiskSummary } from './RiskBadge';
 import { DiffViewer } from './DiffViewer';
 import { ApprovalControls, StatusIndicator } from './ApprovalControls';
+import { loggers } from '@/utils/logger';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -108,13 +109,13 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
     setIsLoading(true);
     try {
       const result = sandboxManager.approveAndMerge(sandbox.id);
-      if (result.success) {
+      if (result.success && result.sandbox) {
         onApproved?.(result.sandbox);
       } else {
-        console.error('Merge failed:', result.errors);
+        loggers.ui.error('Merge failed:', result.errors);
       }
     } catch (error) {
-      console.error('Approval failed:', error);
+      loggers.ui.error('Approval failed:', error);
     } finally {
       setIsLoading(false);
     }
@@ -126,7 +127,7 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
       sandboxManager.reject(sandbox.id);
       onRejected?.(sandbox);
     } catch (error) {
-      console.error('Rejection failed:', error);
+      loggers.ui.error('Rejection failed:', error);
     }
   }, [sandbox.id, onRejected]);
 
@@ -138,10 +139,10 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
       if (result.success) {
         onRolledBack?.(sandbox.id);
       } else {
-        console.error('Rollback failed:', result.errors);
+        loggers.ui.error('Rollback failed:', result.errors);
       }
     } catch (error) {
-      console.error('Rollback failed:', error);
+      loggers.ui.error('Rollback failed:', error);
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { loggers } from '@/utils/logger';
 
 // ===== Types =====
 
@@ -161,7 +162,7 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
 
       set({ currentDiffs: diffs, previewChanges });
     } catch (error) {
-      console.error('Failed to load diffs:', error);
+      loggers.store.error('Failed to load diffs:', error);
     }
   },
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { loggers } from '@/utils/logger';
 import type {
   CalcWorkerMessage,
   CalcWorkerResponse,
@@ -136,7 +137,7 @@ export function useCalcWorker(): UseCalcWorkerResult {
     };
 
     worker.onerror = (error) => {
-      console.error('Calc worker error:', error);
+      loggers.worker.error('Calc worker error:', error);
       setState((s) => ({
         ...s,
         isReady: false,
@@ -283,7 +284,7 @@ export function useBatchCalculation(delay: number = 100) {
               }
             }
           } catch (error) {
-            console.error('Batch calculation failed:', error);
+            loggers.worker.error('Batch calculation failed:', error);
             // Resolve all pending with error state
             for (const { cellKey } of formulas) {
               const resolver = resolversRef.current.get(cellKey);

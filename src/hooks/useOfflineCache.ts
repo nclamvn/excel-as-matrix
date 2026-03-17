@@ -6,6 +6,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { loggers } from '@/utils/logger';
 import {
   getCache,
   IndexedDBCache,
@@ -167,7 +168,7 @@ export function useOfflineCache(options: UseOfflineCacheOptions = {}): UseOfflin
       setStats(newStats);
       setPendingChanges(newStats.pendingChangeCount);
     } catch (error) {
-      console.error('Failed to refresh cache stats:', error);
+      loggers.cache.error('Failed to refresh cache stats:', error);
     }
   }, []);
 
@@ -450,7 +451,7 @@ export function useOfflineFirstFetch<T>(
             }
           }
         } catch (e) {
-          console.warn('Failed to read from cache:', e);
+          loggers.cache.warn('Failed to read from cache:', e);
         }
       }
 

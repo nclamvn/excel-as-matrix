@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { NamedRange } from '../types/cell';
+import { loggers } from '@/utils/logger';
 
 interface NamedRangeState {
   // Named range registry
@@ -40,13 +41,13 @@ export const useNamedRangeStore = create<NamedRangeState>()((set, get) => ({
       // Check for name conflicts
       if (range.scope === 'workbook') {
         if (state.workbookScoped[range.name]) {
-          console.warn(`Named range '${range.name}' already exists at workbook scope`);
+          loggers.store.warn('Named range already exists at workbook scope:', range.name);
           return state;
         }
       } else {
         const sheetId = range.scope.sheet;
         if (state.sheetScoped[sheetId]?.[range.name]) {
-          console.warn(`Named range '${range.name}' already exists in sheet`);
+          loggers.store.warn('Named range already exists in sheet:', range.name);
           return state;
         }
       }
@@ -119,13 +120,13 @@ export const useNamedRangeStore = create<NamedRangeState>()((set, get) => ({
     // Check for conflicts with new name
     if (range.scope === 'workbook') {
       if (state.workbookScoped[newName] && state.workbookScoped[newName] !== rangeId) {
-        console.warn(`Named range '${newName}' already exists`);
+        loggers.store.warn('Named range already exists:', newName);
         return;
       }
     } else {
       const sheetId = range.scope.sheet;
       if (state.sheetScoped[sheetId]?.[newName] && state.sheetScoped[sheetId][newName] !== rangeId) {
-        console.warn(`Named range '${newName}' already exists in sheet`);
+        loggers.store.warn('Named range already exists in sheet:', newName);
         return;
       }
     }

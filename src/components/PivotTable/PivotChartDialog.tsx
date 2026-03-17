@@ -22,6 +22,7 @@ import {
   toChartData,
   PivotChartConfig,
 } from '../../utils/pivotChartUtils';
+import { loggers } from '@/utils/logger';
 import './PivotTable.css';
 
 interface PivotChartDialogProps {
@@ -154,7 +155,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
     try {
       return extractPivotChartData(pivot, sourceData, config);
     } catch (e) {
-      console.error('Error extracting pivot chart data:', e);
+      loggers.ui.error('Error extracting pivot chart data:', e);
       return null;
     }
   }, [pivot, sourceData, selectedType, chartTitle, useRowsAsCategories, selectedValueFields]);

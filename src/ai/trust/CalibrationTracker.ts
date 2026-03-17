@@ -2,6 +2,7 @@
 // CALIBRATION TRACKER — Track AI prediction accuracy over time (Blueprint §5.5)
 // =============================================================================
 
+import { loggers } from '@/utils/logger';
 import type {
   CalibrationRecord,
   CalibrationBucket,
@@ -384,7 +385,7 @@ export class CalibrationTracker {
         }));
       }
     } catch {
-      console.error('Failed to import calibration records');
+      loggers.ai.error('Failed to import calibration records');
     }
   }
 

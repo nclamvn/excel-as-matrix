@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
+import { loggers } from '@/utils/logger';
 
 interface SecuritySettings {
   // Password Policy
@@ -140,7 +141,7 @@ export const SecuritySettings: React.FC = () => {
         setSettings(data);
       }
     } catch (error) {
-      console.error('Failed to fetch security settings:', error);
+      loggers.admin.error('Failed to fetch security settings:', error);
     } finally {
       setLoading(false);
     }
@@ -164,7 +165,7 @@ export const SecuritySettings: React.FC = () => {
         setTimeout(() => setSaved(false), 3000);
       }
     } catch (error) {
-      console.error('Failed to save security settings:', error);
+      loggers.admin.error('Failed to save security settings:', error);
     } finally {
       setSaving(false);
     }

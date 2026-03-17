@@ -2,6 +2,7 @@
 // AUTO-VIZ ENGINE — Main orchestrator for automatic visualization
 // =============================================================================
 
+import { loggers } from '@/utils/logger';
 import type {
   DataRange,
   DataCharacteristics,
@@ -441,7 +442,7 @@ export class AutoVizEngine {
       try {
         handler(event);
       } catch (error) {
-        console.error('Auto-Viz event handler error:', error);
+        loggers.autoviz.error('Auto-Viz event handler error:', error);
       }
     }
   }

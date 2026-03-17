@@ -16,6 +16,7 @@ import {
   XCircle,
   Info,
 } from 'lucide-react';
+import { loggers } from '@/utils/logger';
 
 interface AuditEvent {
   id: string;
@@ -124,7 +125,7 @@ export const AuditLog: React.FC = () => {
         setTotalEvents(data.total);
       }
     } catch (error) {
-      console.error('Failed to fetch audit events:', error);
+      loggers.admin.error('Failed to fetch audit events:', error);
     } finally {
       setLoading(false);
     }
@@ -166,7 +167,7 @@ export const AuditLog: React.FC = () => {
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('Failed to export audit log:', error);
+      loggers.admin.error('Failed to export audit log:', error);
     } finally {
       setExporting(false);
     }

@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { registerSW } from 'virtual:pwa-register';
+import { loggers } from '@/utils/logger';
 
 export interface PWAState {
   isInstallable: boolean;
@@ -50,7 +51,7 @@ export function usePWA(): PWAState & PWAActions {
         }
       },
       onRegisterError(error) {
-        console.error('SW registration error:', error);
+        loggers.pwa.error('SW registration error:', error);
       },
     });
 
@@ -108,7 +109,7 @@ export function usePWA(): PWAState & PWAActions {
       setDeferredPrompt(null);
       return outcome === 'accepted';
     } catch (error) {
-      console.error('Install error:', error);
+      loggers.pwa.error('Install error:', error);
       return false;
     }
   }, [deferredPrompt]);

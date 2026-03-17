@@ -4,6 +4,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { loggers } from '@/utils/logger';
 
 export type NameScope = 'workbook' | string; // 'workbook' or sheetId
 
@@ -64,13 +65,13 @@ export const useNameManagerStore = create<NameManagerState>()(
 
         // Validate name
         if (!state.isValidName(name)) {
-          console.error(`Invalid name: ${name}`);
+          loggers.store.error('Invalid name:', name);
           return null;
         }
 
         // Check availability
         if (!state.isNameAvailable(name, scope)) {
-          console.error(`Name already exists: ${name}`);
+          loggers.store.error('Name already exists:', name);
           return null;
         }
 
@@ -104,11 +105,11 @@ export const useNameManagerStore = create<NameManagerState>()(
           // Validate new name if being updated
           if (updates.name && updates.name !== existing.name) {
             if (!get().isValidName(updates.name)) {
-              console.error(`Invalid name: ${updates.name}`);
+              loggers.store.error('Invalid name:', updates.name);
               return state;
             }
             if (!get().isNameAvailable(updates.name, updates.scope || existing.scope, id)) {
-              console.error(`Name already exists: ${updates.name}`);
+              loggers.store.error('Name already exists:', updates.name);
               return state;
             }
             updates.name = updates.name.toUpperCase();

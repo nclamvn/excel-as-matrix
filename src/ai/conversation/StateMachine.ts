@@ -16,6 +16,7 @@ import type {
   ConversationError,
   RecoveryAction,
 } from './types';
+import { loggers } from '@/utils/logger';
 import { STATE_TRANSITIONS, DEFAULT_CONVERSATION_CONFIG } from './types';
 
 // -----------------------------------------------------------------------------
@@ -93,7 +94,7 @@ export class ConversationStateMachine {
    */
   transition(toState: ConversationState, data?: Record<string, unknown>): boolean {
     if (!this.canTransition(toState)) {
-      console.warn(
+      loggers.ai.warn(
         `Invalid state transition: ${this.context.state} -> ${toState}`
       );
       return false;
@@ -428,7 +429,7 @@ export class ConversationStateMachine {
       try {
         listener(event);
       } catch (error) {
-        console.error('Event listener error:', error);
+        loggers.ai.error('Event listener error:', error);
       }
     }
   }

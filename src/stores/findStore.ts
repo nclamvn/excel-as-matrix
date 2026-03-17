@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { useWorkbookStore } from './workbookStore';
 import { getCellKey } from '../types/cell';
+import { loggers } from '@/utils/logger';
 
 export interface FindMatch {
   sheetId: string;
@@ -104,7 +105,7 @@ export const useFindStore = create<FindState>((set, get) => ({
         navigateToCell(matches[0].sheetId, matches[0].row, matches[0].col);
       }
     } catch (error) {
-      console.error('Search failed:', error);
+      loggers.store.error('Search failed:', error);
       set({ isSearching: false });
     }
   },

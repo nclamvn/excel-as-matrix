@@ -98,6 +98,14 @@ export const loggers = {
   pwa: logger.child('PWA'),
   macro: logger.child('Macro'),
   pivot: logger.child('Pivot'),
+  admin: logger.child('Admin'),
+  auth: logger.child('Auth'),
+  datacleaner: logger.child('DataCleaner'),
+  proactive: logger.child('Proactive'),
+  autoviz: logger.child('AutoViz'),
+  worker: logger.child('Worker'),
+  shortcuts: logger.child('Shortcuts'),
+  collab: logger.child('Collab'),
 };
 
 export default logger;

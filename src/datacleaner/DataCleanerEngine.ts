@@ -2,6 +2,7 @@
 // DATA CLEANER ENGINE — Main orchestrator
 // =============================================================================
 
+import { loggers } from '@/utils/logger';
 import { QualityAnalyzer } from './QualityAnalyzer';
 import { DuplicateDetector } from './DuplicateDetector';
 import { FormatStandardizer } from './FormatStandardizer';
@@ -375,7 +376,7 @@ export class DataCleanerEngine {
       try {
         handler(event);
       } catch (error) {
-        console.error('Event handler error:', error);
+        loggers.datacleaner.error('Event handler error:', error);
       }
     }
   }

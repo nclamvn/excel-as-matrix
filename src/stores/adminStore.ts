@@ -2,6 +2,7 @@
 // Zustand store for admin panel state management
 
 import { create } from 'zustand';
+import { loggers } from '@/utils/logger';
 
 interface User {
   id: string;
@@ -406,7 +407,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       const data = await response.json();
       set({ securityStats: data, statsLoading: false });
     } catch (error) {
-      console.error('Failed to fetch security stats:', error);
+      loggers.store.error('Failed to fetch security stats:', error);
       set({ statsLoading: false });
     }
   },
