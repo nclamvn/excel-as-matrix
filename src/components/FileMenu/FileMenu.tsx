@@ -544,7 +544,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       // Find dimensions
       let maxRow = 0, maxCol = 0;
       Object.keys(sheet.cells).forEach(key => {
-        const [row, col] = key.split(',').map(Number);
+        const [row, col] = key.split(':').map(Number);
         maxRow = Math.max(maxRow, row);
         maxCol = Math.max(maxCol, col);
       });
@@ -585,64 +585,99 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     onClose();
   }, [workbookName, onClose]);
 
-  const handleFileOpen = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileOpen = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
       onClose();
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      if (!content) return;
+    const fileName = file.name.toLowerCase();
+    console.log('[FileMenu] handleFileOpen called:', fileName, file.size, 'bytes');
 
-      const fileName = file.name.toLowerCase();
+    try {
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        // Parse XLSX/XLS using SheetJS (binary format — must use ArrayBuffer)
+        console.log('[FileMenu] XLSX branch — using importExcelFile');
+        const { importExcelFile } = await import('../../utils/excelIO');
+        const result = await importExcelFile(file);
+        console.log('[FileMenu] Parsed:', result.sheets.length, 'sheets, first sheet cells:', Object.keys(result.sheets[0]?.cells || {}).length);
 
-      try {
-        if (fileName.endsWith('.csv')) {
-          // Parse CSV file
-          const rows = parseCSV(content);
-          importDataToSheet(rows, file.name);
-        } else if (fileName.endsWith('.json')) {
-          // Parse JSON file
-          const data = JSON.parse(content);
-          if (data.sheets && Array.isArray(data.sheets)) {
-            // ExcelAI format
-            importExcelAIFormat(data, file.name);
-          } else if (Array.isArray(data)) {
-            // Array of objects format
-            const rows = convertArrayToRows(data);
-            importDataToSheet(rows, file.name);
+        const workbookId = `local-${Date.now()}`;
+        const name = file.name.replace(/\.[^/.]+$/, '');
+        setWorkbook(workbookId, name);
+
+        for (let i = 0; i < result.sheets.length; i++) {
+          const sheetData = result.sheets[i];
+          const sheetId = `sheet-${Date.now()}-${i}`;
+
+          addSheet({
+            id: sheetId,
+            name: sheetData.name || `Sheet${i + 1}`,
+            index: i,
+            cells: {},
+            columnWidths: sheetData.columnWidths,
+            rowHeights: sheetData.rowHeights,
+            freezePane: sheetData.freezePane,
+          });
+
+          const updates: Array<{ row: number; col: number; data: Partial<import('../../types/cell').CellData> }> = [];
+          for (const [key, cell] of Object.entries(sheetData.cells)) {
+            const [rowStr, colStr] = key.split(':');
+            const row = parseInt(rowStr);
+            const col = parseInt(colStr);
+            updates.push({
+              row,
+              col,
+              data: {
+                value: cell.value as string | number | boolean,
+                displayValue: cell.displayValue || String(cell.value ?? ''),
+                formula: cell.formula || null,
+                ...(cell.format ? { format: cell.format } : {}),
+              },
+            });
           }
-        } else {
-          // Try to parse as CSV by default
-          const rows = parseCSV(content);
+
+          if (updates.length > 0) {
+            batchUpdateCells(sheetId, updates);
+          }
+        }
+      } else if (fileName.endsWith('.json')) {
+        // Parse JSON file
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if (data.sheets && Array.isArray(data.sheets)) {
+          importExcelAIFormat(data, file.name);
+        } else if (Array.isArray(data)) {
+          const rows = convertArrayToRows(data);
           importDataToSheet(rows, file.name);
         }
-
-        // Add to recent files with workbook data for restore
-        // Capture current workbook state after import
-        setTimeout(() => {
-          const currentSheets = useWorkbookStore.getState().sheets;
-          const sheetOrder = useWorkbookStore.getState().sheetOrder;
-          const workbookData = JSON.stringify({
-            name: file.name.replace(/\.[^/.]+$/, ''),
-            sheets: sheetOrder.map(id => ({
-              name: currentSheets[id]?.name,
-              cells: currentSheets[id]?.cells || {}
-            }))
-          });
-          addRecentFile({ name: file.name, path: 'Local File', workbookData });
-        }, 100);
-
-      } catch (err) {
-        console.error('Error parsing file:', err);
-        alert('Lỗi khi đọc file. Vui lòng kiểm tra định dạng file.');
+      } else {
+        // CSV/TSV — read as text
+        const text = await file.text();
+        const rows = parseCSV(text);
+        importDataToSheet(rows, file.name);
       }
-    };
 
-    reader.readAsText(file);
+      // Add to recent files
+      setTimeout(() => {
+        const currentSheets = useWorkbookStore.getState().sheets;
+        const sheetOrder = useWorkbookStore.getState().sheetOrder;
+        const workbookData = JSON.stringify({
+          name: file.name.replace(/\.[^/.]+$/, ''),
+          sheets: sheetOrder.map(id => ({
+            name: currentSheets[id]?.name,
+            cells: currentSheets[id]?.cells || {}
+          }))
+        });
+        addRecentFile({ name: file.name, path: 'Local File', workbookData });
+      }, 100);
+
+    } catch (err) {
+      console.error('Error parsing file:', err);
+      alert('Lỗi khi đọc file. Vui lòng kiểm tra định dạng file.');
+    }
+
     onClose();
   }, [onClose, activeSheetId, batchUpdateCells, setWorkbook, addSheet, addRecentFile]);
 
@@ -746,7 +781,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       const updates: Array<{ row: number; col: number; data: { value: string; displayValue: string } }> = [];
 
       for (const [key, cell] of Object.entries(sheetData.cells)) {
-        const [row, col] = key.split(',').map(Number);
+        const [row, col] = key.split(':').map(Number);
         const value = String(cell.value ?? '');
         updates.push({
           row,
@@ -772,7 +807,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
 
     let maxRow = 0, maxCol = 0;
     Object.keys(cells).forEach(key => {
-      const [row, col] = key.split(',').map(Number);
+      const [row, col] = key.split(':').map(Number);
       maxRow = Math.max(maxRow, row);
       maxCol = Math.max(maxCol, col);
     });

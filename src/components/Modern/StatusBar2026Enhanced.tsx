@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { getCellKey } from '../../types/cell';
 
 type ViewMode = 'normal' | 'pageBreak' | 'pageLayout';
 type CalcType = 'average' | 'count' | 'numerical_count' | 'min' | 'max' | 'sum';
@@ -91,7 +92,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
       const { start, end } = selectionRange;
       for (let row = start.row; row <= end.row; row++) {
         for (let col = start.col; col <= end.col; col++) {
-          const cellKey = `${row},${col}`;
+          const cellKey = getCellKey(row, col);
           const cell = sheet.cells[cellKey];
           if (cell?.value !== null && cell?.value !== undefined && cell?.value !== '') {
             totalCount++;

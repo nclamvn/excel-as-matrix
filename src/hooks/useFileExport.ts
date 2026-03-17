@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useWorkbookStore } from '../stores/workbookStore';
+import { getCellKey } from '../types/cell';
 
 // Native browser download helper
 function downloadBlob(blob: Blob, filename: string) {
@@ -97,7 +98,7 @@ export function useFileExport(): UseFileExportReturn {
 
         const cells = [];
         for (const [key, cell] of Object.entries(sheet.cells)) {
-          const [row, col] = key.split(',').map(Number);
+          const [row, col] = key.split(':').map(Number);
 
           let value;
           const cellValue = cell.value;
@@ -157,7 +158,7 @@ export function useFileExport(): UseFileExportReturn {
 
       // Find dimensions
       for (const key of Object.keys(sheet.cells)) {
-        const [row, col] = key.split(',').map(Number);
+        const [row, col] = key.split(':').map(Number);
         maxCol = Math.max(maxCol, col);
         maxRow = Math.max(maxRow, row);
       }
@@ -166,7 +167,7 @@ export function useFileExport(): UseFileExportReturn {
       for (let row = 0; row <= maxRow; row++) {
         const cells: string[] = [];
         for (let col = 0; col <= maxCol; col++) {
-          const cell = sheet.cells[`${row},${col}`];
+          const cell = sheet.cells[getCellKey(row, col)];
           cells.push(cell?.value?.toString() || '');
         }
         rows.push({ index: row, cells });
@@ -198,14 +199,14 @@ export function useFileExport(): UseFileExportReturn {
 
         // Find dimensions
         for (const key of Object.keys(sheet.cells)) {
-          const [r, c] = key.split(',').map(Number);
+          const [r, c] = key.split(':').map(Number);
           maxCol = Math.max(maxCol, c);
           maxRow = Math.max(maxRow, r);
         }
 
         // Build cells
         for (const [key, cell] of Object.entries(sheet.cells)) {
-          const [row, col] = key.split(',').map(Number);
+          const [row, col] = key.split(':').map(Number);
           cells.push({
             row,
             col,

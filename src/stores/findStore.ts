@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { useWorkbookStore } from './workbookStore';
+import { getCellKey } from '../types/cell';
 
 export interface FindMatch {
   sheetId: string;
@@ -177,7 +178,7 @@ async function searchCells(pattern: RegExp, options: FindOptions): Promise<FindM
 
   for (const [sheetId, sheet] of sheetsToSearch) {
     for (const [key, cell] of Object.entries(sheet.cells)) {
-      const [row, col] = key.split(',').map(Number);
+      const [row, col] = key.split(':').map(Number);
 
       let searchValue = '';
       if (options.searchIn === 'values' || options.searchIn === 'both') {
@@ -233,7 +234,7 @@ function replaceCell(
   const sheet = workbookStore.sheets[sheetId];
   if (!sheet) return;
 
-  const cell = sheet.cells[`${row},${col}`];
+  const cell = sheet.cells[getCellKey(row, col)];
   if (!cell) return;
 
   const currentValue = String(cell.value ?? '');

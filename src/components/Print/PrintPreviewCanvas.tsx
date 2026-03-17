@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { getCellKey } from '../../types/cell';
 import { usePrintStore } from '../../stores/printStore';
 import { PrintSettings } from '../../types/print';
 import './Print.css';
@@ -54,7 +55,7 @@ export const PrintPreviewCanvas: React.FC<PrintPreviewCanvasProps> = ({
 
   // Get cell value
   const getCellValue = (row: number, col: number): string => {
-    const cellKey = `${row},${col}`;
+    const cellKey = getCellKey(row, col);
     const cell = sheet.cells?.[cellKey];
     if (!cell) return '';
     return cell.displayValue ?? cell.value ?? '';
@@ -62,7 +63,7 @@ export const PrintPreviewCanvas: React.FC<PrintPreviewCanvasProps> = ({
 
   // Get cell format
   const getCellFormat = (row: number, col: number) => {
-    const cellKey = `${row},${col}`;
+    const cellKey = getCellKey(row, col);
     const cell = sheet.cells?.[cellKey];
     return cell?.format || {};
   };

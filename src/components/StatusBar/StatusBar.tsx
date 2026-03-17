@@ -1,5 +1,6 @@
 import React, { useMemo, useState, memo } from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { getCellKey } from '../../types/cell';
 
 interface StatusBarProps {
   selection?: {
@@ -25,7 +26,7 @@ export const StatusBar: React.FC<StatusBarProps> = memo(({ selection, onZoomChan
 
     for (let row = selection.startRow; row <= selection.endRow; row++) {
       for (let col = selection.startCol; col <= selection.endCol; col++) {
-        const cell = sheet.cells[`${row},${col}`];
+        const cell = sheet.cells[getCellKey(row, col)];
         if (cell?.value !== undefined && cell?.value !== null && cell?.value !== '') {
           const num = parseFloat(String(cell.value));
           if (!isNaN(num)) {

@@ -12,6 +12,7 @@ import {
   Rows, Columns, Moon, Sun, RefreshCw
 } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { getCellKey } from '../../types/cell';
 import { useUIStore } from '../../stores/uiStore';
 import { useFindStore } from '../../stores/findStore';
 
@@ -121,7 +122,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         let maxRow = 0, maxCol = 0;
 
         Object.keys(cells).forEach(key => {
-          const [r, c] = key.split(',').map(Number);
+          const [r, c] = key.split(':').map(Number);
           maxRow = Math.max(maxRow, r);
           maxCol = Math.max(maxCol, c);
         });
@@ -129,7 +130,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         for (let r = 0; r <= maxRow; r++) {
           const row: string[] = [];
           for (let c = 0; c <= maxCol; c++) {
-            const cell = cells[`${r},${c}`];
+            const cell = cells[getCellKey(r, c)];
             row.push(cell?.displayValue ?? cell?.value?.toString() ?? '');
           }
           rows.push(row);
@@ -331,7 +332,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       action: () => {
         const cell = workbook.selectedCell;
         if (cell && workbook.activeSheetId) {
-          const current = workbook.sheets[workbook.activeSheetId]?.cells[`${cell.row},${cell.col}`];
+          const current = workbook.sheets[workbook.activeSheetId]?.cells[getCellKey(cell.row, cell.col)];
           workbook.applyFormat({ bold: !current?.format?.bold });
         }
       }
@@ -346,7 +347,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       action: () => {
         const cell = workbook.selectedCell;
         if (cell && workbook.activeSheetId) {
-          const current = workbook.sheets[workbook.activeSheetId]?.cells[`${cell.row},${cell.col}`];
+          const current = workbook.sheets[workbook.activeSheetId]?.cells[getCellKey(cell.row, cell.col)];
           workbook.applyFormat({ italic: !current?.format?.italic });
         }
       }
@@ -361,7 +362,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       action: () => {
         const cell = workbook.selectedCell;
         if (cell && workbook.activeSheetId) {
-          const current = workbook.sheets[workbook.activeSheetId]?.cells[`${cell.row},${cell.col}`];
+          const current = workbook.sheets[workbook.activeSheetId]?.cells[getCellKey(cell.row, cell.col)];
           workbook.applyFormat({ underline: !current?.format?.underline });
         }
       }

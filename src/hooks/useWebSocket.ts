@@ -9,11 +9,10 @@ import {
   CellUpdatePayload,
   CursorMovePayload,
   SelectionChangePayload,
-  UserPresence,
   ConnectionStatus,
 } from '../types/collab';
 
-const WS_URL = 'ws://localhost:3001/ws';
+const WS_BASE = 'ws://localhost:3001/ws';
 const RECONNECT_DELAYS = [1000, 2000, 4000, 8000, 16000, 30000]; // Exponential backoff
 const PING_INTERVAL = 30000;
 const PONG_TIMEOUT = 10000;
@@ -80,7 +79,7 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
     }
     pingIntervalRef.current = setInterval(() => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        sendMessage('Ping', {});
+        sendMessage('ping', {});
 
         // Set pong timeout
         pongTimeoutRef.current = setTimeout(() => {
@@ -107,36 +106,58 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
       const message: WsMessage = JSON.parse(event.data);
 
       switch (message.type) {
-        case 'Pong':
+        case 'pong':
           if (pongTimeoutRef.current) {
             clearTimeout(pongTimeoutRef.current);
             pongTimeoutRef.current = null;
           }
           break;
 
-        case 'PresenceUpdate':
-          const presencePayload = message.payload as UserPresence;
-          if (presencePayload.sessionId !== localUser?.sessionId) {
-            addRemoteUser(presencePayload);
+        case 'presence_update': {
+          const payload = message.payload as Record<string, unknown>;
+          const action = payload.action as string;
+
+          if (action === 'init') {
+            // Server sends initial member list on connect
+            const members = payload.members as Array<{ userId: string; userName: string }>;
+            members?.forEach((m) => {
+              addRemoteUser({
+                sessionId: m.userId,
+                userId: m.userId,
+                workbookId,
+                sheetId,
+                displayName: m.userName,
+                color: '',
+                lastActivity: new Date().toISOString(),
+                status: 'active',
+              });
+            });
+          } else if (action === 'join') {
+            const userId = payload.userId as string;
+            if (userId !== localUser?.sessionId) {
+              addRemoteUser({
+                sessionId: userId,
+                userId,
+                workbookId,
+                sheetId,
+                displayName: (payload.userName as string) || 'Anonymous',
+                color: '',
+                lastActivity: new Date().toISOString(),
+                status: 'active',
+              });
+            }
+          } else if (action === 'leave') {
+            const userId = payload.userId as string;
+            removeRemoteUser(userId);
           }
           break;
+        }
 
-        case 'Join':
-          const joinPayload = message.payload as UserPresence;
-          if (joinPayload.sessionId !== localUser?.sessionId) {
-            addRemoteUser(joinPayload);
-          }
-          break;
-
-        case 'Leave':
-          const leavePayload = message.payload as { sessionId: string };
-          removeRemoteUser(leavePayload.sessionId);
-          break;
-
-        case 'CursorMove':
-          const cursorPayload = message.payload as CursorMovePayload & { sessionId: string };
-          if (cursorPayload.sessionId !== localUser?.sessionId) {
-            updateRemoteUser(cursorPayload.sessionId, {
+        case 'cursor_move': {
+          const cursorPayload = message.payload as CursorMovePayload & { userId?: string };
+          const senderId = cursorPayload.userId || message.senderId;
+          if (senderId && senderId !== localUser?.sessionId) {
+            updateRemoteUser(senderId, {
               cursorPosition: {
                 row: cursorPayload.row,
                 col: cursorPayload.col,
@@ -145,11 +166,13 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
             });
           }
           break;
+        }
 
-        case 'SelectionChange':
-          const selPayload = message.payload as SelectionChangePayload & { sessionId: string };
-          if (selPayload.sessionId !== localUser?.sessionId) {
-            updateRemoteUser(selPayload.sessionId, {
+        case 'selection_change': {
+          const selPayload = message.payload as SelectionChangePayload & { userId?: string };
+          const senderId = selPayload.userId || message.senderId;
+          if (senderId && senderId !== localUser?.sessionId) {
+            updateRemoteUser(senderId, {
               selection: {
                 sheetId: selPayload.sheetId,
                 startRow: selPayload.startRow,
@@ -160,40 +183,47 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
             });
           }
           break;
+        }
 
-        case 'CellUpdate':
+        case 'cell_update': {
           const cellPayload = message.payload as CellUpdatePayload;
           onCellUpdate?.(cellPayload);
           break;
+        }
 
-        case 'Conflict':
+        case 'conflict':
           onConflict?.(message.payload);
           break;
 
-        case 'Sync':
+        case 'sync':
           onSync?.(message.payload);
           break;
 
-        case 'SheetChange':
-          const sheetPayload = message.payload as { sessionId: string; sheetId: string };
-          if (sheetPayload.sessionId !== localUser?.sessionId) {
-            updateRemoteUser(sheetPayload.sessionId, {
+        case 'sheet_change': {
+          const sheetPayload = message.payload as { userId?: string; sheetId: string };
+          const senderId = sheetPayload.userId || message.senderId;
+          if (senderId && senderId !== localUser?.sessionId) {
+            updateRemoteUser(senderId, {
               sheetId: sheetPayload.sheetId,
               cursorPosition: undefined,
               selection: undefined,
             });
           }
           break;
+        }
 
-        case 'Error':
+        case 'error': {
           const errorPayload = message.payload as { message: string };
           setError(errorPayload.message);
           break;
+        }
       }
     } catch (e) {
       console.error('Failed to parse WebSocket message:', e);
     }
   }, [
+    workbookId,
+    sheetId,
     localUser?.sessionId,
     addRemoteUser,
     removeRemoteUser,
@@ -214,7 +244,8 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
     setConnectionStatus('connecting');
 
     try {
-      const url = `${WS_URL}?token=${tokens.token}&workbook=${workbookId}`;
+      // URL: /ws/:roomId?userId=...&userName=...  (matches server route)
+      const url = `${WS_BASE}/${encodeURIComponent(workbookId)}?userId=${encodeURIComponent(user.id)}&userName=${encodeURIComponent(user.displayName)}`;
       wsRef.current = new WebSocket(url);
 
       wsRef.current.onopen = () => {
@@ -227,14 +258,14 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
           initLocalUser(user.id, user.displayName, workbookId, sheetId, user.avatarUrl);
         }
 
-        // Send join message
+        // Send join message with sheet context
         const joinPayload: JoinPayload = {
           workbookId,
           sheetId,
           userId: user.id,
           displayName: user.displayName,
         };
-        sendMessage('Join', joinPayload);
+        sendMessage('join', joinPayload);
 
         // Start ping
         startPing();
@@ -295,7 +326,7 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
     stopPing();
 
     if (wsRef.current) {
-      sendMessage('Leave', { sessionId: localUser?.sessionId });
+      sendMessage('leave', { sessionId: localUser?.sessionId });
       wsRef.current.close(1000, 'User disconnected');
       wsRef.current = null;
     }
@@ -319,20 +350,20 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
   useEffect(() => {
     if (connectionStatus === 'connected' && localUser) {
       updateSheet(sheetId);
-      sendMessage('SheetChange', { sheetId });
+      sendMessage('sheet_change', { sheetId });
     }
   }, [sheetId, connectionStatus, localUser, updateSheet, sendMessage]);
 
   const sendCellUpdate = useCallback((payload: CellUpdatePayload) => {
-    sendMessage('CellUpdate', payload);
+    sendMessage('cell_update', payload);
   }, [sendMessage]);
 
   const sendCursorMove = useCallback((row: number, col: number) => {
-    sendMessage('CursorMove', { sheetId, row, col });
+    sendMessage('cursor_move', { sheetId, row, col });
   }, [sendMessage, sheetId]);
 
   const sendSelectionChange = useCallback((startRow: number, startCol: number, endRow: number, endCol: number) => {
-    sendMessage('SelectionChange', {
+    sendMessage('selection_change', {
       sheetId,
       startRow,
       startCol,
@@ -342,7 +373,7 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
   }, [sendMessage, sheetId]);
 
   const sendSheetChange = useCallback((newSheetId: string) => {
-    sendMessage('SheetChange', { sheetId: newSheetId });
+    sendMessage('sheet_change', { sheetId: newSheetId });
   }, [sendMessage]);
 
   return {

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useWorkbookStore } from '../stores/workbookStore';
 import { useUndoStore } from '../stores/undoStore';
-import { CellValue } from '../types/cell';
+import { CellValue, getCellKey } from '../types/cell';
 import { detectPattern as detectPatternUtil, generateSeriesValues, DetectedPattern } from '../utils/fillSeriesUtils';
 
 export type FillDirection = 'down' | 'up' | 'left' | 'right';
@@ -94,7 +94,7 @@ export function useAutofill() {
       if (!sheet) return;
 
       const getCellValue = (row: number, col: number): CellValue => {
-        const cell = sheet.cells[`${row},${col}`];
+        const cell = sheet.cells[getCellKey(row, col)];
         return cell?.value ?? null;
       };
 

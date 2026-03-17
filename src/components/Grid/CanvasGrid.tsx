@@ -3,10 +3,12 @@
 // Uses HTML5 Canvas for instant feedback like Excel/WPS
 // ═══════════════════════════════════════════════════════════════════════════
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useProtectionStore } from '../../stores/protectionStore';
+import { useValidationStore } from '../../stores/validationStore';
 import { CellEditor } from './CellEditor';
 import { getCellKey } from '../../types/cell';
 import { FloatingAIButton } from '../AI/FloatingAIButton';
@@ -56,6 +58,39 @@ const BASE_HEADER_HEIGHT = 24;
 const MAX_ROWS = 100000;
 const MAX_COLS = 26;
 
+// Format number for display with thousand separators
+// TIP-010: Also supports VND format when numberFormat indicates currency
+const formatNumberDisplay = (value: number, displayValue: string, numberFormat?: string): string => {
+  // If displayValue already looks formatted (has separators or special chars), use it
+  if (displayValue && (displayValue.includes(',') || displayValue.includes('₫') || displayValue.includes('%') || displayValue.includes('$'))) {
+    return displayValue;
+  }
+
+  // TIP-010: VND currency format
+  if (numberFormat && (numberFormat.includes('₫') || numberFormat.toLowerCase().includes('vnd'))) {
+    const formatted = Math.round(value).toLocaleString('vi-VN');
+    return `${formatted} ₫`;
+  }
+
+  // For integers and decimals, add thousand separators
+  if (Number.isFinite(value)) {
+    // Avoid formatting very small numbers or scientific notation
+    if (Math.abs(value) >= 1000) {
+      const parts = value.toString().split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return parts.join('.');
+    }
+    // For decimals, limit to reasonable precision
+    if (!Number.isInteger(value) && displayValue === String(value)) {
+      const str = String(value);
+      if (str.length > 10) {
+        return Number(value.toPrecision(10)).toString();
+      }
+    }
+  }
+  return displayValue;
+};
+
 // Column letter helper
 const getColLetter = (col: number): string => {
   let letter = '';
@@ -76,6 +111,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [showGoToCell, setShowGoToCell] = useState(false);
+  const [goToCellValue, setGoToCellValue] = useState('');
+  const [hoverTooltip, setHoverTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Drag state - local for performance
   const isDraggingRef = useRef(false);
@@ -88,20 +129,66 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const zoom = useWorkbookStore((state) => state.zoom);
   const getCellFormula = useWorkbookStore((state) => state.getCellFormula);
   const getCellDisplayValue = useWorkbookStore((state) => state.getCellDisplayValue);
-  const setCellValue = useWorkbookStore((state) => state.setCellValue);
+  const updateCell = useWorkbookStore((state) => state.updateCell);
+  const setWorkbook = useWorkbookStore((state) => state.setWorkbook);
+  const addSheet = useWorkbookStore((state) => state.addSheet);
+  const batchUpdateCells = useWorkbookStore((state) => state.batchUpdateCells);
+  const sortStore = useWorkbookStore((state) => state.sort);
+  const sortConfig = useWorkbookStore((state) => state.sortConfig);
 
   // Theme
   const resolvedTheme = useUIStore((state) => state.resolvedTheme);
   const colors = THEME_COLORS[resolvedTheme];
+  const showToast = useUIStore((state) => state.showToast);
+
+  // Protection & Validation
+  const canPerformAction = useProtectionStore((state) => state.canPerformAction);
+  const validateCell = useValidationStore((state) => state.validateCell);
+  const getRuleForCell = useValidationStore((state) => state.getRuleForCell);
+  const getInputMessage = useValidationStore((state) => state.getInputMessage);
 
   // Calculate scaled dimensions based on zoom
   const zoomFactor = zoom / 100;
-  const CELL_WIDTH = Math.round(BASE_CELL_WIDTH * zoomFactor);
+  const DEFAULT_CELL_WIDTH = Math.round(BASE_CELL_WIDTH * zoomFactor);
   const CELL_HEIGHT = Math.round(BASE_CELL_HEIGHT * zoomFactor);
   const HEADER_WIDTH = Math.round(BASE_HEADER_WIDTH * zoomFactor);
   const HEADER_HEIGHT = Math.round(BASE_HEADER_HEIGHT * zoomFactor);
   const FONT_SIZE = Math.round(13 * zoomFactor);
   const HEADER_FONT_SIZE = Math.round(12 * zoomFactor);
+
+  // Compute per-column widths (from sheet.columnWidths or default)
+  const colWidths = useMemo(() => {
+    const widths: number[] = [];
+    for (let c = 0; c < MAX_COLS; c++) {
+      const customWidth = sheet?.columnWidths?.[c];
+      widths.push(customWidth ? Math.round(customWidth * zoomFactor) : DEFAULT_CELL_WIDTH);
+    }
+    return widths;
+  }, [sheet?.columnWidths, DEFAULT_CELL_WIDTH, zoomFactor]);
+
+  // Prefix-sum offsets for fast column position lookup
+  const colOffsets = useMemo(() => {
+    const offsets: number[] = [0];
+    for (let c = 0; c < MAX_COLS; c++) {
+      offsets.push(offsets[c] + colWidths[c]);
+    }
+    return offsets;
+  }, [colWidths]);
+
+  const totalWidth = colOffsets[MAX_COLS];
+
+  // Find column index from x position (pixel coordinate in scrollable area)
+  const getColFromX = useCallback((x: number): number => {
+    for (let c = 0; c < MAX_COLS; c++) {
+      if (x < colOffsets[c + 1]) return c;
+    }
+    return MAX_COLS - 1;
+  }, [colOffsets]);
+
+  // Find first visible column from scroll position
+  const getFirstVisibleCol = useCallback((scrollX: number): number => {
+    return getColFromX(scrollX);
+  }, [getColFromX]);
 
   const selectedCell = useSelectionStore((state) => state.selectedCell);
   const selectionRange = useSelectionStore((state) => state.selectionRange);
@@ -119,11 +206,11 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     const rect = containerRef.current.getBoundingClientRect();
     const x = clientX - rect.left + scrollLeft;
     const y = clientY - rect.top + scrollTop;
-    const col = Math.floor(x / CELL_WIDTH);
+    const col = getColFromX(x);
     const row = Math.floor(y / CELL_HEIGHT);
     if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) return null;
     return { row, col };
-  }, [scrollLeft, scrollTop, CELL_WIDTH, CELL_HEIGHT]);
+  }, [scrollLeft, scrollTop, getColFromX, CELL_HEIGHT]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CANVAS RENDERING
@@ -151,11 +238,17 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     // Calculate visible range
     const startRow = Math.floor(scrollTop / CELL_HEIGHT);
-    const startCol = Math.floor(scrollLeft / CELL_WIDTH);
+    const startCol = getFirstVisibleCol(scrollLeft);
     const endRow = Math.min(MAX_ROWS, startRow + Math.ceil(height / CELL_HEIGHT) + 1);
-    const endCol = Math.min(MAX_COLS, startCol + Math.ceil(width / CELL_WIDTH) + 1);
+    // Find endCol by accumulating widths
+    let endCol = startCol;
+    let accWidth = colOffsets[startCol] - scrollLeft;
+    while (endCol < MAX_COLS && accWidth < width) {
+      accWidth += colWidths[endCol];
+      endCol++;
+    }
+    endCol = Math.min(MAX_COLS, endCol + 1);
 
-    const offsetX = -(scrollLeft % CELL_WIDTH);
     const offsetY = -(scrollTop % CELL_HEIGHT);
 
     // Draw grid lines
@@ -163,8 +256,8 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.lineWidth = 1;
 
     // Vertical lines
-    for (let col = startCol; col <= endCol; col++) {
-      const x = offsetX + (col - startCol) * CELL_WIDTH + 0.5;
+    for (let col = startCol; col <= endCol && col <= MAX_COLS; col++) {
+      const x = colOffsets[col] - scrollLeft + 0.5;
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
@@ -190,17 +283,21 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         const cellData = sheet?.cells[key];
         if (!cellData) continue;
 
-        const x = offsetX + (col - startCol) * CELL_WIDTH;
+        const cw = colWidths[col];
+        const x = colOffsets[col] - scrollLeft;
         const y = offsetY + (row - startRow) * CELL_HEIGHT;
 
         // Cell background if formatted
         if (cellData.format?.backgroundColor) {
           ctx.fillStyle = cellData.format.backgroundColor;
-          ctx.fillRect(x + 1, y + 1, CELL_WIDTH - 2, CELL_HEIGHT - 2);
+          ctx.fillRect(x + 1, y + 1, cw - 2, CELL_HEIGHT - 2);
         }
 
-        // Cell text
-        const displayValue = cellData.displayValue || String(cellData.value || '');
+        // Cell text — apply number formatting for readability
+        let displayValue = cellData.displayValue || String(cellData.value || '');
+        if (typeof cellData.value === 'number') {
+          displayValue = formatNumberDisplay(cellData.value, displayValue, cellData.format?.numberFormat);
+        }
         if (displayValue) {
           ctx.fillStyle = cellData.format?.textColor || colors.text;
 
@@ -210,10 +307,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
           if (cellData.format?.align === 'center') {
             ctx.textAlign = 'center';
-            textX = x + CELL_WIDTH / 2;
-          } else if (cellData.format?.align === 'right') {
+            textX = x + cw / 2;
+          } else if (cellData.format?.align === 'right' || (typeof cellData.value === 'number' && !cellData.format?.align)) {
             ctx.textAlign = 'right';
-            textX = x + CELL_WIDTH - 4;
+            textX = x + cw - 4;
           } else {
             ctx.textAlign = 'left';
           }
@@ -227,7 +324,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           // Clip text to cell
           ctx.save();
           ctx.beginPath();
-          ctx.rect(x + 1, y + 1, CELL_WIDTH - 2, CELL_HEIGHT - 2);
+          ctx.rect(x + 1, y + 1, cw - 2, CELL_HEIGHT - 2);
           ctx.clip();
           ctx.fillText(displayValue, textX, textY);
           ctx.restore();
@@ -235,22 +332,36 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           // Reset font
           ctx.font = `${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
         }
+
+        // Spill cell indicator: dashed blue border
+        if (cellData.spillOrigin) {
+          ctx.save();
+          ctx.strokeStyle = '#3b82f6';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 2]);
+          ctx.strokeRect(x + 1, y + 1, cw - 2, CELL_HEIGHT - 2);
+          ctx.restore();
+        }
       }
     }
+
+    // Helper: compute selection rect from row/col ranges using variable widths
+    const getSelectionRect = (minRow: number, maxRow: number, minCol: number, maxCol: number) => {
+      const selX = colOffsets[minCol] - scrollLeft;
+      const selY = offsetY + (minRow - startRow) * CELL_HEIGHT;
+      const selW = colOffsets[maxCol + 1] - colOffsets[minCol];
+      const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
+      return { selX, selY, selW, selH };
+    };
 
     // Draw drag selection (live)
     if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
       const ds = dragStartRef.current;
       const de = dragEndRef.current;
-      const minRow = Math.min(ds.row, de.row);
-      const maxRow = Math.max(ds.row, de.row);
-      const minCol = Math.min(ds.col, de.col);
-      const maxCol = Math.max(ds.col, de.col);
-
-      const selX = offsetX + (minCol - startCol) * CELL_WIDTH;
-      const selY = offsetY + (minRow - startRow) * CELL_HEIGHT;
-      const selW = (maxCol - minCol + 1) * CELL_WIDTH;
-      const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
+      const { selX, selY, selW, selH } = getSelectionRect(
+        Math.min(ds.row, de.row), Math.max(ds.row, de.row),
+        Math.min(ds.col, de.col), Math.max(ds.col, de.col)
+      );
 
       ctx.fillStyle = colors.rangeSelection;
       ctx.fillRect(selX, selY, selW, selH);
@@ -260,15 +371,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     }
     // Draw committed selection range
     else if (selectionRange) {
-      const minRow = Math.min(selectionRange.start.row, selectionRange.end.row);
-      const maxRow = Math.max(selectionRange.start.row, selectionRange.end.row);
-      const minCol = Math.min(selectionRange.start.col, selectionRange.end.col);
-      const maxCol = Math.max(selectionRange.start.col, selectionRange.end.col);
-
-      const selX = offsetX + (minCol - startCol) * CELL_WIDTH;
-      const selY = offsetY + (minRow - startRow) * CELL_HEIGHT;
-      const selW = (maxCol - minCol + 1) * CELL_WIDTH;
-      const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
+      const { selX, selY, selW, selH } = getSelectionRect(
+        Math.min(selectionRange.start.row, selectionRange.end.row),
+        Math.max(selectionRange.start.row, selectionRange.end.row),
+        Math.min(selectionRange.start.col, selectionRange.end.col),
+        Math.max(selectionRange.start.col, selectionRange.end.col)
+      );
 
       ctx.fillStyle = colors.rangeSelection;
       ctx.fillRect(selX, selY, selW, selH);
@@ -279,13 +387,41 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     // Draw selected cell highlight
     if (selectedCell && !isEditing) {
-      const x = offsetX + (selectedCell.col - startCol) * CELL_WIDTH;
+      const x = colOffsets[selectedCell.col] - scrollLeft;
       const y = offsetY + (selectedCell.row - startRow) * CELL_HEIGHT;
       ctx.strokeStyle = colors.selection;
       ctx.lineWidth = 2;
-      ctx.strokeRect(x, y, CELL_WIDTH, CELL_HEIGHT);
+      ctx.strokeRect(x, y, colWidths[selectedCell.col], CELL_HEIGHT);
     }
-  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, selectedCell, selectionRange, isEditing, CELL_WIDTH, CELL_HEIGHT, FONT_SIZE, colors]);
+
+    // TIP-002: Draw freeze pane separator lines
+    if (sheet?.freezePane) {
+      ctx.save();
+      ctx.strokeStyle = resolvedTheme === 'dark' ? '#6b7280' : '#374151';
+      ctx.lineWidth = 2;
+      // Horizontal freeze line (below frozen rows)
+      if (sheet.freezePane.row > 0) {
+        const freezeY = sheet.freezePane.row * CELL_HEIGHT - scrollTop;
+        if (freezeY > 0 && freezeY < height) {
+          ctx.beginPath();
+          ctx.moveTo(0, freezeY + 0.5);
+          ctx.lineTo(width, freezeY + 0.5);
+          ctx.stroke();
+        }
+      }
+      // Vertical freeze line (right of frozen cols)
+      if (sheet.freezePane.col > 0) {
+        const freezeX = colOffsets[sheet.freezePane.col] - scrollLeft;
+        if (freezeX > 0 && freezeX < width) {
+          ctx.beginPath();
+          ctx.moveTo(freezeX + 0.5, 0);
+          ctx.lineTo(freezeX + 0.5, height);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, sheet?.freezePane, selectedCell, selectionRange, isEditing, colWidths, colOffsets, getFirstVisibleCol, CELL_HEIGHT, FONT_SIZE, colors, resolvedTheme]);
 
   // Check if column is in selection range
   const isColInRange = useCallback((col: number) => {
@@ -341,38 +477,44 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.fillStyle = colors.headerBg;
     ctx.fillRect(0, 0, width, height);
 
-    const startCol = Math.floor(scrollLeft / CELL_WIDTH);
-    const endCol = Math.min(MAX_COLS, startCol + Math.ceil(width / CELL_WIDTH) + 1);
-    const offsetX = -(scrollLeft % CELL_WIDTH);
+    const startCol = getFirstVisibleCol(scrollLeft);
+    let endCol = startCol;
+    let acc = colOffsets[startCol] - scrollLeft;
+    while (endCol < MAX_COLS && acc < width) {
+      acc += colWidths[endCol];
+      endCol++;
+    }
+    endCol = Math.min(MAX_COLS, endCol + 1);
 
     ctx.font = `${HEADER_FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     for (let col = startCol; col < endCol; col++) {
-      const x = offsetX + (col - startCol) * CELL_WIDTH;
+      const cw = colWidths[col];
+      const x = colOffsets[col] - scrollLeft;
       const inRange = isColInRange(col);
 
       // Highlight selected column (dark green) or in-range column (light green)
       if (selectedCell?.col === col) {
         ctx.fillStyle = colors.selectedHeader;
-        ctx.fillRect(x, 0, CELL_WIDTH, height);
+        ctx.fillRect(x, 0, cw, height);
         ctx.fillStyle = colors.selectedHeaderText;
       } else if (inRange) {
         ctx.fillStyle = colors.rangeHeader;
-        ctx.fillRect(x, 0, CELL_WIDTH, height);
+        ctx.fillRect(x, 0, cw, height);
         ctx.fillStyle = colors.rangeHeaderText;
       } else {
         ctx.fillStyle = colors.headerText;
       }
 
-      ctx.fillText(getColLetter(col), x + CELL_WIDTH / 2, height / 2);
+      ctx.fillText(getColLetter(col), x + cw / 2, height / 2);
 
       // Border
       ctx.strokeStyle = colors.gridLine;
       ctx.beginPath();
-      ctx.moveTo(x + CELL_WIDTH + 0.5, 0);
-      ctx.lineTo(x + CELL_WIDTH + 0.5, height);
+      ctx.moveTo(x + cw + 0.5, 0);
+      ctx.lineTo(x + cw + 0.5, height);
       ctx.stroke();
     }
 
@@ -382,7 +524,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.moveTo(0, height - 0.5);
     ctx.lineTo(width, height - 0.5);
     ctx.stroke();
-  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange, CELL_WIDTH, HEADER_HEIGHT, HEADER_FONT_SIZE, colors]);
+  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange, colWidths, colOffsets, getFirstVisibleCol, HEADER_HEIGHT, HEADER_FONT_SIZE, colors]);
 
   // Render row headers
   const renderRowHeaders = useCallback(() => {
@@ -499,10 +641,22 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     const cell = getCellFromMouse(e.clientX, e.clientY);
     if (cell) {
+      // Protection check: prevent editing on protected sheets
+      if (!canPerformAction(sheetId, 'formatCells')) {
+        showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+        return;
+      }
+      // Spill cell check: cannot edit spill cells directly
+      const cellKey = getCellKey(cell.row, cell.col);
+      const cellData = sheet?.cells[cellKey];
+      if (cellData?.spillOrigin) {
+        showToast('This cell contains a spilled value. Edit the formula in the origin cell.', 'info');
+        return;
+      }
       setSelectedCell(cell);
       setIsEditing(true);
     }
-  }, [getCellFromMouse, setSelectedCell, setIsEditing]);
+  }, [getCellFromMouse, setSelectedCell, setIsEditing, canPerformAction, sheetId, showToast, sheet?.cells]);
 
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -510,13 +664,277 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     setScrollLeft(target.scrollLeft);
   }, []);
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TOUCH EVENT HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const cell = getCellFromMouse(touch.clientX, touch.clientY);
+    if (!cell) return;
+
+    setSelectedCell(cell);
+    setSelectionRange(null);
+    isDraggingRef.current = true;
+    dragStartRef.current = cell;
+    dragEndRef.current = cell;
+  }, [getCellFromMouse, setSelectedCell, setSelectionRange]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDraggingRef.current || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const cell = getCellFromMouse(touch.clientX, touch.clientY);
+    if (cell && dragEndRef.current &&
+        (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)) {
+      dragEndRef.current = cell;
+      renderGrid();
+      renderColumnHeaders();
+      renderRowHeaders();
+    }
+  }, [getCellFromMouse, renderGrid, renderColumnHeaders, renderRowHeaders]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+      const ds = dragStartRef.current;
+      const de = dragEndRef.current;
+      if (ds.row !== de.row || ds.col !== de.col) {
+        selectRange(ds, de);
+      }
+    }
+    isDraggingRef.current = false;
+    dragStartRef.current = null;
+    dragEndRef.current = null;
+    renderGrid();
+    renderColumnHeaders();
+    renderRowHeaders();
+  }, [selectRange, renderGrid, renderColumnHeaders, renderRowHeaders]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FILE DROP HANDLER — TIP-005: Drag-drop file directly onto grid
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const handleFileDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragOver(true);
+    }
+  }, []);
+
+  const handleFileDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  const handleFileDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    const name = file.name.toLowerCase();
+    if (!name.endsWith('.xlsx') && !name.endsWith('.xls') && !name.endsWith('.csv')) {
+      showToast('Unsupported file format. Please drop .xlsx, .xls, or .csv files.', 'warning');
+      return;
+    }
+
+    try {
+      showToast(`Importing ${file.name}...`, 'info');
+
+      if (name.endsWith('.csv')) {
+        const { importCSVFile } = await import('../../utils/excelIO');
+        const result = await importCSVFile(file);
+        const workbookId = `local-${Date.now()}`;
+        setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
+        const sid = `sheet-${Date.now()}-0`;
+        addSheet({ id: sid, name: result.sheets[0].name, index: 0, cells: {} });
+        const updates = Object.entries(result.sheets[0].cells).map(([key, cell]) => {
+          const [r, c] = key.split(':').map(Number);
+          return { row: r, col: c, data: { value: cell.value as string | number | boolean, displayValue: cell.displayValue } };
+        });
+        if (updates.length > 0) batchUpdateCells(sid, updates);
+      } else {
+        const { importExcelFile } = await import('../../utils/excelIO');
+        const result = await importExcelFile(file);
+        const workbookId = `local-${Date.now()}`;
+        setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
+        for (let i = 0; i < result.sheets.length; i++) {
+          const sd = result.sheets[i];
+          const sid = `sheet-${Date.now()}-${i}`;
+          addSheet({ id: sid, name: sd.name || `Sheet${i + 1}`, index: i, cells: {},
+            columnWidths: sd.columnWidths, rowHeights: sd.rowHeights, freezePane: sd.freezePane });
+          const updates = Object.entries(sd.cells).map(([key, cell]) => {
+            const [r, c] = key.split(':').map(Number);
+            return { row: r, col: c, data: {
+              value: cell.value as string | number | boolean,
+              displayValue: cell.displayValue || String(cell.value ?? ''),
+              formula: cell.formula || null,
+              ...(cell.format ? { format: cell.format } : {}),
+            }};
+          });
+          if (updates.length > 0) batchUpdateCells(sid, updates);
+        }
+      }
+      showToast(`${file.name} imported successfully`, 'info');
+    } catch (err) {
+      console.error('Drop import error:', err);
+      showToast('Failed to import file. Please check the format.', 'warning');
+    }
+  }, [setWorkbook, addSheet, batchUpdateCells, showToast]);
+
+  // TIP-009: Navigate to cell reference
+  const goToCell = useCallback((ref: string) => {
+    const match = ref.toUpperCase().trim().match(/^([A-Z]+)(\d+)$/);
+    if (!match) {
+      showToast('Invalid cell reference. Use format like A1, B25, AA100.', 'warning');
+      return;
+    }
+    let col = 0;
+    for (let i = 0; i < match[1].length; i++) {
+      col = col * 26 + (match[1].charCodeAt(i) - 64);
+    }
+    col -= 1;
+    const row = parseInt(match[2]) - 1;
+    if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) {
+      showToast('Cell reference out of range.', 'warning');
+      return;
+    }
+    setSelectedCell({ row, col });
+    // Scroll to make cell visible
+    if (containerRef.current) {
+      const targetY = row * CELL_HEIGHT;
+      const targetX = colOffsets[col];
+      containerRef.current.scrollTop = Math.max(0, targetY - containerSize.height / 3);
+      containerRef.current.scrollLeft = Math.max(0, targetX - containerSize.width / 3);
+    }
+    setShowGoToCell(false);
+    setGoToCellValue('');
+  }, [setSelectedCell, CELL_HEIGHT, colOffsets, containerSize, showToast]);
+
+  // TIP-004: Hover tooltip for truncated cells
+  const handleMouseMoveTooltip = useCallback((e: React.MouseEvent) => {
+    if (isDraggingRef.current) return;
+    const cell = getCellFromMouse(e.clientX, e.clientY);
+    if (!cell || !sheet?.cells) {
+      if (hoverTooltip) setHoverTooltip(null);
+      return;
+    }
+    const key = getCellKey(cell.row, cell.col);
+    const cellData = sheet.cells[key];
+    if (!cellData) {
+      if (hoverTooltip) setHoverTooltip(null);
+      return;
+    }
+    const text = cellData.displayValue || String(cellData.value || '');
+    if (!text) {
+      if (hoverTooltip) setHoverTooltip(null);
+      return;
+    }
+    // Estimate if text is truncated (rough: 7px per char)
+    const cw = colWidths[cell.col];
+    const estimatedWidth = text.length * 7;
+    if (estimatedWidth > cw - 8) {
+      // Clear existing timeout
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = setTimeout(() => {
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (rect) {
+          setHoverTooltip({
+            text,
+            x: e.clientX - rect.left + HEADER_WIDTH,
+            y: e.clientY - rect.top + HEADER_HEIGHT - 30,
+          });
+        }
+      }, 500); // 500ms delay before showing tooltip
+    } else {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (hoverTooltip) setHoverTooltip(null);
+    }
+  }, [getCellFromMouse, sheet?.cells, colWidths, hoverTooltip, HEADER_WIDTH, HEADER_HEIGHT]);
+
+  // TIP-008: Column header click to sort
+  const handleColumnHeaderClick = useCallback((e: React.MouseEvent) => {
+    if (!headerCanvasRef.current || !sheet?.cells) return;
+    const rect = headerCanvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left + scrollLeft;
+    const col = getColFromX(x);
+
+    // Find data range: first row to last row with data in this column
+    let minRow = Infinity, maxRow = -1;
+    for (const key of Object.keys(sheet.cells)) {
+      const [rStr, cStr] = key.split(':');
+      if (parseInt(cStr) === col || true) { // need all cols in range
+        const r = parseInt(rStr);
+        if (r < minRow) minRow = r;
+        if (r > maxRow) maxRow = r;
+      }
+    }
+    if (maxRow < 0) return;
+
+    // Find min/max col with data
+    let minCol = Infinity, maxCol = -1;
+    for (const key of Object.keys(sheet.cells)) {
+      const c = parseInt(key.split(':')[1]);
+      if (c < minCol) minCol = c;
+      if (c > maxCol) maxCol = c;
+    }
+
+    // Set selection range to cover all data, then sort
+    const range = { start: { row: minRow, col: minCol }, end: { row: maxRow, col: maxCol } };
+    setSelectionRange(range);
+
+    // Toggle sort direction
+    const newDir = (sortConfig?.column === col && sortConfig?.direction === 'asc') ? 'desc' : 'asc';
+
+    // Use setTimeout to let selection range update in store first
+    setTimeout(() => {
+      sortStore({ column: col, direction: newDir });
+      showToast(`Sorted by column ${getColLetter(col)} (${newDir === 'asc' ? 'A→Z' : 'Z→A'})`, 'info');
+    }, 0);
+  }, [sheet?.cells, scrollLeft, getColFromX, setSelectionRange, sortStore, sortConfig, showToast]);
+
+  // Check if grid is empty for empty state overlay
+  const isEmpty = !sheet?.cells || Object.keys(sheet.cells).length === 0;
+
   // Cell edit handlers
   const handleCellSubmit = useCallback((value: string) => {
     if (!selectedCell || !sheetId) return;
+
+    // Protection check
+    if (!canPerformAction(sheetId, 'formatCells')) {
+      showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+      setIsEditing(false);
+      return;
+    }
+
+    // Validation check
+    const result = validateCell(sheetId, selectedCell.row, selectedCell.col, value);
+    if (!result.isValid) {
+      const rule = getRuleForCell(sheetId, selectedCell.row, selectedCell.col);
+      const errorStyle = rule?.errorAlert?.style ?? 'stop';
+
+      if (errorStyle === 'stop') {
+        // Stop: reject the value, keep editor open
+        setValidationError(result.message || 'Invalid value');
+        return;
+      }
+      // Warning/Information: show toast but allow the value through
+      showToast(result.message || 'Invalid value', errorStyle === 'warning' ? 'warning' : 'info');
+    }
+
+    setValidationError(null);
     setIsEditing(false);
-    setCellValue(sheetId, selectedCell.row, selectedCell.col, value);
+    const isFormula = typeof value === 'string' && value.startsWith('=');
+    updateCell(sheetId, selectedCell.row, selectedCell.col, {
+      value,
+      formula: isFormula ? value : null,
+    });
     moveSelection('down');
-  }, [selectedCell, sheetId, setIsEditing, setCellValue, moveSelection]);
+  }, [selectedCell, sheetId, setIsEditing, updateCell, moveSelection, canPerformAction, validateCell, getRuleForCell, showToast]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // KEYBOARD HANDLING
@@ -525,6 +943,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!selectedCell || isEditing) return;
+
+      // Helper to check edit permission
+      const canEdit = () => canPerformAction(sheetId, 'formatCells');
 
       switch (e.key) {
         case 'ArrowUp':
@@ -549,32 +970,56 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           break;
         case 'Enter':
           e.preventDefault();
-          e.shiftKey ? moveSelection('up') : setIsEditing(true);
+          if (e.shiftKey) {
+            moveSelection('up');
+          } else if (canEdit()) {
+            setIsEditing(true);
+          } else {
+            showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+          }
           break;
         case 'F2':
           e.preventDefault();
-          setIsEditing(true);
+          if (canEdit()) {
+            setIsEditing(true);
+          } else {
+            showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+          }
           break;
         case 'Delete':
         case 'Backspace':
           e.preventDefault();
-          handleCellSubmit('');
+          if (canEdit()) {
+            handleCellSubmit('');
+          } else {
+            showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+          }
           break;
         case 'Escape':
           e.preventDefault();
           setSelectionRange(null);
           break;
         default:
+          // TIP-009: Ctrl+G / Cmd+G → Go to cell
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
+            e.preventDefault();
+            setShowGoToCell(true);
+            return;
+          }
           if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.preventDefault();
-            setIsEditing(true);
+            if (canEdit()) {
+              setIsEditing(true);
+            } else {
+              showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+            }
           }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCell, isEditing, moveSelection, expandSelection, setIsEditing, setSelectionRange, handleCellSubmit]);
+  }, [selectedCell, isEditing, moveSelection, expandSelection, setIsEditing, setSelectionRange, handleCellSubmit, canPerformAction, sheetId, showToast]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EFFECTS
@@ -618,7 +1063,13 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   // ═══════════════════════════════════════════════════════════════════════════
 
   return (
-    <div className="relative h-full overflow-hidden" style={{ background: colors.headerBg }}>
+    <div
+      className="relative h-full overflow-hidden"
+      style={{ background: colors.headerBg }}
+      onDragOver={handleFileDragOver}
+      onDragLeave={handleFileDragLeave}
+      onDrop={handleFileDrop}
+    >
       {/* Corner */}
       <div
         style={{
@@ -634,14 +1085,16 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         }}
       />
 
-      {/* Column headers */}
+      {/* Column headers — TIP-008: click to sort */}
       <canvas
         ref={headerCanvasRef}
+        onClick={handleColumnHeaderClick}
         style={{
           position: 'absolute',
           left: HEADER_WIDTH,
           top: 0,
           zIndex: 2,
+          cursor: 'pointer',
         }}
       />
 
@@ -668,13 +1121,17 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           overflow: 'auto',
         }}
         onScroll={handleScroll}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
+        onMouseDown={(e) => { setHoverTooltip(null); handleMouseDown(e); }}
+        onMouseMove={(e) => { handleMouseMove(e); handleMouseMoveTooltip(e); }}
         onMouseUp={handleMouseUp}
         onDoubleClick={handleDoubleClick}
+        onMouseLeave={() => { setHoverTooltip(null); if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current); }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Scrollable area */}
-        <div style={{ width: MAX_COLS * CELL_WIDTH, height: MAX_ROWS * CELL_HEIGHT, position: 'relative' }}>
+        <div style={{ width: totalWidth, height: MAX_ROWS * CELL_HEIGHT, position: 'relative' }}>
           <canvas
             ref={canvasRef}
             style={{
@@ -696,12 +1153,15 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
               getCellDisplayValue(sheetId, selectedCell.row, selectedCell.col) ||
               ''
             }
-            cellWidth={CELL_WIDTH}
+            cellWidth={colWidths[selectedCell.col]}
             cellHeight={CELL_HEIGHT}
             headerWidth={-scrollLeft}
             headerHeight={-scrollTop}
+            colOffset={colOffsets[selectedCell.col]}
             onSubmit={handleCellSubmit}
-            onCancel={() => setIsEditing(false)}
+            onCancel={() => { setValidationError(null); setIsEditing(false); }}
+            validationError={validationError}
+            inputMessage={getInputMessage(sheetId, selectedCell.row, selectedCell.col)}
           />
         )}
 
@@ -709,11 +1169,209 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         {!isEditing && (
           <FloatingAIButton
             gridRef={containerRef}
-            cellWidth={CELL_WIDTH}
+            cellWidth={DEFAULT_CELL_WIDTH}
             cellHeight={CELL_HEIGHT}
           />
         )}
       </div>
+
+      {/* TIP-003: Empty state overlay — shown when grid has no data */}
+      {isEmpty && !isEditing && (
+        <div
+          style={{
+            position: 'absolute',
+            left: HEADER_WIDTH,
+            top: HEADER_HEIGHT,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 16,
+            pointerEvents: 'none',
+            zIndex: 5,
+          }}
+        >
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 12,
+            padding: '40px 32px',
+            borderRadius: 12,
+            background: resolvedTheme === 'dark' ? 'rgba(38,38,38,0.9)' : 'rgba(255,255,255,0.9)',
+            border: `2px dashed ${resolvedTheme === 'dark' ? '#525252' : '#d4d4d4'}`,
+            pointerEvents: 'auto',
+          }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={resolvedTheme === 'dark' ? '#6ee7b7' : '#059669'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="12" y1="18" x2="12" y2="12" />
+              <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            <div style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: resolvedTheme === 'dark' ? '#e5e5e5' : '#171717',
+            }}>
+              Drop XLSX, XLS, or CSV file here
+            </div>
+            <div style={{
+              fontSize: 13,
+              color: resolvedTheme === 'dark' ? '#a3a3a3' : '#737373',
+            }}>
+              or use File &gt; Open to browse
+            </div>
+            <button
+              onClick={() => document.getElementById('file-input-open')?.click()}
+              style={{
+                marginTop: 4,
+                padding: '8px 20px',
+                background: '#059669',
+                color: 'white',
+                border: 'none',
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}
+            >
+              Open File
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* TIP-004: Hover tooltip for truncated cells */}
+      {hoverTooltip && (
+        <div
+          style={{
+            position: 'absolute',
+            left: hoverTooltip.x,
+            top: hoverTooltip.y,
+            maxWidth: 350,
+            padding: '4px 8px',
+            background: resolvedTheme === 'dark' ? '#404040' : '#1a1a1a',
+            color: 'white',
+            fontSize: 12,
+            borderRadius: 4,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            zIndex: 60,
+            pointerEvents: 'none',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-all',
+          }}
+        >
+          {hoverTooltip.text}
+        </div>
+      )}
+
+      {/* TIP-009: Go-to-cell dialog (Ctrl+G) */}
+      {showGoToCell && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            zIndex: 60,
+            display: 'flex',
+            gap: 4,
+            background: resolvedTheme === 'dark' ? '#262626' : 'white',
+            border: `1px solid ${resolvedTheme === 'dark' ? '#525252' : '#d4d4d4'}`,
+            borderRadius: 6,
+            padding: 4,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          }}
+        >
+          <input
+            autoFocus
+            type="text"
+            placeholder="Go to cell (e.g. A1)"
+            value={goToCellValue}
+            onChange={(e) => setGoToCellValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') goToCell(goToCellValue);
+              if (e.key === 'Escape') { setShowGoToCell(false); setGoToCellValue(''); }
+            }}
+            style={{
+              width: 140,
+              padding: '4px 8px',
+              border: `1px solid ${resolvedTheme === 'dark' ? '#525252' : '#d4d4d4'}`,
+              borderRadius: 4,
+              fontSize: 13,
+              background: resolvedTheme === 'dark' ? '#1a1a1a' : 'white',
+              color: resolvedTheme === 'dark' ? '#e5e5e5' : '#171717',
+              outline: 'none',
+            }}
+          />
+          <button
+            onClick={() => goToCell(goToCellValue)}
+            style={{
+              padding: '4px 10px',
+              background: '#059669',
+              color: 'white',
+              border: 'none',
+              borderRadius: 4,
+              fontSize: 12,
+              cursor: 'pointer',
+            }}
+          >
+            Go
+          </button>
+          <button
+            onClick={() => { setShowGoToCell(false); setGoToCellValue(''); }}
+            style={{
+              padding: '4px 8px',
+              background: 'transparent',
+              color: resolvedTheme === 'dark' ? '#a3a3a3' : '#737373',
+              border: 'none',
+              fontSize: 14,
+              cursor: 'pointer',
+            }}
+          >
+            x
+          </button>
+        </div>
+      )}
+
+      {/* TIP-005: Drag overlay — shown when file is being dragged over grid */}
+      {isDragOver && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(5, 150, 105, 0.12)',
+            border: '3px dashed #059669',
+            borderRadius: 8,
+            zIndex: 50,
+            pointerEvents: 'none',
+          }}
+        >
+          <div style={{
+            padding: '24px 40px',
+            background: resolvedTheme === 'dark' ? '#1a1a1a' : 'white',
+            borderRadius: 12,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 8,
+          }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#059669' }}>
+              Drop to import
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

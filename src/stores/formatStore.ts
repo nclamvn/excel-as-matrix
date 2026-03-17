@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { useWorkbookStore } from './workbookStore';
-import { CellFormat } from '../types/cell';
+import { CellFormat, getCellKey } from '../types/cell';
 
 interface FormatState {
   // Current format (reflects selected cell or format to apply)
@@ -161,7 +161,7 @@ export const useFormatStore = create<FormatState>()(
         return;
       }
 
-      const cellKey = `${selectedCell.row},${selectedCell.col}`;
+      const cellKey = getCellKey(selectedCell.row, selectedCell.col);
       const cell = sheet.cells[cellKey];
       const format = cell?.format;
 

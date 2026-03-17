@@ -148,7 +148,7 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
       let lastRow = 0;
       let lastCol = 0;
       Object.keys(sheet.cells).forEach((key) => {
-        const [rowStr, colStr] = key.split(',');
+        const [rowStr, colStr] = key.split(':');
         const row = parseInt(rowStr);
         const col = parseInt(colStr);
         if (row > lastRow || (row === lastRow && col > lastCol)) {

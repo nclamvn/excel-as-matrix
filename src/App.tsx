@@ -4,16 +4,14 @@ import { ToastContainer } from './components/Toast/Toast';
 import { useWorkbookStore } from './stores/workbookStore';
 import { useSelectionStore } from './stores/selectionStore';
 import { useAIStore } from './stores/aiStore';
+import { useSyncStore } from './stores/syncStore';
 import { apiClient } from './api/client';
 import { shortcutManager } from './shortcuts';
 
 // Landing Page
 import { LandingPage } from './components/Landing';
 
-// Lazy load dialogs for better initial load
-const FindReplaceDialog = lazy(() => import('./components/FindReplace').then(m => ({ default: m.FindReplaceDialog })));
-
-// Modern 2026 Components
+// Modern 2026 Components (critical path — not lazy)
 import {
   Header2026,
   Toolbar2026,
@@ -23,23 +21,19 @@ import {
 } from './components/Modern';
 import { StatusBar2026Enhanced } from './components/Modern/StatusBar2026Enhanced';
 
-// AI Copilot
-import { AICopilotDock, ProactiveAINotifications } from './components/AI';
-
-// File Tabs
+// File Tabs (critical path)
 import { FileTabs } from './components/FileTabs';
 
-// Charts
-import { ChartOverlay } from './components/Charts';
-
-// Shapes
-import { ShapeCanvas, ShapeToolbar } from './components/Shapes';
-
-// Pictures
-import { PictureCanvas, PictureToolbar } from './components/Pictures';
-
-// Print
-import { PrintPreviewDialog } from './components/Print';
+// Lazy load non-critical modules for smaller initial bundle
+const FindReplaceDialog = lazy(() => import('./components/FindReplace').then(m => ({ default: m.FindReplaceDialog })));
+const AICopilotDock = lazy(() => import('./components/AI').then(m => ({ default: m.AICopilotDock })));
+const ProactiveAINotifications = lazy(() => import('./components/AI').then(m => ({ default: m.ProactiveAINotifications })));
+const ChartOverlay = lazy(() => import('./components/Charts').then(m => ({ default: m.ChartOverlay })));
+const ShapeCanvas = lazy(() => import('./components/Shapes').then(m => ({ default: m.ShapeCanvas })));
+const ShapeToolbar = lazy(() => import('./components/Shapes').then(m => ({ default: m.ShapeToolbar })));
+const PictureCanvas = lazy(() => import('./components/Pictures').then(m => ({ default: m.PictureCanvas })));
+const PictureToolbar = lazy(() => import('./components/Pictures').then(m => ({ default: m.PictureToolbar })));
+const PrintPreviewDialog = lazy(() => import('./components/Print').then(m => ({ default: m.PrintPreviewDialog })));
 
 // Styles
 import './styles/fonts.css';
@@ -100,6 +94,7 @@ function App() {
 
   const isAIOpen = useAIStore((state) => state.isOpen);
   const toggleAIPanel = useAIStore((state) => state.togglePanel);
+  const setBackendAvailableStore = useSyncStore((state) => state.setBackendAvailable);
 
   // Command Palette shortcut (⌘K), AI Copilot shortcut (⌘J), Print shortcut (⌘P)
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -188,10 +183,12 @@ function App() {
 
         // Select cell A1
         setSelectedCell({ row: 0, col: 0 });
+        setBackendAvailableStore(true);
 
         setIsInitializing(false);
       } catch (err) {
         console.warn('Backend not available, using local mode:', err);
+        setBackendAvailableStore(false);
         // Fallback to local mode
         initializeLocal();
       } finally {
@@ -257,9 +254,11 @@ function App() {
         {/* Grid with Chart, Shape, and Picture Overlay */}
         <div className="flex-1 overflow-hidden relative">
           <Grid workbookId={workbookId} sheetId={activeSheetId} />
-          <ChartOverlay sheetId={activeSheetId} />
-          <ShapeCanvas sheetId={activeSheetId} />
-          <PictureCanvas sheetId={activeSheetId} />
+          <Suspense fallback={null}>
+            <ChartOverlay sheetId={activeSheetId} />
+            <ShapeCanvas sheetId={activeSheetId} />
+            <PictureCanvas sheetId={activeSheetId} />
+          </Suspense>
         </div>
 
         {/* Sheet Tabs */}
@@ -270,7 +269,9 @@ function App() {
       </div>
 
       {/* AI Copilot Dock */}
-      <AICopilotDock />
+      <Suspense fallback={null}>
+        <AICopilotDock />
+      </Suspense>
 
       {/* Command Palette (⌘K) */}
       <CommandPalette
@@ -286,21 +287,17 @@ function App() {
       {/* Toast Notifications */}
       <ToastContainer />
 
-      {/* Shape Toolbar (floating, shows when shape selected) */}
-      <ShapeToolbar sheetId={activeSheetId} />
-
-      {/* Picture Toolbar (floating, shows when picture selected) */}
-      <PictureToolbar sheetId={activeSheetId} />
-
-      {/* Print Preview Dialog (⌘P) */}
-      <PrintPreviewDialog
-        sheetId={activeSheetId}
-        isOpen={showPrintPreview}
-        onClose={() => setShowPrintPreview(false)}
-      />
-
-      {/* Proactive AI Notifications */}
-      <ProactiveAINotifications />
+      {/* Floating toolbars & dialogs (lazy) */}
+      <Suspense fallback={null}>
+        <ShapeToolbar sheetId={activeSheetId} />
+        <PictureToolbar sheetId={activeSheetId} />
+        <PrintPreviewDialog
+          sheetId={activeSheetId}
+          isOpen={showPrintPreview}
+          onClose={() => setShowPrintPreview(false)}
+        />
+        <ProactiveAINotifications />
+      </Suspense>
     </div>
   );
 }

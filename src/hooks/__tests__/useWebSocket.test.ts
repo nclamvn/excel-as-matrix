@@ -167,7 +167,7 @@ describe('useWebSocket', () => {
       expect(mockWs).toBeNull();
     });
 
-    it('includes token and workbook in connection URL', async () => {
+    it('uses path-based roomId and query params for userId/userName', async () => {
       renderHook(() =>
         useWebSocket({
           workbookId: 'wb-123',
@@ -178,8 +178,10 @@ describe('useWebSocket', () => {
 
       await waitFor(() => {
         expect(mockWs).not.toBeNull();
-        expect(mockWs?.url).toContain('token=test-token');
-        expect(mockWs?.url).toContain('workbook=wb-123');
+        // URL format: /ws/:roomId?userId=...&userName=...
+        expect(mockWs?.url).toContain('/ws/wb-123');
+        expect(mockWs?.url).toContain('userId=user-1');
+        expect(mockWs?.url).toContain('userName=Test%20User');
       });
     });
 
@@ -221,7 +223,7 @@ describe('useWebSocket', () => {
       await waitFor(() => {
         expect(mockWs?.sentMessages.length).toBeGreaterThan(0);
         const joinMessage = mockWs?.sentMessages.find(m =>
-          JSON.parse(m).type === 'Join'
+          JSON.parse(m).type === 'join'
         );
         expect(joinMessage).toBeDefined();
       });
@@ -329,7 +331,7 @@ describe('useWebSocket', () => {
       });
 
       const cellUpdateMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'CellUpdate'
+        JSON.parse(m).type === 'cell_update'
       );
       expect(cellUpdateMessage).toBeDefined();
     });
@@ -352,7 +354,7 @@ describe('useWebSocket', () => {
       });
 
       const cursorMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'CursorMove'
+        JSON.parse(m).type === 'cursor_move'
       );
       expect(cursorMessage).toBeDefined();
       const parsed = JSON.parse(cursorMessage!);
@@ -378,7 +380,7 @@ describe('useWebSocket', () => {
       });
 
       const selectionMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'SelectionChange'
+        JSON.parse(m).type === 'selection_change'
       );
       expect(selectionMessage).toBeDefined();
     });
@@ -401,14 +403,14 @@ describe('useWebSocket', () => {
       });
 
       const sheetMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'SheetChange'
+        JSON.parse(m).type === 'sheet_change'
       );
       expect(sheetMessage).toBeDefined();
     });
   });
 
   describe('message handling', () => {
-    it('handles presence update messages', async () => {
+    it('handles presence_update join action', async () => {
       renderHook(() =>
         useWebSocket({
           workbookId: 'wb-1',
@@ -423,15 +425,15 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'PresenceUpdate',
-          payload: { sessionId: 'other-session', userId: 'user-2' },
+          type: 'presence_update',
+          payload: { action: 'join', userId: 'user-2', userName: 'Other User' },
         });
       });
 
       expect(mockAddRemoteUser).toHaveBeenCalled();
     });
 
-    it('handles join messages', async () => {
+    it('handles presence_update init action', async () => {
       renderHook(() =>
         useWebSocket({
           workbookId: 'wb-1',
@@ -446,15 +448,18 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'Join',
-          payload: { sessionId: 'other-session', userId: 'user-2' },
+          type: 'presence_update',
+          payload: {
+            action: 'init',
+            members: [{ userId: 'user-2', userName: 'Other User' }],
+          },
         });
       });
 
       expect(mockAddRemoteUser).toHaveBeenCalled();
     });
 
-    it('handles leave messages', async () => {
+    it('handles presence_update leave action', async () => {
       renderHook(() =>
         useWebSocket({
           workbookId: 'wb-1',
@@ -469,12 +474,12 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'Leave',
-          payload: { sessionId: 'other-session' },
+          type: 'presence_update',
+          payload: { action: 'leave', userId: 'user-2' },
         });
       });
 
-      expect(mockRemoveRemoteUser).toHaveBeenCalledWith('other-session');
+      expect(mockRemoveRemoteUser).toHaveBeenCalledWith('user-2');
     });
 
     it('handles cursor move messages', async () => {
@@ -492,8 +497,10 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'CursorMove',
-          payload: { sessionId: 'other-session', row: 5, col: 10, sheetId: 'sheet-1' },
+          type: 'cursor_move',
+          payload: { row: 5, col: 10, sheetId: 'sheet-1' },
+          userId: 'other-session',
+          senderId: 'other-session',
         });
       });
 
@@ -518,7 +525,7 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'CellUpdate',
+          type: 'cell_update',
           payload: { sheetId: 'sheet-1', row: 0, col: 0, value: 'test' },
         });
       });
@@ -541,7 +548,7 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'Error',
+          type: 'error',
           payload: { message: 'Test error' },
         });
       });
@@ -566,8 +573,8 @@ describe('useWebSocket', () => {
 
       act(() => {
         mockWs?.simulateMessage({
-          type: 'PresenceUpdate',
-          payload: { sessionId: 'test-session', userId: 'user-1' }, // Same as local
+          type: 'presence_update',
+          payload: { action: 'join', userId: 'test-session' }, // Same as local
         });
       });
 
@@ -577,8 +584,6 @@ describe('useWebSocket', () => {
 
   describe('return values', () => {
     it('returns isConnected state based on connection status', () => {
-      // Test that isConnected is computed from connectionStatus
-      // Note: We use 'disconnected' because 'connected' would trigger effects
       const { result } = renderHook(() =>
         useWebSocket({
           workbookId: 'wb-1',
@@ -587,13 +592,11 @@ describe('useWebSocket', () => {
         })
       );
 
-      // When disconnected, isConnected should be false
       expect(result.current.isConnected).toBe(false);
       expect(result.current.status).toBe('disconnected');
     });
 
     it('returns status', () => {
-      // Note: Can't set 'reconnecting' or 'connected' without triggering effects
       const { result } = renderHook(() =>
         useWebSocket({
           workbookId: 'wb-1',

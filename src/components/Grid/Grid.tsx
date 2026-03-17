@@ -36,7 +36,7 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
   const sheet = useWorkbookStore(useCallback((state) => state.sheets[sheetId], [sheetId]));
   const getCellDisplayValue = useWorkbookStore((state) => state.getCellDisplayValue);
   const getCellFormula = useWorkbookStore((state) => state.getCellFormula);
-  const setCellValue = useWorkbookStore((state) => state.setCellValue);
+  const updateCell = useWorkbookStore((state) => state.updateCell);
 
   const selectedCell = useSelectionStore((state) => state.selectedCell);
   const selectionRange = useSelectionStore((state) => state.selectionRange);
@@ -173,13 +173,17 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
       const { row, col } = selectedCell;
       setIsEditing(false);
 
-      // Update cell locally
-      setCellValue(sheetId, row, col, value);
+      // Update cell locally — route through updateCell so formulas get evaluated
+      const isFormula = typeof value === 'string' && value.startsWith('=');
+      updateCell(sheetId, row, col, {
+        value,
+        formula: isFormula ? value : null,
+      });
 
       // Move to next row
       moveSelection('down');
     },
-    [selectedCell, sheetId, setIsEditing, setCellValue, moveSelection]
+    [selectedCell, sheetId, setIsEditing, updateCell, moveSelection]
   );
 
   // Handle keyboard navigation

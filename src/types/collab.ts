@@ -30,20 +30,20 @@ export interface SelectionRange {
   endCol: number;
 }
 
-// WebSocket message types
+// WebSocket message types — snake_case to match server protocol
 export type WsMessageType =
-  | 'Join'
-  | 'Leave'
-  | 'CellUpdate'
-  | 'CursorMove'
-  | 'SelectionChange'
-  | 'PresenceUpdate'
-  | 'SheetChange'
-  | 'Conflict'
-  | 'Sync'
-  | 'Ping'
-  | 'Pong'
-  | 'Error';
+  | 'join'
+  | 'leave'
+  | 'cell_update'
+  | 'cursor_move'
+  | 'selection_change'
+  | 'presence_update'
+  | 'sheet_change'
+  | 'conflict'
+  | 'sync'
+  | 'ping'
+  | 'pong'
+  | 'error';
 
 export interface WsMessage {
   type: WsMessageType;

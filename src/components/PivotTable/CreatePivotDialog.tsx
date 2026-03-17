@@ -5,6 +5,7 @@
 import React, { useState, useMemo } from 'react';
 import { X, Table2, AlertCircle, CheckCircle } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { useSelectionStore } from '../../stores/selectionStore';
 import { usePivotStore } from '../../stores/pivotStore';
 import { PivotField } from '../../types/pivot';
 import './PivotTable.css';
@@ -18,7 +19,8 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { sheets, activeSheetId, selectionRange, getCellValue } = useWorkbookStore();
+  const { sheets, activeSheetId, getCellValue } = useWorkbookStore();
+  const selectionRange = useSelectionStore((s) => s.selectionRange);
   const { createPivotTable } = usePivotStore();
 
   const [pivotName, setPivotName] = useState('PivotTable1');

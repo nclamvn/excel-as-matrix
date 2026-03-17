@@ -5,6 +5,7 @@
 import React, { useMemo } from 'react';
 import { Sparkline } from '../../types/sparkline';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { getCellKey } from '../../types/cell';
 import './Sparklines.css';
 
 interface SparklineRendererProps {
@@ -23,7 +24,7 @@ export const SparklineRenderer: React.FC<SparklineRendererProps> = ({
 
   // Get cell value helper
   const getCellValue = (_sheetId: string, row: number, col: number): string | number | null => {
-    const cellKey = `${row},${col}`;
+    const cellKey = getCellKey(row, col);
     const cell = sheet?.cells?.[cellKey];
     return cell?.displayValue ?? cell?.value ?? null;
   };

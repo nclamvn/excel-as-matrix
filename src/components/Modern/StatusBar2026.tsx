@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
+import { getCellKey } from '../../types/cell';
 
 export const StatusBar2026: React.FC = () => {
   const { selectedCell, selectionRange } = useSelectionStore();
@@ -17,7 +18,7 @@ export const StatusBar2026: React.FC = () => {
       const { start, end } = selectionRange;
       for (let row = start.row; row <= end.row; row++) {
         for (let col = start.col; col <= end.col; col++) {
-          const cellKey = `${row},${col}`;
+          const cellKey = getCellKey(row, col);
           const cell = sheet.cells[cellKey];
           if (cell?.value !== null && cell?.value !== undefined) {
             const num = parseFloat(String(cell.value));

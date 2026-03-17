@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
-import { colToLetter } from '../../types/cell';
+import { colToLetter, getCellKey } from '../../types/cell';
 import { InlineAISuggestions, FormulaBarAIHint } from '../AI/InlineAISuggestions';
 
 interface FormulaBar2026Props {
@@ -23,7 +23,7 @@ export const FormulaBar2026: React.FC<FormulaBar2026Props> = ({ sheetId }) => {
     if (selectedCell && sheetId) {
       const sheet = sheets[sheetId];
       if (sheet) {
-        const cellKey = `${selectedCell.row},${selectedCell.col}`;
+        const cellKey = getCellKey(selectedCell.row, selectedCell.col);
         const cell = sheet.cells[cellKey];
         setValue(cell?.formula || cell?.value?.toString() || '');
       }
@@ -54,7 +54,7 @@ export const FormulaBar2026: React.FC<FormulaBar2026Props> = ({ sheetId }) => {
     if (selectedCell && sheetId) {
       const sheet = sheets[sheetId];
       if (sheet) {
-        const cellKey = `${selectedCell.row},${selectedCell.col}`;
+        const cellKey = getCellKey(selectedCell.row, selectedCell.col);
         const cell = sheet.cells[cellKey];
         setValue(cell?.formula || cell?.value?.toString() || '');
       }

@@ -9,6 +9,7 @@ import { ConflictInfo } from '../offline/ConflictResolver';
 export interface SyncState {
   // Network status
   isOnline: boolean;
+  backendAvailable: boolean;
 
   // Sync status per workbook
   syncStatus: Map<string, WorkbookSyncStatus>;
@@ -47,6 +48,9 @@ export interface SyncActions {
   failSync: (workbookId: string, error: string) => void;
   setPendingCount: (workbookId: string, count: number) => void;
 
+  // Backend availability
+  setBackendAvailable: (available: boolean) => void;
+
   // Global
   updateGlobalPendingCount: () => void;
 
@@ -70,6 +74,7 @@ export interface SyncActions {
 export const useSyncStore = create<SyncState & SyncActions>((set, get) => ({
   // Initial state
   isOnline: navigator.onLine,
+  backendAvailable: false,
   syncStatus: new Map(),
   globalPendingCount: 0,
   lastGlobalSync: null,
@@ -81,6 +86,9 @@ export const useSyncStore = create<SyncState & SyncActions>((set, get) => ({
   // Network
   setOnline: (online) => {
     set({ isOnline: online, showOfflineBanner: !online });
+  },
+  setBackendAvailable: (available: boolean) => {
+    set({ backendAvailable: available });
   },
 
   // Workbook sync status
@@ -218,6 +226,7 @@ export const useSyncStore = create<SyncState & SyncActions>((set, get) => ({
 // === Selectors ===
 
 export const selectIsOnline = (state: SyncState) => state.isOnline;
+export const selectBackendAvailable = (state: SyncState) => state.backendAvailable;
 export const selectGlobalPendingCount = (state: SyncState) => state.globalPendingCount;
 export const selectActiveConflicts = (state: SyncState) => state.activeConflicts;
 export const selectHasConflicts = (state: SyncState) => state.activeConflicts.length > 0;
