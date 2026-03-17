@@ -3,6 +3,8 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { CellData, Sheet, getCellKey, CellValue, CellFormat, CellRange } from '../types/cell';
 import { formulaEngine, FormulaValue, CellDataProvider } from '../engine';
 import { FillSeriesConfig, applyFillSeries } from '../utils/fillSeriesUtils';
+import { useProtectionStore } from './protectionStore';
+import { syncManager } from '../offline/SyncManager';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -324,12 +326,66 @@ export const useWorkbookStore = create<WorkbookState>()(
         // Calculate formula
         const result = formulaEngine.calculate(formula, sheetId, row, col, dataProvider);
 
-        newCell = {
-          ...newCell,
-          formula,
-          value: result.error ? result.displayValue : result.value as CellValue,
-          displayValue: result.displayValue,
-        };
+        // Handle array results (spill behavior)
+        const resultValue = result.value;
+        if (Array.isArray(resultValue) && Array.isArray(resultValue[0])) {
+          // Dynamic array — spill into adjacent cells
+          const spillCells: Record<string, CellData> = {};
+          const originKey = getCellKey(row, col);
+          const arrayData = resultValue as unknown[][];
+
+          // First, clear old spill cells from this origin
+          for (const [ck, cd] of Object.entries(sheet.cells)) {
+            if (cd.spillOrigin === originKey) {
+              spillCells[ck] = { value: null, formula: null, displayValue: '', spillOrigin: undefined };
+            }
+          }
+
+          // Spill new values
+          for (let r = 0; r < arrayData.length; r++) {
+            for (let c = 0; c < arrayData[r].length; c++) {
+              const spillKey = getCellKey(row + r, col + c);
+              if (r === 0 && c === 0) continue; // origin cell handled separately
+              const sv = arrayData[r][c];
+              spillCells[spillKey] = {
+                value: sv as CellValue,
+                formula: null,
+                displayValue: String(sv ?? ''),
+                spillOrigin: originKey,
+              };
+            }
+          }
+
+          // Origin cell gets first value
+          const firstVal = arrayData[0]?.[0];
+          newCell = {
+            ...newCell,
+            formula,
+            value: firstVal as CellValue,
+            displayValue: String(firstVal ?? ''),
+          };
+
+          // Apply spill cells to sheet
+          const currentSheet = state.sheets[sheetId];
+          if (currentSheet) {
+            set({
+              sheets: {
+                ...state.sheets,
+                [sheetId]: {
+                  ...currentSheet,
+                  cells: { ...currentSheet.cells, ...spillCells, [key]: newCell },
+                },
+              },
+            });
+          }
+        } else {
+          newCell = {
+            ...newCell,
+            formula,
+            value: result.error ? result.displayValue : resultValue as CellValue,
+            displayValue: result.displayValue,
+          };
+        }
 
         // Now recalculate dependent cells
         const dependentKeys = formulaEngine.getDependentCells(sheetId, row, col);
@@ -400,7 +456,11 @@ export const useWorkbookStore = create<WorkbookState>()(
 
       const key = getCellKey(row, col);
       const existing = sheet.cells[key] || { value: null, formula: null, displayValue: '' };
+      const isFormula = typeof value === 'string' && value.startsWith('=');
       const newCell = { ...existing, value, displayValue: String(value ?? '') };
+      if (isFormula) {
+        newCell.formula = value as string;
+      }
 
       set({
         sheets: {
@@ -408,6 +468,19 @@ export const useWorkbookStore = create<WorkbookState>()(
           [sheetId]: { ...sheet, cells: { ...sheet.cells, [key]: newCell } },
         },
       });
+
+      // Auto-save: persist locally + trigger sync
+      const workbookId = state.workbookId;
+      if (workbookId) {
+        syncManager.saveLocally(
+          workbookId,
+          sheetId,
+          row,
+          col,
+          value as string | number | boolean | null,
+          isFormula ? (value as string) : null
+        ).catch(() => { /* swallow — offline queue handles retries */ });
+      }
     },
 
     setSelectedCell: (cell) => {
@@ -436,6 +509,9 @@ export const useWorkbookStore = create<WorkbookState>()(
       const state = get();
       const { activeSheetId, selectionRange, sheets } = state;
       if (!activeSheetId || !selectionRange) return;
+
+      // Protection guard
+      if (!useProtectionStore.getState().canPerformAction(activeSheetId, 'formatCells')) return;
 
       const sheet = sheets[activeSheetId];
       if (!sheet) return;
@@ -523,6 +599,10 @@ export const useWorkbookStore = create<WorkbookState>()(
     // ═══════════════════════════════════════════════════════════════════════
 
     deleteSheet: (sheetId) => {
+      // Workbook structure protection
+      const wbProtection = useProtectionStore.getState().workbookProtection;
+      if (wbProtection.enabled && wbProtection.protectStructure) return;
+
       set((state) => {
         if (state.sheetOrder.length <= 1) return {}; // Keep at least one sheet
 
@@ -613,6 +693,9 @@ export const useWorkbookStore = create<WorkbookState>()(
       const { activeSheetId, selectedCell, sheets } = state;
       if (!activeSheetId) return;
 
+      // Protection guard
+      if (!useProtectionStore.getState().canPerformAction(activeSheetId, 'insertRows')) return;
+
       const sheet = sheets[activeSheetId];
       if (!sheet) return;
 
@@ -642,6 +725,9 @@ export const useWorkbookStore = create<WorkbookState>()(
       const state = get();
       const { activeSheetId, selectedCell, sheets } = state;
       if (!activeSheetId) return;
+
+      // Protection guard
+      if (!useProtectionStore.getState().canPerformAction(activeSheetId, 'deleteRows')) return;
 
       const sheet = sheets[activeSheetId];
       if (!sheet) return;
@@ -673,6 +759,9 @@ export const useWorkbookStore = create<WorkbookState>()(
       const { activeSheetId, selectedCell, sheets } = state;
       if (!activeSheetId) return;
 
+      // Protection guard
+      if (!useProtectionStore.getState().canPerformAction(activeSheetId, 'insertColumns')) return;
+
       const sheet = sheets[activeSheetId];
       if (!sheet) return;
 
@@ -702,6 +791,9 @@ export const useWorkbookStore = create<WorkbookState>()(
       const state = get();
       const { activeSheetId, selectedCell, sheets } = state;
       if (!activeSheetId) return;
+
+      // Protection guard
+      if (!useProtectionStore.getState().canPerformAction(activeSheetId, 'deleteColumns')) return;
 
       const sheet = sheets[activeSheetId];
       if (!sheet) return;

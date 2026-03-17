@@ -30,6 +30,8 @@ export interface CellData {
   displayValue: string;
   format?: CellFormat;
   comment?: CellComment;
+  /** If this cell is a spill cell, points to the origin formula cell (row:col) */
+  spillOrigin?: string;
 }
 
 export interface CellPosition {

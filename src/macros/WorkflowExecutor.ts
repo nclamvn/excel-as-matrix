@@ -782,7 +782,7 @@ export class WorkflowExecutor {
       const filename = (params.filename as string) || `${workbookName || 'spreadsheet'}.xlsx`;
 
       // Export using xlsx library
-      exportToExcel(sheets, sheetOrder, filename);
+      await exportToExcel(sheets, sheetOrder, filename);
 
       return { exported: true, filename, format: 'xlsx', sheetCount: sheetOrder.length };
     },

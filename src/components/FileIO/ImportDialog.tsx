@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileDropZone } from './FileDropZone';
+import { importExcelFile, importCSVFile } from '../../utils/excelIO';
 
 // Typed cell value for import
 type ImportedCellPrimitive = string | number | boolean | null | undefined;
@@ -74,36 +75,79 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
     setLoading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('file', droppedFile);
+      const isCSV = /\.(csv|tsv)$/i.test(droppedFile.name);
 
-      const response = await fetch('/api/files/import?preview_only=true&preview_rows=100', {
-        method: 'POST',
-        body: formData,
-      });
+      if (isCSV) {
+        // Client-side CSV parsing
+        const result = await importCSVFile(droppedFile);
+        const csvRows: Array<{ index: number; cells: string[] }> = [];
+        let maxCol = 0;
+        let maxRow = 0;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to preview file');
-      }
+        for (const key of Object.keys(result.sheets[0].cells)) {
+          const [rowStr, colStr] = key.split(':');
+          maxRow = Math.max(maxRow, parseInt(rowStr));
+          maxCol = Math.max(maxCol, parseInt(colStr));
+        }
 
-      const result = await response.json();
+        for (let r = 0; r <= Math.min(maxRow, 99); r++) {
+          const cells: string[] = [];
+          for (let c = 0; c <= maxCol; c++) {
+            const cellData = result.sheets[0].cells[`${r}:${c}`];
+            cells.push(cellData ? String(cellData.value ?? '') : '');
+          }
+          csvRows.push({ index: r, cells });
+        }
 
-      if (result.workbook) {
-        setPreviewData({
-          sheets: result.workbook.sheets,
-          sheet_names: result.workbook.sheet_names,
-          detected_format: result.detected_format,
+        setCsvPreviewData({
+          rows: csvRows,
+          column_count: maxCol + 1,
+          row_count: maxRow + 1,
+          detected_delimiter: ',',
+          detected_encoding: 'utf-8',
         });
-        setSelectedSheets(result.workbook.sheet_names);
-        setCsvPreviewData(null);
-        // Calculate total rows from all sheets
-        const total = result.workbook.sheets.reduce((sum: number, s: ImportedSheet) => sum + s.row_count, 0);
-        setTotalRowCount(total);
-      } else if (result.csv_data) {
-        setCsvPreviewData(result.csv_data);
         setPreviewData(null);
-        setTotalRowCount(result.csv_data.row_count);
+        setTotalRowCount(maxRow + 1);
+      } else {
+        // Client-side XLSX parsing via SheetJS
+        const result = await importExcelFile(droppedFile);
+        const sheets: ImportedSheet[] = result.sheets.map((sheet) => {
+          const cells: ImportedSheet['cells'] = [];
+          let rowCount = 0;
+          let colCount = 0;
+
+          for (const [key, cell] of Object.entries(sheet.cells)) {
+            const [rowStr, colStr] = key.split(':');
+            const row = parseInt(rowStr);
+            const col = parseInt(colStr);
+            rowCount = Math.max(rowCount, row + 1);
+            colCount = Math.max(colCount, col + 1);
+
+            // Only preview first 100 rows
+            if (row < 100) {
+              const cellValue = cell.value;
+              let typedValue: ImportedCellValue;
+              if (cellValue === null || cellValue === undefined || cellValue === '') {
+                typedValue = { type: 'Empty' };
+              } else if (typeof cellValue === 'number') {
+                typedValue = { type: 'Number', value: cellValue };
+              } else if (typeof cellValue === 'boolean') {
+                typedValue = { type: 'Bool', value: cellValue };
+              } else {
+                typedValue = { type: 'String', value: String(cellValue) };
+              }
+              cells.push({ row, col, value: typedValue });
+            }
+          }
+
+          return { name: sheet.name, cells, row_count: rowCount, col_count: colCount };
+        });
+
+        const sheetNames = result.sheets.map((s) => s.name);
+        setPreviewData({ sheets, sheet_names: sheetNames, detected_format: 'XLSX' });
+        setSelectedSheets(sheetNames);
+        setCsvPreviewData(null);
+        setTotalRowCount(sheets.reduce((sum, s) => sum + s.row_count, 0));
       }
 
       setStep('preview');
@@ -121,30 +165,75 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
     setError(null);
 
     try {
-      // Fetch data with row limit for import
-      const formData = new FormData();
-      formData.append('file', file);
+      const isCSV = /\.(csv|tsv)$/i.test(file.name);
 
-      const response = await fetch(`/api/files/import?preview_only=false&max_rows=${maxRows}`, {
-        method: 'POST',
-        body: formData,
-      });
+      if (isCSV) {
+        const result = await importCSVFile(file);
+        // Convert to CsvPreviewData format for onImport
+        const csvRows: Array<{ index: number; cells: string[] }> = [];
+        let maxCol = 0;
+        let maxRow = 0;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to import file');
-      }
+        for (const key of Object.keys(result.sheets[0].cells)) {
+          const [rowStr, colStr] = key.split(':');
+          maxRow = Math.max(maxRow, parseInt(rowStr));
+          maxCol = Math.max(maxCol, parseInt(colStr));
+        }
 
-      const result = await response.json();
+        for (let r = 0; r <= Math.min(maxRow, maxRows - 1); r++) {
+          const cells: string[] = [];
+          for (let c = 0; c <= maxCol; c++) {
+            const cellData = result.sheets[0].cells[`${r}:${c}`];
+            cells.push(cellData ? String(cellData.value ?? '') : '');
+          }
+          csvRows.push({ index: r, cells });
+        }
 
-      if (result.workbook) {
         onImport({
-          sheets: result.workbook.sheets,
-          sheet_names: result.workbook.sheet_names,
-          detected_format: result.detected_format,
+          rows: csvRows,
+          column_count: maxCol + 1,
+          row_count: Math.min(maxRow + 1, maxRows),
+          detected_delimiter: ',',
+          detected_encoding: 'utf-8',
+        }, { hasHeader, skipRows, maxRows });
+      } else {
+        const result = await importExcelFile(file);
+        const sheets: ImportedSheet[] = result.sheets.map((sheet) => {
+          const cells: ImportedSheet['cells'] = [];
+          let rowCount = 0;
+          let colCount = 0;
+
+          for (const [key, cell] of Object.entries(sheet.cells)) {
+            const [rowStr, colStr] = key.split(':');
+            const row = parseInt(rowStr);
+            const col = parseInt(colStr);
+            if (row >= maxRows) continue;
+            rowCount = Math.max(rowCount, row + 1);
+            colCount = Math.max(colCount, col + 1);
+
+            const cellValue = cell.value;
+            let typedValue: ImportedCellValue;
+            if (cellValue === null || cellValue === undefined || cellValue === '') {
+              typedValue = { type: 'Empty' };
+            } else if (typeof cellValue === 'number') {
+              typedValue = { type: 'Number', value: cellValue };
+            } else if (typeof cellValue === 'boolean') {
+              typedValue = { type: 'Bool', value: cellValue };
+            } else {
+              typedValue = { type: 'String', value: String(cellValue) };
+            }
+            cells.push({ row, col, value: typedValue });
+          }
+
+          return { name: sheet.name, cells, row_count: rowCount, col_count: colCount };
+        });
+
+        const sheetNames = result.sheets.map((s) => s.name);
+        onImport({
+          sheets,
+          sheet_names: sheetNames,
+          detected_format: 'XLSX',
         }, { selectedSheets, hasHeader, skipRows, maxRows });
-      } else if (result.csv_data) {
-        onImport(result.csv_data, { hasHeader, skipRows, maxRows });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to import file');

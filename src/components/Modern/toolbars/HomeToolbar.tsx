@@ -3,9 +3,11 @@ import {
   Bold, Italic, Underline,
   AlignLeft, AlignCenter, AlignRight,
   DollarSign, Percent,
-  PaintBucket, Type, ChevronDown
+  PaintBucket, Type, ChevronDown,
+  Undo2, Redo2
 } from 'lucide-react';
 import { useFormatStore } from '../../../stores/formatStore';
+import { useWorkbookStore } from '../../../stores/workbookStore';
 import { CFDropdown } from '../../ConditionalFormatting';
 import { TextOrientationDropdown } from '../../TextOrientation';
 
@@ -34,6 +36,11 @@ export const HomeToolbar: React.FC = () => {
     setTextColor, setBackgroundColor,
     setAlign, setNumberFormat,
   } = useFormatStore();
+
+  const undo = useWorkbookStore((state) => state.undo);
+  const redo = useWorkbookStore((state) => state.redo);
+  const canUndo = useWorkbookStore((state) => state.canUndo);
+  const canRedo = useWorkbookStore((state) => state.canRedo);
 
   const [showFontDropdown, setShowFontDropdown] = useState(false);
   const [showSizeDropdown, setShowSizeDropdown] = useState(false);
@@ -67,6 +74,28 @@ export const HomeToolbar: React.FC = () => {
 
   return (
     <div className="toolbar-2026">
+      {/* TIP-007: Undo/Redo */}
+      <div className="toolbar-2026__group" style={{ gap: 2 }}>
+        <button
+          className="toolbar-2026__btn"
+          title="Undo (Ctrl+Z)"
+          onClick={() => undo()}
+          disabled={!canUndo()}
+          style={{ opacity: canUndo() ? 1 : 0.35 }}
+        >
+          <Undo2 size={16} />
+        </button>
+        <button
+          className="toolbar-2026__btn"
+          title="Redo (Ctrl+Y)"
+          onClick={() => redo()}
+          disabled={!canRedo()}
+          style={{ opacity: canRedo() ? 1 : 0.35 }}
+        >
+          <Redo2 size={16} />
+        </button>
+      </div>
+
       {/* Font Family */}
       <div className="toolbar-2026__group">
         <div className="toolbar-2026__dropdown" ref={fontRef}>

@@ -8,6 +8,12 @@ import { lookupFunctions } from './lookup';
 import { financialFunctions } from './financial';
 import { arrayFunctions } from './array';
 import { lambdaFunctions } from './lambda';
+import { engineeringFunctions } from './engineering';
+import { databaseFunctions } from './database';
+import { infoFunctions } from './info';
+import { webFunctions } from './web';
+import { mathExtraFunctions } from './math_extra';
+import { compatibilityFunctions } from './compatibility';
 
 // Combine all functions
 const allFunctions: FunctionDef[] = [
@@ -20,6 +26,12 @@ const allFunctions: FunctionDef[] = [
   ...financialFunctions,
   ...arrayFunctions,
   ...lambdaFunctions,
+  ...engineeringFunctions,
+  ...databaseFunctions,
+  ...infoFunctions,
+  ...webFunctions,
+  ...mathExtraFunctions,
+  ...compatibilityFunctions,
 ];
 
 // Create lookup map for fast function resolution
@@ -45,7 +57,7 @@ export function getAllFunctionNames(): string[] {
 }
 
 // Export individual function groups
-export { mathFunctions, textFunctions, logicalFunctions, dateFunctions, statisticalFunctions, lookupFunctions, financialFunctions, arrayFunctions, lambdaFunctions };
+export { mathFunctions, textFunctions, logicalFunctions, dateFunctions, statisticalFunctions, lookupFunctions, financialFunctions, arrayFunctions, lambdaFunctions, engineeringFunctions, databaseFunctions, infoFunctions, webFunctions, mathExtraFunctions, compatibilityFunctions };
 
 // Export utils
 export * from './utils';
