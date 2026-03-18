@@ -275,7 +275,7 @@ export const usePrintStore = create<PrintStore>()(
             startRow: 0,
             endRow: Math.min(totalRows - 1, 49),
             startCol: 0,
-            endCol: Math.min(totalCols - 1, 25),
+            endCol: totalCols - 1,
           });
         }
 

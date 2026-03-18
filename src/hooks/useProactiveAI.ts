@@ -13,7 +13,17 @@ import type { SheetData, CellData, ColumnInfo } from '../proactive/types';
 
 // Constants for grid size estimation
 const DEFAULT_ROWS = 100;
-const DEFAULT_COLS = 26;
+
+// Detect the actual column count used in the sheet (up to 10 consecutive empty columns)
+function detectColCount(cells: Record<string, unknown> | undefined): number {
+  if (!cells) return 26;
+  let maxCol = 0;
+  for (const key of Object.keys(cells)) {
+    const c = parseInt(key.split(':')[1]);
+    if (c > maxCol) maxCol = c;
+  }
+  return Math.max(26, maxCol + 1);
+}
 
 /**
  * Hook to integrate Proactive AI Engine with the workbook
@@ -45,8 +55,9 @@ export function useProactiveAI() {
     if (!currentSheet || !activeSheetId) return null;
 
     // Build headers from first row
+    const colCount = detectColCount(currentSheet.cells);
     const headers: ColumnInfo[] = [];
-    for (let col = 0; col < DEFAULT_COLS; col++) {
+    for (let col = 0; col < colCount; col++) {
       const cellKey = `0:${col}`;
       const cell = currentSheet.cells?.[cellKey];
       const colLetter = colToLetter(col);
@@ -65,7 +76,7 @@ export function useProactiveAI() {
     const cells: CellData[][] = [];
     for (let row = 0; row < DEFAULT_ROWS; row++) {
       cells[row] = [];
-      for (let col = 0; col < DEFAULT_COLS; col++) {
+      for (let col = 0; col < colCount; col++) {
         const cellKey = `${row}:${col}`;
         const cell = currentSheet.cells?.[cellKey];
         const ref = `${colToLetter(col)}${row + 1}`;
@@ -88,7 +99,7 @@ export function useProactiveAI() {
       cells,
       headers,
       rowCount: DEFAULT_ROWS,
-      colCount: DEFAULT_COLS,
+      colCount,
     };
   }, [currentSheet, activeSheetId]);
 
@@ -110,7 +121,8 @@ export function useProactiveAI() {
     // Mark cells as empty for deleted rows
     const sortedRows = [...rows].sort((a, b) => b - a);
     for (const row of sortedRows) {
-      for (let col = 0; col < DEFAULT_COLS; col++) {
+      const deleteColCount = detectColCount(useWorkbookStore.getState().sheets[activeSheetId]?.cells);
+      for (let col = 0; col < deleteColCount; col++) {
         updateCell(activeSheetId, row, col, { value: null });
       }
     }

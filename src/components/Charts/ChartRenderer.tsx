@@ -41,6 +41,7 @@ export interface ChartConfig {
   colors?: string[];
   showLegend?: boolean;
   showGrid?: boolean;
+  seriesKeys?: string[]; // Additional series keys beyond 'value'
 }
 
 interface ChartRendererProps {
@@ -80,6 +81,7 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
     colors = DEFAULT_COLORS,
     showLegend = true,
     showGrid = true,
+    seriesKeys,
   } = config;
 
   const renderChart = () => {
@@ -108,7 +110,10 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
               }}
             />
             {showLegend && <Legend wrapperStyle={{ fontSize: '12px' }} />}
-            <Bar dataKey="value" fill={colors[0]} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="value" fill={colors[0]} radius={[4, 4, 0, 0]} name="value" />
+            {seriesKeys?.map((key, i) => (
+              <Bar key={key} dataKey={key} fill={colors[(i + 1) % colors.length]} radius={[4, 4, 0, 0]} name={key} />
+            ))}
           </BarChart>
         );
 
@@ -133,8 +138,12 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
               stroke={colors[0]}
               strokeWidth={2}
               dot={{ fill: colors[0], strokeWidth: 2 }}
+              name="value"
               activeDot={{ r: 6 }}
             />
+            {seriesKeys?.map((key, i) => (
+              <Line key={key} type="monotone" dataKey={key} stroke={colors[(i + 1) % colors.length]} strokeWidth={2} dot={{ fill: colors[(i + 1) % colors.length], strokeWidth: 2 }} name={key} />
+            ))}
           </LineChart>
         );
 
@@ -160,6 +169,9 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
               fill={`${colors[0]}33`}
               strokeWidth={2}
             />
+            {seriesKeys?.map((key, i) => (
+              <Area key={key} type="monotone" dataKey={key} stroke={colors[(i + 1) % colors.length]} fill={`${colors[(i + 1) % colors.length]}33`} strokeWidth={2} name={key} />
+            ))}
           </AreaChart>
         );
 

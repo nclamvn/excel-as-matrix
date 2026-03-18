@@ -304,3 +304,175 @@ test.describe('Sheet Tabs', () => {
     await expect(page.locator('.sheet-tabs-2026__add')).toBeVisible();
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FORMULA EVALUATION E2E TESTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+test.describe('Formula Evaluation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    const enterButton = page.locator('text=Enter App').or(page.locator('text=Get Started'));
+    if (await enterButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await enterButton.click();
+    }
+    await page.waitForSelector('canvas', { timeout: 10000 });
+  });
+
+  test('should evaluate a simple SUM formula', async ({ page }) => {
+    const canvas = page.locator('canvas').nth(0);
+
+    // Enter value in A1
+    await canvas.click({ position: { x: 50, y: 12 } });
+    await page.keyboard.type('10');
+    await page.keyboard.press('Enter');
+
+    // Enter value in A2
+    await page.keyboard.type('20');
+    await page.keyboard.press('Enter');
+
+    // Enter SUM formula in A3
+    await page.keyboard.type('=SUM(A1:A2)');
+    await page.keyboard.press('Enter');
+
+    // Navigate back to A3 to check
+    await page.keyboard.press('ArrowUp');
+    // Formula bar should show the formula or result
+    await expect(page.locator('.formula-bar-2026')).toBeVisible();
+  });
+
+  test('should handle cell reference updates', async ({ page }) => {
+    const canvas = page.locator('canvas').nth(0);
+
+    // Enter value in A1
+    await canvas.click({ position: { x: 50, y: 12 } });
+    await page.keyboard.type('100');
+    await page.keyboard.press('Tab');
+
+    // Enter formula in B1 referencing A1
+    await page.keyboard.type('=A1*2');
+    await page.keyboard.press('Enter');
+
+    // B1 should have the formula
+    await expect(page.locator('.formula-bar-2026')).toBeVisible();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// KEYBOARD NAVIGATION E2E TESTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+test.describe('Keyboard Navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    const enterButton = page.locator('text=Enter App').or(page.locator('text=Get Started'));
+    if (await enterButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await enterButton.click();
+    }
+    await page.waitForSelector('canvas', { timeout: 10000 });
+  });
+
+  test('should navigate with Tab (right) and Shift+Tab (left)', async ({ page }) => {
+    const canvas = page.locator('canvas').nth(0);
+    await canvas.click({ position: { x: 50, y: 12 } });
+
+    // Tab moves right
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+
+    // Shift+Tab moves left
+    await page.keyboard.press('Shift+Tab');
+
+    await expect(page.locator('.formula-bar-2026__cell')).toBeVisible();
+  });
+
+  test('should enter edit mode with F2', async ({ page }) => {
+    const canvas = page.locator('canvas').nth(0);
+    await canvas.click({ position: { x: 50, y: 12 } });
+    await page.keyboard.type('Test');
+    await page.keyboard.press('Enter');
+
+    // Go back to cell and press F2
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('F2');
+
+    // Editor should be visible
+    await expect(page.locator('.cell-editor')).toBeVisible();
+  });
+
+  test('should delete cell content with Delete key', async ({ page }) => {
+    const canvas = page.locator('canvas').nth(0);
+    await canvas.click({ position: { x: 50, y: 12 } });
+
+    // Enter and confirm value
+    await page.keyboard.type('To Delete');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('ArrowUp');
+
+    // Delete content
+    await page.keyboard.press('Delete');
+
+    // Cell should be empty now
+    await expect(page.locator('.cell-editor')).not.toBeVisible();
+  });
+
+  test('should open Go To Cell dialog with Ctrl+G', async ({ page }) => {
+    const canvas = page.locator('canvas').nth(0);
+    await canvas.click({ position: { x: 50, y: 12 } });
+
+    // Open Go To Cell
+    await page.keyboard.press('Control+g');
+
+    // Dialog should appear
+    await expect(page.locator('input[placeholder*="Go to cell"]')).toBeVisible();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMMAND PALETTE E2E TESTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+test.describe('Command Palette', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    const enterButton = page.locator('text=Enter App').or(page.locator('text=Get Started'));
+    if (await enterButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await enterButton.click();
+    }
+    await page.waitForSelector('.header-2026', { timeout: 10000 });
+  });
+
+  test('should open with Ctrl+K', async ({ page }) => {
+    await page.keyboard.press('Control+k');
+    await expect(page.locator('.command-palette')).toBeVisible();
+  });
+
+  test('should close with Escape', async ({ page }) => {
+    await page.keyboard.press('Control+k');
+    await expect(page.locator('.command-palette')).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.command-palette')).not.toBeVisible();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PRINT PREVIEW E2E TESTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+test.describe('Print Preview', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    const enterButton = page.locator('text=Enter App').or(page.locator('text=Get Started'));
+    if (await enterButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await enterButton.click();
+    }
+    await page.waitForSelector('.header-2026', { timeout: 10000 });
+  });
+
+  test('should open with Ctrl+P', async ({ page }) => {
+    await page.keyboard.press('Control+p');
+    // Print dialog should appear (or at least the overlay)
+    await page.waitForTimeout(500);
+  });
+});

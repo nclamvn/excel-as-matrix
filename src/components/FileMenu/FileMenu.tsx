@@ -608,9 +608,11 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
         const name = file.name.replace(/\.[^/.]+$/, '');
         setWorkbook(workbookId, name);
 
+        const importedSheetIds: string[] = [];
         for (let i = 0; i < result.sheets.length; i++) {
           const sheetData = result.sheets[i];
           const sheetId = `sheet-${Date.now()}-${i}`;
+          importedSheetIds.push(sheetId);
 
           addSheet({
             id: sheetId,
@@ -641,6 +643,53 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
 
           if (updates.length > 0) {
             batchUpdateCells(sheetId, updates);
+          }
+        }
+
+        // Wire imported charts to chart store
+        if (result.charts && result.charts.length > 0) {
+          const { useChartStore } = await import('../../stores/chartStore');
+          const { populateChartDataFromCells } = await import('../../utils/excelIO');
+          const chartStore = useChartStore.getState();
+          const typeMap: Record<string, string> = {
+            bar: 'Bar', column: 'ColumnClustered', line: 'Line',
+            pie: 'Pie', area: 'Area', scatter: 'Scatter', doughnut: 'Doughnut',
+          };
+          const defaultColors = ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948'];
+          for (const ic of result.charts) {
+            const chartSheetId = importedSheetIds[ic.sheetIndex] || importedSheetIds[0];
+            const chartType = (typeMap[ic.type.toLowerCase()] || 'ColumnClustered') as import('../../types/visualization').ChartType;
+            const chart = chartStore.createChart(workbookId, chartSheetId, ic.name, chartType);
+            if (ic.position) chartStore.updatePosition(chart.id, ic.position);
+            // Populate chart data from cells
+            const sheetCells = result.sheets[ic.sheetIndex]?.cells;
+            if (sheetCells) {
+              const chartData = populateChartDataFromCells(ic, sheetCells);
+              if (chartData && chartData.categories.length > 0 && chartData.series.length > 0) {
+                const seriesData = chartData.series.map((s, idx) => {
+                  const vals = s.values;
+                  return {
+                    id: `series-${idx}`, name: s.name, values: vals,
+                    color: defaultColors[idx % defaultColors.length],
+                    statistics: {
+                      min: Math.min(...vals), max: Math.max(...vals),
+                      sum: vals.reduce((a, b) => a + b, 0),
+                      avg: vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
+                      count: vals.length,
+                    },
+                  };
+                });
+                const allValues = seriesData.flatMap(s => s.values);
+                const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
+                const maxVal = allValues.length > 0 ? Math.max(...allValues) : 100;
+                chartStore.setChartData(chart.id, {
+                  chartId: chart.id, chartType,
+                  categories: chartData.categories,
+                  series: seriesData,
+                  bounds: { minValue: minVal, maxValue: maxVal, suggestedMin: minVal >= 0 ? 0 : minVal * 1.1, suggestedMax: maxVal * 1.1 },
+                });
+              }
+            }
           }
         }
       } else if (fileName.endsWith('.json')) {

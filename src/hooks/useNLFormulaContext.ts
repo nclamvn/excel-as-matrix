@@ -25,15 +25,18 @@ export function useNLFormulaContext(
     const cellRef = `${colToLetter(col)}${row + 1}`;
 
     // Extract headers from first row (row 0)
+    // Dynamic detection: scan until 10 consecutive empty columns
     const headers: ColumnHeader[] = [];
-    const maxCols = 26; // Check up to column Z
+    let emptyStreak = 0;
+    const maxScan = 500; // safety limit
 
-    for (let c = 0; c < maxCols; c++) {
+    for (let c = 0; c < maxScan && emptyStreak < 10; c++) {
       const cellKey = getCellKey(0, c);
       const cell = sheet.cells[cellKey];
       const headerValue = cell?.displayValue || cell?.value;
 
       if (headerValue && typeof headerValue === 'string' && headerValue.trim()) {
+        emptyStreak = 0;
         // Get sample values from column (rows 1-10)
         const sampleValues: unknown[] = [];
         for (let r = 1; r <= 10; r++) {
@@ -54,6 +57,8 @@ export function useNLFormulaContext(
           dataType,
           sampleValues,
         });
+      } else {
+        emptyStreak++;
       }
     }
 

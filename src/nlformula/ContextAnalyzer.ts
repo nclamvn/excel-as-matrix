@@ -92,10 +92,10 @@ export class ContextAnalyzer {
       startRow: 0,
       endRow: 100,
       startCol: 0,
-      endCol: 26,
+      endCol: 256,
       hasHeaders: true,
       rowCount: 100,
-      colCount: 26,
+      colCount: 256,
     };
 
     if (!range) return defaultRange;

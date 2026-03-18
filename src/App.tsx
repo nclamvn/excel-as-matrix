@@ -8,9 +8,21 @@ import { useSyncStore } from './stores/syncStore';
 import { apiClient } from './api/client';
 import { logger } from './utils/logger';
 import { shortcutManager } from './shortcuts';
+import { auditLog } from './audit/AuditLogService';
+import { useCollaboration } from './hooks/useCollaboration';
+import type { CollaborationConfig } from './collaboration/CollaborationManager';
 
-// Landing Page
-import { LandingPage } from './components/Landing';
+// Crash Recovery & Accessibility
+import { crashRecovery } from './recovery/CrashRecoveryJournal';
+import { SkipToContent } from './components/Accessibility/SkipToContent';
+
+// Lazy load non-critical overlays
+const CrashRecoveryBanner = lazy(() => import('./components/Recovery/CrashRecoveryBanner').then(m => ({ default: m.CrashRecoveryBanner })));
+const MobileGridOverlay = lazy(() => import('./components/Mobile/MobileGridOverlay').then(m => ({ default: m.MobileGridOverlay })));
+const OnboardingTour = lazy(() => import('./components/Onboarding/OnboardingTour'));
+
+// Landing Page — lazy since only shown on first visit
+const CompetitiveLanding = lazy(() => import('./components/Landing/CompetitiveLanding').then(m => ({ default: m.CompetitiveLanding })));
 
 // Modern 2026 Components (critical path — not lazy)
 import {
@@ -37,6 +49,7 @@ const PictureToolbar = lazy(() => import('./components/Pictures').then(m => ({ d
 const PrintPreviewDialog = lazy(() => import('./components/Print').then(m => ({ default: m.PrintPreviewDialog })));
 
 // Styles
+import './styles/mobile.css';
 import './styles/fonts.css';
 import './styles/variables.css';
 import './styles/modern-2026.css';
@@ -97,6 +110,24 @@ function App() {
   const toggleAIPanel = useAIStore((state) => state.togglePanel);
   const setBackendAvailableStore = useSyncStore((state) => state.setBackendAvailable);
 
+  // Collaboration — enabled when ?collab=true or VITE_COLLAB_ENABLED is set
+  // Use ?mock=true for local testing without a real WebSocket server
+  const collabConfig: CollaborationConfig | undefined = (() => {
+    const params = new URLSearchParams(window.location.search);
+    const collabEnabled = params.get('collab') === 'true' || import.meta.env.VITE_COLLAB_ENABLED === 'true';
+    if (!collabEnabled || !workbookId) return undefined;
+    const useMock = params.get('mock') === 'true';
+    const userId = params.get('userId') || `user-${Math.random().toString(36).slice(2, 8)}`;
+    const userName = params.get('userName') || `User ${userId.slice(-4)}`;
+    const wsUrl = import.meta.env.VITE_WS_URL || `ws://${window.location.hostname}:3001`;
+    return { wsUrl: `${wsUrl}/ws/${workbookId}`, documentId: workbookId, userId, userName, useMock };
+  })();
+
+  const { isConnected: _collabConnected, userCount: _collabUserCount } = useCollaboration({
+    enabled: !!collabConfig,
+    config: collabConfig,
+  });
+
   // Command Palette shortcut (⌘K), AI Copilot shortcut (⌘J), Print shortcut (⌘P)
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -122,10 +153,67 @@ function App() {
 
   const { setSelectedCell } = useSelectionStore();
 
-  // Initialize shortcuts manager
+  // Initialize shortcuts manager + responsive mobile detection
   useEffect(() => {
     shortcutManager.init();
-    return () => shortcutManager.destroy();
+
+    // Responsive mobile detection on resize
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      import('./stores/uiStore').then(({ useUIStore }) => {
+        const current = useUIStore.getState().isMobile;
+        if (current !== mobile) useUIStore.getState().setMobile(mobile);
+      });
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      shortcutManager.destroy();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Initialize audit log + crash recovery journal
+  useEffect(() => {
+    auditLog.init().then(() => {
+      auditLog.logSystem('app.start', 'Application initialized');
+    });
+
+    // Audit data operations via workbook store subscription
+    const unsubAudit = useWorkbookStore.subscribe(
+      (state, prev) => {
+        // Log sheet additions
+        const newSheets = Object.keys(state.sheets).filter(k => !prev.sheets[k]);
+        for (const sid of newSheets) {
+          auditLog.logData('sheet.create', `Sheet created: ${state.sheets[sid]?.name}`, {
+            workbookId: state.workbookId || undefined,
+            metadata: { sheetId: sid },
+          });
+        }
+        // Log workbook changes
+        if (state.workbookId !== prev.workbookId && state.workbookId) {
+          auditLog.logData('workbook.open', `Workbook opened: ${state.workbookName}`, {
+            workbookId: state.workbookId,
+          });
+        }
+      }
+    );
+
+    crashRecovery.init().then(() => {
+      crashRecovery.cleanup();
+    });
+
+    const handleBeforeUnload = () => {
+      auditLog.logSystem('app.close', 'Application closing');
+      auditLog.flush();
+      crashRecovery.closeSession();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      unsubAudit();
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      crashRecovery.closeSession();
+    };
   }, []);
 
   // Initialize workbook on mount
@@ -202,7 +290,11 @@ function App() {
 
   // Show landing page if user hasn't entered app yet
   if (showLanding) {
-    return <LandingPage onEnterApp={handleEnterApp} />;
+    return (
+      <Suspense fallback={<div className="h-full flex items-center justify-center"><div className="text-sm text-gray-500">Loading...</div></div>}>
+        <CompetitiveLanding onEnterApp={handleEnterApp} />
+      </Suspense>
+    );
   }
 
   if (isInitializing) {
@@ -232,6 +324,9 @@ function App() {
 
   return (
     <div className="h-full flex flex-col" style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
+      {/* Skip to Content — WCAG 2.1 AA */}
+      <SkipToContent />
+
       {/* Main Content - adjusts when AI panel is open */}
       <div
         className="h-full flex flex-col"
@@ -252,9 +347,12 @@ function App() {
         {/* Formula Bar */}
         <FormulaBar2026 sheetId={activeSheetId} />
 
-        {/* Grid with Chart, Shape, and Picture Overlay */}
-        <div className="flex-1 overflow-hidden relative">
+        {/* Grid with Chart, Shape, Picture, and Mobile Overlay */}
+        <div id="main-grid" className="flex-1 overflow-hidden relative" tabIndex={-1} role="region" aria-label="Spreadsheet grid">
           <Grid workbookId={workbookId} sheetId={activeSheetId} />
+          <Suspense fallback={null}>
+            <MobileGridOverlay />
+          </Suspense>
           <Suspense fallback={null}>
             <ChartOverlay sheetId={activeSheetId} />
             <ShapeCanvas sheetId={activeSheetId} />
@@ -283,6 +381,16 @@ function App() {
       {/* Find/Replace Dialog (lazy loaded) */}
       <Suspense fallback={null}>
         <FindReplaceDialog />
+      </Suspense>
+
+      {/* Crash Recovery Banner */}
+      <Suspense fallback={null}>
+        <CrashRecoveryBanner />
+      </Suspense>
+
+      {/* Onboarding Tour (lazy) */}
+      <Suspense fallback={null}>
+        <OnboardingTour />
       </Suspense>
 
       {/* Toast Notifications */}

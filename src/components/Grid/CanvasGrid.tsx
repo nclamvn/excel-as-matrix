@@ -13,6 +13,12 @@ import { useValidationStore } from '../../stores/validationStore';
 import { CellEditor } from './CellEditor';
 import { getCellKey } from '../../types/cell';
 import { FloatingAIButton } from '../AI/FloatingAIButton';
+import { UserCursors } from '../Collab/UserCursors';
+import { useScreenReaderAnnounce } from '../../hooks/useScreenReaderAnnounce';
+import { MAX_COLS, MAX_ROWS } from '../../constants/grid';
+import { useConditionalFormattingStore } from '../../stores/conditionalFormattingStore';
+import { evaluateRule, calculateRangeStats, calculateDataBarWidth, calculateColorScaleColor, calculateIconSetIcon } from '../../utils/conditionalFormatting/evaluator';
+import { ICON_SET_DEFINITIONS } from '../../types/conditionalFormatting';
 
 // Theme colors
 const THEME_COLORS = {
@@ -56,8 +62,7 @@ const BASE_CELL_WIDTH = 100;
 const BASE_CELL_HEIGHT = 24;
 const BASE_HEADER_WIDTH = 50;
 const BASE_HEADER_HEIGHT = 24;
-const MAX_ROWS = 100000;
-const MAX_COLS = 26;
+// MAX_ROWS and MAX_COLS imported from constants/grid.ts
 
 // Format number for display with thousand separators
 // TIP-010: Also supports VND format when numberFormat indicates currency
@@ -118,6 +123,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const [goToCellValue, setGoToCellValue] = useState('');
   const [hoverTooltip, setHoverTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [dropdownState, setDropdownState] = useState<{
+    row: number; col: number; options: string[]; x: number; y: number; w: number;
+  } | null>(null);
 
   // Drag state - local for performance
   const isDraggingRef = useRef(false);
@@ -157,34 +165,88 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const FONT_SIZE = Math.round(13 * zoomFactor);
   const HEADER_FONT_SIZE = Math.round(12 * zoomFactor);
 
+  // Determine how many columns to actively track widths for.
+  // We only need widths up to the furthest column with data or custom width,
+  // plus a buffer — capped at MAX_COLS.
+  const activeColCount = useMemo(() => {
+    let maxDataCol = 26; // minimum 26 (A-Z) even if empty
+    if (sheet?.cells) {
+      for (const key of Object.keys(sheet.cells)) {
+        const c = parseInt(key.split(':')[1]);
+        if (c > maxDataCol) maxDataCol = c;
+      }
+    }
+    if (sheet?.columnWidths) {
+      for (const c of Object.keys(sheet.columnWidths)) {
+        const ci = parseInt(c);
+        if (ci > maxDataCol) maxDataCol = ci;
+      }
+    }
+    // Add buffer of 20 columns beyond data, cap at MAX_COLS
+    return Math.min(MAX_COLS, maxDataCol + 20);
+  }, [sheet?.cells, sheet?.columnWidths]);
+
   // Compute per-column widths (from sheet.columnWidths or default)
   const colWidths = useMemo(() => {
     const widths: number[] = [];
-    for (let c = 0; c < MAX_COLS; c++) {
+    for (let c = 0; c < activeColCount; c++) {
       const customWidth = sheet?.columnWidths?.[c];
       widths.push(customWidth ? Math.round(customWidth * zoomFactor) : DEFAULT_CELL_WIDTH);
     }
     return widths;
-  }, [sheet?.columnWidths, DEFAULT_CELL_WIDTH, zoomFactor]);
+  }, [sheet?.columnWidths, DEFAULT_CELL_WIDTH, zoomFactor, activeColCount]);
+
+  // Get width for a column (falls back to default for columns beyond activeColCount)
+  const getColWidth = useCallback((col: number): number => {
+    if (col < colWidths.length) return colWidths[col];
+    const customWidth = sheet?.columnWidths?.[col];
+    return customWidth ? Math.round(customWidth * zoomFactor) : DEFAULT_CELL_WIDTH;
+  }, [colWidths, sheet?.columnWidths, zoomFactor, DEFAULT_CELL_WIDTH]);
 
   // Prefix-sum offsets for fast column position lookup
   const colOffsets = useMemo(() => {
     const offsets: number[] = [0];
-    for (let c = 0; c < MAX_COLS; c++) {
+    for (let c = 0; c < activeColCount; c++) {
       offsets.push(offsets[c] + colWidths[c]);
     }
     return offsets;
-  }, [colWidths]);
+  }, [colWidths, activeColCount]);
 
-  const totalWidth = colOffsets[MAX_COLS];
+  // Get offset for a column (computes on-the-fly for columns beyond activeColCount)
+  const getColOffset = useCallback((col: number): number => {
+    if (col < colOffsets.length) return colOffsets[col];
+    // Compute from the last known offset
+    let offset = colOffsets[colOffsets.length - 1];
+    for (let c = colOffsets.length - 1; c < col; c++) {
+      offset += getColWidth(c);
+    }
+    return offset;
+  }, [colOffsets, getColWidth]);
+
+  const totalWidth = useMemo(() => {
+    // Total width = offset of last active column + remaining columns at default width
+    const activeWidth = colOffsets[activeColCount] || 0;
+    const remainingCols = MAX_COLS - activeColCount;
+    return activeWidth + remainingCols * DEFAULT_CELL_WIDTH;
+  }, [colOffsets, activeColCount, DEFAULT_CELL_WIDTH]);
 
   // Find column index from x position (pixel coordinate in scrollable area)
   const getColFromX = useCallback((x: number): number => {
-    for (let c = 0; c < MAX_COLS; c++) {
+    // Binary search through known offsets first
+    if (x < 0) return 0;
+    const knownCount = colOffsets.length - 1; // activeColCount
+    // Check within pre-computed offsets
+    for (let c = 0; c < knownCount; c++) {
       if (x < colOffsets[c + 1]) return c;
     }
+    // Beyond pre-computed: compute from last known offset
+    let offset = colOffsets[knownCount];
+    for (let c = knownCount; c < MAX_COLS; c++) {
+      offset += getColWidth(c);
+      if (x < offset) return c;
+    }
     return MAX_COLS - 1;
-  }, [colOffsets]);
+  }, [colOffsets, getColWidth]);
 
   // Find first visible column from scroll position
   const getFirstVisibleCol = useCallback((scrollX: number): number => {
@@ -192,6 +254,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   }, [getColFromX]);
 
   const selectedCell = useSelectionStore((state) => state.selectedCell);
+  const { announceCell } = useScreenReaderAnnounce();
   const selectionRange = useSelectionStore((state) => state.selectionRange);
   const isEditing = useSelectionStore((state) => state.isEditing);
   const setSelectedCell = useSelectionStore((state) => state.setSelectedCell);
@@ -212,6 +275,41 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) return null;
     return { row, col };
   }, [scrollLeft, scrollTop, getColFromX, CELL_HEIGHT]);
+
+  // Announce selected cell to screen readers
+  useEffect(() => {
+    if (!selectedCell || !sheet?.cells) return;
+    const key = getCellKey(selectedCell.row, selectedCell.col);
+    const cellData = sheet.cells[key];
+    const value = cellData?.displayValue || String(cellData?.value ?? '');
+    announceCell(selectedCell.col, selectedCell.row, value, cellData?.formula);
+  }, [selectedCell?.row, selectedCell?.col]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Get cell pixel position for overlays (UserCursors, etc.)
+  const getCellPosition = useCallback((row: number, col: number) => {
+    const x = getColOffset(col) - scrollLeft;
+    const y = row * CELL_HEIGHT - scrollTop;
+    const w = getColWidth(col);
+    if (x + w < 0 || x > containerSize.width || y + CELL_HEIGHT < 0 || y > containerSize.height) return null;
+    return { x, y, width: w, height: CELL_HEIGHT };
+  }, [getColOffset, getColWidth, scrollLeft, scrollTop, CELL_HEIGHT, containerSize]);
+
+  // Visible range for UserCursors
+  const visibleRange = useMemo(() => {
+    const startRow = Math.floor(scrollTop / CELL_HEIGHT);
+    const endRow = startRow + Math.ceil(containerSize.height / CELL_HEIGHT) + 1;
+    const startCol = getFirstVisibleCol(scrollLeft);
+    let endCol = startCol;
+    let acc = getColOffset(startCol) - scrollLeft;
+    while (endCol < MAX_COLS && acc < containerSize.width) {
+      acc += getColWidth(endCol);
+      endCol++;
+    }
+    return {
+      rows: { start: startRow, end: endRow },
+      cols: { start: startCol, end: endCol },
+    };
+  }, [scrollTop, scrollLeft, containerSize, CELL_HEIGHT, getFirstVisibleCol, getColOffset, getColWidth]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CANVAS RENDERING
@@ -243,9 +341,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     const endRow = Math.min(MAX_ROWS, startRow + Math.ceil(height / CELL_HEIGHT) + 1);
     // Find endCol by accumulating widths
     let endCol = startCol;
-    let accWidth = colOffsets[startCol] - scrollLeft;
+    let accWidth = getColOffset(startCol) - scrollLeft;
     while (endCol < MAX_COLS && accWidth < width) {
-      accWidth += colWidths[endCol];
+      accWidth += getColWidth(endCol);
       endCol++;
     }
     endCol = Math.min(MAX_COLS, endCol + 1);
@@ -258,7 +356,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     // Vertical lines
     for (let col = startCol; col <= endCol && col <= MAX_COLS; col++) {
-      const x = colOffsets[col] - scrollLeft + 0.5;
+      const x = getColOffset(col) - scrollLeft + 0.5;
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
@@ -274,6 +372,35 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       ctx.stroke();
     }
 
+    // ── Conditional Formatting: pre-compute range stats per rule ──
+    const cfStore = useConditionalFormattingStore.getState();
+    const allCFRules = cfStore.getAllRules(sheetId);
+    const cfRangeStats = new Map<string, ReturnType<typeof calculateRangeStats>>();
+    if (allCFRules.length > 0 && sheet?.cells) {
+      for (const rule of allCFRules) {
+        if (!rule.enabled) continue;
+        // Parse the rule range to collect cells for stats
+        const rangeMatch = rule.range.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/);
+        if (!rangeMatch) continue;
+        const colToNum = (c: string) => c.split('').reduce((acc, ch) => acc * 26 + ch.charCodeAt(0) - 64, 0) - 1;
+        const rStartCol = colToNum(rangeMatch[1]);
+        const rStartRow = parseInt(rangeMatch[2]) - 1;
+        const rEndCol = colToNum(rangeMatch[3]);
+        const rEndRow = parseInt(rangeMatch[4]) - 1;
+        const rangeCells: { value: unknown; row: number; col: number }[] = [];
+        for (let r = rStartRow; r <= rEndRow; r++) {
+          for (let c = rStartCol; c <= rEndCol; c++) {
+            const cd = sheet.cells[getCellKey(r, c)];
+            if (cd) rangeCells.push({ value: cd.value, row: r, col: c });
+          }
+        }
+        cfRangeStats.set(rule.id, calculateRangeStats(rangeCells));
+      }
+    }
+
+    // ── Validation store for dropdown indicators ──
+    const valStore = useValidationStore.getState();
+
     // Draw cells
     ctx.font = `${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
     ctx.textBaseline = 'middle';
@@ -282,16 +409,111 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       for (let col = startCol; col < endCol; col++) {
         const key = getCellKey(row, col);
         const cellData = sheet?.cells[key];
-        if (!cellData) continue;
+        if (!cellData) {
+          // Even empty cells may have validation dropdown indicators
+          const valRule = valStore.getRuleForCell(sheetId, row, col);
+          if (valRule?.validationType.type === 'list' && valRule.validationType.dropdown) {
+            const cw = getColWidth(col);
+            const cx = getColOffset(col) - scrollLeft;
+            const cy = offsetY + (row - startRow) * CELL_HEIGHT;
+            // Draw dropdown arrow
+            ctx.save();
+            ctx.fillStyle = colors.headerText;
+            const ax = cx + cw - 10;
+            const ay = cy + CELL_HEIGHT / 2 - 2;
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(ax + 6, ay);
+            ctx.lineTo(ax + 3, ay + 5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+          continue;
+        }
 
-        const cw = colWidths[col];
-        const x = colOffsets[col] - scrollLeft;
+        const cw = getColWidth(col);
+        const x = getColOffset(col) - scrollLeft;
         const y = offsetY + (row - startRow) * CELL_HEIGHT;
 
-        // Cell background if formatted
-        if (cellData.format?.backgroundColor) {
+        // ── Conditional Formatting: evaluate rules for this cell ──
+        let cfBgColor: string | undefined;
+        let cfTextColor: string | undefined;
+        let cfBold = false;
+        let cfItalic = false;
+        let cfDataBar: { width: number; isNegative: boolean; color: string } | undefined;
+        let cfColorScaleColor: string | undefined;
+        let cfIcon: string | undefined;
+
+        if (allCFRules.length > 0) {
+          const rules = cfStore.getRulesForCell(row, col, sheetId);
+          for (const rule of rules) {
+            const stats = cfRangeStats.get(rule.id);
+            if (!stats) continue;
+            const cellForCF = { value: cellData.value, row, col };
+            if (!evaluateRule(rule, cellForCF, stats)) continue;
+
+            // Apply style-based formatting
+            if (rule.style) {
+              if (rule.style.backgroundColor) cfBgColor = rule.style.backgroundColor;
+              if (rule.style.textColor) cfTextColor = rule.style.textColor;
+              if (rule.style.fontWeight === 'bold') cfBold = true;
+              if (rule.style.fontStyle === 'italic') cfItalic = true;
+            }
+
+            // Data bar
+            if (rule.type === 'dataBar' && rule.dataBar) {
+              const numVal = parseFloat(String(cellData.value));
+              if (!isNaN(numVal)) {
+                const bar = calculateDataBarWidth(numVal, rule.dataBar, stats);
+                cfDataBar = { ...bar, color: bar.isNegative ? rule.dataBar.negativeColor : rule.dataBar.positiveColor };
+              }
+            }
+
+            // Color scale
+            if (rule.type === 'colorScale' && rule.colorScale) {
+              const numVal = parseFloat(String(cellData.value));
+              if (!isNaN(numVal)) {
+                cfColorScaleColor = calculateColorScaleColor(numVal, rule.colorScale, stats);
+              }
+            }
+
+            // Icon set
+            if (rule.type === 'iconSet' && rule.iconSet) {
+              const numVal = parseFloat(String(cellData.value));
+              if (!isNaN(numVal)) {
+                const iconDef = ICON_SET_DEFINITIONS.find(d => d.id === rule.iconSet!.iconStyle);
+                if (iconDef) {
+                  cfIcon = calculateIconSetIcon(numVal, rule.iconSet, stats, iconDef);
+                }
+              }
+            }
+
+            if (rule.stopIfTrue) break;
+          }
+        }
+
+        // Cell background: color scale > CF bg > cell format bg
+        if (cfColorScaleColor) {
+          ctx.fillStyle = cfColorScaleColor;
+          ctx.fillRect(x + 1, y + 1, cw - 2, CELL_HEIGHT - 2);
+        } else if (cfBgColor) {
+          ctx.fillStyle = cfBgColor;
+          ctx.fillRect(x + 1, y + 1, cw - 2, CELL_HEIGHT - 2);
+        } else if (cellData.format?.backgroundColor) {
           ctx.fillStyle = cellData.format.backgroundColor;
           ctx.fillRect(x + 1, y + 1, cw - 2, CELL_HEIGHT - 2);
+        }
+
+        // Data bar rendering (behind text)
+        if (cfDataBar && cfDataBar.width > 0) {
+          ctx.save();
+          ctx.globalAlpha = 0.35;
+          ctx.fillStyle = cfDataBar.color;
+          const barWidth = Math.round((cw - 4) * cfDataBar.width / 100);
+          ctx.fillRect(x + 2, y + 2, barWidth, CELL_HEIGHT - 4);
+          ctx.globalAlpha = 1;
+          ctx.restore();
         }
 
         // Cell text — apply number formatting for readability
@@ -300,15 +522,18 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           displayValue = formatNumberDisplay(cellData.value, displayValue, cellData.format?.numberFormat);
         }
         if (displayValue) {
-          ctx.fillStyle = cellData.format?.textColor || colors.text;
+          ctx.fillStyle = cfTextColor || cellData.format?.textColor || colors.text;
 
           // Text alignment
           let textX = x + 4;
           const textY = y + CELL_HEIGHT / 2;
 
+          // If icon set, reserve space for icon on the left
+          if (cfIcon) textX += 16;
+
           if (cellData.format?.align === 'center') {
             ctx.textAlign = 'center';
-            textX = x + cw / 2;
+            textX = x + cw / 2 + (cfIcon ? 8 : 0);
           } else if (cellData.format?.align === 'right' || (typeof cellData.value === 'number' && !cellData.format?.align)) {
             ctx.textAlign = 'right';
             textX = x + cw - 4;
@@ -316,10 +541,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             ctx.textAlign = 'left';
           }
 
-          // Bold/Italic
+          // Bold/Italic (CF overrides format)
           let fontStyle = '';
-          if (cellData.format?.bold) fontStyle += 'bold ';
-          if (cellData.format?.italic) fontStyle += 'italic ';
+          if (cfBold || cellData.format?.bold) fontStyle += 'bold ';
+          if (cfItalic || cellData.format?.italic) fontStyle += 'italic ';
           ctx.font = `${fontStyle}${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
 
           // Clip text to cell
@@ -332,6 +557,35 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
           // Reset font
           ctx.font = `${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+        }
+
+        // Icon set rendering (after text, left side of cell)
+        if (cfIcon) {
+          ctx.save();
+          ctx.font = `${Math.round(FONT_SIZE * 0.85)}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = colors.text;
+          ctx.fillText(cfIcon, x + 3, y + CELL_HEIGHT / 2);
+          ctx.restore();
+          ctx.font = `${FONT_SIZE}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+          ctx.textBaseline = 'middle';
+        }
+
+        // Validation dropdown indicator
+        const valRule = valStore.getRuleForCell(sheetId, row, col);
+        if (valRule?.validationType.type === 'list' && valRule.validationType.dropdown) {
+          ctx.save();
+          ctx.fillStyle = colors.headerText;
+          const ax = x + cw - 10;
+          const ay = y + CELL_HEIGHT / 2 - 2;
+          ctx.beginPath();
+          ctx.moveTo(ax, ay);
+          ctx.lineTo(ax + 6, ay);
+          ctx.lineTo(ax + 3, ay + 5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
         }
 
         // Spill cell indicator: dashed blue border
@@ -348,9 +602,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     // Helper: compute selection rect from row/col ranges using variable widths
     const getSelectionRect = (minRow: number, maxRow: number, minCol: number, maxCol: number) => {
-      const selX = colOffsets[minCol] - scrollLeft;
+      const selX = getColOffset(minCol) - scrollLeft;
       const selY = offsetY + (minRow - startRow) * CELL_HEIGHT;
-      const selW = colOffsets[maxCol + 1] - colOffsets[minCol];
+      const selW = getColOffset(maxCol + 1) - getColOffset(minCol);
       const selH = (maxRow - minRow + 1) * CELL_HEIGHT;
       return { selX, selY, selW, selH };
     };
@@ -388,11 +642,11 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     // Draw selected cell highlight
     if (selectedCell && !isEditing) {
-      const x = colOffsets[selectedCell.col] - scrollLeft;
+      const x = getColOffset(selectedCell.col) - scrollLeft;
       const y = offsetY + (selectedCell.row - startRow) * CELL_HEIGHT;
       ctx.strokeStyle = colors.selection;
       ctx.lineWidth = 2;
-      ctx.strokeRect(x, y, colWidths[selectedCell.col], CELL_HEIGHT);
+      ctx.strokeRect(x, y, getColWidth(selectedCell.col), CELL_HEIGHT);
     }
 
     // TIP-002: Draw freeze pane separator lines
@@ -412,7 +666,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       }
       // Vertical freeze line (right of frozen cols)
       if (sheet.freezePane.col > 0) {
-        const freezeX = colOffsets[sheet.freezePane.col] - scrollLeft;
+        const freezeX = getColOffset(sheet.freezePane.col) - scrollLeft;
         if (freezeX > 0 && freezeX < width) {
           ctx.beginPath();
           ctx.moveTo(freezeX + 0.5, 0);
@@ -422,7 +676,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       }
       ctx.restore();
     }
-  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, sheet?.freezePane, selectedCell, selectionRange, isEditing, colWidths, colOffsets, getFirstVisibleCol, CELL_HEIGHT, FONT_SIZE, colors, resolvedTheme]);
+  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, sheet?.freezePane, selectedCell, selectionRange, isEditing, getColWidth, getColOffset, getFirstVisibleCol, CELL_HEIGHT, FONT_SIZE, colors, resolvedTheme, sheetId]);
 
   // Check if column is in selection range
   const isColInRange = useCallback((col: number) => {
@@ -480,9 +734,9 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     const startCol = getFirstVisibleCol(scrollLeft);
     let endCol = startCol;
-    let acc = colOffsets[startCol] - scrollLeft;
+    let acc = getColOffset(startCol) - scrollLeft;
     while (endCol < MAX_COLS && acc < width) {
-      acc += colWidths[endCol];
+      acc += getColWidth(endCol);
       endCol++;
     }
     endCol = Math.min(MAX_COLS, endCol + 1);
@@ -492,8 +746,8 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.textBaseline = 'middle';
 
     for (let col = startCol; col < endCol; col++) {
-      const cw = colWidths[col];
-      const x = colOffsets[col] - scrollLeft;
+      const cw = getColWidth(col);
+      const x = getColOffset(col) - scrollLeft;
       const inRange = isColInRange(col);
 
       // Highlight selected column (dark green) or in-range column (light green)
@@ -525,7 +779,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.moveTo(0, height - 0.5);
     ctx.lineTo(width, height - 0.5);
     ctx.stroke();
-  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange, colWidths, colOffsets, getFirstVisibleCol, HEADER_HEIGHT, HEADER_FONT_SIZE, colors]);
+  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange, getColWidth, getColOffset, getFirstVisibleCol, HEADER_HEIGHT, HEADER_FONT_SIZE, colors]);
 
   // Render row headers
   const renderRowHeaders = useCallback(() => {
@@ -598,6 +852,32 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     const cell = getCellFromMouse(e.clientX, e.clientY);
     if (!cell) return;
 
+    // Check for validation dropdown
+    const valStoreState = useValidationStore.getState();
+    const dropdownOptions = valStoreState.getDropdownOptions(sheetId, cell.row, cell.col);
+    if (dropdownOptions && dropdownOptions.length > 0) {
+      // Check if click is near the dropdown arrow area (right edge of cell)
+      const cellX = getColOffset(cell.col);
+      const cellW = getColWidth(cell.col);
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        const localX = e.clientX - rect.left + scrollLeft;
+        const arrowX = cellX + cellW - 14;
+        if (localX >= arrowX) {
+          // Open dropdown
+          const screenX = cellX - scrollLeft;
+          const screenY = (cell.row + 1) * CELL_HEIGHT - scrollTop;
+          setDropdownState({
+            row: cell.row, col: cell.col,
+            options: dropdownOptions,
+            x: screenX, y: screenY, w: cellW,
+          });
+          return;
+        }
+      }
+    }
+    setDropdownState(null);
+
     if (e.shiftKey && selectedCell) {
       selectRange(selectedCell, cell);
     } else {
@@ -607,7 +887,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       dragStartRef.current = cell;
       dragEndRef.current = cell;
     }
-  }, [getCellFromMouse, selectedCell, selectRange, setSelectedCell, setSelectionRange]);
+  }, [getCellFromMouse, selectedCell, selectRange, setSelectedCell, setSelectionRange, sheetId, getColOffset, getColWidth, scrollLeft, scrollTop, CELL_HEIGHT]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDraggingRef.current || e.buttons !== 1) return;
@@ -763,9 +1043,11 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         const result = await importExcelFile(file);
         const workbookId = `local-${Date.now()}`;
         setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
+        const sheetIds: string[] = [];
         for (let i = 0; i < result.sheets.length; i++) {
           const sd = result.sheets[i];
           const sid = `sheet-${Date.now()}-${i}`;
+          sheetIds.push(sid);
           addSheet({ id: sid, name: sd.name || `Sheet${i + 1}`, index: i, cells: {},
             columnWidths: sd.columnWidths, rowHeights: sd.rowHeights, freezePane: sd.freezePane });
           const updates = Object.entries(sd.cells).map(([key, cell]) => {
@@ -778,6 +1060,63 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             }};
           });
           if (updates.length > 0) batchUpdateCells(sid, updates);
+        }
+        // Wire imported charts to chart store with data population
+        if (result.charts && result.charts.length > 0) {
+          const { useChartStore } = await import('../../stores/chartStore');
+          const { populateChartDataFromCells } = await import('../../utils/excelIO');
+          const chartStoreState = useChartStore.getState();
+          const typeMap: Record<string, string> = {
+            bar: 'Bar', column: 'ColumnClustered', line: 'Line',
+            pie: 'Pie', area: 'Area', scatter: 'Scatter', doughnut: 'Doughnut',
+          };
+          const defaultColors = ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948'];
+          for (const ic of result.charts) {
+            const chartSheetId = sheetIds[ic.sheetIndex] || sheetIds[0];
+            const chartType = (typeMap[ic.type.toLowerCase()] || 'ColumnClustered') as import('../../types/visualization').ChartType;
+            const chart = chartStoreState.createChart(workbookId, chartSheetId, ic.name, chartType);
+            if (ic.position) {
+              chartStoreState.updatePosition(chart.id, ic.position);
+            }
+            // Populate chart data from cells
+            const sheetCells = result.sheets[ic.sheetIndex]?.cells;
+            if (sheetCells) {
+              const chartData = populateChartDataFromCells(ic, sheetCells);
+              if (chartData && chartData.categories.length > 0 && chartData.series.length > 0) {
+                const seriesData = chartData.series.map((s, idx) => {
+                  const vals = s.values;
+                  return {
+                    id: `series-${idx}`,
+                    name: s.name,
+                    values: vals,
+                    color: defaultColors[idx % defaultColors.length],
+                    statistics: {
+                      min: Math.min(...vals),
+                      max: Math.max(...vals),
+                      sum: vals.reduce((a, b) => a + b, 0),
+                      avg: vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
+                      count: vals.length,
+                    },
+                  };
+                });
+                const allValues = seriesData.flatMap(s => s.values);
+                const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
+                const maxVal = allValues.length > 0 ? Math.max(...allValues) : 100;
+                chartStoreState.setChartData(chart.id, {
+                  chartId: chart.id,
+                  chartType,
+                  categories: chartData.categories,
+                  series: seriesData,
+                  bounds: {
+                    minValue: minVal,
+                    maxValue: maxVal,
+                    suggestedMin: minVal >= 0 ? 0 : minVal * 1.1,
+                    suggestedMax: maxVal * 1.1,
+                  },
+                });
+              }
+            }
+          }
         }
       }
       showToast(`${file.name} imported successfully`, 'info');
@@ -808,13 +1147,13 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     // Scroll to make cell visible
     if (containerRef.current) {
       const targetY = row * CELL_HEIGHT;
-      const targetX = colOffsets[col];
+      const targetX = getColOffset(col);
       containerRef.current.scrollTop = Math.max(0, targetY - containerSize.height / 3);
       containerRef.current.scrollLeft = Math.max(0, targetX - containerSize.width / 3);
     }
     setShowGoToCell(false);
     setGoToCellValue('');
-  }, [setSelectedCell, CELL_HEIGHT, colOffsets, containerSize, showToast]);
+  }, [setSelectedCell, CELL_HEIGHT, getColOffset, containerSize, showToast]);
 
   // TIP-004: Hover tooltip for truncated cells
   const handleMouseMoveTooltip = useCallback((e: React.MouseEvent) => {
@@ -836,7 +1175,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       return;
     }
     // Estimate if text is truncated (rough: 7px per char)
-    const cw = colWidths[cell.col];
+    const cw = getColWidth(cell.col);
     const estimatedWidth = text.length * 7;
     if (estimatedWidth > cw - 8) {
       // Clear existing timeout
@@ -855,7 +1194,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
       if (hoverTooltip) setHoverTooltip(null);
     }
-  }, [getCellFromMouse, sheet?.cells, colWidths, hoverTooltip, HEADER_WIDTH, HEADER_HEIGHT]);
+  }, [getCellFromMouse, sheet?.cells, getColWidth, hoverTooltip, HEADER_WIDTH, HEADER_HEIGHT]);
 
   // TIP-008: Column header click to sort
   const handleColumnHeaderClick = useCallback((e: React.MouseEvent) => {
@@ -998,6 +1337,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           break;
         case 'Escape':
           e.preventDefault();
+          setDropdownState(null);
           setSelectionRange(null);
           break;
         default:
@@ -1144,6 +1484,14 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           />
         </div>
 
+        {/* Remote user cursors overlay */}
+        <UserCursors
+          sheetId={sheetId}
+          visibleRows={visibleRange.rows}
+          visibleCols={visibleRange.cols}
+          getCellPosition={getCellPosition}
+        />
+
         {/* Cell editor overlay */}
         {isEditing && selectedCell && (
           <CellEditor
@@ -1154,16 +1502,76 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
               getCellDisplayValue(sheetId, selectedCell.row, selectedCell.col) ||
               ''
             }
-            cellWidth={colWidths[selectedCell.col]}
+            cellWidth={getColWidth(selectedCell.col)}
             cellHeight={CELL_HEIGHT}
             headerWidth={-scrollLeft}
             headerHeight={-scrollTop}
-            colOffset={colOffsets[selectedCell.col]}
+            colOffset={getColOffset(selectedCell.col)}
             onSubmit={handleCellSubmit}
             onCancel={() => { setValidationError(null); setIsEditing(false); }}
             validationError={validationError}
             inputMessage={getInputMessage(sheetId, selectedCell.row, selectedCell.col)}
           />
+        )}
+
+        {/* Validation dropdown */}
+        {dropdownState && (
+          <div
+            style={{
+              position: 'absolute',
+              left: dropdownState.x,
+              top: dropdownState.y,
+              width: Math.max(dropdownState.w, 120),
+              maxHeight: 200,
+              overflowY: 'auto',
+              background: resolvedTheme === 'dark' ? '#262626' : 'white',
+              border: `1px solid ${resolvedTheme === 'dark' ? '#525252' : '#d4d4d4'}`,
+              borderRadius: 4,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              zIndex: 50,
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {dropdownState.options.map((opt, i) => (
+              <div
+                key={i}
+                onClick={() => {
+                  updateCell(sheetId, dropdownState.row, dropdownState.col, {
+                    value: opt,
+                    displayValue: opt,
+                  });
+                  setDropdownState(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    updateCell(sheetId, dropdownState.row, dropdownState.col, {
+                      value: opt,
+                      displayValue: opt,
+                    });
+                    setDropdownState(null);
+                  } else if (e.key === 'Escape') {
+                    setDropdownState(null);
+                  }
+                }}
+                tabIndex={0}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  color: resolvedTheme === 'dark' ? '#e5e5e5' : '#171717',
+                  background: 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.background = resolvedTheme === 'dark' ? '#404040' : '#f0f0f0';
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.background = 'transparent';
+                }}
+              >
+                {opt}
+              </div>
+            ))}
+          </div>
         )}
 
         {/* Floating AI button - context-aware quick access */}

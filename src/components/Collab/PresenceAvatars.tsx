@@ -33,7 +33,7 @@ export const PresenceAvatars: React.FC<PresenceAvatarsProps> = ({
   const allUsers = useMemo(() => {
     const users: UserPresence[] = [];
     if (localUser) users.push(localUser);
-    for (const user of remoteUsers.values()) {
+    for (const user of Array.from(remoteUsers.values())) {
       users.push(user);
     }
     return users;

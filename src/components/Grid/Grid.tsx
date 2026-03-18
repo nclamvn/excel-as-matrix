@@ -6,6 +6,7 @@ import { CellEditor } from './CellEditor';
 import { Headers } from './Headers';
 import { Selection, RangeSelection } from './Selection';
 import { getCellKey } from '../../types/cell';
+import { MAX_COLS, MAX_ROWS } from '../../constants/grid';
 
 interface GridProps {
   workbookId: string;
@@ -18,8 +19,6 @@ const HEADER_WIDTH = 50;
 const HEADER_HEIGHT = 24;
 const BUFFER_ROWS = 5;
 const BUFFER_COLS = 3;
-const MAX_ROWS = 100000; // Support up to 100k rows
-const MAX_COLS = 26; // A-Z for MVP
 
 export const Grid: React.FC<GridProps> = ({ sheetId }) => {
   const containerRef = useRef<HTMLDivElement>(null);

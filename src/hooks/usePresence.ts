@@ -138,7 +138,7 @@ export const useSelectionOverlays = (options: UseSelectionOverlaysOptions): Sele
   return useMemo(() => {
     const overlays: SelectionOverlay[] = [];
 
-    for (const user of remoteUsers.values()) {
+    for (const user of Array.from(remoteUsers.values())) {
       if (user.sheetId !== sheetId) continue;
       if (!user.selection) continue;
 
@@ -191,7 +191,7 @@ export const useRemoteCursors = (options: UseRemoteCursorsOptions): RemoteCursor
   return useMemo(() => {
     const cursors: RemoteCursor[] = [];
 
-    for (const user of remoteUsers.values()) {
+    for (const user of Array.from(remoteUsers.values())) {
       if (user.sheetId !== sheetId) continue;
       if (!user.cursorPosition) continue;
 

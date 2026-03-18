@@ -88,7 +88,11 @@ export type SyncMessageType =
   // Cursor/Selection
   | 'cursor_move'
   | 'selection_change'
-  // Data
+  // Data operations (match server protocol)
+  | 'cell_update'
+  | 'format_change'
+  | 'sheet_change'
+  // Legacy data sync
   | 'event_broadcast'
   | 'event_ack'
   | 'sync_request'

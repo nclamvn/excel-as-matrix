@@ -89,12 +89,31 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-xlsx': ['xlsx'],
-          'vendor-charts': ['recharts'],
-          'vendor-zustand': ['zustand'],
-          'vendor-icons': ['lucide-react'],
+        manualChunks(id) {
+          // Vendor splits
+          if (id.includes('node_modules/react-dom')) return 'vendor-react';
+          if (id.includes('node_modules/react/')) return 'vendor-react';
+          if (id.includes('node_modules/recharts')) return 'vendor-charts';
+          if (id.includes('node_modules/xlsx')) return 'vendor-xlsx';
+          if (id.includes('node_modules/exceljs')) return 'vendor-exceljs';
+          if (id.includes('node_modules/zustand')) return 'vendor-zustand';
+          if (id.includes('node_modules/lucide-react')) return 'vendor-icons';
+          if (id.includes('node_modules/@tanstack')) return 'vendor-virtual';
+          if (id.includes('node_modules/hono')) return 'vendor-hono';
+
+          // Application code splits — heavy feature modules
+          if (id.includes('/src/engine/functions/')) return 'engine-functions';
+          if (id.includes('/src/engine/')) return 'engine-core';
+          if (id.includes('/src/ai/')) return 'ai-runtime';
+          if (id.includes('/src/collaboration/')) return 'collab';
+          if (id.includes('/src/datacleaner/')) return 'datacleaner';
+          if (id.includes('/src/nlformula/')) return 'nlformula';
+          if (id.includes('/src/autoviz/')) return 'autoviz';
+          if (id.includes('/src/macros/')) return 'macros';
+          if (id.includes('/src/proactive/')) return 'proactive';
+          if (id.includes('/src/powerquery/')) return 'powerquery';
+          if (id.includes('/src/utils/excelIO')) return 'excel-io';
+          if (id.includes('/src/utils/xlsxFidelity')) return 'excel-io';
         },
       },
     },

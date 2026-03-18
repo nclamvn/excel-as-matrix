@@ -69,6 +69,9 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
   const initialPos = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
   // Convert chart data to ChartRenderer format
+  const extraSeriesKeys = data && data.series.length > 1
+    ? data.series.slice(1).map(s => s.name || `series${data.series.indexOf(s)}`)
+    : undefined;
   const chartConfig: ChartConfig = {
     id: chart.id,
     type: mapChartType(chart.chartType),
@@ -77,6 +80,7 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
     colors: chart.colors,
     showLegend: chart.legend.visible,
     showGrid: chart.axes.xAxis.gridlines,
+    seriesKeys: extraSeriesKeys,
   };
 
   // Handle drag start
@@ -233,10 +237,18 @@ function convertChartData(data?: import('../../types/visualization').ChartData):
     ];
   }
 
-  return data.categories.map((cat, i) => ({
-    name: cat,
-    value: data.series[0]?.values[i] || 0,
-  }));
+  // Multi-series support: each data point gets name + value (series 0) + series1, series2, etc.
+  return data.categories.map((cat, i) => {
+    const point: ChartData = {
+      name: cat,
+      value: data.series[0]?.values[i] || 0,
+    };
+    // Add additional series as named keys
+    for (let s = 1; s < data.series.length; s++) {
+      point[data.series[s].name || `series${s}`] = data.series[s]?.values[i] || 0;
+    }
+    return point;
+  });
 }
 
 export default ChartOverlay;

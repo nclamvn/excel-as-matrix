@@ -21,6 +21,8 @@ interface Room {
 export type WSMessageType =
   | 'join'
   | 'leave'
+  | 'user_joined'
+  | 'user_left'
   | 'cell_update'
   | 'cursor_move'
   | 'selection_change'
@@ -29,7 +31,8 @@ export type WSMessageType =
   | 'format_change'
   | 'ping'
   | 'pong'
-  | 'undo' | 'redo';
+  | 'undo' | 'redo'
+  | 'heartbeat';
 
 interface WSMessage {
   type: WSMessageType;
@@ -77,10 +80,14 @@ class WebSocketManager {
       payload: { action: 'init', members: presenceList },
     });
 
-    // Broadcast join to others
+    // Broadcast join to others (both presence_update and user_joined for client compatibility)
     this.broadcast(room, userId, {
       type: 'presence_update',
       payload: { action: 'join', userId, userName },
+    });
+    this.broadcast(room, userId, {
+      type: 'user_joined',
+      payload: { user: { id: userId, name: userName, color: this.getColorForUser(userId) }, timestamp: Date.now() },
     });
 
     console.log(`[WS] ${userName} (${userId}) joined room ${roomId} (${room.members.size} members)`);
@@ -93,10 +100,14 @@ class WebSocketManager {
     const member = room.members.get(userId);
     room.members.delete(userId);
 
-    // Broadcast leave
+    // Broadcast leave (both formats for client compatibility)
     this.broadcast(room, userId, {
       type: 'presence_update',
       payload: { action: 'leave', userId, userName: member?.userName },
+    });
+    this.broadcast(room, userId, {
+      type: 'user_left',
+      payload: { userId },
     });
 
     // Clean up empty rooms
@@ -124,8 +135,9 @@ class WebSocketManager {
 
     switch (data.type) {
       case 'ping':
+      case 'heartbeat':
         // Respond with pong directly to sender
-        this.send(_ws, { type: 'pong', payload: {} });
+        this.send(_ws, { type: 'pong', payload: { timestamp: Date.now() } });
         break;
 
       case 'join':
@@ -188,6 +200,19 @@ class WebSocketManager {
         this.send(member.ws, message);
       }
     }
+  }
+
+  // Deterministic color for user (matches client-side getColorForUser)
+  private getColorForUser(userId: string): string {
+    const colors = [
+      '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#14b8a6',
+      '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899',
+    ];
+    let hash = 0;
+    for (let i = 0; i < userId.length; i++) {
+      hash = ((hash << 5) - hash + userId.charCodeAt(i)) | 0;
+    }
+    return colors[Math.abs(hash) % colors.length];
   }
 
   // Stats

@@ -5,7 +5,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import type { CellData, CellFormat, Sheet } from '../types/cell';
-import { getCellKey } from '../types/cell';
+import { getCellKey, colToLetter } from '../types/cell';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -265,7 +265,7 @@ export function exportWorksheet(sheet: Sheet): Record<string, XLSXWorksheetCell>
   }
 
   // Set range (xlsx library uses string for !ref metadata key)
-  (ws as Record<string, unknown>)['!ref'] = `A1:${String.fromCharCode(65 + Math.min(maxCol, 25))}${maxRow + 1}`;
+  (ws as Record<string, unknown>)['!ref'] = `A1:${colToLetter(maxCol)}${maxRow + 1}`;
 
   return ws;
 }

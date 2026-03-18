@@ -5,6 +5,116 @@ import { CellData, CellFormat, Sheet, getCellKey } from '../types/cell';
 // IMPORT EXCEL (using ExcelJS for full style support)
 // ═══════════════════════════════════════════════════════════════════════════
 
+export interface ImportedChart {
+  name: string;
+  type: string; // e.g., 'bar', 'line', 'pie', 'column', 'area', 'scatter'
+  dataRange?: string; // e.g., 'Sheet1!A1:D10' or 'A1:D10'
+  sheetIndex: number;
+  position?: { x: number; y: number; width: number; height: number };
+  // Extracted series info (if ExcelJS exposes it)
+  series?: Array<{
+    name?: string;
+    valuesRef?: string; // e.g., 'B2:B10'
+    categoriesRef?: string; // e.g., 'A2:A10'
+  }>;
+}
+
+/**
+ * Parse an Excel-style range reference (e.g., 'A1:D10' or 'Sheet1!A1:D10')
+ * into row/col coordinates (0-based).
+ */
+export function parseRangeRef(ref: string): {
+  sheetName?: string; startRow: number; startCol: number; endRow: number; endCol: number;
+} | null {
+  // Strip sheet name if present
+  let sheetName: string | undefined;
+  let range = ref;
+  const bangIdx = ref.indexOf('!');
+  if (bangIdx >= 0) {
+    sheetName = ref.slice(0, bangIdx).replace(/^'|'$/g, '');
+    range = ref.slice(bangIdx + 1);
+  }
+  // Remove absolute markers
+  range = range.replace(/\$/g, '');
+
+  const match = range.match(/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/);
+  if (!match) return null;
+
+  const colToNum = (c: string) => {
+    let n = 0;
+    for (let i = 0; i < c.length; i++) n = n * 26 + (c.charCodeAt(i) - 64);
+    return n - 1;
+  };
+
+  return {
+    sheetName,
+    startRow: parseInt(match[2]) - 1,
+    startCol: colToNum(match[1]),
+    endRow: parseInt(match[4]) - 1,
+    endCol: colToNum(match[3]),
+  };
+}
+
+/**
+ * Populate chart data from imported cells.
+ * Heuristic: first column = categories, remaining columns = series.
+ */
+export function populateChartDataFromCells(
+  chart: ImportedChart,
+  cells: Record<string, CellData>,
+): {
+  categories: string[];
+  series: Array<{ name: string; values: number[] }>;
+} | null {
+  const rangeStr = chart.dataRange;
+  if (!rangeStr) return null;
+
+  const range = parseRangeRef(rangeStr);
+  if (!range) return null;
+
+  const numDataCols = range.endCol - range.startCol;
+  if (numDataCols < 1) return null;
+
+  // Check if first row is headers
+  const firstRowKey = getCellKey(range.startRow, range.startCol + 1);
+  const firstRowCell = cells[firstRowKey];
+  const hasHeaders = firstRowCell && typeof firstRowCell.value === 'string' && isNaN(Number(firstRowCell.value));
+
+  const dataStartRow = hasHeaders ? range.startRow + 1 : range.startRow;
+
+  // Extract categories from first column
+  const categories: string[] = [];
+  for (let r = dataStartRow; r <= range.endRow; r++) {
+    const key = getCellKey(r, range.startCol);
+    const cell = cells[key];
+    categories.push(cell?.displayValue || String(cell?.value ?? `Row ${r + 1}`));
+  }
+
+  // Extract series from remaining columns
+  const series: Array<{ name: string; values: number[] }> = [];
+  for (let c = range.startCol + 1; c <= range.endCol; c++) {
+    // Series name from header row (if present)
+    let seriesName = `Series ${c - range.startCol}`;
+    if (hasHeaders) {
+      const headerKey = getCellKey(range.startRow, c);
+      const headerCell = cells[headerKey];
+      if (headerCell?.value) seriesName = String(headerCell.value);
+    }
+
+    const values: number[] = [];
+    for (let r = dataStartRow; r <= range.endRow; r++) {
+      const key = getCellKey(r, c);
+      const cell = cells[key];
+      const num = parseFloat(String(cell?.value ?? 0));
+      values.push(isNaN(num) ? 0 : num);
+    }
+
+    series.push({ name: seriesName, values });
+  }
+
+  return { categories, series };
+}
+
 export interface ImportResult {
   sheets: Array<{
     name: string;
@@ -14,6 +124,7 @@ export interface ImportResult {
     freezePane?: { row: number; col: number };
     merges?: Array<{ startRow: number; startCol: number; endRow: number; endCol: number }>;
   }>;
+  charts?: ImportedChart[];
 }
 
 // Convert ExcelJS ARGB color (e.g. 'FF00FF00') to CSS hex color
@@ -136,8 +247,11 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
   await workbook.xlsx.load(arrayBuffer);
 
   const sheets: ImportResult['sheets'] = [];
+  const charts: ImportedChart[] = [];
+  let sheetIndex = 0;
 
   workbook.eachSheet((worksheet) => {
+    const currentSheetIndex = sheetIndex++;
     const cells: Record<string, CellData> = {};
 
     // Iterate all rows and cells (ExcelJS uses 1-based indexing)
@@ -293,6 +407,116 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
       if (merges.length === 0) merges = undefined;
     }
 
+    // Extract chart information from worksheet model
+    // ExcelJS stores drawings/charts in the worksheet model
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wsModel = (worksheet as any).model || worksheet;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const drawings = wsModel?.drawing?.anchors || wsModel?.drawings || (worksheet as any)._media || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const charts2 = wsModel?.charts || (worksheet as any)._charts || [];
+
+    // Try multiple ExcelJS model paths for chart data
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const allChartSources: any[] = [
+      ...(Array.isArray(drawings) ? drawings : []),
+      ...(Array.isArray(charts2) ? charts2 : []),
+    ];
+
+    for (const drawing of allChartSources) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const d = drawing as any;
+      if (d.picture) continue; // Skip images
+
+      const chartInfo: ImportedChart = {
+        name: d.name || d.title || `Chart ${charts.length + 1}`,
+        type: d.chartType || d.type || d.plotType || 'column',
+        sheetIndex: currentSheetIndex,
+      };
+
+      // Extract position from anchor
+      const anchor = d.from || d.tl || d.anchor?.from;
+      const anchorTo = d.to || d.br || d.anchor?.to;
+      if (anchor) {
+        const anchorCol = anchor.col ?? anchor.nativeCol ?? 0;
+        const anchorRow = anchor.row ?? anchor.nativeRow ?? 0;
+        let w = 500, h = 300;
+        if (anchorTo) {
+          const toCol = anchorTo.col ?? anchorTo.nativeCol ?? anchorCol + 5;
+          const toRow = anchorTo.row ?? anchorTo.nativeRow ?? anchorRow + 15;
+          w = Math.max(200, (toCol - anchorCol) * 100);
+          h = Math.max(150, (toRow - anchorRow) * 24);
+        }
+        chartInfo.position = {
+          x: anchorCol * 100,
+          y: anchorRow * 24,
+          width: w,
+          height: h,
+        };
+      }
+
+      // Try multiple paths for data range
+      const dataRange = d.dataRange || d.range || d.plotArea?.dataRange;
+      if (dataRange) {
+        chartInfo.dataRange = typeof dataRange === 'string' ? dataRange : undefined;
+      }
+
+      // Try to extract series definitions
+      const seriesList = d.series || d.plotArea?.series || d.dataSeries;
+      if (Array.isArray(seriesList) && seriesList.length > 0) {
+        chartInfo.series = [];
+        for (const s of seriesList) {
+          chartInfo.series.push({
+            name: s.name || s.title,
+            valuesRef: s.values?.ref || s.valuesRef || s.numRef,
+            categoriesRef: s.categories?.ref || s.categoriesRef || s.catRef,
+          });
+        }
+        // If we have series but no overall dataRange, try to infer from series refs
+        if (!chartInfo.dataRange && chartInfo.series.length > 0) {
+          const firstCat = chartInfo.series[0]?.categoriesRef;
+          const lastVal = chartInfo.series[chartInfo.series.length - 1]?.valuesRef;
+          if (firstCat && lastVal) {
+            const catRange = parseRangeRef(firstCat);
+            const valRange = parseRangeRef(lastVal);
+            if (catRange && valRange) {
+              const colToLetter = (c: number) => {
+                let r = ''; let n = c + 1;
+                while (n > 0) { n--; r = String.fromCharCode(65 + (n % 26)) + r; n = Math.floor(n / 26); }
+                return r;
+              };
+              const startCol = Math.min(catRange.startCol, valRange.startCol);
+              const endCol = Math.max(catRange.endCol, valRange.endCol);
+              const startRow = Math.min(catRange.startRow, valRange.startRow);
+              const endRow = Math.max(catRange.endRow, valRange.endRow);
+              chartInfo.dataRange = `${colToLetter(startCol)}${startRow + 1}:${colToLetter(endCol)}${endRow + 1}`;
+            }
+          }
+        }
+      }
+
+      // If still no dataRange, try to infer from surrounding data
+      if (!chartInfo.dataRange && Object.keys(cells).length > 0) {
+        // Find the data extent of the sheet
+        let maxRow = 0, maxCol = 0;
+        for (const key of Object.keys(cells)) {
+          const [r, c] = key.split(':').map(Number);
+          if (r > maxRow) maxRow = r;
+          if (c > maxCol) maxCol = c;
+        }
+        if (maxRow > 0 && maxCol > 0) {
+          const colToLetter = (c: number) => {
+            let r = ''; let n = c + 1;
+            while (n > 0) { n--; r = String.fromCharCode(65 + (n % 26)) + r; n = Math.floor(n / 26); }
+            return r;
+          };
+          chartInfo.dataRange = `A1:${colToLetter(maxCol)}${maxRow + 1}`;
+        }
+      }
+
+      charts.push(chartInfo);
+    }
+
     sheets.push({
       name: worksheet.name,
       cells,
@@ -303,7 +527,7 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
     });
   });
 
-  return { sheets };
+  return { sheets, charts: charts.length > 0 ? charts : undefined };
 };
 
 // ═══════════════════════════════════════════════════════════════════════════

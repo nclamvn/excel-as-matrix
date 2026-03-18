@@ -19,6 +19,7 @@ import {
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { getCellKey } from '../../types/cell';
+import { getCollaborationManager } from '../../collaboration/CollaborationManager';
 
 type ViewMode = 'normal' | 'pageBreak' | 'pageLayout';
 type CalcType = 'average' | 'count' | 'numerical_count' | 'min' | 'max' | 'sum';
@@ -181,6 +182,19 @@ export const StatusBar2026Enhanced: React.FC = () => {
           </span>
           <span className="status-bar-enhanced__mode-text">Ready</span>
         </div>
+
+        {/* Collaboration indicator */}
+        {(() => {
+          const mgr = getCollaborationManager();
+          if (!mgr || !mgr.isConnected()) return null;
+          const count = mgr.getUserCount();
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 8px', fontSize: 11, color: '#059669' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }} />
+              <span>{count} online</span>
+            </div>
+          );
+        })()}
 
         {cellInfo && (
           <div className="status-bar-enhanced__cell-info">
