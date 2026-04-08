@@ -2,9 +2,11 @@
 // NOTIFICATION BELL — Shows mention notifications
 // ============================================================
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Bell } from 'lucide-react';
 import { useNotificationStore } from '../../stores/notificationStore';
+import { navigateToCell } from '../../utils/cellNavigation';
+import type { MentionNotification } from '../../types/mention';
 import '../Comments/Mention.css';
 
 function formatTimeAgo(ts: number): string {
@@ -36,6 +38,19 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) =>
 
   const userNotifications = notifications.filter(
     (n) => n.mentionedUserId === userId
+  );
+
+  const handleNotificationClick = useCallback(
+    (n: MentionNotification) => {
+      markAsRead(n.id);
+      setIsOpen(false);
+      navigateToCell({
+        workbookId: n.workbookId,
+        sheetId: n.sheetId,
+        cellId: n.cellId,
+      });
+    },
+    [markAsRead]
   );
 
   // Close dropdown on outside click
@@ -89,7 +104,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) =>
                 <div
                   key={n.id}
                   className={`notification-item ${n.read ? '' : 'unread'}`}
-                  onClick={() => markAsRead(n.id)}
+                  onClick={() => handleNotificationClick(n)}
                 >
                   <div className="notification-item__text">
                     <strong>{n.mentionedByName}</strong>{' '}

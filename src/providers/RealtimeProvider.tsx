@@ -5,6 +5,7 @@
  */
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
+import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
 import { getSupabase } from '@/lib/supabase';
 import { CellUpdatePayload } from '@/types/collab';
 import { usePresenceStore } from '@/stores/presenceStore';
@@ -46,6 +47,9 @@ export function RealtimeProvider({
   children,
 }: RealtimeProviderProps) {
   const supabaseAvailable = !!getSupabase();
+
+  // Subscribe to mention notifications via Supabase Realtime
+  useRealtimeNotifications(workbookId, userId || '');
 
   const handleCellUpdate = useCallback(
     (payload: CellUpdatePayload) => {

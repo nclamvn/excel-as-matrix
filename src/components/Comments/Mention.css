@@ -233,3 +233,16 @@
   color: var(--text-secondary, #737373);
   font-size: 13px;
 }
+
+/* Cell flash highlight — triggered on notification click */
+@keyframes cell-flash {
+  0% { background-color: rgba(59, 130, 246, 0.5); }
+  50% { background-color: rgba(59, 130, 246, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.cell-highlight-flash {
+  animation: cell-flash 2s ease-out !important;
+  box-shadow: 0 0 0 2px #3b82f6 !important;
+  z-index: 10;
+}

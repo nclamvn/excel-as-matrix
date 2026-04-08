@@ -1437,6 +1437,21 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     return () => window.removeEventListener('mouseup', globalMouseUp);
   }, [handleMouseUp]);
 
+  // Listen for scrollToCell events (from notification click, etc.)
+  useEffect(() => {
+    const handleScrollToCell = (e: Event) => {
+      const { row, col } = (e as CustomEvent).detail;
+      if (containerRef.current && typeof row === 'number' && typeof col === 'number') {
+        const targetY = row * CELL_HEIGHT;
+        const targetX = getColOffset(col);
+        containerRef.current.scrollTop = Math.max(0, targetY - containerSize.height / 3);
+        containerRef.current.scrollLeft = Math.max(0, targetX - containerSize.width / 3);
+      }
+    };
+    window.addEventListener('scrollToCell', handleScrollToCell);
+    return () => window.removeEventListener('scrollToCell', handleScrollToCell);
+  }, [CELL_HEIGHT, getColOffset, containerSize]);
+
   // Render on state changes
   useEffect(() => {
     renderGrid();

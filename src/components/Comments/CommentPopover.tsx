@@ -3,6 +3,7 @@ import { X, Send, Trash2, MessageSquare } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { usePresenceStore } from '../../stores/presenceStore';
 import { useNotificationStore } from '../../stores/notificationStore';
+import { broadcastMentionNotification } from '../../hooks/useRealtimeNotifications';
 import { MentionInput } from './MentionInput';
 import type { Mention, UserSuggestion } from '../../types/mention';
 
@@ -64,14 +65,14 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
         addComment(row, col, text.trim());
       }
 
-      // Trigger notifications for mentioned users
+      // Trigger notifications for mentioned users (local + broadcast)
       for (const mention of mentions) {
         const mentioned = userSuggestions.find(
           (u) => u.name.toLowerCase() === mention.userName.toLowerCase()
         );
         if (mentioned && mentioned.id !== localUser?.userId) {
-          addNotification({
-            type: 'mention',
+          const notificationData = {
+            type: 'mention' as const,
             workbookId: localUser?.workbookId || '',
             sheetId: localUser?.sheetId || '',
             cellId: `${row}:${col}`,
@@ -80,7 +81,16 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
             mentionedByName: localUser?.displayName || 'Someone',
             mentionedUserId: mentioned.id,
             preview: text.trim(),
-          });
+          };
+
+          // Local notification (for same-browser tabs)
+          addNotification(notificationData);
+
+          // Broadcast via Supabase Realtime (for remote users)
+          broadcastMentionNotification(
+            localUser?.workbookId || '',
+            notificationData
+          );
         }
       }
 
