@@ -71,6 +71,35 @@ app.get(
 // Health check
 app.get('/api/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
 
+// Google Sheets proxy — fetches public sheet as xlsx to avoid CORS
+app.get('/api/google-sheets-proxy', async (c) => {
+  const spreadsheetId = c.req.query('spreadsheetId');
+  if (!spreadsheetId || !/^[a-zA-Z0-9_-]+$/.test(spreadsheetId)) {
+    return c.json({ error: 'Invalid spreadsheet ID' }, 400);
+  }
+
+  const exportUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=xlsx`;
+
+  try {
+    const response = await fetch(exportUrl, { redirect: 'follow' });
+
+    if (!response.ok) {
+      const status = response.status === 401 || response.status === 403 ? 403 : response.status;
+      return c.json(
+        { error: status === 403 ? 'Sheet is not public' : `Google returned ${response.status}` },
+        status as 403 | 404 | 500
+      );
+    }
+
+    const buffer = await response.arrayBuffer();
+    c.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    c.header('Content-Disposition', 'attachment; filename="google-sheet.xlsx"');
+    return c.body(buffer);
+  } catch (err) {
+    return c.json({ error: `Proxy error: ${err instanceof Error ? err.message : 'unknown'}` }, 500);
+  }
+});
+
 // AI routes
 app.route('/api/ai', aiRouter);
 

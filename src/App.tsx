@@ -22,9 +22,15 @@ import type { WorkbookSnapshot, SnapshotData } from './types/version';
 import { crashRecovery } from './recovery/CrashRecoveryJournal';
 import { SkipToContent } from './components/Accessibility/SkipToContent';
 
+// Responsive CSS + hook
+import './styles/responsive.css';
+import { useResponsiveClass } from './hooks/useResponsive';
+
 // Lazy load non-critical overlays
 const CrashRecoveryBanner = lazy(() => import('./components/Recovery/CrashRecoveryBanner').then(m => ({ default: m.CrashRecoveryBanner })));
 const MobileGridOverlay = lazy(() => import('./components/Mobile/MobileGridOverlay').then(m => ({ default: m.MobileGridOverlay })));
+const MobileToolbar = lazy(() => import('./components/Mobile/MobileToolbar').then(m => ({ default: m.MobileToolbar })));
+const MobileSheetTabs = lazy(() => import('./components/Mobile/MobileSheetTabs').then(m => ({ default: m.MobileSheetTabs })));
 const OnboardingTour = lazy(() => import('./components/Onboarding/OnboardingTour'));
 
 // Landing Page — lazy since only shown on first visit
@@ -89,6 +95,7 @@ import './components/Print/Print.css';
 import './components/Sparklines/Sparklines.css';
 
 function App() {
+  const responsiveClass = useResponsiveClass();
   const [showLanding, setShowLanding] = useState(() => {
     // Check localStorage to see if user has entered app before
     return localStorage.getItem('ai-suite-entered') !== 'true';
@@ -364,7 +371,7 @@ function App() {
         });
       }}
     >
-    <div className="h-full flex flex-col" style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
+    <div className={`h-full flex flex-col ${responsiveClass}`} style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
       {/* Skip to Content — WCAG 2.1 AA */}
       <SkipToContent />
 
@@ -410,8 +417,18 @@ function App() {
         {/* Sheet Tabs */}
         <SheetTabs2026 />
 
+        {/* Mobile Sheet Tabs (shown on mobile only) */}
+        <Suspense fallback={null}>
+          <MobileSheetTabs />
+        </Suspense>
+
         {/* Status Bar (Green theme - Enhanced) */}
         <StatusBar2026Enhanced />
+
+        {/* Mobile Toolbar (bottom tab bar, shown on mobile only) */}
+        <Suspense fallback={null}>
+          <MobileToolbar />
+        </Suspense>
       </div>
 
       {/* AI Copilot Dock */}

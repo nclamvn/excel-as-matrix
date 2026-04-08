@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import { Link2 } from 'lucide-react';
 import { FileDropZone } from './FileDropZone';
 import { importExcelFile, importCSVFile } from '../../utils/excelIO';
+import {
+  parseGoogleSheetsUrl,
+  isGoogleSheetsUrl,
+  fetchGoogleSheetAsFile,
+} from '../../services/googleSheetsService';
 
 // Typed cell value for import
 type ImportedCellPrimitive = string | number | boolean | null | undefined;
@@ -57,6 +63,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
   onClose,
   onImport,
 }) => {
+  const [activeTab, setActiveTab] = useState<'file' | 'google'>('file');
   const [step, setStep] = useState<'upload' | 'preview' | 'options'>('upload');
   const [file, setFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<ImportPreviewData | null>(null);
@@ -68,6 +75,34 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
   const [skipRows] = useState(0);
   const [maxRows, setMaxRows] = useState(DEFAULT_MAX_ROWS);
   const [totalRowCount, setTotalRowCount] = useState(0);
+
+  // Google Sheets state
+  const [googleUrl, setGoogleUrl] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
+
+  const handleGoogleImport = async () => {
+    setGoogleError(null);
+    setGoogleLoading(true);
+
+    try {
+      const spreadsheetId = parseGoogleSheetsUrl(googleUrl);
+      if (!spreadsheetId) {
+        throw new Error('Invalid Google Sheets URL. Please paste a valid link.');
+      }
+
+      // Fetch as xlsx file via backend proxy
+      const xlsxFile = await fetchGoogleSheetAsFile(spreadsheetId);
+
+      // Reuse existing xlsx import pipeline
+      setFile(xlsxFile);
+      await handleFileDrop(xlsxFile);
+    } catch (err) {
+      setGoogleError(err instanceof Error ? err.message : 'Import failed');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const handleFileDrop = async (droppedFile: File) => {
     setFile(droppedFile);
@@ -276,11 +311,137 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+          {/* Import source tabs */}
           {step === 'upload' && (
+            <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', marginBottom: 20 }}>
+              <button
+                type="button"
+                onClick={() => { setActiveTab('file'); setGoogleError(null); }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: `2px solid ${activeTab === 'file' ? '#2563eb' : 'transparent'}`,
+                  color: activeTab === 'file' ? '#2563eb' : '#6b7280',
+                  fontWeight: 500,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                }}
+              >
+                Upload File
+              </button>
+              <button
+                type="button"
+                onClick={() => { setActiveTab('google'); setError(null); }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: `2px solid ${activeTab === 'google' ? '#2563eb' : 'transparent'}`,
+                  color: activeTab === 'google' ? '#2563eb' : '#6b7280',
+                  fontWeight: 500,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <Link2 size={14} />
+                Google Sheets
+              </button>
+            </div>
+          )}
+
+          {step === 'upload' && activeTab === 'file' && (
             <FileDropZone
               onFileDrop={handleFileDrop}
               disabled={loading}
             />
+          )}
+
+          {step === 'upload' && activeTab === 'google' && (
+            <div style={{ padding: '8px 0' }}>
+              <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 16, lineHeight: 1.5 }}>
+                Paste a Google Sheets URL. The sheet must be shared as
+                <strong> &ldquo;Anyone with the link can view&rdquo;</strong>.
+              </p>
+
+              <input
+                type="url"
+                placeholder="https://docs.google.com/spreadsheets/d/..."
+                value={googleUrl}
+                onChange={(e) => { setGoogleUrl(e.target.value); setGoogleError(null); }}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  border: `1px solid ${googleError ? '#ef4444' : '#d1d5db'}`,
+                  borderRadius: 8,
+                  fontSize: 14,
+                  marginBottom: 12,
+                  outline: 'none',
+                }}
+                onFocus={(e) => { e.target.style.borderColor = '#2563eb'; }}
+                onBlur={(e) => { e.target.style.borderColor = googleError ? '#ef4444' : '#d1d5db'; }}
+              />
+
+              {googleError && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: 8,
+                  padding: '10px 14px',
+                  marginBottom: 12,
+                  fontSize: 13,
+                  color: '#dc2626',
+                }}>
+                  {googleError}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleGoogleImport}
+                disabled={!googleUrl || googleLoading || !isGoogleSheetsUrl(googleUrl)}
+                style={{
+                  width: '100%',
+                  padding: '12px 20px',
+                  background: !googleUrl || !isGoogleSheetsUrl(googleUrl) ? '#d1d5db' : '#2563eb',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: !googleUrl || googleLoading ? 'not-allowed' : 'pointer',
+                  opacity: googleLoading ? 0.7 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                }}
+              >
+                {googleLoading && (
+                  <span style={{
+                    width: 16, height: 16,
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    borderTopColor: '#fff',
+                    borderRadius: '50%',
+                    animation: 'spin 0.6s linear infinite',
+                    display: 'inline-block',
+                  }} />
+                )}
+                {googleLoading ? 'Importing...' : 'Import from Google Sheets'}
+              </button>
+
+              {googleUrl && !isGoogleSheetsUrl(googleUrl) && (
+                <p style={{ fontSize: 12, color: '#9ca3af', marginTop: 8 }}>
+                  Please enter a valid Google Sheets URL (docs.google.com/spreadsheets/d/...)
+                </p>
+              )}
+            </div>
           )}
 
           {loading && (
