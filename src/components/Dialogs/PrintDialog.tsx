@@ -99,7 +99,7 @@ export const PrintDialog: React.FC<PrintDialogProps> = ({ onClose }) => {
       <div className="dialog print-dialog" onClick={(e) => e.stopPropagation()} style={{ width: 400 }}>
         <div className="dialog-header">
           <h2>Print</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -203,10 +203,10 @@ export const PrintDialog: React.FC<PrintDialogProps> = ({ onClose }) => {
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handlePrint}>
+          <button type="button" className="dialog-btn-primary" onClick={handlePrint}>
             <Printer size={14} style={{ marginRight: 6 }} />
             Print
           </button>

@@ -99,7 +99,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
         </div>
 
         <div className="space-y-3">
-          <button
+          <button type="button"
             onClick={() => startSetup('totp')}
             disabled={loading}
             className="w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
@@ -111,7 +111,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
             </div>
           </button>
 
-          <button
+          <button type="button"
             onClick={() => startSetup('sms')}
             disabled={loading}
             className="w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
@@ -123,7 +123,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
             </div>
           </button>
 
-          <button
+          <button type="button"
             onClick={() => startSetup('email')}
             disabled={loading}
             className="w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
@@ -137,7 +137,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
         </div>
 
         {onCancel && (
-          <button
+          <button type="button"
             onClick={onCancel}
             className="w-full mt-4 py-2 text-gray-600 hover:text-gray-800"
           >
@@ -152,7 +152,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
   if (step === 'setup' && method === 'totp') {
     return (
       <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg">
-        <button
+        <button type="button"
           onClick={() => setStep('choose')}
           className="flex items-center gap-1 text-gray-600 hover:text-gray-800 mb-4"
         >
@@ -185,7 +185,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
             <p className="text-sm text-gray-500 text-center mb-2">Or enter this code manually:</p>
             <div className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-lg">
               <code className="text-sm font-mono text-gray-800">{setupData.secret}</code>
-              <button
+              <button type="button"
                 onClick={() => navigator.clipboard.writeText(setupData.secret!)}
                 className="p-1 hover:bg-gray-200 rounded"
               >
@@ -217,7 +217,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
           </div>
         )}
 
-        <button
+        <button type="button"
           onClick={verifySetup}
           disabled={loading || verifyCode.length !== 6}
           className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50"
@@ -253,7 +253,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
                 </div>
               ))}
             </div>
-            <button
+            <button type="button"
               onClick={copyBackupCodes}
               className="w-full mt-2 flex items-center justify-center gap-2 py-2 text-blue-600 hover:text-blue-700"
             >
@@ -263,7 +263,7 @@ export const MFASetup: React.FC<MFASetupProps> = ({ onComplete, onCancel }) => {
           </div>
         )}
 
-        <button
+        <button type="button"
           onClick={onComplete}
           className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
         >
@@ -322,7 +322,7 @@ export const MFAVerify: React.FC<MFAVerifyProps> = ({ onBack }) => {
       <div className="max-w-md w-full mx-4">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {onBack && (
-            <button
+            <button type="button"
               onClick={onBack}
               className="flex items-center gap-1 text-gray-600 hover:text-gray-800 mb-4"
             >
@@ -369,7 +369,7 @@ export const MFAVerify: React.FC<MFAVerifyProps> = ({ onBack }) => {
             />
           </div>
 
-          <button
+          <button type="button"
             onClick={handleVerify}
             disabled={loading || code.length < 6}
             className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all"
@@ -377,7 +377,7 @@ export const MFAVerify: React.FC<MFAVerifyProps> = ({ onBack }) => {
             {loading ? 'Verifying...' : 'Verify'}
           </button>
 
-          <button
+          <button type="button"
             onClick={() => {
               setUseBackup(!useBackup);
               setCode('');

@@ -76,7 +76,7 @@ export const HomeToolbar: React.FC = () => {
     <div className="toolbar-2026">
       {/* TIP-007: Undo/Redo */}
       <div className="toolbar-2026__group" style={{ gap: 2 }}>
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           title="Undo (Ctrl+Z)"
           onClick={() => undo()}
@@ -85,7 +85,7 @@ export const HomeToolbar: React.FC = () => {
         >
           <Undo2 size={16} />
         </button>
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           title="Redo (Ctrl+Y)"
           onClick={() => redo()}
@@ -99,7 +99,7 @@ export const HomeToolbar: React.FC = () => {
       {/* Font Family */}
       <div className="toolbar-2026__group">
         <div className="toolbar-2026__dropdown" ref={fontRef}>
-          <button
+          <button type="button"
             className="toolbar-2026__select"
             style={{ width: 100 }}
             onClick={() => setShowFontDropdown(!showFontDropdown)}
@@ -110,7 +110,7 @@ export const HomeToolbar: React.FC = () => {
           {showFontDropdown && (
             <div className="toolbar-2026__dropdown-menu">
               {FONTS.map((font) => (
-                <button
+                <button type="button"
                   key={font}
                   className={`toolbar-2026__dropdown-item ${font === fontFamily ? 'active' : ''}`}
                   style={{ fontFamily: font }}
@@ -128,7 +128,7 @@ export const HomeToolbar: React.FC = () => {
 
         {/* Font Size */}
         <div className="toolbar-2026__dropdown" ref={sizeRef}>
-          <button
+          <button type="button"
             className="toolbar-2026__input"
             onClick={() => setShowSizeDropdown(!showSizeDropdown)}
           >
@@ -138,7 +138,7 @@ export const HomeToolbar: React.FC = () => {
           {showSizeDropdown && (
             <div className="toolbar-2026__dropdown-menu toolbar-2026__dropdown-menu--narrow">
               {FONT_SIZES.map((size) => (
-                <button
+                <button type="button"
                   key={size}
                   className={`toolbar-2026__dropdown-item ${size === fontSize ? 'active' : ''}`}
                   onClick={() => {
@@ -158,21 +158,21 @@ export const HomeToolbar: React.FC = () => {
 
       {/* Text Formatting */}
       <div className="toolbar-2026__group">
-        <button
+        <button type="button"
           className={`toolbar-2026__btn ${bold ? 'toolbar-2026__btn--active' : ''}`}
           onClick={toggleBold}
           title="Bold (⌘B)"
         >
           <Bold size={15} />
         </button>
-        <button
+        <button type="button"
           className={`toolbar-2026__btn ${italic ? 'toolbar-2026__btn--active' : ''}`}
           onClick={toggleItalic}
           title="Italic (⌘I)"
         >
           <Italic size={15} />
         </button>
-        <button
+        <button type="button"
           className={`toolbar-2026__btn ${underline ? 'toolbar-2026__btn--active' : ''}`}
           onClick={toggleUnderline}
           title="Underline (⌘U)"
@@ -187,7 +187,7 @@ export const HomeToolbar: React.FC = () => {
       <div className="toolbar-2026__group">
         {/* Fill Color */}
         <div className="toolbar-2026__color-picker" ref={fillColorRef}>
-          <button
+          <button type="button"
             className="toolbar-2026__btn toolbar-2026__btn--color"
             onClick={() => setShowFillColorPicker(!showFillColorPicker)}
             title="Fill Color"
@@ -202,7 +202,7 @@ export const HomeToolbar: React.FC = () => {
             <div className="toolbar-2026__color-dropdown">
               <div className="toolbar-2026__color-grid">
                 {COLORS.map((color) => (
-                  <button
+                  <button type="button"
                     key={color}
                     className={`toolbar-2026__color-cell ${color === backgroundColor ? 'active' : ''}`}
                     style={{ backgroundColor: color }}
@@ -213,7 +213,7 @@ export const HomeToolbar: React.FC = () => {
                   />
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="toolbar-2026__color-none"
                 onClick={() => {
                   setBackgroundColor('#FFFFFF');
@@ -228,7 +228,7 @@ export const HomeToolbar: React.FC = () => {
 
         {/* Text Color */}
         <div className="toolbar-2026__color-picker" ref={textColorRef}>
-          <button
+          <button type="button"
             className="toolbar-2026__btn toolbar-2026__btn--color"
             onClick={() => setShowTextColorPicker(!showTextColorPicker)}
             title="Text Color"
@@ -243,7 +243,7 @@ export const HomeToolbar: React.FC = () => {
             <div className="toolbar-2026__color-dropdown">
               <div className="toolbar-2026__color-grid">
                 {COLORS.map((color) => (
-                  <button
+                  <button type="button"
                     key={color}
                     className={`toolbar-2026__color-cell ${color === textColor ? 'active' : ''}`}
                     style={{ backgroundColor: color }}
@@ -254,7 +254,7 @@ export const HomeToolbar: React.FC = () => {
                   />
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="toolbar-2026__color-none"
                 onClick={() => {
                   setTextColor('#000000');
@@ -272,21 +272,21 @@ export const HomeToolbar: React.FC = () => {
 
       {/* Alignment */}
       <div className="toolbar-2026__group">
-        <button
+        <button type="button"
           className={`toolbar-2026__btn ${align === 'left' ? 'toolbar-2026__btn--active' : ''}`}
           onClick={() => setAlign('left')}
           title="Align Left"
         >
           <AlignLeft size={15} />
         </button>
-        <button
+        <button type="button"
           className={`toolbar-2026__btn ${align === 'center' ? 'toolbar-2026__btn--active' : ''}`}
           onClick={() => setAlign('center')}
           title="Align Center"
         >
           <AlignCenter size={15} />
         </button>
-        <button
+        <button type="button"
           className={`toolbar-2026__btn ${align === 'right' ? 'toolbar-2026__btn--active' : ''}`}
           onClick={() => setAlign('right')}
           title="Align Right"
@@ -302,14 +302,14 @@ export const HomeToolbar: React.FC = () => {
 
       {/* Number Format */}
       <div className="toolbar-2026__group">
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           onClick={() => setNumberFormat('$#,##0.00')}
           title="Currency Format"
         >
           <DollarSign size={15} />
         </button>
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           onClick={() => setNumberFormat('0.00%')}
           title="Percent Format"

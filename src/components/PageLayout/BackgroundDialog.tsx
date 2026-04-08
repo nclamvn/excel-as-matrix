@@ -74,7 +74,7 @@ export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
       <div className="background-dialog" onClick={e => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>Sheet Background</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -94,7 +94,7 @@ export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
             {previewUrl ? (
               <div className="preview-container">
                 <img src={previewUrl} alt="Background preview" />
-                <button
+                <button type="button"
                   className="remove-btn"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -144,10 +144,10 @@ export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary" onClick={handleApply}>
+          <button type="button" className="btn-primary" onClick={handleApply}>
             Apply
           </button>
         </div>

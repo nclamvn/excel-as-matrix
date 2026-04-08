@@ -8,6 +8,10 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { createNodeWebSocket } from '@hono/node-ws';
 import { aiRouter } from './routes/ai';
+import { webhookRouter } from './routes/webhooks';
+import { billingRouter } from './routes/billing';
+import { scimRouter } from './routes/scim';
+import { complianceRouter } from './routes/compliance';
 import { wsManager } from './ws/WebSocketManager';
 
 const app = new Hono();
@@ -69,6 +73,18 @@ app.get('/api/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
 
 // AI routes
 app.route('/api/ai', aiRouter);
+
+// Webhook routes
+app.route('/api/webhooks', webhookRouter);
+
+// Billing routes (Stripe)
+app.route('/api/billing', billingRouter);
+
+// SCIM 2.0 provisioning
+app.route('/scim/v2', scimRouter);
+
+// Compliance / SOC2 health checks
+app.route('/api/compliance', complianceRouter);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Start Server

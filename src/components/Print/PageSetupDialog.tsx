@@ -65,26 +65,26 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
       <div className="dialog page-setup-dialog" onClick={e => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Page Setup</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
         {/* Tabs */}
         <div className="page-setup-tabs">
-          <button
+          <button type="button"
             className={activeTab === 'page' ? 'active' : ''}
             onClick={() => setActiveTab('page')}
           >
             Page
           </button>
-          <button
+          <button type="button"
             className={activeTab === 'margins' ? 'active' : ''}
             onClick={() => setActiveTab('margins')}
           >
             Margins
           </button>
-          <button
+          <button type="button"
             className={activeTab === 'headerFooter' ? 'active' : ''}
             onClick={() => setActiveTab('headerFooter')}
           >
@@ -336,7 +336,7 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                 <label>Insert codes:</label>
                 <div className="code-buttons">
                   {Object.entries(HEADER_FOOTER_CODES).map(([code, label]) => (
-                    <button
+                    <button type="button"
                       key={code}
                       className="code-btn"
                       title={`Insert ${label}`}
@@ -355,7 +355,7 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Close
           </button>
         </div>

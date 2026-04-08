@@ -63,7 +63,7 @@ export const TextOrientationDropdown: React.FC = () => {
 
   return (
     <div className="text-orientation-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="toolbar-2026__btn toolbar-2026__btn--dropdown"
         onClick={() => setIsOpen(!isOpen)}
         title="Text Orientation"
@@ -78,7 +78,7 @@ export const TextOrientationDropdown: React.FC = () => {
       {isOpen && (
         <div className="orientation-menu">
           {ORIENTATION_OPTIONS.map((option) => (
-            <button
+            <button type="button"
               key={option.id}
               className="orientation-item"
               onClick={() => handleSelect(option)}
@@ -101,7 +101,7 @@ export const TextOrientationDropdown: React.FC = () => {
 
           <div className="orientation-menu-divider" />
 
-          <button
+          <button type="button"
             className="orientation-item"
             onClick={() => { setShowCustomDialog(true); setIsOpen(false); }}
           >

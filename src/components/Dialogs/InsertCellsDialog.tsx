@@ -50,7 +50,7 @@ export const InsertCellsDialog: React.FC<InsertCellsDialogProps> = ({ onClose })
       <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 320 }}>
         <div className="dialog-header">
           <h2>Insert Cells</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -102,10 +102,10 @@ export const InsertCellsDialog: React.FC<InsertCellsDialogProps> = ({ onClose })
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleInsert}>
+          <button type="button" className="dialog-btn-primary" onClick={handleInsert}>
             OK
           </button>
         </div>

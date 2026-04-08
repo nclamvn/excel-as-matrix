@@ -63,7 +63,7 @@ export const DuplicatesView: React.FC<DuplicatesViewProps> = ({
           <span className="duplicates-view__total">{totalDuplicates} duplicates</span>
         </div>
         {onRemoveAllDuplicates && totalDuplicates > 0 && (
-          <button
+          <button type="button"
             className="duplicates-view__remove-all"
             onClick={onRemoveAllDuplicates}
           >
@@ -141,7 +141,7 @@ const DuplicateGroupCard: React.FC<DuplicateGroupCardProps> = ({
         </div>
         <div className="duplicate-group__actions">
           {onMerge && (
-            <button
+            <button type="button"
               className="duplicate-group__action"
               onClick={(e) => {
                 e.stopPropagation();
@@ -247,7 +247,7 @@ const DuplicateRowItem: React.FC<DuplicateRowItemProps> = ({
     ))}
     <div className="duplicate-row__actions">
       {onKeep && (
-        <button
+        <button type="button"
           className="duplicate-row__action duplicate-row__action--keep"
           onClick={onKeep}
           title="Keep this row"
@@ -256,7 +256,7 @@ const DuplicateRowItem: React.FC<DuplicateRowItemProps> = ({
         </button>
       )}
       {onRemove && !isFirst && (
-        <button
+        <button type="button"
           className="duplicate-row__action duplicate-row__action--remove"
           onClick={onRemove}
           title="Remove this row"

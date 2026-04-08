@@ -34,7 +34,7 @@ export const BorderSelector: React.FC<BorderSelectorProps> = ({ value, onChange 
 
   return (
     <div className="border-selector" ref={ref}>
-      <button
+      <button type="button"
         className="border-selector-trigger"
         onClick={() => setOpen(!isOpen)}
         title="Borders"
@@ -46,7 +46,7 @@ export const BorderSelector: React.FC<BorderSelectorProps> = ({ value, onChange 
       {isOpen && (
         <div className="border-selector-dropdown">
           {BORDER_OPTIONS.map(option => (
-            <button
+            <button type="button"
               key={option.id}
               className={`border-option ${value === option.id ? 'selected' : ''}`}
               onClick={() => {
@@ -59,13 +59,13 @@ export const BorderSelector: React.FC<BorderSelectorProps> = ({ value, onChange 
             </button>
           ))}
           <div className="border-divider" />
-          <button className="border-option">
+          <button type="button" className="border-option">
             <span>Draw Borders</span>
           </button>
-          <button className="border-option">
+          <button type="button" className="border-option">
             <span>Line Color</span>
           </button>
-          <button className="border-option">
+          <button type="button" className="border-option">
             <span>Line Style</span>
           </button>
         </div>

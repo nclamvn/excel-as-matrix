@@ -47,7 +47,7 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
         <div className="preview-section-title">Gradient Fill</div>
         <div className="preview-grid">
           {gradientPresets.map((preset) => (
-            <button
+            <button type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
@@ -68,7 +68,7 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
         <div className="preview-section-title">Solid Fill</div>
         <div className="preview-grid">
           {solidPresets.map((preset) => (
-            <button
+            <button type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
@@ -86,7 +86,7 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
       </div>
 
       <div className="preview-footer">
-        <button className="more-options-btn">
+        <button type="button" className="more-options-btn">
           More Data Bars...
         </button>
       </div>

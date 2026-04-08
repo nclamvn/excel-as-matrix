@@ -29,10 +29,10 @@ export const FontGroup: React.FC = () => {
         <div className="font-row">
           <FontPicker value={fontFamily} onChange={setFontFamily} />
           <FontSizePicker value={fontSize} onChange={setFontSize} />
-          <button className="size-button" onClick={() => setFontSize(fontSize + 1)} title="Increase Font Size">
+          <button type="button" className="size-button" onClick={() => setFontSize(fontSize + 1)} title="Increase Font Size">
             <ChevronUp className="w-3 h-3" />
           </button>
-          <button className="size-button" onClick={() => setFontSize(Math.max(1, fontSize - 1))} title="Decrease Font Size">
+          <button type="button" className="size-button" onClick={() => setFontSize(Math.max(1, fontSize - 1))} title="Decrease Font Size">
             <ChevronDown className="w-3 h-3" />
           </button>
         </div>

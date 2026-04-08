@@ -103,7 +103,7 @@ export const ThemesDropdown: React.FC<ThemesDropdownProps> = ({ sheetId: _sheetI
 
   return (
     <div className="themes-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="toolbar-2026__btn"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -121,7 +121,7 @@ export const ThemesDropdown: React.FC<ThemesDropdownProps> = ({ sheetId: _sheetI
           <div className="menu-title">Office Themes</div>
           <div className="themes-grid">
             {THEMES.map(theme => (
-              <button
+              <button type="button"
                 key={theme.id}
                 className={`theme-item ${selectedTheme === theme.id ? 'active' : ''}`}
                 onClick={() => handleSelectTheme(theme.id)}

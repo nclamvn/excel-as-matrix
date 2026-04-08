@@ -270,7 +270,7 @@ export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = ({
           </span>
           <div className="chart-type-grid">
             {options.map((option) => (
-              <button
+              <button type="button"
                 key={option.type}
                 className={`chart-type-button ${
                   selectedType === option.type ? 'selected' : ''

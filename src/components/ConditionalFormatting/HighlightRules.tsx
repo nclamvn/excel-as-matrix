@@ -179,8 +179,8 @@ export const HighlightRules: React.FC<HighlightRulesProps> = ({ onSelect }) => {
           </div>
         </div>
         <div className="dialog-footer">
-          <button className="btn-cancel" onClick={() => setShowDialog(null)}>Cancel</button>
-          <button className="btn-ok" onClick={handleApply}>OK</button>
+          <button type="button" className="btn-cancel" onClick={() => setShowDialog(null)}>Cancel</button>
+          <button type="button" className="btn-ok" onClick={handleApply}>OK</button>
         </div>
       </div>
     );
@@ -189,7 +189,7 @@ export const HighlightRules: React.FC<HighlightRulesProps> = ({ onSelect }) => {
   return (
     <div className="highlight-rules-menu">
       {RULE_CONFIGS.map((rule) => (
-        <button
+        <button type="button"
           key={rule.type}
           className="highlight-rule-item"
           onClick={() => setShowDialog(rule.type)}

@@ -219,7 +219,7 @@ export const CFRuleDialog: React.FC<CFRuleDialogProps> = ({ onClose, onSave }) =
       <div className="cf-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="cf-dialog-header">
           <h2>New Formatting Rule</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -274,8 +274,8 @@ export const CFRuleDialog: React.FC<CFRuleDialogProps> = ({ onClose, onSave }) =
         </div>
 
         <div className="cf-dialog-footer">
-          <button className="btn-cancel" onClick={onClose}>Cancel</button>
-          <button className="btn-ok" onClick={handleSave}>OK</button>
+          <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+          <button type="button" className="btn-ok" onClick={handleSave}>OK</button>
         </div>
       </div>
     </div>

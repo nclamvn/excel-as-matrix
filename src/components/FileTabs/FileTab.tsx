@@ -116,7 +116,7 @@ export const FileTab: React.FC<FileTabProps> = ({
       )}
 
       {!tab.isPinned && (
-        <button
+        <button type="button"
           className="tab-close-btn"
           onClick={onClose}
           title="Close (Ctrl+W)"

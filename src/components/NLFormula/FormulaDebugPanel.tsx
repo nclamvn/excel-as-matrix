@@ -77,7 +77,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
           </span>
           <span className="formula-debug-panel__title">No Issues Found</span>
           {onClose && (
-            <button className="formula-debug-panel__close" onClick={onClose}>
+            <button type="button" className="formula-debug-panel__close" onClick={onClose}>
               ×
             </button>
           )}
@@ -100,7 +100,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
         </span>
         <span className="formula-debug-panel__title">Issue Found</span>
         {onClose && (
-          <button className="formula-debug-panel__close" onClick={onClose}>
+          <button type="button" className="formula-debug-panel__close" onClick={onClose}>
             ×
           </button>
         )}
@@ -170,7 +170,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
 
           {/* Apply Fix Button */}
           <div className="formula-debug-panel__actions">
-            <button
+            <button type="button"
               className="formula-debug-panel__action formula-debug-panel__action--primary"
               onClick={() => {
                 if (suggestedFixes[selectedFix]) {
@@ -181,7 +181,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
               Apply Fix
             </button>
             {onClose && (
-              <button
+              <button type="button"
                 className="formula-debug-panel__action formula-debug-panel__action--secondary"
                 onClick={onClose}
               >

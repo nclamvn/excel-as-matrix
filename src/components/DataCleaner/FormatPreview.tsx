@@ -96,7 +96,7 @@ export const FormatPreview: React.FC<FormatPreviewProps> = ({
           <span className="format-preview__label">can be standardized</span>
         </div>
         {onApply && selectedChanges.length > 0 && (
-          <button
+          <button type="button"
             className="format-preview__apply-selected"
             onClick={() => onApply(selectedChanges)}
           >
@@ -171,14 +171,14 @@ const FormatTypeCard: React.FC<FormatTypeCardProps> = ({
         </div>
         <div className="format-type-card__actions">
           {onApply && (
-            <button
+            <button type="button"
               className="format-type-card__apply"
               onClick={() => onApply(summary.type)}
             >
               Apply All
             </button>
           )}
-          <button className="format-type-card__expand" onClick={onToggleExpand}>
+          <button type="button" className="format-type-card__expand" onClick={onToggleExpand}>
             <ChevronIcon expanded={isExpanded} />
           </button>
         </div>
@@ -200,7 +200,7 @@ const FormatTypeCard: React.FC<FormatTypeCardProps> = ({
               <span className="format-type-card__arrow">→</span>
               <span className="format-type-card__standardized">{example.standardizedValue}</span>
               {onReject && (
-                <button
+                <button type="button"
                   className="format-type-card__reject"
                   onClick={() => onReject(example)}
                   title="Reject this change"

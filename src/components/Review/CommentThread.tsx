@@ -79,18 +79,18 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
         </div>
         <div className="comment-actions">
           {comment.resolved ? (
-            <button onClick={(e) => { e.stopPropagation(); reopenComment(comment.id, sheetId); }} title="Reopen">
+            <button type="button" onClick={(e) => { e.stopPropagation(); reopenComment(comment.id, sheetId); }} title="Reopen">
               <RotateCcw size={14} />
             </button>
           ) : (
-            <button onClick={(e) => { e.stopPropagation(); resolveComment(comment.id, sheetId); }} title="Resolve">
+            <button type="button" onClick={(e) => { e.stopPropagation(); resolveComment(comment.id, sheetId); }} title="Resolve">
               <Check size={14} />
             </button>
           )}
-          <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} title="Edit">
+          <button type="button" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} title="Edit">
             <Pencil size={14} />
           </button>
-          <button onClick={(e) => { e.stopPropagation(); deleteComment(comment.id, sheetId); }} title="Delete">
+          <button type="button" onClick={(e) => { e.stopPropagation(); deleteComment(comment.id, sheetId); }} title="Delete">
             <Trash2 size={14} />
           </button>
         </div>
@@ -105,8 +105,8 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
             onClick={(e) => e.stopPropagation()}
           />
           <div className="editor-actions">
-            <button onClick={(e) => { e.stopPropagation(); setIsEditing(false); }}>Cancel</button>
-            <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="primary">Save</button>
+            <button type="button" onClick={(e) => { e.stopPropagation(); setIsEditing(false); }}>Cancel</button>
+            <button type="button" onClick={(e) => { e.stopPropagation(); handleSave(); }} className="primary">Save</button>
           </div>
         </div>
       ) : (
@@ -129,7 +129,7 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
                   </div>
                   <span className="author-name">{replyAuthor?.name}</span>
                   <span className="reply-time">{formatTime(reply.createdAt)}</span>
-                  <button
+                  <button type="button"
                     className="delete-reply"
                     onClick={(e) => { e.stopPropagation(); deleteReply(comment.id, reply.id, sheetId); }}
                   >
@@ -156,12 +156,12 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
                 onClick={(e) => e.stopPropagation()}
               />
               <div className="editor-actions">
-                <button onClick={(e) => { e.stopPropagation(); setIsReplying(false); }}>Cancel</button>
-                <button onClick={(e) => { e.stopPropagation(); handleReply(); }} className="primary">Reply</button>
+                <button type="button" onClick={(e) => { e.stopPropagation(); setIsReplying(false); }}>Cancel</button>
+                <button type="button" onClick={(e) => { e.stopPropagation(); handleReply(); }} className="primary">Reply</button>
               </div>
             </div>
           ) : (
-            <button className="reply-btn" onClick={(e) => { e.stopPropagation(); setIsReplying(true); }}>
+            <button type="button" className="reply-btn" onClick={(e) => { e.stopPropagation(); setIsReplying(true); }}>
               Reply...
             </button>
           )}

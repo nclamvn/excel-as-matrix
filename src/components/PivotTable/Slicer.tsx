@@ -189,7 +189,7 @@ export const Slicer: React.FC<SlicerProps> = ({
           <span className="slicer-title">{slicer.name}</span>
           <div className="slicer-actions">
             {hasActiveFilter && (
-              <button
+              <button type="button"
                 className="slicer-action-btn"
                 onClick={handleClearFilter}
                 title="Clear Filter"
@@ -197,7 +197,7 @@ export const Slicer: React.FC<SlicerProps> = ({
                 <Filter size={14} />
               </button>
             )}
-            <button
+            <button type="button"
               className="slicer-action-btn"
               onClick={() => setShowMenu(!showMenu)}
               title="Options"
@@ -209,16 +209,16 @@ export const Slicer: React.FC<SlicerProps> = ({
           {/* Menu Dropdown */}
           {showMenu && (
             <div className="slicer-menu" onClick={e => e.stopPropagation()}>
-              <button onClick={handleSelectAll}>
+              <button type="button" onClick={handleSelectAll}>
                 <Check size={14} />
                 Select All
               </button>
-              <button onClick={handleClearFilter}>
+              <button type="button" onClick={handleClearFilter}>
                 <X size={14} />
                 Clear Filter
               </button>
               <div className="menu-divider" />
-              <button onClick={handleDelete} className="danger">
+              <button type="button" onClick={handleDelete} className="danger">
                 <Trash2 size={14} />
                 Remove Slicer
               </button>
@@ -236,7 +236,7 @@ export const Slicer: React.FC<SlicerProps> = ({
           }}
         >
           {uniqueValues.map((value, index) => (
-            <button
+            <button type="button"
               key={index}
               className={`slicer-value ${isSelected(value) ? 'selected' : 'unselected'}`}
               style={{

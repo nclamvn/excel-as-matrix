@@ -154,7 +154,7 @@ export const MobileSheetTabs: React.FC = () => {
         data-testid="mobile-sheet-tabs"
       >
         {/* Swipe-up indicator */}
-        <button
+        <button type="button"
           onClick={() => setShowFullList(true)}
           className={`
             flex-shrink-0 flex items-center justify-center w-8 h-full
@@ -227,7 +227,7 @@ export const MobileSheetTabs: React.FC = () => {
         </div>
 
         {/* Add sheet button */}
-        <button
+        <button type="button"
           onClick={handleAddSheet}
           className={`
             flex-shrink-0 flex items-center justify-center
@@ -274,7 +274,7 @@ export const MobileSheetTabs: React.FC = () => {
               <h3 className={`font-semibold text-sm ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
                 All Sheets ({orderedSheets.length})
               </h3>
-              <button
+              <button type="button"
                 onClick={() => setShowFullList(false)}
                 className={`p-1 rounded-full ${isDark ? 'hover:bg-neutral-800' : 'hover:bg-neutral-100'}`}
                 aria-label="Close sheet list"
@@ -288,7 +288,7 @@ export const MobileSheetTabs: React.FC = () => {
               {orderedSheets.map((sheet, index) => {
                 const isActive = sheet.id === activeSheetId;
                 return (
-                  <button
+                  <button type="button"
                     key={sheet.id}
                     onClick={() => {
                       setActiveSheet(sheet.id);
@@ -334,7 +334,7 @@ export const MobileSheetTabs: React.FC = () => {
 
             {/* Add sheet in list view */}
             <div className={`px-4 py-3 border-t ${isDark ? 'border-neutral-700' : 'border-neutral-200'}`}>
-              <button
+              <button type="button"
                 onClick={() => {
                   handleAddSheet();
                   setShowFullList(false);

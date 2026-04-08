@@ -57,7 +57,7 @@ export const FontSizePicker: React.FC<FontSizePickerProps> = ({ value, onChange 
           onKeyDown={handleKeyDown}
           className="font-size-input"
         />
-        <button
+        <button type="button"
           className="font-size-dropdown-trigger"
           onClick={() => setOpen(!isOpen)}
         >
@@ -68,7 +68,7 @@ export const FontSizePicker: React.FC<FontSizePickerProps> = ({ value, onChange 
       {isOpen && (
         <div className="font-size-dropdown">
           {FONT_SIZES.map(size => (
-            <button
+            <button type="button"
               key={size}
               className={`font-size-option ${size === value ? 'selected' : ''}`}
               onClick={() => {

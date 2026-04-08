@@ -200,7 +200,7 @@ export const NLFormulaBar: React.FC<NLFormulaBarProps> = ({
       {/* Action buttons */}
       <div className="nl-formula-bar__actions">
         {interpretation?.success && (
-          <button
+          <button type="button"
             className="nl-formula-bar__action nl-formula-bar__action--accept"
             onClick={handleAcceptInterpretation}
             title="Accept formula (Enter)"
@@ -208,7 +208,7 @@ export const NLFormulaBar: React.FC<NLFormulaBarProps> = ({
             <CheckIcon />
           </button>
         )}
-        <button
+        <button type="button"
           className="nl-formula-bar__action"
           onClick={() => {
             onChange('');

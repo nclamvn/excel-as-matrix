@@ -70,7 +70,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
 
         {/* Edit/View toggle */}
         <div className="flex items-center border rounded overflow-hidden">
-          <button
+          <button type="button"
             onClick={() => setEditMode(true)}
             className={`px-3 py-1 text-sm ${
               isEditMode
@@ -80,7 +80,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
           >
             Edit
           </button>
-          <button
+          <button type="button"
             onClick={() => setEditMode(false)}
             className={`px-3 py-1 text-sm ${
               !isEditMode
@@ -97,7 +97,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
         {/* Add Widget Button */}
         {isEditMode && (
           <div className="relative">
-            <button
+            <button type="button"
               onClick={() => setShowAddMenu(!showAddMenu)}
               className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
             >
@@ -109,7 +109,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
 
             {showAddMenu && (
               <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-20 min-w-[150px]">
-                <button
+                <button type="button"
                   onClick={() => handleAddWidget('KPI')}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-gray-50"
                 >
@@ -119,7 +119,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
                   </svg>
                   KPI Card
                 </button>
-                <button
+                <button type="button"
                   onClick={() => handleAddWidget('Chart')}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-gray-50"
                 >
@@ -129,7 +129,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
                   </svg>
                   Chart
                 </button>
-                <button
+                <button type="button"
                   onClick={() => handleAddWidget('Text')}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-gray-50"
                 >
@@ -140,7 +140,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
                   Text
                 </button>
                 <hr className="my-1" />
-                <button
+                <button type="button"
                   onClick={() => handleAddWidget('Table')}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-gray-50"
                 >
@@ -157,7 +157,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
 
         {/* Theme Selector */}
         <div className="relative">
-          <button
+          <button type="button"
             onClick={() => setShowThemeMenu(!showThemeMenu)}
             className="flex items-center gap-1 px-3 py-1.5 text-sm border rounded hover:bg-gray-50"
           >
@@ -171,7 +171,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
           {showThemeMenu && (
             <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-20">
               {Object.entries(DEFAULT_THEMES).map(([name, theme]) => (
-                <button
+                <button type="button"
                   key={name}
                   onClick={() => handleThemeChange(name)}
                   className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-gray-50
@@ -199,7 +199,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
         </div>
 
         {/* Presentation Mode */}
-        <button
+        <button type="button"
           onClick={() => setPresentationMode(true)}
           className="flex items-center gap-1 px-3 py-1.5 text-sm border rounded hover:bg-gray-50"
           title="Presentation mode"
@@ -211,7 +211,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({ dashboard })
         </button>
 
         {/* More Options */}
-        <button className="p-1.5 border rounded hover:bg-gray-50" title="More options">
+        <button type="button" className="p-1.5 border rounded hover:bg-gray-50" title="More options">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />

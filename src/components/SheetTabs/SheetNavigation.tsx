@@ -16,16 +16,16 @@ export const SheetNavigation: React.FC<SheetNavigationProps> = ({
 }) => {
   return (
     <div className="sheet-navigation">
-      <button onClick={onFirst} title="First Sheet">
+      <button type="button" onClick={onFirst} title="First Sheet">
         <ChevronsLeft className="w-4 h-4" />
       </button>
-      <button onClick={onPrev} title="Previous Sheet">
+      <button type="button" onClick={onPrev} title="Previous Sheet">
         <ChevronLeft className="w-4 h-4" />
       </button>
-      <button onClick={onNext} title="Next Sheet">
+      <button type="button" onClick={onNext} title="Next Sheet">
         <ChevronRight className="w-4 h-4" />
       </button>
-      <button onClick={onLast} title="Last Sheet">
+      <button type="button" onClick={onLast} title="Last Sheet">
         <ChevronsRight className="w-4 h-4" />
       </button>
     </div>

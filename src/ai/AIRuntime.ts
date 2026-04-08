@@ -26,6 +26,15 @@ import { ContextAssembler } from './context/ContextAssembler';
 import { GroundingManager } from './grounding/GroundingManager';
 import { SourceTracker } from './grounding/SourceTracker';
 
+// Audit imports
+import { aiUsageLogger } from '../audit/AIUsageLogger';
+
+// Reasoning trace
+import { reasoningTracer } from './reasoning/ReasoningTracer';
+
+// Proficiency
+import { proficiencyTracker } from './proficiency/ProficiencyTracker';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // AI Runtime Class
 // ─────────────────────────────────────────────────────────────────────────────
@@ -214,8 +223,20 @@ export class AIRuntime {
     };
     this.conversation!.messages.push(userMessage);
 
+    // Track proficiency signal
+    proficiencyTracker.recordAIInteraction();
+
+    // Start reasoning trace
+    const msgId = userMessage.id;
+    reasoningTracer.startTrace(this.conversation!.id, msgId);
+    reasoningTracer.traceIntentParse(content, 'analyzing', 0.9);
+
     // Update context
     this.conversation!.context = this.buildContext();
+    reasoningTracer.traceContextRead(
+      this.conversation!.context.sheet?.usedRange || 'A1',
+      this.conversation!.context.sheet?.cellCount || 0
+    );
 
     // Build system prompt with context
     const systemPrompt = this.buildSystemPrompt();
@@ -235,6 +256,13 @@ export class AIRuntime {
         processedToolCalls.push(result);
       }
 
+      // Complete reasoning trace
+      reasoningTracer.addStep('output', 'Generated response',
+        `Response: ${response.message.slice(0, 100)}...`,
+        { confidence: 0.9, output: `${response.tokensUsed} tokens` }
+      );
+      const trace = reasoningTracer.completeTrace();
+
       // Create assistant message
       const assistantMessage: AIMessage = {
         id: uuidv4(),
@@ -244,6 +272,7 @@ export class AIRuntime {
         metadata: {
           tokensUsed: response.tokensUsed,
           toolCalls: processedToolCalls,
+          reasoningTraceId: trace?.id,
         },
       };
 
@@ -331,22 +360,59 @@ export class AIRuntime {
       contextInfo += `\n\n## Active Sheet\n- Name: ${context.sheet.name}\n- Used Range: ${context.sheet.usedRange}\n- Total Cells: ${context.sheet.cellCount}\n- Formulas: ${context.sheet.formulaCount}`;
     }
 
-    // Add assembled context info if available
+    // Add cross-sheet context from assembled context
     if (this.lastAssembledContext) {
       const meta = this.lastAssembledContext.metadata;
+      const schema = this.lastAssembledContext.schemaContext;
+
       contextInfo += `\n\n## Context Assembly\n- Tokens Used: ${meta.totalTokens}\n- Budget Remaining: ${meta.budgetRemaining}`;
 
       if (meta.warnings.length > 0) {
         contextInfo += `\n- Warnings: ${meta.warnings.join(', ')}`;
       }
+
+      // Cross-sheet awareness
+      if (schema.tables.length > 0) {
+        contextInfo += `\n\n## Workbook Structure (${schema.tables.length} sheets)`;
+        for (const table of schema.tables) {
+          contextInfo += `\n- **${table.name}**: ${table.range}, ${table.rowCount} rows`;
+          if (table.hasHeaders && table.columns.length > 0) {
+            contextInfo += `, columns: [${table.columns.slice(0, 10).join(', ')}${table.columns.length > 10 ? '...' : ''}]`;
+          }
+        }
+      }
+
+      // Cross-sheet references
+      if (schema.semanticTypes.length > 0) {
+        contextInfo += `\n\n## Cross-Sheet References`;
+        for (const ref of schema.semanticTypes.slice(0, 20)) {
+          contextInfo += `\n- ${ref}`;
+        }
+        if (schema.semanticTypes.length > 20) {
+          contextInfo += `\n- ... and ${schema.semanticTypes.length - 20} more`;
+        }
+      }
     }
+
+    // Autonomy mode instruction
+    if (this.config.autonomyMode === 'autopilot') {
+      contextInfo += `\n\n## Autonomy Mode: AUTOPILOT
+You may execute low-risk read operations and small writes (≤${this.config.autoApprove.maxCells} cells) without asking for approval. Always ask before high-risk or bulk operations.`;
+    } else {
+      contextInfo += `\n\n## Autonomy Mode: COPILOT
+Always propose changes and wait for user approval before executing writes. Use propose_action for any modifications.`;
+    }
+
+    // User proficiency adaptation
+    contextInfo += proficiencyTracker.getSystemPromptAddon();
 
     // Add grounding instructions
     contextInfo += `\n\n## Grounding Requirements
 When making claims about data, always cite your sources using these markers:
 - [📍CellRef] for direct cell reads (e.g., [📍A1] = 100)
 - [🔢Formula] for computed values (e.g., [🔢SUM(A1:A10)] = 550)
-- [🤔] for inferred conclusions with reasoning`;
+- [🤔] for inferred conclusions with reasoning
+- Use Sheet1!A1 notation for cross-sheet references`;
 
     return AI_SYSTEM_PROMPT + contextInfo;
   }
@@ -357,8 +423,19 @@ When making claims about data, always cite your sources using these markers:
 
   private async processToolCall(toolCall: AIToolCall): Promise<AIToolCall> {
     const tool = AI_TOOLS.find((t) => t.name === toolCall.tool);
+    const startTime = Date.now();
 
     if (!tool) {
+      aiUsageLogger.logToolExecution({
+        conversationId: this.conversation?.id || 'unknown',
+        toolName: toolCall.tool,
+        inputSummary: 'unknown tool',
+        outputSummary: 'failed',
+        durationMs: Date.now() - startTime,
+        status: 'error',
+        errorMessage: `Unknown tool: ${toolCall.tool}`,
+      }).catch(() => {});
+
       return {
         ...toolCall,
         status: 'failed',
@@ -372,6 +449,15 @@ When making claims about data, always cite your sources using these markers:
       const action = this.createPendingAction(toolCall);
       this.conversation?.pendingActions.push(action);
 
+      aiUsageLogger.logToolExecution({
+        conversationId: this.conversation?.id || 'unknown',
+        toolName: toolCall.tool,
+        inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
+        outputSummary: 'pending approval',
+        durationMs: Date.now() - startTime,
+        status: 'pending',
+      }).catch(() => {});
+
       return {
         ...toolCall,
         status: 'pending',
@@ -381,12 +467,32 @@ When making claims about data, always cite your sources using these markers:
     // Execute tool
     try {
       const result = await this.executor.execute(toolCall);
+
+      aiUsageLogger.logToolExecution({
+        conversationId: this.conversation?.id || 'unknown',
+        toolName: toolCall.tool,
+        inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
+        outputSummary: 'success',
+        durationMs: Date.now() - startTime,
+        status: 'success',
+      }).catch(() => {});
+
       return {
         ...toolCall,
         status: 'executed',
         result,
       };
     } catch (error) {
+      aiUsageLogger.logToolExecution({
+        conversationId: this.conversation?.id || 'unknown',
+        toolName: toolCall.tool,
+        inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
+        outputSummary: 'failed',
+        durationMs: Date.now() - startTime,
+        status: 'error',
+        errorMessage: error instanceof Error ? error.message : 'Execution failed',
+      }).catch(() => {});
+
       return {
         ...toolCall,
         status: 'failed',
@@ -399,6 +505,27 @@ When making claims about data, always cite your sources using these markers:
     toolCall: AIToolCall,
     tool: (typeof AI_TOOLS)[number]
   ): boolean {
+    // Autopilot mode: auto-approve low-risk actions
+    if (this.config.autonomyMode === 'autopilot') {
+      // Never auto-approve high-risk in any mode
+      if (tool.riskLevel === 'high') return false;
+
+      // In autopilot, approve low-risk automatically
+      if (tool.riskLevel === 'low') return true;
+
+      // Medium risk: check cell count
+      if (toolCall.tool === 'write_range') {
+        const values = toolCall.arguments.values as unknown[][];
+        if (values) {
+          const cellCount = values.reduce((acc, row) => acc + row.length, 0);
+          return cellCount <= this.config.autoApprove.maxCells;
+        }
+      }
+
+      return true;
+    }
+
+    // Copilot mode: use explicit autoApprove settings
     if (!this.config.autoApprove.enabled) {
       return false;
     }
@@ -419,6 +546,21 @@ When making claims about data, always cite your sources using these markers:
     }
 
     return true;
+  }
+
+  /**
+   * Set the AI autonomy mode
+   */
+  setAutonomyMode(mode: 'copilot' | 'autopilot'): void {
+    this.config.autonomyMode = mode;
+    this.client.updateConfig(this.config);
+  }
+
+  /**
+   * Get current autonomy mode
+   */
+  getAutonomyMode(): 'copilot' | 'autopilot' {
+    return this.config.autonomyMode;
   }
 
   private createPendingAction(toolCall: AIToolCall): AIProposedAction {
@@ -469,6 +611,14 @@ When making claims about data, always cite your sources using these markers:
     this.conversation.history.push(historyEntry);
     this.conversation.pendingActions.splice(actionIndex, 1);
 
+    // Log approval
+    aiUsageLogger.logToolDecision({
+      conversationId: this.conversation.id,
+      toolName: action.type,
+      actionId,
+      approved: true,
+    }).catch(() => {});
+
     return true;
   }
 
@@ -484,6 +634,15 @@ When making claims about data, always cite your sources using these markers:
     action.status = 'rejected';
 
     this.conversation.pendingActions.splice(actionIndex, 1);
+
+    // Log rejection
+    aiUsageLogger.logToolDecision({
+      conversationId: this.conversation.id,
+      toolName: action.type,
+      actionId,
+      approved: false,
+    }).catch(() => {});
+
     return true;
   }
 

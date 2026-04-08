@@ -80,7 +80,7 @@ export const FormulaExplanation: React.FC<FormulaExplanationProps> = ({
           <InfoIcon /> Formula Explanation
         </h4>
         {onClose && (
-          <button className="formula-explanation__close" onClick={onClose}>
+          <button type="button" className="formula-explanation__close" onClick={onClose}>
             <CloseIcon />
           </button>
         )}
@@ -95,7 +95,7 @@ export const FormulaExplanation: React.FC<FormulaExplanationProps> = ({
       <p className="formula-explanation__summary">{explanation.summary}</p>
 
       {/* Steps toggle */}
-      <button
+      <button type="button"
         className="formula-explanation__toggle"
         onClick={() => setShowSteps(!showSteps)}
       >

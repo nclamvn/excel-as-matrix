@@ -170,26 +170,26 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Data Validation</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-700">
             ✕
           </button>
         </div>
 
         {/* Tabs */}
         <div className="flex border-b">
-          <button
+          <button type="button"
             onClick={() => setActiveTab('settings')}
             className={`px-4 py-2 text-sm ${activeTab === 'settings' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
           >
             Settings
           </button>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('input')}
             className={`px-4 py-2 text-sm ${activeTab === 'input' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
           >
             Input Message
           </button>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('error')}
             className={`px-4 py-2 text-sm ${activeTab === 'error' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
           >
@@ -401,7 +401,7 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-200 flex justify-between">
           <div className="flex gap-2">
-            <button
+            <button type="button"
               onClick={handleClearValidation}
               className="px-3 py-1 text-sm text-red-600 hover:text-red-800"
             >
@@ -409,13 +409,13 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
             </button>
           </div>
           <div className="flex gap-2">
-            <button
+            <button type="button"
               onClick={onClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
             >
               Cancel
             </button>
-            <button
+            <button type="button"
               onClick={() => { handleCreateRule(); handleApplyRule(); }}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >

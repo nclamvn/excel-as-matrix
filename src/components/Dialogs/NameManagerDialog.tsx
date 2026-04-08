@@ -200,7 +200,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
       <div className="dialog name-manager-dialog" onClick={e => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>Name Manager</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -208,7 +208,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
         <div className="dialog-body">
           {/* Toolbar */}
           <div className="name-manager-toolbar">
-            <button
+            <button type="button"
               className="dialog-btn-primary"
               onClick={() => {
                 resetForm();
@@ -231,7 +231,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
             </div>
 
             <div className="filter-dropdown">
-              <button
+              <button type="button"
                 className="filter-btn"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
               >
@@ -243,19 +243,19 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
               </button>
               {showFilterMenu && (
                 <div className="filter-menu">
-                  <button onClick={() => { setFilterType('all'); setShowFilterMenu(false); }}>
+                  <button type="button" onClick={() => { setFilterType('all'); setShowFilterMenu(false); }}>
                     All Types
                   </button>
-                  <button onClick={() => { setFilterType('range'); setShowFilterMenu(false); }}>
+                  <button type="button" onClick={() => { setFilterType('range'); setShowFilterMenu(false); }}>
                     {TYPE_ICONS.range} Named Ranges
                   </button>
-                  <button onClick={() => { setFilterType('formula'); setShowFilterMenu(false); }}>
+                  <button type="button" onClick={() => { setFilterType('formula'); setShowFilterMenu(false); }}>
                     {TYPE_ICONS.formula} Formulas
                   </button>
-                  <button onClick={() => { setFilterType('lambda'); setShowFilterMenu(false); }}>
+                  <button type="button" onClick={() => { setFilterType('lambda'); setShowFilterMenu(false); }}>
                     {TYPE_ICONS.lambda} LAMBDA Functions
                   </button>
-                  <button onClick={() => { setFilterType('constant'); setShowFilterMenu(false); }}>
+                  <button type="button" onClick={() => { setFilterType('constant'); setShowFilterMenu(false); }}>
                     {TYPE_ICONS.constant} Constants
                   </button>
                 </div>
@@ -301,14 +301,14 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                         {item.comment || '-'}
                       </td>
                       <td className="actions-cell">
-                        <button
+                        <button type="button"
                           className="action-btn"
                           onClick={() => handleEdit(item)}
                           title="Edit"
                         >
                           <Edit2 size={14} />
                         </button>
-                        <button
+                        <button type="button"
                           className="action-btn danger"
                           onClick={() => handleDelete(item.id)}
                           title="Delete"
@@ -331,7 +331,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Close
           </button>
         </div>
@@ -342,7 +342,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
             <div className="name-edit-dialog" onClick={e => e.stopPropagation()}>
               <div className="name-edit-header">
                 <h3>{editingItem ? 'Edit Name' : 'New Name'}</h3>
-                <button onClick={() => { setShowNewDialog(false); resetForm(); setEditingItem(null); }}>
+                <button type="button" onClick={() => { setShowNewDialog(false); resetForm(); setEditingItem(null); }}>
                   <X size={16} />
                 </button>
               </div>
@@ -422,13 +422,13 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
               </div>
 
               <div className="name-edit-footer">
-                <button
+                <button type="button"
                   className="dialog-btn-secondary"
                   onClick={() => { setShowNewDialog(false); resetForm(); setEditingItem(null); }}
                 >
                   Cancel
                 </button>
-                <button
+                <button type="button"
                   className="dialog-btn-primary"
                   onClick={editingItem ? handleUpdate : handleCreate}
                 >

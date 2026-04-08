@@ -172,7 +172,7 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
       >
         <Move size={14} className="chart-overlay__drag-icon" />
         <span className="chart-overlay__title">{chart.name}</span>
-        <button
+        <button type="button"
           className="chart-overlay__close"
           onClick={(e) => {
             e.stopPropagation();

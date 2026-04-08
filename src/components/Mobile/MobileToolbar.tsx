@@ -263,7 +263,7 @@ export const MobileToolbar: React.FC = () => {
             <h3 className={`font-semibold text-sm ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
               {panelTitles[activePanel]}
             </h3>
-            <button
+            <button type="button"
               onClick={closePanel}
               className={`
                 p-1 rounded-full
@@ -278,7 +278,7 @@ export const MobileToolbar: React.FC = () => {
           {/* Panel tools grid */}
           <div className="grid grid-cols-4 gap-1 p-3">
             {panelMap[activePanel].map((btn) => (
-              <button
+              <button type="button"
                 key={btn.id}
                 onClick={btn.action}
                 className={`
@@ -321,7 +321,7 @@ export const MobileToolbar: React.FC = () => {
         {tabs.map((tab) => {
           const isActive = activePanel === tab.id;
           return (
-            <button
+            <button type="button"
               key={tab.id}
               onClick={() => togglePanel(tab.id)}
               className={`

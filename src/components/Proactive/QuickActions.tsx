@@ -113,7 +113,7 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = ({
   onClick,
   variant = 'default',
 }) => (
-  <button
+  <button type="button"
     className={`quick-actions__button quick-actions__button--${variant}`}
     onClick={onClick}
   >

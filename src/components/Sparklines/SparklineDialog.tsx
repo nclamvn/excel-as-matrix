@@ -135,7 +135,7 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
       <div className="dialog sparkline-dialog" onClick={e => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Insert Sparklines</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -143,21 +143,21 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
         <div className="dialog-content">
           {/* Type Selection */}
           <div className="sparkline-types">
-            <button
+            <button type="button"
               className={`type-btn ${type === 'line' ? 'active' : ''}`}
               onClick={() => setType('line')}
             >
               <TrendingUp size={24} />
               <span>Line</span>
             </button>
-            <button
+            <button type="button"
               className={`type-btn ${type === 'column' ? 'active' : ''}`}
               onClick={() => setType('column')}
             >
               <BarChart3 size={24} />
               <span>Column</span>
             </button>
-            <button
+            <button type="button"
               className={`type-btn ${type === 'winloss' ? 'active' : ''}`}
               onClick={() => setType('winloss')}
             >
@@ -197,7 +197,7 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
             <label>Color:</label>
             <div className="color-options">
               {Object.keys(SPARKLINE_PRESETS).map((color) => (
-                <button
+                <button type="button"
                   key={color}
                   className={`color-btn ${selectedColor === color ? 'active' : ''}`}
                   style={{
@@ -249,10 +249,10 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary" onClick={handleInsert}>
+          <button type="button" className="btn-primary" onClick={handleInsert}>
             Insert
           </button>
         </div>

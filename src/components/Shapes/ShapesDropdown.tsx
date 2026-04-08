@@ -51,7 +51,7 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
 
   return (
     <div className="shapes-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="toolbar-2026__btn"
         onClick={() => setIsOpen(!isOpen)}
         title="Insert Shapes"
@@ -68,7 +68,7 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
               <div className="section-title">Recently Used</div>
               <div className="shapes-grid recent">
                 {recentShapes.map(shape => (
-                  <button
+                  <button type="button"
                     key={shape.id}
                     className="shape-item"
                     onClick={() => handleSelectShape(shape.id)}
@@ -105,7 +105,7 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
                     <div className="submenu-title">{CATEGORY_LABELS[category]}</div>
                     <div className="shapes-grid">
                       {SHAPES_BY_CATEGORY[category].map(shape => (
-                        <button
+                        <button type="button"
                           key={shape.id}
                           className="shape-item"
                           onClick={() => handleSelectShape(shape.id)}

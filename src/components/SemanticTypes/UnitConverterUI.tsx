@@ -131,7 +131,7 @@ export const UnitConverterUI: React.FC<UnitConverterUIProps> = ({
         </div>
 
         {/* Swap button */}
-        <button
+        <button type="button"
           className="unit-converter-swap"
           onClick={handleSwap}
           disabled={!fromUnit || !toUnit}
@@ -174,7 +174,7 @@ export const UnitConverterUI: React.FC<UnitConverterUIProps> = ({
           {result.success ? (
             <>
               <span className="unit-converter-formula">{result.formula}</span>
-              <button className="unit-converter-copy" onClick={handleCopy}>
+              <button type="button" className="unit-converter-copy" onClick={handleCopy}>
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
             </>

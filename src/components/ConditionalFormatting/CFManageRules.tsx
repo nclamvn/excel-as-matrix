@@ -76,7 +76,7 @@ export const CFManageRules: React.FC<CFManageRulesProps> = ({ onClose }) => {
       <div className="cf-manage-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="cf-manage-header">
           <h2>Conditional Formatting Rules Manager</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -114,7 +114,7 @@ export const CFManageRules: React.FC<CFManageRulesProps> = ({ onClose }) => {
                   </div>
 
                   <div className="rule-actions">
-                    <button
+                    <button type="button"
                       className="action-btn"
                       onClick={() => movePriority(rule.id, 'up')}
                       disabled={index === 0}
@@ -122,7 +122,7 @@ export const CFManageRules: React.FC<CFManageRulesProps> = ({ onClose }) => {
                     >
                       <ChevronUp size={16} />
                     </button>
-                    <button
+                    <button type="button"
                       className="action-btn"
                       onClick={() => movePriority(rule.id, 'down')}
                       disabled={index === rules.length - 1}
@@ -130,20 +130,20 @@ export const CFManageRules: React.FC<CFManageRulesProps> = ({ onClose }) => {
                     >
                       <ChevronDown size={16} />
                     </button>
-                    <button
+                    <button type="button"
                       className="action-btn"
                       onClick={() => toggleRule(rule.id)}
                       title={rule.enabled ? 'Disable' : 'Enable'}
                     >
                       {rule.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
                     </button>
-                    <button
+                    <button type="button"
                       className="action-btn"
                       title="Edit Rule"
                     >
                       <Edit2 size={16} />
                     </button>
-                    <button
+                    <button type="button"
                       className="action-btn danger"
                       onClick={() => deleteRule(rule.id)}
                       title="Delete Rule"
@@ -158,7 +158,7 @@ export const CFManageRules: React.FC<CFManageRulesProps> = ({ onClose }) => {
         </div>
 
         <div className="cf-manage-footer">
-          <button className="btn-secondary" onClick={onClose}>Close</button>
+          <button type="button" className="btn-secondary" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>

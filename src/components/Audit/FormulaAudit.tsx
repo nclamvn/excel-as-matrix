@@ -135,7 +135,7 @@ export const WatchWindow: React.FC = () => {
 
   if (!isOpen) {
     return (
-      <button
+      <button type="button"
         onClick={() => setIsOpen(true)}
         className="fixed bottom-4 right-4 z-40 px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg shadow-lg text-sm flex items-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-700"
       >
@@ -151,10 +151,10 @@ export const WatchWindow: React.FC = () => {
       <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-200 dark:border-neutral-700">
         <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">Watch Window</span>
         <div className="flex gap-1">
-          <button onClick={addWatch} className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50">
+          <button type="button" onClick={addWatch} className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50">
             + Add
           </button>
-          <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+          <button type="button" onClick={() => setIsOpen(false)} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
             <EyeOff size={14} />
           </button>
         </div>
@@ -187,7 +187,7 @@ export const WatchWindow: React.FC = () => {
                       {cellData?.displayValue || cellData?.value?.toString() || '(empty)'}
                     </td>
                     <td className="px-1">
-                      <button onClick={() => removeWatch(i)} className="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded">
+                      <button type="button" onClick={() => removeWatch(i)} className="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded">
                         <X size={12} className="text-neutral-400" />
                       </button>
                     </td>
@@ -288,7 +288,7 @@ export const AuditToolbar: React.FC<AuditToolbarProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-1">
-      <button
+      <button type="button"
         onClick={onTogglePrecedents}
         className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
           showPrecedents
@@ -300,7 +300,7 @@ export const AuditToolbar: React.FC<AuditToolbarProps> = ({
         <ArrowUpRight size={14} />
         Precedents
       </button>
-      <button
+      <button type="button"
         onClick={onToggleDependents}
         className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
           showDependents
@@ -313,7 +313,7 @@ export const AuditToolbar: React.FC<AuditToolbarProps> = ({
         Dependents
       </button>
       {(showPrecedents || showDependents) && (
-        <button
+        <button type="button"
           onClick={onClear}
           className="px-2 py-1 text-xs rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-500"
           title="Remove Arrows"

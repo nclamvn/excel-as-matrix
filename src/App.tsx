@@ -11,6 +11,12 @@ import { shortcutManager } from './shortcuts';
 import { auditLog } from './audit/AuditLogService';
 import { useCollaboration } from './hooks/useCollaboration';
 import type { CollaborationConfig } from './collaboration/CollaborationManager';
+import { RealtimeProvider, useRealtime } from './providers/RealtimeProvider';
+import { usePresenceStore } from './stores/presenceStore';
+import { useAutoSave } from './hooks/useAutoSave';
+import { VersionHistoryPanel, PreviewBanner, VersionDiffView } from './components/Version';
+import { useVersionStore } from './stores/versionStore';
+import type { WorkbookSnapshot, SnapshotData } from './types/version';
 
 // Crash Recovery & Accessibility
 import { crashRecovery } from './recovery/CrashRecoveryJournal';
@@ -90,6 +96,11 @@ function App() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [previewSnapshot, setPreviewSnapshot] = useState<WorkbookSnapshot | null>(null);
+  const [previewOriginalData, setPreviewOriginalData] = useState<SnapshotData | null>(null);
+  const [showDiff, setShowDiff] = useState(false);
+  const [diffSnapshot, setDiffSnapshot] = useState<WorkbookSnapshot | null>(null);
 
   const handleEnterApp = useCallback(() => {
     localStorage.setItem('ai-suite-entered', 'true');
@@ -127,6 +138,24 @@ function App() {
     enabled: !!collabConfig,
     config: collabConfig,
   });
+
+  // Auto-save snapshots every 5 minutes
+  useAutoSave({
+    workbookId: workbookId || '',
+    userId: collabConfig?.userId || 'local-user',
+    userName: collabConfig?.userName || 'Local User',
+    enabled: !!workbookId,
+  });
+
+  // Get current workbook data as SnapshotData
+  const getCurrentSnapshotData = useCallback((): SnapshotData => {
+    const state = useWorkbookStore.getState();
+    const sheets: SnapshotData['sheets'] = {};
+    for (const [id, sheet] of Object.entries(state.sheets)) {
+      sheets[id] = { id: sheet.id, name: sheet.name, cells: sheet.cells };
+    }
+    return { sheets, sheetOrder: state.sheetOrder, workbookName: state.workbookName };
+  }, []);
 
   // Command Palette shortcut (⌘K), AI Copilot shortcut (⌘J), Print shortcut (⌘P)
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -323,6 +352,18 @@ function App() {
   }
 
   return (
+    <RealtimeProvider
+      workbookId={workbookId}
+      sheetId={activeSheetId}
+      userName={collabConfig?.userName || `User ${Date.now().toString(36).slice(-4)}`}
+      userId={collabConfig?.userId}
+      onRemoteCellChange={(payload) => {
+        updateCell(payload.sheetId, payload.row, payload.col, {
+          value: payload.value,
+          formula: payload.formula,
+        });
+      }}
+    >
     <div className="h-full flex flex-col" style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
       {/* Skip to Content — WCAG 2.1 AA */}
       <SkipToContent />
@@ -336,7 +377,10 @@ function App() {
         }}
       >
         {/* Modern Header with Nav */}
-        <Header2026 onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
+        <Header2026
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          onOpenVersionHistory={() => setShowVersionHistory(true)}
+        />
 
         {/* File Tabs (Browser-style) */}
         <FileTabs />
@@ -346,6 +390,9 @@ function App() {
 
         {/* Formula Bar */}
         <FormulaBar2026 sheetId={activeSheetId} />
+
+        {/* Realtime cursor broadcaster */}
+        <RealtimeCursorBroadcaster sheetId={activeSheetId} />
 
         {/* Grid with Chart, Shape, Picture, and Mobile Overlay */}
         <div id="main-grid" className="flex-1 overflow-hidden relative" tabIndex={-1} role="region" aria-label="Spreadsheet grid">
@@ -394,6 +441,73 @@ function App() {
       </Suspense>
 
       {/* Toast Notifications */}
+      {/* Version History Panel */}
+      <VersionHistoryPanel
+        workbookId={workbookId!}
+        isOpen={showVersionHistory}
+        onClose={() => setShowVersionHistory(false)}
+        onPreview={(snapshot) => {
+          setDiffSnapshot(snapshot);
+          setShowDiff(true);
+        }}
+        onRestore={(snapshot) => {
+          // Save current state first
+          const { createSnapshot } = useVersionStore.getState();
+          createSnapshot(workbookId!, getCurrentSnapshotData(), 'local-user', 'Local User', 'Before restore');
+
+          // Apply snapshot data
+          const state = useWorkbookStore.getState();
+          for (const [sheetId, sheetData] of Object.entries(snapshot.data.sheets)) {
+            if (state.sheets[sheetId]) {
+              for (const [key, cellData] of Object.entries(sheetData.cells as Record<string, Record<string, unknown>>)) {
+                const [r, c] = key.split(',').map(Number);
+                state.updateCell(sheetId, r, c, cellData as Parameters<typeof state.updateCell>[3]);
+              }
+            }
+          }
+          setShowVersionHistory(false);
+          setShowDiff(false);
+        }}
+      />
+
+      {/* Diff View (side panel next to version history) */}
+      {showDiff && diffSnapshot && showVersionHistory && (
+        <VersionDiffView
+          oldData={diffSnapshot.data}
+          newData={getCurrentSnapshotData()}
+          oldLabel={`v${diffSnapshot.version}`}
+          newLabel="Current"
+          onClose={() => { setShowDiff(false); setDiffSnapshot(null); }}
+        />
+      )}
+
+      {/* Preview Banner (top bar when previewing a version) */}
+      {previewSnapshot && (
+        <PreviewBanner
+          snapshot={previewSnapshot}
+          onCancel={() => {
+            // Restore original data
+            if (previewOriginalData) {
+              const state = useWorkbookStore.getState();
+              for (const [sheetId, sheetData] of Object.entries(previewOriginalData.sheets)) {
+                if (state.sheets[sheetId]) {
+                  for (const [key, cellData] of Object.entries(sheetData.cells as Record<string, Record<string, unknown>>)) {
+                    const [r, c] = key.split(',').map(Number);
+                    state.updateCell(sheetId, r, c, cellData as Parameters<typeof state.updateCell>[3]);
+                  }
+                }
+              }
+            }
+            setPreviewSnapshot(null);
+            setPreviewOriginalData(null);
+          }}
+          onRestore={() => {
+            setPreviewSnapshot(null);
+            setPreviewOriginalData(null);
+          }}
+        />
+      )}
+
       <ToastContainer />
 
       {/* Floating toolbars & dialogs (lazy) */}
@@ -408,7 +522,32 @@ function App() {
         <ProactiveAINotifications />
       </Suspense>
     </div>
+    </RealtimeProvider>
   );
+}
+
+/**
+ * Inner component that broadcasts cursor position via Supabase Realtime
+ * whenever the user selects a cell.
+ */
+function RealtimeCursorBroadcaster({ sheetId }: { sheetId: string }) {
+  const { broadcastCursor } = useRealtime();
+  const selectedCell = useSelectionStore((s) => s.selectedCell);
+  const cleanStaleLocks = usePresenceStore((s) => s.cleanStaleLocks);
+
+  // Clean stale locks every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(cleanStaleLocks, 5000);
+    return () => clearInterval(interval);
+  }, [cleanStaleLocks]);
+
+  useEffect(() => {
+    if (selectedCell) {
+      broadcastCursor(selectedCell.row, selectedCell.col);
+    }
+  }, [selectedCell?.row, selectedCell?.col, sheetId, broadcastCursor]);
+
+  return null;
 }
 
 export default App;

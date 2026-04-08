@@ -35,7 +35,7 @@ export const UpdatePrompt: React.FC = () => {
                 A new version is ready. Refresh to update.
               </p>
             </div>
-            <button
+            <button type="button"
               onClick={dismissUpdate}
               className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
             >
@@ -47,13 +47,13 @@ export const UpdatePrompt: React.FC = () => {
         </div>
 
         <div className="flex border-t">
-          <button
+          <button type="button"
             onClick={dismissUpdate}
             className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
           >
             Later
           </button>
-          <button
+          <button type="button"
             onClick={update}
             disabled={isUpdating}
             className="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50"
@@ -98,7 +98,7 @@ export const UpdateToast: React.FC = () => {
           />
         </svg>
         <span className="text-sm font-medium">New version available</span>
-        <button
+        <button type="button"
           onClick={update}
           className="px-3 py-1 bg-white text-green-600 text-sm font-medium rounded hover:bg-green-50 transition-colors"
         >

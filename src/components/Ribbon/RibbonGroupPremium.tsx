@@ -21,7 +21,7 @@ export const RibbonGroupPremium: React.FC<RibbonGroupPremiumProps> = ({
       <div className="ribbon-group__label">
         {label}
         {showDialogLauncher && (
-          <button
+          <button type="button"
             className="ribbon-group__dialog-launcher"
             onClick={onDialogLaunch}
             title={`${label} settings`}

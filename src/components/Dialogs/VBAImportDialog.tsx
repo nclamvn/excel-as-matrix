@@ -50,7 +50,7 @@ export const VBAImportDialog: React.FC<VBAImportDialogProps> = ({ isOpen, onClos
             <FileCode size={18} className="text-purple-600" />
             <h2 className="text-base font-semibold">Import VBA Macro</h2>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
             <X size={16} />
           </button>
         </div>
@@ -71,10 +71,10 @@ export const VBAImportDialog: React.FC<VBAImportDialogProps> = ({ isOpen, onClos
               />
             </div>
             <div className="flex justify-end gap-2 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
-              <button onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
+              <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
                 Cancel
               </button>
-              <button
+              <button type="button"
                 onClick={handleConvert}
                 disabled={!vbaCode.trim()}
                 className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1.5"
@@ -148,10 +148,10 @@ export const VBAImportDialog: React.FC<VBAImportDialogProps> = ({ isOpen, onClos
             </div>
 
             <div className="flex justify-between gap-2 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
-              <button onClick={handleBack} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
+              <button type="button" onClick={handleBack} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
                 Back
               </button>
-              <button
+              <button type="button"
                 onClick={handleImport}
                 disabled={result.actions.length === 0}
                 className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-1.5"

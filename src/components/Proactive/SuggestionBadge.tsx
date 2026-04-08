@@ -35,7 +35,7 @@ export const SuggestionBadge: React.FC<SuggestionBadgeProps> = ({
   const config = getTypeConfig(type);
 
   return (
-    <button
+    <button type="button"
       className={`suggestion-badge suggestion-badge--${size} ${animated && count > 0 ? 'suggestion-badge--animated' : ''}`}
       onClick={onClick}
       style={{
@@ -76,7 +76,7 @@ export const MultiBadge: React.FC<MultiBadgeProps> = ({
   if (total === 0) return null;
 
   return (
-    <button
+    <button type="button"
       className={`multi-badge multi-badge--${size}`}
       onClick={onClick}
       title={`${total} suggestions`}

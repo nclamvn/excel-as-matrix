@@ -162,7 +162,7 @@ export const FormulasToolbar: React.FC = () => {
       <div className="toolbar-2026">
         {/* Insert Function */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => setShowFunctionDialog(true)}
             title="Insert Function"
@@ -176,7 +176,7 @@ export const FormulasToolbar: React.FC = () => {
 
         {/* AutoSum & Quick Functions */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleAutoSum}
             title="AutoSum (Alt+=)"
@@ -184,28 +184,28 @@ export const FormulasToolbar: React.FC = () => {
             <Sigma size={16} />
             <span>AutoSum</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => insertFunction('AVERAGE')}
             title="Average"
           >
             <span>Avg</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => insertFunction('COUNT')}
             title="Count"
           >
             <span>Count</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => insertFunction('MAX')}
             title="Max"
           >
             <span>Max</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => insertFunction('MIN')}
             title="Min"
@@ -220,7 +220,7 @@ export const FormulasToolbar: React.FC = () => {
         <div className="toolbar-2026__group">
           {/* Math */}
           <div className="toolbar-2026__dropdown">
-            <button
+            <button type="button"
               className="toolbar-2026__btn"
               onClick={() => handleDropdownClick('math')}
               title="Math Functions"
@@ -232,7 +232,7 @@ export const FormulasToolbar: React.FC = () => {
             {activeDropdown === 'math' && (
               <div className="toolbar-2026__dropdown-menu">
                 {FUNCTION_CATEGORIES.math.map(fn => (
-                  <button
+                  <button type="button"
                     key={fn.name}
                     className="toolbar-2026__dropdown-item"
                     onClick={() => insertFunction(fn.name)}
@@ -247,7 +247,7 @@ export const FormulasToolbar: React.FC = () => {
 
           {/* Financial */}
           <div className="toolbar-2026__dropdown">
-            <button
+            <button type="button"
               className="toolbar-2026__btn"
               onClick={() => handleDropdownClick('financial')}
               title="Financial Functions"
@@ -259,7 +259,7 @@ export const FormulasToolbar: React.FC = () => {
             {activeDropdown === 'financial' && (
               <div className="toolbar-2026__dropdown-menu">
                 {FUNCTION_CATEGORIES.financial.map(fn => (
-                  <button
+                  <button type="button"
                     key={fn.name}
                     className="toolbar-2026__dropdown-item"
                     onClick={() => insertFunction(fn.name)}
@@ -274,7 +274,7 @@ export const FormulasToolbar: React.FC = () => {
 
           {/* Text */}
           <div className="toolbar-2026__dropdown">
-            <button
+            <button type="button"
               className="toolbar-2026__btn"
               onClick={() => handleDropdownClick('text')}
               title="Text Functions"
@@ -286,7 +286,7 @@ export const FormulasToolbar: React.FC = () => {
             {activeDropdown === 'text' && (
               <div className="toolbar-2026__dropdown-menu">
                 {FUNCTION_CATEGORIES.text.map(fn => (
-                  <button
+                  <button type="button"
                     key={fn.name}
                     className="toolbar-2026__dropdown-item"
                     onClick={() => insertFunction(fn.name)}
@@ -301,7 +301,7 @@ export const FormulasToolbar: React.FC = () => {
 
           {/* Date */}
           <div className="toolbar-2026__dropdown">
-            <button
+            <button type="button"
               className="toolbar-2026__btn"
               onClick={() => handleDropdownClick('date')}
               title="Date Functions"
@@ -313,7 +313,7 @@ export const FormulasToolbar: React.FC = () => {
             {activeDropdown === 'date' && (
               <div className="toolbar-2026__dropdown-menu">
                 {FUNCTION_CATEGORIES.date.map(fn => (
-                  <button
+                  <button type="button"
                     key={fn.name}
                     className="toolbar-2026__dropdown-item"
                     onClick={() => insertFunction(fn.name)}
@@ -328,7 +328,7 @@ export const FormulasToolbar: React.FC = () => {
 
           {/* Lookup */}
           <div className="toolbar-2026__dropdown">
-            <button
+            <button type="button"
               className="toolbar-2026__btn"
               onClick={() => handleDropdownClick('lookup')}
               title="Lookup Functions"
@@ -340,7 +340,7 @@ export const FormulasToolbar: React.FC = () => {
             {activeDropdown === 'lookup' && (
               <div className="toolbar-2026__dropdown-menu">
                 {FUNCTION_CATEGORIES.lookup.map(fn => (
-                  <button
+                  <button type="button"
                     key={fn.name}
                     className="toolbar-2026__dropdown-item"
                     onClick={() => insertFunction(fn.name)}
@@ -355,7 +355,7 @@ export const FormulasToolbar: React.FC = () => {
 
           {/* Logical */}
           <div className="toolbar-2026__dropdown">
-            <button
+            <button type="button"
               className="toolbar-2026__btn"
               onClick={() => handleDropdownClick('logical')}
               title="Logical Functions"
@@ -367,7 +367,7 @@ export const FormulasToolbar: React.FC = () => {
             {activeDropdown === 'logical' && (
               <div className="toolbar-2026__dropdown-menu">
                 {FUNCTION_CATEGORIES.logical.map(fn => (
-                  <button
+                  <button type="button"
                     key={fn.name}
                     className="toolbar-2026__dropdown-item"
                     onClick={() => insertFunction(fn.name)}

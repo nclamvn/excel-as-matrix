@@ -9,7 +9,7 @@ export const ZoomSlider: React.FC = () => {
 
   return (
     <div className="zoom-slider">
-      <button onClick={handleZoomOut} title="Zoom Out">
+      <button type="button" onClick={handleZoomOut} title="Zoom Out">
         <Minus className="w-4 h-4" />
       </button>
 
@@ -22,7 +22,7 @@ export const ZoomSlider: React.FC = () => {
         className="zoom-range"
       />
 
-      <button onClick={handleZoomIn} title="Zoom In">
+      <button type="button" onClick={handleZoomIn} title="Zoom In">
         <Plus className="w-4 h-4" />
       </button>
 

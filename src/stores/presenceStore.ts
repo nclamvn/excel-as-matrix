@@ -8,10 +8,20 @@ import {
   getColorForUser,
 } from '../types/collab';
 
+interface LockedCell {
+  sheetId: string;
+  row: number;
+  col: number;
+  userId: string;
+  userName: string;
+  lockedAt: number;
+}
+
 interface PresenceState {
   // State
   localUser: UserPresence | null;
   remoteUsers: Map<string, UserPresence>;
+  lockedCells: Map<string, LockedCell>;
   connectionStatus: ConnectionStatus;
   reconnectAttempts: number;
   lastConnected: string | null;
@@ -31,6 +41,13 @@ interface PresenceState {
   removeRemoteUser: (sessionId: string) => void;
   clearRemoteUsers: () => void;
 
+  // Cell locking
+  setLockedCell: (cell: LockedCell) => void;
+  removeLockedCell: (sheetId: string, row: number, col: number) => void;
+  isCellLocked: (sheetId: string, row: number, col: number, selfId?: string) => boolean;
+  getLockedCellInfo: (sheetId: string, row: number, col: number) => LockedCell | null;
+  cleanStaleLocks: () => void;
+
   // Connection
   setConnectionStatus: (status: ConnectionStatus) => void;
   setReconnectAttempts: (attempts: number) => void;
@@ -46,6 +63,7 @@ export const usePresenceStore = create<PresenceState>()((set, get) => ({
   // Initial state
   localUser: null,
   remoteUsers: new Map(),
+  lockedCells: new Map(),
   connectionStatus: 'disconnected',
   reconnectAttempts: 0,
   lastConnected: null,
@@ -154,6 +172,53 @@ export const usePresenceStore = create<PresenceState>()((set, get) => ({
 
   clearRemoteUsers: () => {
     set({ remoteUsers: new Map() });
+  },
+
+  // Cell locking
+  setLockedCell: (cell) => {
+    set((state) => {
+      const key = `${cell.sheetId}-${cell.row}-${cell.col}`;
+      const newLocked = new Map(state.lockedCells);
+      newLocked.set(key, cell);
+      return { lockedCells: newLocked };
+    });
+  },
+
+  removeLockedCell: (sheetId, row, col) => {
+    set((state) => {
+      const key = `${sheetId}-${row}-${col}`;
+      const newLocked = new Map(state.lockedCells);
+      newLocked.delete(key);
+      return { lockedCells: newLocked };
+    });
+  },
+
+  isCellLocked: (sheetId, row, col, selfId) => {
+    const key = `${sheetId}-${row}-${col}`;
+    const lock = get().lockedCells.get(key);
+    if (!lock) return false;
+    if (selfId && lock.userId === selfId) return false;
+    return true;
+  },
+
+  getLockedCellInfo: (sheetId, row, col) => {
+    const key = `${sheetId}-${row}-${col}`;
+    return get().lockedCells.get(key) || null;
+  },
+
+  cleanStaleLocks: () => {
+    const now = Date.now();
+    set((state) => {
+      const newLocked = new Map(state.lockedCells);
+      let changed = false;
+      for (const [key, lock] of newLocked) {
+        if (now - lock.lockedAt > 30000) {
+          newLocked.delete(key);
+          changed = true;
+        }
+      }
+      return changed ? { lockedCells: newLocked } : {};
+    });
   },
 
   setConnectionStatus: (status) => {

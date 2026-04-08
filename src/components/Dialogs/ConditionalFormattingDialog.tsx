@@ -75,7 +75,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
       <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 420 }}>
         <div className="dialog-header">
           <h2>Conditional Formatting</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -153,7 +153,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
             <label>Quick Formats:</label>
             <div className="cf-presets">
               {PRESET_COLORS.map((preset, i) => (
-                <button
+                <button type="button"
                   key={i}
                   className={`cf-preset-btn ${!useCustomColors && selectedPreset === i ? 'selected' : ''}`}
                   style={{ backgroundColor: preset.bg, color: preset.text }}
@@ -206,10 +206,10 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleApply}>
+          <button type="button" className="dialog-btn-primary" onClick={handleApply}>
             Apply
           </button>
         </div>

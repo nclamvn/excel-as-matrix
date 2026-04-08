@@ -27,7 +27,7 @@ export const Ribbon: React.FC = () => {
     <div className="ribbon">
       {/* File Menu Button + Tab Bar */}
       <div className="ribbon-header">
-        <button className="file-button">
+        <button type="button" className="file-button">
           <Menu className="w-4 h-4" />
           <span>File</span>
         </button>
@@ -44,7 +44,7 @@ export const Ribbon: React.FC = () => {
           ))}
         </div>
 
-        <button
+        <button type="button"
           className="collapse-button"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? 'Expand Ribbon' : 'Collapse Ribbon'}

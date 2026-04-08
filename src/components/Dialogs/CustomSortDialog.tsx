@@ -78,7 +78,7 @@ export const CustomSortDialog: React.FC<CustomSortDialogProps> = ({ onClose }) =
       <div className="dialog custom-sort-dialog" onClick={e => e.stopPropagation()} style={{ width: 450 }}>
         <div className="dialog-header">
           <h2>Custom Sort</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -121,7 +121,7 @@ export const CustomSortDialog: React.FC<CustomSortDialogProps> = ({ onClose }) =
                   <option value="desc">Z to A</option>
                 </select>
 
-                <button
+                <button type="button"
                   className="sort-level-icon"
                   title={level.direction === 'asc' ? 'Ascending' : 'Descending'}
                   onClick={() => updateLevel(index, 'direction', level.direction === 'asc' ? 'desc' : 'asc')}
@@ -130,7 +130,7 @@ export const CustomSortDialog: React.FC<CustomSortDialogProps> = ({ onClose }) =
                 </button>
 
                 {sortLevels.length > 1 && (
-                  <button
+                  <button type="button"
                     className="sort-level-remove"
                     onClick={() => removeLevel(index)}
                     title="Remove level"
@@ -143,7 +143,7 @@ export const CustomSortDialog: React.FC<CustomSortDialogProps> = ({ onClose }) =
           </div>
 
           {sortLevels.length < 5 && (
-            <button className="btn-add-level" onClick={addLevel}>
+            <button type="button" className="btn-add-level" onClick={addLevel}>
               <Plus size={16} />
               Add Level
             </button>
@@ -151,10 +151,10 @@ export const CustomSortDialog: React.FC<CustomSortDialogProps> = ({ onClose }) =
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleSort}>
+          <button type="button" className="dialog-btn-primary" onClick={handleSort}>
             Sort
           </button>
         </div>

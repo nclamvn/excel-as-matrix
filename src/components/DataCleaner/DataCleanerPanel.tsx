@@ -97,14 +97,14 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
           <span>Data Cleaner</span>
         </div>
         <div className="data-cleaner-panel__actions">
-          <button
+          <button type="button"
             className="data-cleaner-panel__action data-cleaner-panel__action--primary"
             onClick={handleAnalyze}
             disabled={isAnalyzing}
           >
             {isAnalyzing ? 'Analyzing...' : 'Analyze'}
           </button>
-          <button
+          <button type="button"
             className="data-cleaner-panel__action"
             onClick={onClose}
             title="Close"
@@ -139,13 +139,13 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
 
       {/* Tabs */}
       <div className="data-cleaner-panel__tabs">
-        <button
+        <button type="button"
           className={`data-cleaner-panel__tab ${activeTab === 'overview' ? 'data-cleaner-panel__tab--active' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
           Overview
         </button>
-        <button
+        <button type="button"
           className={`data-cleaner-panel__tab ${activeTab === 'issues' ? 'data-cleaner-panel__tab--active' : ''}`}
           onClick={() => setActiveTab('issues')}
         >
@@ -153,7 +153,7 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
             <span className="data-cleaner-panel__tab-badge">{score.summary.totalIssues}</span>
           )}
         </button>
-        <button
+        <button type="button"
           className={`data-cleaner-panel__tab ${activeTab === 'fixes' ? 'data-cleaner-panel__tab--active' : ''}`}
           onClick={() => setActiveTab('fixes')}
         >
@@ -203,7 +203,7 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
             </div>
 
             {score.summary.autoFixable > 0 && (
-              <button
+              <button type="button"
                 className="data-cleaner-panel__fix-all"
                 onClick={handleFixAll}
                 disabled={isCleaning}
@@ -232,7 +232,7 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
               <>
                 <div className="data-cleaner-panel__fixes-summary">
                   <span>{pendingChanges.length} changes ready to apply</span>
-                  <button
+                  <button type="button"
                     className="data-cleaner-panel__apply-btn"
                     onClick={handleApplyChanges}
                   >

@@ -172,7 +172,7 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
   const icon = getConfidenceIcon(score.level);
 
   return (
-    <button
+    <button type="button"
       className={`trust-badge ${className}`}
       onClick={onClick}
       style={{ '--badge-color': color } as React.CSSProperties}

@@ -61,7 +61,7 @@ export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({
             <SettingsIcon />
             Proactive AI Settings
           </h3>
-          <button
+          <button type="button"
             className="proactive-settings__close"
             onClick={onClose}
             title="Close"
@@ -191,20 +191,20 @@ export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({
         </div>
 
         <div className="proactive-settings__footer">
-          <button
+          <button type="button"
             className="proactive-settings__button proactive-settings__button--secondary"
             onClick={handleReset}
           >
             Reset to Default
           </button>
           <div className="proactive-settings__footer-right">
-            <button
+            <button type="button"
               className="proactive-settings__button proactive-settings__button--secondary"
               onClick={onClose}
             >
               Cancel
             </button>
-            <button
+            <button type="button"
               className="proactive-settings__button proactive-settings__button--primary"
               onClick={handleSave}
               disabled={!hasChanges}
@@ -261,7 +261,7 @@ const ToggleSetting: React.FC<ToggleSettingProps> = ({
         <span className="setting-row__description">{description}</span>
       </div>
     </div>
-    <button
+    <button type="button"
       className={`toggle-switch ${value ? 'toggle-switch--on' : ''}`}
       onClick={() => onChange(!value)}
       role="switch"

@@ -112,7 +112,7 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
         onClick={() => onCellClick?.(cell)}
       >
         {cell.isCollapsible && (
-          <button
+          <button type="button"
             className="expand-btn"
             onClick={(e) => {
               e.stopPropagation();
@@ -136,7 +136,7 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
       <div className="pivot-table-header">
         <span className="pivot-table-name">{pivot.name}</span>
         <div className="pivot-header-actions">
-          <button
+          <button type="button"
             className="pivot-action-btn"
             onClick={() => setShowSlicerDialog(true)}
             title="Insert Slicer"
@@ -144,7 +144,7 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
             <Filter size={14} />
           </button>
           {hasDateFields && (
-            <button
+            <button type="button"
               className="pivot-action-btn"
               onClick={() => setShowTimelineDialog(true)}
               title="Insert Timeline"
@@ -152,14 +152,14 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
               <Calendar size={14} />
             </button>
           )}
-          <button
+          <button type="button"
             className="pivot-chart-btn"
             onClick={() => setShowChartDialog(true)}
             title="Create Pivot Chart"
           >
             <BarChart2 size={14} />
           </button>
-          <button
+          <button type="button"
             className="pivot-refresh-btn"
             onClick={handleRefresh}
             title="Refresh pivot table"

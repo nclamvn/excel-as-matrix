@@ -216,7 +216,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
       >
         <div className="dialog-header">
           <h2>Conditional Formatting Rules Manager</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -235,7 +235,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
               />
             </div>
             <div className="toolbar-right">
-              <button
+              <button type="button"
                 className="toolbar-btn primary"
                 onClick={onAddRule}
               >
@@ -251,7 +251,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
               <div className="no-rules">
                 <AlertCircle size={32} />
                 <p>No conditional formatting rules found.</p>
-                <button className="add-rule-btn" onClick={onAddRule}>
+                <button type="button" className="add-rule-btn" onClick={onAddRule}>
                   <Plus size={16} />
                   Add New Rule
                 </button>
@@ -303,7 +303,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
           {rules.length > 0 && (
             <div className="rules-actions">
               <div className="action-group">
-                <button
+                <button type="button"
                   className="action-btn"
                   disabled={!selectedRuleId}
                   onClick={() => selectedRuleId && movePriority(selectedRuleId, 'up', sheetId)}
@@ -311,7 +311,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 >
                   <ChevronUp size={16} />
                 </button>
-                <button
+                <button type="button"
                   className="action-btn"
                   disabled={!selectedRuleId}
                   onClick={() => selectedRuleId && movePriority(selectedRuleId, 'down', sheetId)}
@@ -321,7 +321,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 </button>
               </div>
               <div className="action-group">
-                <button
+                <button type="button"
                   className="action-btn"
                   disabled={!selectedRuleId}
                   onClick={() => selectedRuleId && toggleRule(selectedRuleId, sheetId)}
@@ -332,14 +332,14 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                     : <Eye size={16} />
                   }
                 </button>
-                <button
+                <button type="button"
                   className="action-btn edit"
                   disabled={!selectedRuleId}
                   title="Edit Rule"
                 >
                   <Pencil size={16} />
                 </button>
-                <button
+                <button type="button"
                   className="action-btn danger"
                   disabled={!selectedRuleId}
                   onClick={() => setShowDeleteConfirm(true)}
@@ -349,7 +349,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 </button>
               </div>
               <div className="action-group">
-                <button
+                <button type="button"
                   className="action-btn danger-text"
                   onClick={handleClearAll}
                 >
@@ -361,7 +361,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Close
           </button>
         </div>
@@ -372,13 +372,13 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
             <div className="confirm-dialog">
               <p>Delete the selected rule?</p>
               <div className="confirm-actions">
-                <button
+                <button type="button"
                   className="confirm-btn cancel"
                   onClick={() => setShowDeleteConfirm(false)}
                 >
                   Cancel
                 </button>
-                <button
+                <button type="button"
                   className="confirm-btn delete"
                   onClick={handleDeleteSelected}
                 >

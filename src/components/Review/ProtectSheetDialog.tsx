@@ -70,7 +70,7 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({ sheetId,
               <><Shield size={20} /> Protect Sheet</>
             )}
           </h3>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -137,8 +137,8 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({ sheetId,
         </div>
 
         <div className="dialog-footer">
-          <button onClick={onClose}>Cancel</button>
-          <button
+          <button type="button" onClick={onClose}>Cancel</button>
+          <button type="button"
             className="primary"
             onClick={isProtected ? handleUnprotect : handleProtect}
           >

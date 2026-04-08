@@ -133,7 +133,7 @@ export const InsertFunctionDialog: React.FC<InsertFunctionDialogProps> = ({
       <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 560, height: 520 }}>
         <div className="dialog-header">
           <h2>Insert Function</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -154,7 +154,7 @@ export const InsertFunctionDialog: React.FC<InsertFunctionDialogProps> = ({
           {/* Category Filter */}
           <div className="dialog-categories">
             {CATEGORIES.map(cat => (
-              <button
+              <button type="button"
                 key={cat}
                 className={`category-btn ${category === cat ? 'active' : ''}`}
                 onClick={() => setCategory(cat)}
@@ -190,10 +190,10 @@ export const InsertFunctionDialog: React.FC<InsertFunctionDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="dialog-btn-primary"
             onClick={handleInsert}
             disabled={!selectedFunc}

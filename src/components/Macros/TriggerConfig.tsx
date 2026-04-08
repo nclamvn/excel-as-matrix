@@ -81,7 +81,7 @@ export const TriggerConfig: React.FC<TriggerConfigProps> = ({
       {/* Trigger Type Selection */}
       <div className="trigger-types">
         {(['manual', 'schedule', 'data_change'] as TriggerType[]).map(type => (
-          <button
+          <button type="button"
             key={type}
             className={`trigger-type-btn ${trigger.type === type ? 'active' : ''}`}
             onClick={() => handleTypeChange(type)}
@@ -144,7 +144,7 @@ export const TriggerConfig: React.FC<TriggerConfigProps> = ({
                 <label>Days:</label>
                 <div className="day-selector">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-                    <button
+                    <button type="button"
                       key={day}
                       className={`day-btn ${trigger.config.schedule?.daysOfWeek?.includes(i) ? 'active' : ''}`}
                       onClick={() => {

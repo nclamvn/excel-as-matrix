@@ -33,7 +33,7 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({ workbookId, onSync }) =>
   return (
     <div className="flex items-center gap-4 text-sm">
       {/* Sync Button */}
-      <button
+      <button type="button"
         onClick={onSync}
         disabled={isSyncing || !isOnline}
         className={`
@@ -128,7 +128,7 @@ export const SyncButton: React.FC<{ workbookId: string; onSync: () => void }> = 
   const pendingChanges = status?.pendingChanges || 0;
 
   return (
-    <button
+    <button type="button"
       onClick={onSync}
       disabled={isSyncing || !isOnline}
       className={`

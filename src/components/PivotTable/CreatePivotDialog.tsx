@@ -148,7 +148,7 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
             <Table2 size={20} />
             <h2>Create PivotTable</h2>
           </div>
-          <button className="pivot-dialog-close" onClick={onClose}>
+          <button type="button" className="pivot-dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -273,10 +273,10 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
         </div>
 
         <div className="pivot-dialog-footer">
-          <button className="pivot-btn-secondary" onClick={onClose}>
+          <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="pivot-btn-primary"
             onClick={handleCreate}
             disabled={detectedFields.length === 0}

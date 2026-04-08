@@ -42,7 +42,7 @@ export const FreezeMenu: React.FC<FreezeMenuProps> = ({
   return (
     <div className="absolute z-50 bg-white border rounded-lg shadow-lg py-1 min-w-48">
       {hasFrozen ? (
-        <button
+        <button type="button"
           onClick={handleUnfreeze}
           className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100"
         >
@@ -53,7 +53,7 @@ export const FreezeMenu: React.FC<FreezeMenuProps> = ({
         </button>
       ) : (
         <>
-          <button
+          <button type="button"
             onClick={handleFreezeAtSelection}
             className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100"
           >
@@ -68,7 +68,7 @@ export const FreezeMenu: React.FC<FreezeMenuProps> = ({
             </div>
           </button>
 
-          <button
+          <button type="button"
             onClick={handleFreezeTopRow}
             className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100"
           >
@@ -78,7 +78,7 @@ export const FreezeMenu: React.FC<FreezeMenuProps> = ({
             <span>Freeze Top Row</span>
           </button>
 
-          <button
+          <button type="button"
             onClick={handleFreezeFirstColumn}
             className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100"
           >

@@ -36,7 +36,7 @@ export const SourceAttribution: React.FC<SourceAttributionProps> = ({
 
   return (
     <div className={`source-attribution ${className}`}>
-      <button
+      <button type="button"
         className="source-attribution__trigger"
         onClick={() => setExpanded(!expanded)}
       >
@@ -107,7 +107,7 @@ const SourceItem: React.FC<SourceItemProps> = ({
   const confidenceColor = getConfidenceColor(source.confidence);
 
   return (
-    <button
+    <button type="button"
       className={`source-item ${isPrimary ? 'source-item--primary' : ''}`}
       onClick={() => onClick?.(source)}
     >
@@ -153,7 +153,7 @@ export const SourceCitation: React.FC<SourceCitationProps> = ({
   const typeInfo = getSourceTypeInfo(source.type);
 
   return (
-    <button
+    <button type="button"
       className={`source-citation ${className}`}
       onClick={onClick}
       title={source.relevance}
@@ -192,7 +192,7 @@ export const SourcesSummary: React.FC<SourcesSummaryProps> = ({
   const byType = groupSourcesByType(info.sources);
 
   return (
-    <button
+    <button type="button"
       className={`sources-summary ${className}`}
       onClick={onClick}
     >
@@ -239,7 +239,7 @@ export const CellSource: React.FC<CellSourceProps> = ({
   className = '',
 }) => {
   return (
-    <button
+    <button type="button"
       className={`cell-source ${className}`}
       onClick={onClick}
       title={`Cell ${cellRef}: ${value || 'empty'}`}

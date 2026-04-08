@@ -27,17 +27,17 @@ export const SheetTabs2026: React.FC = () => {
   return (
     <div className="sheet-tabs-2026">
       <div className="sheet-tabs-2026__nav">
-        <button className="sheet-tabs-2026__nav-btn" title="Previous sheets">
+        <button type="button" className="sheet-tabs-2026__nav-btn" title="Previous sheets">
           <ChevronLeft />
         </button>
-        <button className="sheet-tabs-2026__nav-btn" title="Next sheets">
+        <button type="button" className="sheet-tabs-2026__nav-btn" title="Next sheets">
           <ChevronRight />
         </button>
       </div>
 
       <div className="sheet-tabs-2026__list">
         {sheetList.map((sheet) => (
-          <button
+          <button type="button"
             key={sheet.id}
             className={`sheet-tab-2026 ${sheet.id === activeSheetId ? 'sheet-tab-2026--active' : ''}`}
             onClick={() => setActiveSheet(sheet.id)}
@@ -48,7 +48,7 @@ export const SheetTabs2026: React.FC = () => {
         ))}
       </div>
 
-      <button
+      <button type="button"
         className="sheet-tabs-2026__add"
         onClick={handleAddSheet}
         title="Add sheet"

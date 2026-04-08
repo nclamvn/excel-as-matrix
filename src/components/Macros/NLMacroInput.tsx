@@ -70,7 +70,7 @@ export const NLMacroInput: React.FC<NLMacroInputProps> = ({ onCreate }) => {
         <span className="examples-label">Examples:</span>
         <div className="example-list">
           {examples.map((ex, i) => (
-            <button
+            <button type="button"
               key={i}
               className="example-item"
               onClick={() => setDescription(ex)}

@@ -61,7 +61,7 @@ export const MarginsDropdown: React.FC<MarginsDropdownProps> = ({ sheetId }) => 
 
   return (
     <div className="margins-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="toolbar-2026__btn"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -78,7 +78,7 @@ export const MarginsDropdown: React.FC<MarginsDropdownProps> = ({ sheetId }) => 
         <div className="margins-menu">
           <div className="menu-title">Page Margins</div>
           {MARGIN_OPTIONS.map(option => (
-            <button
+            <button type="button"
               key={option.id}
               className={`margin-item ${currentPreset === option.name ? 'active' : ''}`}
               onClick={() => handleSelectMargin(option.margins)}

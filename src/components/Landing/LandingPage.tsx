@@ -48,7 +48,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
           <a href="#features">Features</a>
           <a href="#" className="active">ExcelAI Dashboard</a>
         </div>
-        <button className="nav-cta" onClick={onEnterApp}>Get Started</button>
+        <button type="button" className="nav-cta" onClick={onEnterApp}>Get Started</button>
       </nav>
 
       {/* Main Content */}
@@ -102,7 +102,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
 
           {/* CTA Buttons */}
           <div className="cta-buttons">
-            <button className="cta-primary" onClick={onEnterApp}>
+            <button type="button" className="cta-primary" onClick={onEnterApp}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
               Try ExcelAI Free
             </button>
@@ -256,7 +256,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
                 <li><CheckIcon /> Real-time collaboration</li>
                 <li><CheckIcon /> Grammar & style correction</li>
               </ul>
-              <button className="product-card-btn disabled">Notify Me</button>
+              <button type="button" className="product-card-btn disabled">Notify Me</button>
             </div>
 
             {/* ExcelAI (Featured) */}
@@ -274,7 +274,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
                 <li><CheckIcon /> Smart Auto-Visualization</li>
                 <li><CheckIcon /> AI Macros & Automation</li>
               </ul>
-              <button className="product-card-btn primary" onClick={onEnterApp}>
+              <button type="button" className="product-card-btn primary" onClick={onEnterApp}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 Start Free Trial
               </button>
@@ -294,7 +294,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
                 <li><CheckIcon /> Auto-animations</li>
                 <li><CheckIcon /> Presenter AI coach</li>
               </ul>
-              <button className="product-card-btn disabled">Notify Me</button>
+              <button type="button" className="product-card-btn disabled">Notify Me</button>
             </div>
           </div>
         </section>

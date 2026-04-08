@@ -7,7 +7,7 @@ interface AddSheetButtonProps {
 
 export const AddSheetButton: React.FC<AddSheetButtonProps> = ({ onClick }) => {
   return (
-    <button
+    <button type="button"
       className="add-sheet-button"
       onClick={onClick}
       title="New Sheet (Shift+F11)"

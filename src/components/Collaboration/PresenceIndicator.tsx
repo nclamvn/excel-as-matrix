@@ -72,7 +72,7 @@ export const ConnectionStatusBar: React.FC<ConnectionStatusProps> = ({
         {statusInfo.message}
       </span>
       {status === 'disconnected' && onReconnect && (
-        <button
+        <button type="button"
           className="connection-status__reconnect"
           onClick={onReconnect}
         >
@@ -113,7 +113,7 @@ export const OnlineUsersIndicator: React.FC<OnlineUsersIndicatorProps> = ({
   }
 
   return (
-    <button
+    <button type="button"
       className="online-users-indicator"
       onClick={onClick}
       title={`${users.length} user${users.length !== 1 ? 's' : ''} online`}

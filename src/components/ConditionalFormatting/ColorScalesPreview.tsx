@@ -47,7 +47,7 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
         <div className="preview-section-title">2-Color Scale</div>
         <div className="preview-grid cols-3">
           {twoColorPresets.map((preset) => (
-            <button
+            <button type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
@@ -66,7 +66,7 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
         <div className="preview-section-title">3-Color Scale</div>
         <div className="preview-grid cols-3">
           {threeColorPresets.map((preset) => (
-            <button
+            <button type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
@@ -82,7 +82,7 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
       </div>
 
       <div className="preview-footer">
-        <button className="more-options-btn">
+        <button type="button" className="more-options-btn">
           More Color Scales...
         </button>
       </div>

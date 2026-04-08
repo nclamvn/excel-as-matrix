@@ -87,32 +87,32 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
         <h3 className="formula-assistant__title">
           <AssistantIcon /> Formula Assistant
         </h3>
-        <button className="formula-assistant__close" onClick={onClose}>
+        <button type="button" className="formula-assistant__close" onClick={onClose}>
           <CloseIcon />
         </button>
       </div>
 
       {/* Tabs */}
       <div className="formula-assistant__tabs">
-        <button
+        <button type="button"
           className={`formula-assistant__tab ${activeTab === 'create' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('create')}
         >
           Create
         </button>
-        <button
+        <button type="button"
           className={`formula-assistant__tab ${activeTab === 'explain' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('explain')}
         >
           Explain
         </button>
-        <button
+        <button type="button"
           className={`formula-assistant__tab ${activeTab === 'debug' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('debug')}
         >
           Debug
         </button>
-        <button
+        <button type="button"
           className={`formula-assistant__tab ${activeTab === 'examples' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('examples')}
         >
@@ -143,7 +143,7 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
                 }
                 rows={3}
               />
-              <button
+              <button type="button"
                 className="formula-assistant__button formula-assistant__button--primary"
                 onClick={handleInterpret}
                 disabled={isProcessing || !nlInput.trim()}
@@ -167,13 +167,13 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
                       {interpretation.explanation}
                     </p>
                     <div className="formula-assistant__result-actions">
-                      <button
+                      <button type="button"
                         className="formula-assistant__button formula-assistant__button--primary"
                         onClick={handleInsert}
                       >
                         Insert Formula
                       </button>
-                      <button
+                      <button type="button"
                         className="formula-assistant__button formula-assistant__button--secondary"
                         onClick={() => setInterpretation(null)}
                       >

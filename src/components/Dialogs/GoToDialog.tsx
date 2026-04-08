@@ -68,7 +68,7 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
       <div className="dialog goto-dialog" onClick={e => e.stopPropagation()} style={{ width: 320 }}>
         <div className="dialog-header">
           <h2>Go To</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -93,7 +93,7 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
               <label>Recent:</label>
               <div className="goto-recent">
                 {recentRefs.map((ref, i) => (
-                  <button
+                  <button type="button"
                     key={i}
                     className="goto-recent-btn"
                     onClick={() => {
@@ -113,10 +113,10 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleGo}>
+          <button type="button" className="dialog-btn-primary" onClick={handleGo}>
             <Navigation size={14} style={{ marginRight: 6 }} />
             Go
           </button>

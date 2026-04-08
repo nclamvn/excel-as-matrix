@@ -84,7 +84,7 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
             {mode === 'slicer' ? <Filter size={20} /> : <Calendar size={20} />}
             <h2>Insert {mode === 'slicer' ? 'Slicer' : 'Timeline'}</h2>
           </div>
-          <button className="pivot-dialog-close" onClick={onClose}>
+          <button type="button" className="pivot-dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -137,10 +137,10 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
         </div>
 
         <div className="pivot-dialog-footer">
-          <button className="pivot-btn-secondary" onClick={onClose}>
+          <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="pivot-btn-primary"
             onClick={handleInsert}
             disabled={selectedFields.length === 0}

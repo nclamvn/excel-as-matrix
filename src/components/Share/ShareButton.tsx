@@ -16,7 +16,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ isSyncing = false }) =
 
   return (
     <>
-      <button className="share-button" onClick={() => setShowDialog(true)}>
+      <button type="button" className="share-button" onClick={() => setShowDialog(true)}>
         {isSyncing ? (
           <Loader2 size={16} className="share-icon spinning" />
         ) : (

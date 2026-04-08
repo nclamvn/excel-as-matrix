@@ -79,7 +79,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
       className="tab-context-menu"
       style={{ left: adjustedX, top: adjustedY }}
     >
-      <button
+      <button type="button"
         className="context-menu-item"
         onClick={() => handleAction(() => removeTab(tabId))}
       >
@@ -88,7 +88,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
         <span className="menu-shortcut">Ctrl+W</span>
       </button>
 
-      <button
+      <button type="button"
         className="context-menu-item"
         onClick={() => handleAction(() => closeOtherTabs(tabId))}
         disabled={!hasOtherTabs}
@@ -97,7 +97,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
         <span className="menu-label">Close Others</span>
       </button>
 
-      <button
+      <button type="button"
         className="context-menu-item"
         onClick={() => handleAction(() => closeTabsToRight(tabId))}
         disabled={!hasTabsToRight}
@@ -109,7 +109,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
       <div className="context-menu-divider" />
 
       {tab.isPinned ? (
-        <button
+        <button type="button"
           className="context-menu-item"
           onClick={() => handleAction(() => unpinTab(tabId))}
         >
@@ -117,7 +117,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
           <span className="menu-label">Unpin Tab</span>
         </button>
       ) : (
-        <button
+        <button type="button"
           className="context-menu-item"
           onClick={() => handleAction(() => pinTab(tabId))}
         >
@@ -126,7 +126,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
         </button>
       )}
 
-      <button
+      <button type="button"
         className="context-menu-item"
         onClick={() => handleAction(() => duplicateTab(tabId))}
       >
@@ -137,7 +137,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
       <div className="context-menu-divider" />
 
       {tab.path && (
-        <button
+        <button type="button"
           className="context-menu-item"
           onClick={() =>
             handleAction(() => {
@@ -150,7 +150,7 @@ export const TabContextMenu: React.FC<TabContextMenuProps> = ({
         </button>
       )}
 
-      <button
+      <button type="button"
         className="context-menu-item"
         onClick={() =>
           handleAction(() => {

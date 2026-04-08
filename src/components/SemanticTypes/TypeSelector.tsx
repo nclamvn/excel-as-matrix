@@ -78,7 +78,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
       {/* Header */}
       <div className="type-selector-header">
         {selectedCategory ? (
-          <button className="type-selector-back" onClick={handleBack}>
+          <button type="button" className="type-selector-back" onClick={handleBack}>
             <ChevronLeft size={16} />
             <span>Back</span>
           </button>
@@ -107,7 +107,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
           // Show categories
           <div className="type-selector-categories">
             {TYPE_CATEGORIES.map((cat) => (
-              <button
+              <button type="button"
                 key={cat.id}
                 className="type-selector-category"
                 onClick={() => setSelectedCategory(cat.id)}
@@ -129,7 +129,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
               <div className="type-selector-empty">No types found</div>
             ) : (
               filteredTypes.map((type) => (
-                <button
+                <button type="button"
                   key={type.id}
                   className={`type-selector-type ${value === type.id ? 'selected' : ''}`}
                   onClick={() => handleSelect(type)}
@@ -170,7 +170,7 @@ export const CompactTypeSelector: React.FC<CompactTypeSelectorProps> = ({
 
   return (
     <div className={`compact-type-selector ${className}`}>
-      <button className="compact-type-selector-trigger" onClick={() => setIsOpen(!isOpen)}>
+      <button type="button" className="compact-type-selector-trigger" onClick={() => setIsOpen(!isOpen)}>
         {selectedType ? (
           <TypeBadge type={selectedType} size="small" />
         ) : (
@@ -220,7 +220,7 @@ export const TypeQuickSelect: React.FC<TypeQuickSelectProps> = ({
         if (!type) return null;
 
         return (
-          <button
+          <button type="button"
             key={typeId}
             className={`type-quick-select-btn ${value === typeId ? 'selected' : ''}`}
             onClick={() => onChange(type)}

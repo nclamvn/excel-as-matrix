@@ -200,7 +200,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
             <BarChart2 size={20} />
             <h2>Create Pivot Chart</h2>
           </div>
-          <button className="pivot-dialog-close" onClick={onClose}>
+          <button type="button" className="pivot-dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -226,7 +226,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
             </p>
             <div className="chart-type-grid">
               {CHART_TYPE_OPTIONS.map(option => (
-                <button
+                <button type="button"
                   key={option.type}
                   className={`chart-type-btn ${selectedType === option.type ? 'selected' : ''} ${recommendedTypes.includes(option.type) ? 'recommended' : ''}`}
                   onClick={() => setSelectedType(option.type)}
@@ -347,10 +347,10 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
         </div>
 
         <div className="pivot-dialog-footer">
-          <button className="pivot-btn-secondary" onClick={onClose}>
+          <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="pivot-btn-primary"
             onClick={handleCreateChart}
             disabled={!previewData}

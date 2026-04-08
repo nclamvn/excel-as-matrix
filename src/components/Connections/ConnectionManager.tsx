@@ -141,7 +141,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="text-lg font-semibold">Data Connections</h2>
-          <button
+          <button type="button"
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 text-xl"
           >
@@ -151,7 +151,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
 
         {/* Tabs */}
         <div className="flex border-b">
-          <button
+          <button type="button"
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === 'connections'
                 ? 'border-b-2 border-blue-500 text-blue-600'
@@ -161,7 +161,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
           >
             Connections ({connections.length})
           </button>
-          <button
+          <button type="button"
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === 'queries'
                 ? 'border-b-2 border-blue-500 text-blue-600'
@@ -171,7 +171,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
           >
             Queries ({queries.length})
           </button>
-          <button
+          <button type="button"
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === 'schedule'
                 ? 'border-b-2 border-blue-500 text-blue-600'
@@ -187,7 +187,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
         {error && (
           <div className="px-4 py-2 bg-red-50 text-red-600 text-sm">
             {error}
-            <button
+            <button type="button"
               onClick={() => setError(null)}
               className="ml-2 text-red-400 hover:text-red-600"
             >
@@ -203,7 +203,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
           ) : activeTab === 'connections' ? (
             <div className="space-y-3">
               {/* New connection button */}
-              <button
+              <button type="button"
                 onClick={() => setShowNewConnection(true)}
                 className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-500"
               >
@@ -237,7 +237,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button
+                      <button type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleTestConnection(conn.id);
@@ -247,7 +247,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                         Test
                       </button>
                       {conn.status === 'connected' ? (
-                        <button
+                        <button type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDisconnect(conn.id);
@@ -257,7 +257,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                           Disconnect
                         </button>
                       ) : (
-                        <button
+                        <button type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleConnect(conn.id);
@@ -267,7 +267,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                           Connect
                         </button>
                       )}
-                      <button
+                      <button type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteConnection(conn.id);
@@ -301,13 +301,13 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
 
         {/* Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
-          <button
+          <button type="button"
             onClick={loadData}
             className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
           >
             Refresh
           </button>
-          <button
+          <button type="button"
             onClick={onClose}
             className="px-4 py-1.5 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
           >
@@ -357,13 +357,13 @@ const QueryList: React.FC = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button
+                <button type="button"
                   onClick={() => handleExecute(query.id)}
                   className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
                 >
                   Execute
                 </button>
-                <button
+                <button type="button"
                   onClick={() => handleDelete(query.id)}
                   className="px-3 py-1 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50"
                 >
@@ -453,7 +453,7 @@ const ScheduleList: React.FC = () => {
                   />
                   Enabled
                 </label>
-                <button
+                <button type="button"
                   onClick={() => handleTrigger(job.id)}
                   className="px-3 py-1 text-xs bg-amber-500 text-white rounded hover:bg-amber-600"
                 >
@@ -568,7 +568,7 @@ const NewConnectionDialog: React.FC<NewConnectionDialogProps> = ({ onClose, onCr
       <div className="bg-white rounded-lg shadow-xl w-[500px]">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h3 className="font-semibold">New Connection</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-700">
             &times;
           </button>
         </div>

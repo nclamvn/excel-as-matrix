@@ -141,7 +141,7 @@ export const ActionNode: React.FC<ActionNodeProps> = ({
 
         {/* Actions */}
         <div className="node-actions">
-          <button
+          <button type="button"
             className="action-btn move"
             onClick={onMoveUp}
             disabled={isFirst}
@@ -151,7 +151,7 @@ export const ActionNode: React.FC<ActionNodeProps> = ({
               <polyline points="18 15 12 9 6 15"/>
             </svg>
           </button>
-          <button
+          <button type="button"
             className="action-btn move"
             onClick={onMoveDown}
             disabled={isLast}
@@ -161,7 +161,7 @@ export const ActionNode: React.FC<ActionNodeProps> = ({
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
-          <button
+          <button type="button"
             className="action-btn add"
             onClick={onAddAfter}
             title="Add step after"
@@ -170,7 +170,7 @@ export const ActionNode: React.FC<ActionNodeProps> = ({
               <path d="M12 5v14M5 12h14"/>
             </svg>
           </button>
-          <button
+          <button type="button"
             className="action-btn remove"
             onClick={onRemove}
             title="Remove"

@@ -182,7 +182,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
         {/* Header */}
         <div className="templates-header">
           <h2>Chart Templates</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -192,28 +192,28 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
           <div className="templates-sidebar">
             {/* Tabs */}
             <div className="sidebar-tabs">
-              <button
+              <button type="button"
                 className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
                 onClick={() => setActiveTab('all')}
               >
                 <Grid3X3 size={14} />
                 <span>All Templates</span>
               </button>
-              <button
+              <button type="button"
                 className={`tab-btn ${activeTab === 'favorites' ? 'active' : ''}`}
                 onClick={() => setActiveTab('favorites')}
               >
                 <Star size={14} />
                 <span>Favorites</span>
               </button>
-              <button
+              <button type="button"
                 className={`tab-btn ${activeTab === 'recent' ? 'active' : ''}`}
                 onClick={() => setActiveTab('recent')}
               >
                 <Clock size={14} />
                 <span>Recent</span>
               </button>
-              <button
+              <button type="button"
                 className={`tab-btn ${activeTab === 'custom' ? 'active' : ''}`}
                 onClick={() => setActiveTab('custom')}
               >
@@ -226,14 +226,14 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
             {activeTab === 'all' && (
               <div className="category-list">
                 <h4>Categories</h4>
-                <button
+                <button type="button"
                   className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
                   onClick={() => setSelectedCategory('all')}
                 >
                   All Categories
                 </button>
                 {(Object.keys(CATEGORY_CONFIG) as ChartTemplateCategory[]).map(category => (
-                  <button
+                  <button type="button"
                     key={category}
                     className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
                     onClick={() => setSelectedCategory(category)}
@@ -278,7 +278,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                       <p>{template.description}</p>
                     </div>
                     <div className="template-actions">
-                      <button
+                      <button type="button"
                         className={`action-btn ${isFavorite(template.id) ? 'favorited' : ''}`}
                         onClick={e => {
                           e.stopPropagation();
@@ -288,7 +288,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                       >
                         <Star size={14} fill={isFavorite(template.id) ? 'currentColor' : 'none'} />
                       </button>
-                      <button
+                      <button type="button"
                         className="action-btn"
                         onClick={e => {
                           e.stopPropagation();
@@ -299,7 +299,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                         <Copy size={14} />
                       </button>
                       {!template.isBuiltIn && (
-                        <button
+                        <button type="button"
                           className="action-btn danger"
                           onClick={e => {
                             e.stopPropagation();
@@ -340,7 +340,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
 
                 {/* Color Scheme Selector */}
                 <div className="color-scheme-section">
-                  <button
+                  <button type="button"
                     className="color-scheme-toggle"
                     onClick={() => setShowColorPicker(!showColorPicker)}
                   >
@@ -351,7 +351,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                   {showColorPicker && (
                     <div className="color-schemes-grid">
                       {colorSchemes.map(scheme => (
-                        <button
+                        <button type="button"
                           key={scheme.id}
                           className={`color-scheme-option ${selectedColorScheme?.id === scheme.id ? 'selected' : ''}`}
                           onClick={() => setSelectedColorScheme(scheme)}
@@ -375,7 +375,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                   )}
                 </div>
 
-                <button className="apply-btn" onClick={handleApplyTemplate}>
+                <button type="button" className="apply-btn" onClick={handleApplyTemplate}>
                   Apply Template
                 </button>
               </>

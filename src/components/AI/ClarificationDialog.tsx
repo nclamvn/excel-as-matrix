@@ -87,7 +87,7 @@ export const ClarificationDialog: React.FC<ClarificationDialogProps> = ({
 
           {/* Other option */}
           {request.allowFreeText && (
-            <button
+            <button type="button"
               className={`clarification-option ${
                 showFreeText ? 'clarification-option--selected' : ''
               }`}
@@ -122,14 +122,14 @@ export const ClarificationDialog: React.FC<ClarificationDialogProps> = ({
       {/* Actions */}
       <div className="clarification-dialog__actions">
         {onSkip && !request.required && (
-          <button
+          <button type="button"
             className="clarification-dialog__skip"
             onClick={onSkip}
           >
             Skip
           </button>
         )}
-        <button
+        <button type="button"
           className="clarification-dialog__submit"
           onClick={handleSubmit}
           disabled={!canSubmit}
@@ -157,7 +157,7 @@ const ClarificationOptionButton: React.FC<ClarificationOptionButtonProps> = ({
   onSelect,
 }) => {
   return (
-    <button
+    <button type="button"
       className={`clarification-option ${
         selected ? 'clarification-option--selected' : ''
       }`}
@@ -198,7 +198,7 @@ export const InlineClarification: React.FC<InlineClarificationProps> = ({
       <span className="inline-clarification__question">{question}</span>
       <div className="inline-clarification__options">
         {options.map((option, index) => (
-          <button
+          <button type="button"
             key={index}
             className="inline-clarification__option"
             onClick={() => onSelect(option)}
@@ -233,7 +233,7 @@ export const QuickSuggestions: React.FC<QuickSuggestionsProps> = ({
       <span className="quick-suggestions__label">Suggestions:</span>
       <div className="quick-suggestions__list">
         {suggestions.map((suggestion, index) => (
-          <button
+          <button type="button"
             key={index}
             className="quick-suggestions__item"
             onClick={() => onSelect(suggestion)}

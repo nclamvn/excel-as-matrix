@@ -92,7 +92,7 @@ export const GoalSeekDialog: React.FC<GoalSeekDialogProps> = ({ isOpen, onClose 
             <Target size={18} className="text-green-600" />
             <h2 className="text-base font-semibold">Goal Seek</h2>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
             <X size={16} />
           </button>
         </div>
@@ -138,10 +138,10 @@ export const GoalSeekDialog: React.FC<GoalSeekDialogProps> = ({ isOpen, onClose 
         </div>
 
         <div className="flex justify-end gap-2 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
-          <button onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
+          <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
             Close
           </button>
-          <button onClick={handleSeek} className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700">
+          <button type="button" onClick={handleSeek} className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700">
             Seek
           </button>
         </div>

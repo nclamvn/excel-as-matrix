@@ -160,7 +160,7 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
             <Calculator size={18} className="text-blue-600" />
             <h2 className="text-base font-semibold">Solver</h2>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
             <X size={16} />
           </button>
         </div>
@@ -201,7 +201,7 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm text-neutral-600 dark:text-neutral-400">Subject to Constraints:</label>
-              <button onClick={addConstraint} className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200">
+              <button type="button" onClick={addConstraint} className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200">
                 <Plus size={12} /> Add
               </button>
             </div>
@@ -218,7 +218,7 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
                   </select>
                   <input value={c.value} onChange={(e) => updateConstraint(c.id, 'value', e.target.value)} placeholder="Value"
                     className="w-20 px-2 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700" />
-                  <button onClick={() => removeConstraint(c.id)} className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded">
+                  <button type="button" onClick={() => removeConstraint(c.id)} className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded">
                     <Trash2 size={12} className="text-red-500" />
                   </button>
                 </div>
@@ -235,10 +235,10 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
         </div>
 
         <div className="flex justify-end gap-2 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
-          <button onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
+          <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
             Close
           </button>
-          <button onClick={handleSolve} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+          <button type="button" onClick={handleSolve} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
             Solve
           </button>
         </div>

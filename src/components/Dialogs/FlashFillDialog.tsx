@@ -134,7 +134,7 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
               <Zap className="w-4 h-4" />
               Flash Fill
             </h3>
-            <button className="dialog-close" onClick={onClose}>
+            <button type="button" className="dialog-close" onClick={onClose}>
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -145,7 +145,7 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
             </div>
           </div>
           <div className="dialog-footer">
-            <button className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
               Close
             </button>
           </div>
@@ -162,7 +162,7 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
             <Zap className="w-4 h-4" />
             Flash Fill
           </h3>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -284,11 +284,11 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
         </div>
 
         <div className="dialog-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>
           {!flashFillResult ? (
-            <button
+            <button type="button"
               className="btn btn-primary"
               onClick={handlePreview}
               disabled={exampleCount === 0}
@@ -296,7 +296,7 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
               Preview
             </button>
           ) : (
-            <button
+            <button type="button"
               className="btn btn-primary"
               onClick={handleApply}
               disabled={!flashFillResult.success}

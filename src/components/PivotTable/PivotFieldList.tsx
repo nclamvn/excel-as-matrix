@@ -181,13 +181,13 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         </span>
 
         <div className="field-actions">
-          <button
+          <button type="button"
             className="field-action-btn"
             onClick={() => setActiveDropdown(isDropdownOpen ? null : dropdownId)}
           >
             <ChevronDown size={14} />
           </button>
-          <button
+          <button type="button"
             className="field-action-btn remove"
             onClick={() => handleRemoveField(area, areaField.fieldId)}
           >
@@ -205,7 +205,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     Summarize by
                   </span>
                   {(Object.keys(AGGREGATE_LABELS) as AggregateFunction[]).map(func => (
-                    <button
+                    <button type="button"
                       key={func}
                       className={`dropdown-item ${areaField.aggregateFunction === func ? 'active' : ''}`}
                       onClick={() => handleAggregateChange(areaField.fieldId, func)}
@@ -224,19 +224,19 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     <ArrowUpDown size={12} />
                     Sort
                   </span>
-                  <button
+                  <button type="button"
                     className={`dropdown-item ${areaField.sortOrder === 'asc' ? 'active' : ''}`}
                     onClick={() => handleSortChange(areaField.fieldId, area, 'asc')}
                   >
                     A to Z
                   </button>
-                  <button
+                  <button type="button"
                     className={`dropdown-item ${areaField.sortOrder === 'desc' ? 'active' : ''}`}
                     onClick={() => handleSortChange(areaField.fieldId, area, 'desc')}
                   >
                     Z to A
                   </button>
-                  <button
+                  <button type="button"
                     className={`dropdown-item ${areaField.sortOrder === 'none' ? 'active' : ''}`}
                     onClick={() => handleSortChange(areaField.fieldId, area, 'none')}
                   >
@@ -248,7 +248,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     <Layers size={12} />
                     Grouping
                   </span>
-                  <button
+                  <button type="button"
                     className="dropdown-item"
                     onClick={() => {
                       setGroupingField({ field: areaField, area });
@@ -268,7 +268,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                   <Filter size={12} />
                   Filter options
                 </span>
-                <button className="dropdown-item">
+                <button type="button" className="dropdown-item">
                   Select values...
                 </button>
               </div>
@@ -319,7 +319,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
       <Calculator size={14} className="calc-icon" />
       <span className="field-name">{calcField.name}</span>
       <div className="field-actions">
-        <button
+        <button type="button"
           className="field-action-btn"
           onClick={() => {
             setEditingCalculatedField(calcField);
@@ -358,7 +358,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
             <Calculator size={14} />
             Calculated Fields
           </h3>
-          <button
+          <button type="button"
             className="add-calc-field-btn"
             onClick={() => {
               setEditingCalculatedField(undefined);

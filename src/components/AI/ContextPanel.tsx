@@ -170,7 +170,7 @@ export const ContextPanel: React.FC = () => {
       <div className="ai-context-header">
         <Eye size={18} />
         <h3>Current Context</h3>
-        <button
+        <button type="button"
           className="ai-context-refresh"
           onClick={handleRefreshContext}
           disabled={isRefreshing}

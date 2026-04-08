@@ -208,7 +208,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
           <p className="text-gray-500 mt-1">Manage users, roles, and access permissions</p>
         </div>
         {canCreate && (
-          <button
+          <button type="button"
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -266,7 +266,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
           </select>
 
           {/* Refresh */}
-          <button
+          <button type="button"
             onClick={fetchUsers}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
             title="Refresh"
@@ -279,19 +279,19 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
         {selectedUsers.size > 0 && (
           <div className="mt-4 pt-4 border-t border-gray-200 flex items-center gap-4">
             <span className="text-sm text-gray-600">{selectedUsers.size} selected</span>
-            <button
+            <button type="button"
               onClick={() => handleBulkAction('activate')}
               className="text-sm text-green-600 hover:text-green-700"
             >
               Activate
             </button>
-            <button
+            <button type="button"
               onClick={() => handleBulkAction('deactivate')}
               className="text-sm text-gray-600 hover:text-gray-700"
             >
               Deactivate
             </button>
-            <button
+            <button type="button"
               onClick={() => handleBulkAction('suspend')}
               className="text-sm text-red-600 hover:text-red-700"
             >
@@ -402,7 +402,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="relative">
-                      <button
+                      <button type="button"
                         onClick={() =>
                           setActionMenuUser(actionMenuUser === user.id ? null : user.id)
                         }
@@ -415,7 +415,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
                         <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
                           {canEdit && (
                             <>
-                              <button
+                              <button type="button"
                                 onClick={() => {
                                   setEditingUser(user);
                                   setShowEditModal(true);
@@ -426,14 +426,14 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
                                 <Edit className="w-4 h-4" />
                                 Edit User
                               </button>
-                              <button
+                              <button type="button"
                                 onClick={() => handleUserAction(user.id, 'reset-password')}
                                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                               >
                                 <Key className="w-4 h-4" />
                                 Reset Password
                               </button>
-                              <button
+                              <button type="button"
                                 onClick={() => handleUserAction(user.id, 'reset-mfa')}
                                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                               >
@@ -441,7 +441,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
                                 Reset MFA
                               </button>
                               {user.status === 'active' ? (
-                                <button
+                                <button type="button"
                                   onClick={() => handleUserAction(user.id, 'suspend')}
                                   className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
                                 >
@@ -449,7 +449,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
                                   Suspend User
                                 </button>
                               ) : (
-                                <button
+                                <button type="button"
                                   onClick={() => handleUserAction(user.id, 'activate')}
                                   className="w-full flex items-center gap-2 px-4 py-2 text-sm text-green-600 hover:bg-gray-50"
                                 >
@@ -460,7 +460,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ organizationId }
                             </>
                           )}
                           {canDelete && (
-                            <button
+                            <button type="button"
                               onClick={() => handleDeleteUser(user.id)}
                               className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
                             >

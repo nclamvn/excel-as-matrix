@@ -85,7 +85,7 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Name Manager</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-700">
             ✕
           </button>
         </div>
@@ -93,14 +93,14 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
         {/* Toolbar */}
         <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
           <div className="flex gap-2">
-            <button
+            <button type="button"
               onClick={() => setIsCreating(true)}
               className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               New
             </button>
             {selectedRange && (
-              <button
+              <button type="button"
                 onClick={() => handleDelete(selectedRange.id)}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
               >
@@ -174,13 +174,13 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button
+                  <button type="button"
                     onClick={handleCreate}
                     className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
                   >
                     Create
                   </button>
-                  <button
+                  <button type="button"
                     onClick={() => { setIsCreating(false); resetForm(); }}
                     className="px-3 py-1 text-sm bg-gray-300 rounded hover:bg-gray-400"
                   >
@@ -257,7 +257,7 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
 
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-200 flex justify-end">
-          <button
+          <button type="button"
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
           >

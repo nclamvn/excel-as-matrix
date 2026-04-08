@@ -119,7 +119,7 @@ export const SessionTimeoutWarning: React.FC<SessionTimeoutProps> = ({
             </div>
             <h2 className="text-lg font-semibold text-gray-900">Session Expiring</h2>
           </div>
-          <button
+          <button type="button"
             onClick={handleExtendSession}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors"
           >
@@ -154,13 +154,13 @@ export const SessionTimeoutWarning: React.FC<SessionTimeoutProps> = ({
 
         {/* Actions */}
         <div className="flex gap-3">
-          <button
+          <button type="button"
             onClick={handleLogout}
             className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
           >
             Log out
           </button>
-          <button
+          <button type="button"
             onClick={handleExtendSession}
             className="flex-1 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >

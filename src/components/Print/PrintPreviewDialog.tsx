@@ -95,7 +95,7 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
 
           <div className="print-header-center">
             {/* Page Navigation */}
-            <button
+            <button type="button"
               onClick={handlePrevPage}
               disabled={currentPage <= 1}
               className="nav-btn"
@@ -105,7 +105,7 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
             <span className="page-info">
               Page {currentPage} of {pages.length || 1}
             </span>
-            <button
+            <button type="button"
               onClick={handleNextPage}
               disabled={currentPage >= pages.length}
               className="nav-btn"
@@ -116,24 +116,24 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
             <div className="header-divider" />
 
             {/* Zoom */}
-            <button onClick={handleZoomOut} className="nav-btn" title="Zoom Out">
+            <button type="button" onClick={handleZoomOut} className="nav-btn" title="Zoom Out">
               <ZoomOut size={18} />
             </button>
             <span className="zoom-level">{zoom}%</span>
-            <button onClick={handleZoomIn} className="nav-btn" title="Zoom In">
+            <button type="button" onClick={handleZoomIn} className="nav-btn" title="Zoom In">
               <ZoomIn size={18} />
             </button>
           </div>
 
           <div className="print-header-right">
-            <button
+            <button type="button"
               className="setup-btn"
               onClick={() => setShowPageSetup(true)}
             >
               <Settings size={16} />
               Page Setup
             </button>
-            <button className="close-btn" onClick={onClose}>
+            <button type="button" className="close-btn" onClick={onClose}>
               <X size={20} />
             </button>
           </div>
@@ -149,14 +149,14 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
               <div className="setting-item">
                 <label>Orientation</label>
                 <div className="orientation-btns">
-                  <button
+                  <button type="button"
                     className={settings.orientation === 'portrait' ? 'active' : ''}
                     onClick={() => setOrientation(sheetId, 'portrait')}
                   >
                     <FileText size={20} />
                     Portrait
                   </button>
-                  <button
+                  <button type="button"
                     className={settings.orientation === 'landscape' ? 'active' : ''}
                     onClick={() => setOrientation(sheetId, 'landscape')}
                   >
@@ -228,11 +228,11 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
 
             {/* Print Button */}
             <div className="print-actions">
-              <button className="print-btn primary" onClick={handlePrint}>
+              <button type="button" className="print-btn primary" onClick={handlePrint}>
                 <Printer size={18} />
                 Print
               </button>
-              <button className="print-btn secondary" onClick={handleExportPDF}>
+              <button type="button" className="print-btn secondary" onClick={handleExportPDF}>
                 <Download size={18} />
                 Export PDF
               </button>

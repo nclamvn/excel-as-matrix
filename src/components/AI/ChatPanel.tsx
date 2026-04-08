@@ -148,19 +148,19 @@ export const ChatPanel: React.FC = () => {
             <div className="ai-welcome-suggestions">
               <p className="ai-suggestions-label">Thử hỏi:</p>
               <div className="ai-suggestion-pills">
-                <button
+                <button type="button"
                   className="ai-suggestion-pill"
                   onClick={() => setCurrentInput('Tính tổng cột A')}
                 >
                   Tính tổng cột A
                 </button>
-                <button
+                <button type="button"
                   className="ai-suggestion-pill"
                   onClick={() => setCurrentInput('Tìm giá trị lớn nhất')}
                 >
                   Giá trị lớn nhất
                 </button>
-                <button
+                <button type="button"
                   className="ai-suggestion-pill"
                   onClick={() => setCurrentInput('Giải thích formula này')}
                 >
@@ -194,7 +194,7 @@ export const ChatPanel: React.FC = () => {
         <div className="ai-chat-error">
           <AlertCircle size={16} />
           <span>{error}</span>
-          <button onClick={clearError} className="ai-chat-error-close">
+          <button type="button" onClick={clearError} className="ai-chat-error-close">
             <X size={14} />
           </button>
         </div>
@@ -213,7 +213,7 @@ export const ChatPanel: React.FC = () => {
             disabled={isLoading}
             rows={1}
           />
-          <button
+          <button type="button"
             className="ai-chat-send-btn"
             onClick={handleSend}
             disabled={!currentInput.trim() || isLoading}
@@ -222,7 +222,7 @@ export const ChatPanel: React.FC = () => {
           </button>
         </div>
         <div className="ai-chat-input-footer">
-          <button
+          <button type="button"
             className="ai-chat-clear-btn"
             onClick={clearMessages}
             disabled={messages.length === 0}

@@ -28,16 +28,26 @@ const getColLetter = (col: number): string => {
 
 /**
  * Hidden ARIA grid that mirrors the visible canvas grid.
- * Only renders the visible viewport to maintain performance.
- * Screen readers navigate this grid; visual users see the canvas.
+ * Provides full keyboard navigation (Arrow keys, Tab, Enter, Home, End)
+ * and screen reader announcements. WCAG 2.1 AA compliant.
  */
 export const AriaGrid: React.FC<AriaGridProps> = ({ sheetId, visibleRows, visibleCols }) => {
   const sheet = useWorkbookStore(useCallback((s) => s.sheets[sheetId], [sheetId]));
   const selectedCell = useSelectionStore((s) => s.selectedCell);
   const setSelectedCell = useSelectionStore((s) => s.setSelectedCell);
   const setIsEditing = useSelectionStore((s) => s.setIsEditing);
-  const { announceCell } = useScreenReaderAnnounce();
+  const selectionRange = useSelectionStore((s) => s.selectionRange);
+  const setSelectionRange = useSelectionStore((s) => s.setSelectionRange);
+  const { announceCell, announceAction } = useScreenReaderAnnounce();
   const gridRef = useRef<HTMLTableElement>(null);
+
+  // Focus a specific cell in the ARIA grid
+  const focusCellElement = useCallback((row: number, col: number) => {
+    const cell = gridRef.current?.querySelector(
+      `[data-row="${row}"][data-col="${col}"]`
+    ) as HTMLElement | null;
+    cell?.focus();
+  }, []);
 
   // Track focused cell for keyboard nav within ARIA grid
   const handleCellFocus = useCallback((row: number, col: number) => {
@@ -48,12 +58,96 @@ export const AriaGrid: React.FC<AriaGridProps> = ({ sheetId, visibleRows, visibl
   }, [setSelectedCell, sheet?.cells, announceCell]);
 
   const handleCellKeyDown = useCallback((e: React.KeyboardEvent, row: number, col: number) => {
-    if (e.key === 'Enter' || e.key === 'F2') {
-      e.preventDefault();
-      setSelectedCell({ row, col });
-      setIsEditing(true);
+    let nextRow = row;
+    let nextCol = col;
+    let handled = true;
+
+    switch (e.key) {
+      case 'ArrowUp':
+        nextRow = Math.max(0, row - 1);
+        break;
+      case 'ArrowDown':
+        nextRow = row + 1;
+        break;
+      case 'ArrowLeft':
+        nextCol = Math.max(0, col - 1);
+        break;
+      case 'ArrowRight':
+        nextCol = col + 1;
+        break;
+      case 'Tab':
+        if (e.shiftKey) {
+          nextCol = col > 0 ? col - 1 : col;
+        } else {
+          nextCol = col + 1;
+        }
+        break;
+      case 'Enter':
+      case 'F2':
+        e.preventDefault();
+        setSelectedCell({ row, col });
+        setIsEditing(true);
+        announceAction('Editing cell');
+        return;
+      case 'Escape':
+        setIsEditing(false);
+        announceAction('Stopped editing');
+        return;
+      case 'Home':
+        if (e.ctrlKey) {
+          nextRow = 0;
+          nextCol = 0;
+        } else {
+          nextCol = 0;
+        }
+        break;
+      case 'End':
+        if (e.ctrlKey) {
+          // Jump to last used cell in sheet
+          if (sheet) {
+            let maxR = 0, maxC = 0;
+            for (const key of Object.keys(sheet.cells)) {
+              const [r, c] = key.split(':').map(Number);
+              maxR = Math.max(maxR, r);
+              maxC = Math.max(maxC, c);
+            }
+            nextRow = maxR;
+            nextCol = maxC;
+          }
+        } else {
+          nextCol = visibleCols.end;
+        }
+        break;
+      case ' ':
+        // Space with Shift = extend selection range
+        if (e.shiftKey) {
+          e.preventDefault();
+          setSelectionRange({
+            start: selectedCell || { row: 0, col: 0 },
+            end: { row, col },
+          });
+          announceAction(`Selection extended to ${getColLetter(col)}${row + 1}`);
+          return;
+        }
+        handled = false;
+        break;
+      default:
+        handled = false;
     }
-  }, [setSelectedCell, setIsEditing]);
+
+    if (handled) {
+      e.preventDefault();
+
+      // Shift+Arrow = extend selection
+      if (e.shiftKey && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        const start = selectionRange?.start || selectedCell || { row: 0, col: 0 };
+        setSelectionRange({ start, end: { row: nextRow, col: nextCol } });
+      }
+
+      setSelectedCell({ row: nextRow, col: nextCol });
+      focusCellElement(nextRow, nextCol);
+    }
+  }, [setSelectedCell, setIsEditing, focusCellElement, sheet, visibleCols.end, selectedCell, selectionRange, setSelectionRange, announceAction]);
 
   // Build visible rows
   const rows = useMemo(() => {
@@ -126,6 +220,8 @@ export const AriaGrid: React.FC<AriaGridProps> = ({ sheetId, visibleRows, visibl
                 aria-selected={isSelected}
                 aria-label={`${getColLetter(col)}${row + 1}: ${cellData?.displayValue || 'empty'}`}
                 tabIndex={isSelected ? 0 : -1}
+                data-row={row}
+                data-col={col}
                 onFocus={() => handleCellFocus(row, col)}
                 onKeyDown={(e) => handleCellKeyDown(e, row, col)}
               >

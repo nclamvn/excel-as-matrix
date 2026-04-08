@@ -4,6 +4,7 @@
 
 import { Hono } from 'hono';
 import { streamText } from 'hono/streaming';
+import { ServerPIIRedactor } from '../security/PIIRedactor';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
@@ -27,6 +28,18 @@ aiRouter.post('/chat', async (c) => {
   }
 
   try {
+    // PII Redaction — server-side defense-in-depth
+    const redactor = new ServerPIIRedactor();
+    const redactedMessages = redactor.redactMessages(body.messages);
+    const redactedSystem = typeof body.system === 'string'
+      ? redactor.redactText(body.system)
+      : body.system || '';
+
+    const piiCount = redactor.getRedactionCount();
+    if (piiCount > 0) {
+      console.log(`[PII] Server redacted ${piiCount} PII items before forwarding to Claude`);
+    }
+
     const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
       headers: {
@@ -38,8 +51,8 @@ aiRouter.post('/chat', async (c) => {
         model: body.model || 'claude-sonnet-4-20250514',
         max_tokens: body.max_tokens || 4096,
         temperature: body.temperature ?? 0.7,
-        system: body.system || '',
-        messages: body.messages,
+        system: redactedSystem,
+        messages: redactedMessages,
         tools: body.tools || undefined,
       }),
     });
@@ -50,6 +63,16 @@ aiRouter.post('/chat', async (c) => {
     }
 
     const data = await response.json();
+
+    // Restore PII tokens in response
+    if (data.content && Array.isArray(data.content)) {
+      for (const block of data.content) {
+        if (block.type === 'text' && typeof block.text === 'string') {
+          block.text = redactor.restoreText(block.text);
+        }
+      }
+    }
+
     return c.json(data);
   } catch (error) {
     console.error('AI proxy error:', error);
@@ -73,6 +96,18 @@ aiRouter.post('/stream', async (c) => {
   }
 
   try {
+    // PII Redaction — server-side defense-in-depth
+    const redactor = new ServerPIIRedactor();
+    const redactedMessages = redactor.redactMessages(body.messages);
+    const redactedSystem = typeof body.system === 'string'
+      ? redactor.redactText(body.system)
+      : body.system || '';
+
+    const piiCount = redactor.getRedactionCount();
+    if (piiCount > 0) {
+      console.log(`[PII] Server redacted ${piiCount} PII items before streaming to Claude`);
+    }
+
     const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
       headers: {
@@ -84,8 +119,8 @@ aiRouter.post('/stream', async (c) => {
         model: body.model || 'claude-sonnet-4-20250514',
         max_tokens: body.max_tokens || 4096,
         temperature: body.temperature ?? 0.7,
-        system: body.system || '',
-        messages: body.messages,
+        system: redactedSystem,
+        messages: redactedMessages,
         tools: body.tools || undefined,
         stream: true,
       }),

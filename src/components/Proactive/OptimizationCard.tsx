@@ -42,7 +42,7 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
             <span>{metadata?.speedImprovement || 'Performance boost'}</span>
           </div>
         </div>
-        <button
+        <button type="button"
           className="optimization-card__dismiss"
           onClick={() => onDismiss(optimization.id)}
           title="Dismiss"
@@ -84,7 +84,7 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
 
         {/* Preview toggle */}
         {metadata?.previewData && (
-          <button
+          <button type="button"
             className="optimization-card__preview-toggle"
             onClick={() => setShowPreview(!showPreview)}
           >
@@ -136,7 +136,7 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
 
       <div className="optimization-card__actions">
         {optimization.actions.map(action => (
-          <button
+          <button type="button"
             key={action.id}
             className={`optimization-card__action optimization-card__action--${action.type}`}
             onClick={() => onAction(optimization.id, action.id)}

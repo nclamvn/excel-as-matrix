@@ -53,7 +53,7 @@ export const ChangesPanel: React.FC<ChangesPanelProps> = ({ sheetId }) => {
     <div className="changes-panel">
       <div className="panel-header">
         <h3>Change History ({pendingCount} pending)</h3>
-        <button className="close-btn" onClick={toggleChangesPanel}>
+        <button type="button" className="close-btn" onClick={toggleChangesPanel}>
           <X size={18} />
         </button>
       </div>
@@ -96,14 +96,14 @@ export const ChangesPanel: React.FC<ChangesPanelProps> = ({ sheetId }) => {
                 </span>
                 {change.status === 'pending' && (
                   <div className="change-actions">
-                    <button
+                    <button type="button"
                       onClick={(e) => { e.stopPropagation(); acceptChange(change.id, sheetId); }}
                       title="Accept"
                       className="accept-btn"
                     >
                       <Check size={14} />
                     </button>
-                    <button
+                    <button type="button"
                       onClick={(e) => { e.stopPropagation(); rejectChange(change.id, sheetId); }}
                       title="Reject"
                       className="reject-btn"

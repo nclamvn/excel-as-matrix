@@ -143,7 +143,7 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
               <SplitSquareHorizontal className="w-4 h-4" />
               Text to Columns
             </h3>
-            <button className="dialog-close" onClick={onClose}>
+            <button type="button" className="dialog-close" onClick={onClose}>
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -154,7 +154,7 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
             </div>
           </div>
           <div className="dialog-footer">
-            <button className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
               Close
             </button>
           </div>
@@ -171,7 +171,7 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
             <SplitSquareHorizontal className="w-4 h-4" />
             Text to Columns
           </h3>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -324,10 +324,10 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
         <div className="dialog-footer">
           {step === 1 ? (
             <>
-              <button className="btn btn-secondary" onClick={onClose}>
+              <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancel
               </button>
-              <button
+              <button type="button"
                 className="btn btn-primary"
                 onClick={() => setStep(2)}
                 disabled={delimiterType === 'custom' && !customDelimiter}
@@ -337,10 +337,10 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
             </>
           ) : (
             <>
-              <button className="btn btn-secondary" onClick={() => setStep(1)}>
+              <button type="button" className="btn btn-secondary" onClick={() => setStep(1)}>
                 Back
               </button>
-              <button className="btn btn-primary" onClick={handleApply}>
+              <button type="button" className="btn btn-primary" onClick={handleApply}>
                 Apply
               </button>
             </>

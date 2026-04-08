@@ -91,7 +91,7 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
           <HistoryIcon /> Recent Formulas
         </h4>
         {onClear && history.length > 0 && (
-          <button
+          <button type="button"
             className="formula-history__clear"
             onClick={onClear}
             title="Clear history"
@@ -112,7 +112,7 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
           onChange={(e) => setFilter(e.target.value)}
         />
         {filter && (
-          <button
+          <button type="button"
             className="formula-history__search-clear"
             onClick={() => setFilter('')}
           >
@@ -158,7 +158,7 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
 
       {/* Show more */}
       {filteredHistory.length > maxItems && !showAll && (
-        <button
+        <button type="button"
           className="formula-history__show-more"
           onClick={() => setShowAll(true)}
         >
@@ -168,7 +168,7 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
 
       {/* Show less */}
       {showAll && filteredHistory.length > maxItems && (
-        <button
+        <button type="button"
           className="formula-history__show-less"
           onClick={() => setShowAll(false)}
         >

@@ -24,7 +24,7 @@ const QuickAccessButton: React.FC<QuickAccessButtonProps> = ({
 
   return (
     <div className="relative">
-      <button
+      <button type="button"
         ref={buttonRef}
         className="quick-access-bar__btn"
         onClick={onClick}

@@ -4,6 +4,8 @@
 
 import type { AIMessage, AIToolCall, AIConfig, AITool } from '../ai/types';
 import { loggers } from '@/utils/logger';
+import { PIIRedactor } from '../security/PIIRedactor';
+import { aiUsageLogger } from '../audit/AIUsageLogger';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -84,6 +86,8 @@ export class ClaudeAPIClient {
   private baseUrl = 'https://api.anthropic.com/v1';
   private proxyUrl = '/api/ai'; // Server-side proxy (hides API key)
   private useProxy = false; // Will be set to true when server proxy is available
+  private piiRedactor = new PIIRedactor();
+  private conversationId = crypto.randomUUID();
 
   constructor(config: AIConfig) {
     this.config = config;
@@ -169,6 +173,7 @@ export class ClaudeAPIClient {
     }
 
     // Real API call — use server proxy when available, direct API otherwise
+    const startTime = Date.now();
     try {
       const claudeMessages: ClaudeMessage[] = messages
         .filter((m) => m.role !== 'system')
@@ -177,12 +182,23 @@ export class ClaudeAPIClient {
           content: m.content,
         }));
 
+      // PII Redaction — mask sensitive data before sending to API
+      const { messages: redactedMessages, totalRedactions } =
+        this.piiRedactor.redactMessages(claudeMessages);
+      const redactedSystemPrompt = this.piiRedactor.redactSystemPrompt(systemPrompt);
+
+      if (totalRedactions > 0 || redactedSystemPrompt.hasRedactions) {
+        loggers.api.info(
+          `PII redacted: ${totalRedactions + redactedSystemPrompt.matches.length} items before API call`
+        );
+      }
+
       const requestBody = {
         model: this.config.model,
         max_tokens: this.config.maxTokens,
         temperature: this.config.temperature,
-        system: systemPrompt,
-        messages: claudeMessages,
+        system: redactedSystemPrompt.text,
+        messages: redactedMessages,
         tools: this.toolsToClaude(tools),
       };
 
@@ -233,13 +249,47 @@ export class ClaudeAPIClient {
         }
       }
 
+      // Restore PII tokens in AI response so user sees original data
+      messageText = this.piiRedactor.restoreResponse(messageText);
+
+      const tokensUsed = data.usage.input_tokens + data.usage.output_tokens;
+      const durationMs = Date.now() - startTime;
+      const totalPII = totalRedactions + redactedSystemPrompt.matches.length;
+
+      // Log AI usage
+      const lastUserMsg = messages[messages.length - 1]?.content || '';
+      aiUsageLogger.logChat({
+        conversationId: this.conversationId,
+        inputLength: typeof lastUserMsg === 'string' ? lastUserMsg.length : 0,
+        outputLength: messageText.length,
+        tokensUsed,
+        durationMs,
+        piiRedacted: totalPII,
+        streaming: false,
+        status: 'success',
+      }).catch(() => { /* non-blocking */ });
+
       return {
         message: messageText,
         toolCalls,
-        tokensUsed: data.usage.input_tokens + data.usage.output_tokens,
+        tokensUsed,
       };
     } catch (error) {
       loggers.api.error('Claude API error:', error);
+
+      // Log failed request
+      aiUsageLogger.logChat({
+        conversationId: this.conversationId,
+        inputLength: 0,
+        outputLength: 0,
+        tokensUsed: 0,
+        durationMs: Date.now() - startTime,
+        piiRedacted: 0,
+        streaming: false,
+        status: 'error',
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      }).catch(() => { /* non-blocking */ });
+
       throw error;
     }
   }

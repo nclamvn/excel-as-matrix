@@ -43,7 +43,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
       <div className="share-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="share-dialog-header">
           <h2>Share this workbook</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
@@ -68,7 +68,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
                 <option value="comment">Can comment</option>
                 <option value="edit">Can edit</option>
               </select>
-              <button className="invite-btn" onClick={handleInvite}>
+              <button type="button" className="invite-btn" onClick={handleInvite}>
                 Invite
               </button>
             </div>
@@ -82,7 +82,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
                 <div key={invite.email} className="invite-item">
                   <span className="invite-email">{invite.email}</span>
                   <span className="invite-permission">{invite.permission}</span>
-                  <button
+                  <button type="button"
                     className="remove-invite"
                     onClick={() => handleRemoveInvite(invite.email)}
                   >
@@ -101,7 +101,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
                 <Link2 size={14} />
                 <span>{shareLink}</span>
               </div>
-              <button
+              <button type="button"
                 className={`copy-link-btn ${linkCopied ? 'copied' : ''}`}
                 onClick={handleCopyLink}
               >
@@ -121,16 +121,16 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
             <div className="link-permissions">
               <Globe size={14} />
               <span>Anyone with the link can view</span>
-              <button className="change-permission">Change</button>
+              <button type="button" className="change-permission">Change</button>
             </div>
           </div>
         </div>
 
         <div className="share-dialog-footer">
-          <button className="cancel-btn" onClick={onClose}>
+          <button type="button" className="cancel-btn" onClick={onClose}>
             Cancel
           </button>
-          <button className="done-btn" onClick={onClose}>
+          <button type="button" className="done-btn" onClick={onClose}>
             Done
           </button>
         </div>

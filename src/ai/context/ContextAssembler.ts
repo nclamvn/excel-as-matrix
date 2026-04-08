@@ -343,19 +343,102 @@ export class ContextAssembler {
   }
 
   /**
-   * Assemble schema context (tables, named ranges)
+   * Assemble schema context including cross-sheet metadata
+   * Provides AI with awareness of all sheets, their structure,
+   * and inter-sheet formula references.
    */
   private async assembleSchemaContext(
-    _tokenBudget: number,
-    _truncatedItems: TruncationRecord[]
+    tokenBudget: number,
+    truncatedItems: TruncationRecord[]
   ): Promise<AssembledContext['schemaContext']> {
-    // For now, return minimal schema context
-    // This would be expanded when we implement tables/named ranges
+    const store = useWorkbookStore.getState();
+    const { sheets, sheetOrder, activeSheetId } = store;
+    let tokensUsed = 0;
+
+    const tables: AssembledContext['schemaContext']['tables'] = [];
+    const namedRanges: AssembledContext['schemaContext']['namedRanges'] = [];
+    const semanticTypes: string[] = [];
+
+    if (!sheetOrder || !Array.isArray(sheetOrder)) {
+      return { tables, namedRanges, semanticTypes, tokensUsed: 0 };
+    }
+
+    // Build cross-sheet summaries — each sheet gets a table-like summary
+    for (const sheetId of sheetOrder) {
+      if (tokensUsed >= tokenBudget) {
+        truncatedItems.push({
+          itemType: 'sheet_summary',
+          originalSize: sheetOrder.length,
+          truncatedSize: tables.length,
+          reason: 'Token budget exceeded for cross-sheet context',
+        });
+        break;
+      }
+
+      const sheet = sheets[sheetId];
+      if (!sheet) continue;
+
+      const cellEntries = Object.entries(sheet.cells);
+      if (cellEntries.length === 0) continue;
+
+      // Detect used range and column headers
+      let maxRow = 0;
+      let maxCol = 0;
+      const headerCandidates: string[] = [];
+
+      for (const [key, cell] of cellEntries) {
+        const [row, col] = key.split(':').map(Number);
+        maxRow = Math.max(maxRow, row);
+        maxCol = Math.max(maxCol, col);
+
+        // Row 0 cells are likely headers
+        if (row === 0 && cell.value != null) {
+          headerCandidates[col] = String(cell.value);
+        }
+      }
+
+      const columns = headerCandidates.filter(Boolean);
+      const isActive = sheetId === activeSheetId;
+
+      // Estimate tokens for this summary
+      const summaryTokens = this.tokenEstimator.estimateString(
+        `Sheet ${sheet.name}: ${columns.length} cols, ${maxRow + 1} rows`
+      );
+
+      if (tokensUsed + summaryTokens <= tokenBudget) {
+        tables.push({
+          name: `${sheet.name}${isActive ? ' (active)' : ''}`,
+          range: `A1:${colToLetter(maxCol)}${maxRow + 1}`,
+          columns: columns.length > 0 ? columns : Array.from({ length: maxCol + 1 }, (_, i) => colToLetter(i)),
+          rowCount: maxRow + 1,
+          hasHeaders: columns.length > 0,
+        });
+        tokensUsed += summaryTokens;
+      }
+
+      // Detect cross-sheet references in this sheet's formulas
+      for (const [, cell] of cellEntries) {
+        if (!cell.formula) continue;
+
+        // Match Sheet1!A1 or 'Sheet Name'!A1 patterns
+        const crossSheetRefs = cell.formula.match(/(?:'[^']+'|[A-Za-z0-9_]+)![A-Z]+\d+(?::[A-Z]+\d+)?/gi);
+        if (crossSheetRefs) {
+          for (const ref of crossSheetRefs) {
+            const refTokens = this.tokenEstimator.estimateString(ref);
+            if (tokensUsed + refTokens <= tokenBudget) {
+              semanticTypes.push(`cross-ref: ${sheet.name} → ${ref}`);
+              tokensUsed += refTokens;
+            }
+          }
+        }
+      }
+    }
+
     return {
-      tables: [],
-      namedRanges: [],
-      semanticTypes: [],
-      tokensUsed: 0,
+      tables,
+      namedRanges,
+      semanticTypes,
+      tokensUsed,
     };
   }
 

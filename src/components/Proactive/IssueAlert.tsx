@@ -69,7 +69,7 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
 
         <div className="issue-alert__actions">
           {primaryAction && (
-            <button
+            <button type="button"
               className="issue-alert__action issue-alert__action--primary"
               onClick={() => onAction(issue.id, primaryAction.id)}
             >
@@ -78,14 +78,14 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
             </button>
           )}
           {secondaryAction && (
-            <button
+            <button type="button"
               className="issue-alert__action issue-alert__action--secondary"
               onClick={() => onAction(issue.id, secondaryAction.id)}
             >
               {secondaryAction.label}
             </button>
           )}
-          <button
+          <button type="button"
             className="issue-alert__action issue-alert__action--dismiss"
             onClick={() => onDismiss(issue.id)}
           >
@@ -94,7 +94,7 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
         </div>
       </div>
 
-      <button
+      <button type="button"
         className="issue-alert__close"
         onClick={() => onDismiss(issue.id)}
         title="Dismiss"

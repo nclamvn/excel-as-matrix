@@ -40,7 +40,7 @@ export const UncertaintyBadge: React.FC<UncertaintyBadgeProps> = ({
 
   return (
     <div className={`uncertainty-badge ${className}`}>
-      <button
+      <button type="button"
         className="uncertainty-badge__trigger"
         onClick={() => setExpanded(!expanded)}
         style={{ '--severity-color': color } as React.CSSProperties}
@@ -144,7 +144,7 @@ const UncertaintyItemRow: React.FC<UncertaintyItemRowProps> = ({
       )}
 
       {!isResolved && onResolve && (
-        <button
+        <button type="button"
           className="uncertainty-item__resolve"
           onClick={() => onResolve(item.id)}
         >
@@ -184,7 +184,7 @@ export const UncertaintyIndicator: React.FC<UncertaintyIndicatorProps> = ({
   const color = getSeverityColor(severity);
 
   return (
-    <button
+    <button type="button"
       className={`uncertainty-indicator ${className}`}
       onClick={onClick}
       style={{ '--indicator-color': color } as React.CSSProperties}

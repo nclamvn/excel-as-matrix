@@ -29,7 +29,7 @@ export const OrientationDropdown: React.FC<OrientationDropdownProps> = ({ sheetI
 
   return (
     <div className="orientation-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="toolbar-2026__btn"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -43,7 +43,7 @@ export const OrientationDropdown: React.FC<OrientationDropdownProps> = ({ sheetI
 
       {isOpen && (
         <div className="orientation-menu">
-          <button
+          <button type="button"
             className={`orientation-item ${settings.orientation === 'portrait' ? 'active' : ''}`}
             onClick={() => handleSelect('portrait')}
           >
@@ -54,7 +54,7 @@ export const OrientationDropdown: React.FC<OrientationDropdownProps> = ({ sheetI
             </div>
             <span>Portrait</span>
           </button>
-          <button
+          <button type="button"
             className={`orientation-item ${settings.orientation === 'landscape' ? 'active' : ''}`}
             onClick={() => handleSelect('landscape')}
           >

@@ -42,7 +42,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 
   return (
     <div className="color-picker" ref={ref}>
-      <button
+      <button type="button"
         className="color-picker-trigger"
         onClick={() => setOpen(!isOpen)}
         title={title}
@@ -59,7 +59,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
         <div className="color-picker-dropdown">
           <div className="color-grid">
             {COLORS.map((color, index) => (
-              <button
+              <button type="button"
                 key={index}
                 className={`color-cell ${color === value ? 'selected' : ''}`}
                 style={{ backgroundColor: color }}
@@ -72,10 +72,10 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             ))}
           </div>
           <div className="color-picker-footer">
-            <button className="more-colors-btn">
+            <button type="button" className="more-colors-btn">
               More Colors...
             </button>
-            <button
+            <button type="button"
               className="no-color-btn"
               onClick={() => {
                 onChange('transparent');

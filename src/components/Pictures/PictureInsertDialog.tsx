@@ -155,7 +155,7 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
       <div className="dialog picture-dialog" onClick={e => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Insert Picture</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -163,14 +163,14 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
         <div className="dialog-content">
           {/* Mode Tabs */}
           <div className="mode-tabs">
-            <button
+            <button type="button"
               className={`mode-tab ${mode === 'upload' ? 'active' : ''}`}
               onClick={() => { setMode('upload'); setError(null); }}
             >
               <Upload size={16} />
               From Device
             </button>
-            <button
+            <button type="button"
               className={`mode-tab ${mode === 'url' ? 'active' : ''}`}
               onClick={() => { setMode('url'); setError(null); }}
             >
@@ -248,11 +248,11 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="btn-secondary" onClick={onClose} disabled={isLoading}>
+          <button type="button" className="btn-secondary" onClick={onClose} disabled={isLoading}>
             Cancel
           </button>
           {mode === 'url' && (
-            <button
+            <button type="button"
               className="btn-primary"
               onClick={handleUrlInsert}
               disabled={isLoading || !url.trim()}

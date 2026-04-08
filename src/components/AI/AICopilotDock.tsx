@@ -62,7 +62,7 @@ export const AICopilotDock: React.FC = () => {
           )}
         </div>
         <div className="ai-copilot-actions">
-          <button
+          <button type="button"
             className="ai-copilot-btn ai-copilot-btn--icon"
             onClick={closePanel}
             title="Close"
@@ -75,7 +75,7 @@ export const AICopilotDock: React.FC = () => {
       {/* Tabs */}
       <div className="ai-copilot-tabs">
         {TABS.map((tab) => (
-          <button
+          <button type="button"
             key={tab.id}
             className={`ai-copilot-tab ${activeTab === tab.id ? 'ai-copilot-tab--active' : ''}`}
             onClick={() => handleTabChange(tab.id)}

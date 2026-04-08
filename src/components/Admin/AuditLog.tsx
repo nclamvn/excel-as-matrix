@@ -228,7 +228,7 @@ export const AuditLog: React.FC = () => {
           <p className="text-gray-500 mt-1">View and export security audit events</p>
         </div>
         <div className="flex items-center gap-3">
-          <button
+          <button type="button"
             onClick={fetchEvents}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
             title="Refresh"
@@ -236,7 +236,7 @@ export const AuditLog: React.FC = () => {
             <RefreshCw className="w-5 h-5" />
           </button>
           <div className="relative">
-            <button
+            <button type="button"
               onClick={() => handleExport('csv')}
               disabled={exporting}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -292,7 +292,7 @@ export const AuditLog: React.FC = () => {
           </select>
 
           {/* More Filters Toggle */}
-          <button
+          <button type="button"
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-3 py-2 border rounded-lg transition-colors ${
               showFilters ? 'bg-blue-50 border-blue-300 text-blue-700' : 'border-gray-300'
@@ -449,7 +449,7 @@ export const AuditLog: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
+                      <button type="button"
                         onClick={() => setSelectedEvent(event)}
                         className="p-1 hover:bg-gray-100 rounded"
                         title="View details"
@@ -471,14 +471,14 @@ export const AuditLog: React.FC = () => {
               Page {page} of {totalPages}
             </div>
             <div className="flex gap-2">
-              <button
+              <button type="button"
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
                 className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <button
+              <button type="button"
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}
                 className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
@@ -524,7 +524,7 @@ const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onClose })
       <div className="bg-white rounded-xl shadow-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Event Details</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
             <X className="w-6 h-6 text-gray-400" />
           </button>
         </div>

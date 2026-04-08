@@ -96,7 +96,7 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = ({
     <div className="collab-list">
       <div className="collab-list__avatars">
         {visibleUsers.map((session) => (
-          <button
+          <button type="button"
             key={session.user.id}
             className="collab-list__avatar-btn"
             onClick={() => onUserClick?.(session)}

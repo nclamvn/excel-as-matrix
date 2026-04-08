@@ -59,7 +59,7 @@ export const CommentDialog: React.FC<CommentDialogProps> = ({ row, col, onClose 
             <MessageSquare className="w-4 h-4" />
             {isEditing ? 'Edit Comment' : 'Add Comment'}
           </h3>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -87,16 +87,16 @@ export const CommentDialog: React.FC<CommentDialogProps> = ({ row, col, onClose 
 
         <div className="dialog-footer">
           {isEditing && (
-            <button className="btn btn-danger" onClick={handleDelete}>
+            <button type="button" className="btn btn-danger" onClick={handleDelete}>
               <Trash2 className="w-4 h-4" />
               Delete
             </button>
           )}
           <div className="footer-right">
-            <button className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button className="btn btn-primary" onClick={handleSave}>
+            <button type="button" className="btn btn-primary" onClick={handleSave}>
               {isEditing ? 'Update' : 'Add Comment'}
             </button>
           </div>

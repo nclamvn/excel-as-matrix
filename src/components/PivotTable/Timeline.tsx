@@ -306,7 +306,7 @@ export const Timeline: React.FC<TimelineProps> = ({
           </div>
           <div className="timeline-actions">
             {hasActiveFilter && (
-              <button
+              <button type="button"
                 className="timeline-action-btn"
                 onClick={handleClearFilter}
                 title="Clear Filter"
@@ -314,7 +314,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 <X size={14} />
               </button>
             )}
-            <button
+            <button type="button"
               className="timeline-action-btn"
               onClick={() => setShowMenu(!showMenu)}
               title="Options"
@@ -325,12 +325,12 @@ export const Timeline: React.FC<TimelineProps> = ({
 
           {showMenu && (
             <div className="timeline-menu" onClick={e => e.stopPropagation()}>
-              <button onClick={handleClearFilter}>
+              <button type="button" onClick={handleClearFilter}>
                 <X size={14} />
                 Clear Selection
               </button>
               <div className="menu-divider" />
-              <button onClick={handleDelete} className="danger">
+              <button type="button" onClick={handleDelete} className="danger">
                 <Trash2 size={14} />
                 Remove Timeline
               </button>
@@ -342,7 +342,7 @@ export const Timeline: React.FC<TimelineProps> = ({
       {/* Timeline Bar */}
       <div className="timeline-body">
         {scrollOffset > 0 && (
-          <button
+          <button type="button"
             className="timeline-scroll-btn left"
             onClick={() => handleScroll('left')}
           >
@@ -352,7 +352,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
         <div className="timeline-periods">
           {periods.slice(scrollOffset, scrollOffset + 10).map((period, index) => (
-            <button
+            <button type="button"
               key={index}
               className={`timeline-period ${period.isSelected ? 'selected' : ''}`}
               style={{
@@ -372,7 +372,7 @@ export const Timeline: React.FC<TimelineProps> = ({
         </div>
 
         {scrollOffset + 10 < periods.length && (
-          <button
+          <button type="button"
             className="timeline-scroll-btn right"
             onClick={() => handleScroll('right')}
           >

@@ -1,13 +1,18 @@
 import React, { useState, useCallback } from 'react';
-import { FileSpreadsheet, Search, Sparkles, ChevronLeft } from 'lucide-react';
+import { FileSpreadsheet, Search, Sparkles, ChevronLeft, History } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useToolbarStore, TabId } from '../../stores/toolbarStore';
 import { useAIStore } from '../../stores/aiStore';
+import { usePresenceStore } from '../../stores/presenceStore';
 import { FileMenu } from '../FileMenu';
 import { ShareButton } from '../Share';
+import { PresenceAvatars } from '../Collab/PresenceAvatars';
+import { NotificationBell } from '../Notifications/NotificationBell';
+import { useRealtime } from '../../providers/RealtimeProvider';
 
 interface Header2026Props {
   onOpenCommandPalette: () => void;
+  onOpenVersionHistory?: () => void;
 }
 
 const TABS: { id: TabId; label: string }[] = [
@@ -19,12 +24,14 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'view', label: 'View' },
 ];
 
-export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) => {
+export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette, onOpenVersionHistory }) => {
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const { workbookName } = useWorkbookStore();
   const { activeTab, setActiveTab } = useToolbarStore();
   const isAIOpen = useAIStore((state) => state.isOpen);
   const toggleAIPanel = useAIStore((state) => state.togglePanel);
+  const { isConnected, isEnabled } = useRealtime();
+  const localUser = usePresenceStore((s) => s.localUser);
 
   const handleBackToLanding = useCallback(() => {
     localStorage.removeItem('ai-suite-entered');
@@ -35,7 +42,7 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
     <>
       <header className="header-2026">
         {/* Back to Landing */}
-        <button
+        <button type="button"
           className="header-2026__back"
           onClick={handleBackToLanding}
           title="Back to Landing"
@@ -45,7 +52,7 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
         <span className="header-2026__separator">|</span>
 
         {/* Brand / File Menu Button */}
-        <button
+        <button type="button"
           className="header-2026__brand"
           onClick={() => setIsFileMenuOpen(true)}
           title="File Menu"
@@ -57,7 +64,7 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
         {/* Navigation */}
         <nav className="header-2026__nav">
           {TABS.map((tab) => (
-          <button
+          <button type="button"
             key={tab.id}
             className={`header-2026__nav-item ${activeTab === tab.id ? 'header-2026__nav-item--active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
@@ -74,7 +81,7 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
 
       {/* Actions */}
       <div className="header-2026__actions">
-        <button
+        <button type="button"
           className="header-2026__cmd-hint"
           onClick={onOpenCommandPalette}
         >
@@ -83,11 +90,67 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette }) 
           <kbd>⌘K</kbd>
         </button>
 
+        {/* Presence: online users + connection status */}
+        {isEnabled && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 4 }}>
+            <PresenceAvatars size="sm" maxVisible={4} />
+            <span
+              title={isConnected ? 'Live — real-time sync active' : 'Offline'}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: 11,
+                color: isConnected ? '#22c55e' : '#9ca3af',
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  backgroundColor: isConnected ? '#22c55e' : '#9ca3af',
+                  display: 'inline-block',
+                }}
+              />
+              {isConnected ? 'Live' : 'Offline'}
+            </span>
+          </div>
+        )}
+
+        {/* Version History */}
+        {onOpenVersionHistory && (
+          <button type="button"
+            className="header-2026__history-btn"
+            onClick={onOpenVersionHistory}
+            title="Version History"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '4px 10px',
+              height: 28,
+              background: 'transparent',
+              border: '1px solid var(--surface-3, #d4d4d4)',
+              borderRadius: 5,
+              fontSize: 12,
+              color: 'var(--text-2, #525252)',
+              cursor: 'pointer',
+            }}
+          >
+            <History size={14} />
+            <span>History</span>
+          </button>
+        )}
+
+        {/* Notification Bell */}
+        <NotificationBell userId={localUser?.userId || 'anonymous'} />
+
         {/* Share Button */}
         <ShareButton />
 
         {/* AI Copilot Toggle */}
-        <button
+        <button type="button"
           className={`ai-toggle-btn ${isAIOpen ? 'ai-toggle-btn--active' : ''}`}
           onClick={toggleAIPanel}
           title="AI Copilot"

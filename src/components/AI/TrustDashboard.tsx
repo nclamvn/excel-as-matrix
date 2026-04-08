@@ -59,7 +59,7 @@ export const TrustDashboard: React.FC<TrustDashboardProps> = ({
       {/* Tabs */}
       <div className="trust-dashboard__tabs">
         {tabs.map((tab) => (
-          <button
+          <button type="button"
             key={tab.id}
             className={`trust-dashboard__tab ${activeTab === tab.id ? 'trust-dashboard__tab--active' : ''}`}
             onClick={() => setActiveTab(tab.id)}

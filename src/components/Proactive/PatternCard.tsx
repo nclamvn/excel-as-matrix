@@ -42,7 +42,7 @@ export const PatternCard: React.FC<PatternCardProps> = ({
             </div>
           )}
         </div>
-        <button
+        <button type="button"
           className="pattern-card__dismiss"
           onClick={() => onDismiss(pattern.id)}
           title="Dismiss"
@@ -109,7 +109,7 @@ export const PatternCard: React.FC<PatternCardProps> = ({
 
       <div className="pattern-card__actions">
         {pattern.actions.map(action => (
-          <button
+          <button type="button"
             key={action.id}
             className={`pattern-card__action pattern-card__action--${action.type}`}
             onClick={() => onAction(pattern.id, action.id)}

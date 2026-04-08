@@ -133,14 +133,14 @@ const NotificationItem: React.FC<{
         <div className="ai-notification-title">{notification.title}</div>
         <div className="ai-notification-message">{notification.message}</div>
         {notification.action && (
-          <button className="ai-notification-action" onClick={onAction}>
+          <button type="button" className="ai-notification-action" onClick={onAction}>
             {notification.action.label}
             <ChevronRight size={12} />
           </button>
         )}
       </div>
       {notification.dismissible && (
-        <button className="ai-notification-dismiss" onClick={onDismiss}>
+        <button type="button" className="ai-notification-dismiss" onClick={onDismiss}>
           <X size={14} />
         </button>
       )}
@@ -175,7 +175,7 @@ export const ProactiveAINotifications: React.FC = () => {
           )}
         </div>
         <div className="ai-notifications-actions">
-          <button
+          <button type="button"
             className={`ai-notifications-mute ${muted ? 'muted' : ''}`}
             onClick={toggleMute}
             title={muted ? 'Unmute notifications' : 'Mute notifications'}
@@ -183,7 +183,7 @@ export const ProactiveAINotifications: React.FC = () => {
             {muted ? <BellOff size={14} /> : <Bell size={14} />}
           </button>
           {notifications.length > 0 && (
-            <button className="ai-notifications-clear" onClick={clearAll}>
+            <button type="button" className="ai-notifications-clear" onClick={clearAll}>
               Clear all
             </button>
           )}

@@ -64,7 +64,7 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               </p>
             </div>
           </div>
-          <button
+          <button type="button"
             onClick={onClose}
             className="p-2 hover:bg-yellow-100 rounded-lg transition-colors"
           >
@@ -77,7 +77,7 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
         {/* Navigation */}
         {conflicts.length > 1 && (
           <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-b">
-            <button
+            <button type="button"
               onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))}
               disabled={selectedIndex === 0}
               className="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -89,7 +89,7 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
             <span className="text-sm text-gray-600">
               Conflict {selectedIndex + 1} of {conflicts.length}
             </span>
-            <button
+            <button type="button"
               onClick={() => setSelectedIndex(Math.min(conflicts.length - 1, selectedIndex + 1))}
               disabled={selectedIndex === conflicts.length - 1}
               className="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -133,7 +133,7 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               <p className="text-xs text-gray-500">
                 Modified: {formatTime(currentConflict.localTimestamp)}
               </p>
-              <button className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              <button type="button" className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                 Use This Version
               </button>
             </div>
@@ -160,7 +160,7 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               <p className="text-xs text-gray-500">
                 Modified: {formatTime(currentConflict.serverTimestamp)}
               </p>
-              <button className="mt-3 w-full py-2 bg-green-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              <button type="button" className="mt-3 w-full py-2 bg-green-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                 Use This Version
               </button>
             </div>
@@ -174,13 +174,13 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
           </div>
           {conflicts.length > 1 && (
             <div className="flex gap-2">
-              <button
+              <button type="button"
                 onClick={() => onResolveAll('local')}
                 className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 Keep All Local
               </button>
-              <button
+              <button type="button"
                 onClick={() => onResolveAll('server')}
                 className="px-4 py-2 text-sm font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors"
               >

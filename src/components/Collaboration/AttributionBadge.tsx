@@ -172,7 +172,7 @@ export const EditHistoryPanel: React.FC<EditHistoryPanelProps> = ({
           Edit History: {cellRef}
         </h3>
         {onClose && (
-          <button
+          <button type="button"
             className="edit-history-panel__close"
             onClick={onClose}
             title="Close"

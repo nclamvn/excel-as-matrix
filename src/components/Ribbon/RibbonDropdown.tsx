@@ -37,7 +37,7 @@ export const RibbonDropdown: React.FC<RibbonDropdownProps> = ({
 
   return (
     <div className={`ribbon-dropdown ${size}`} ref={ref}>
-      <button
+      <button type="button"
         className={`ribbon-dropdown-trigger ${size}`}
         onClick={() => setOpen(!isOpen)}
       >
@@ -52,7 +52,7 @@ export const RibbonDropdown: React.FC<RibbonDropdownProps> = ({
             option.divider ? (
               <div key={index} className="dropdown-divider" />
             ) : (
-              <button
+              <button type="button"
                 key={option.id}
                 className="dropdown-item"
                 onClick={() => {

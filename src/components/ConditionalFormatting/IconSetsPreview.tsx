@@ -70,7 +70,7 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
             <div className="preview-section-title">{getCategoryTitle(category)}</div>
             <div className="icon-sets-grid">
               {icons.map((iconDef) => (
-                <button
+                <button type="button"
                   key={iconDef.id}
                   className="icon-set-item"
                   onClick={() => handleSelect(iconDef)}
@@ -89,7 +89,7 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
       })}
 
       <div className="preview-footer">
-        <button className="more-options-btn">
+        <button type="button" className="more-options-btn">
           More Icon Sets...
         </button>
       </div>

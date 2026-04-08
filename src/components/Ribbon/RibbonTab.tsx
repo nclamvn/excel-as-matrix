@@ -14,7 +14,7 @@ export const RibbonTab: React.FC<RibbonTabProps> = ({
   onClick,
 }) => {
   return (
-    <button
+    <button type="button"
       className={`ribbon-tab ${isActive ? 'active' : ''}`}
       onClick={onClick}
       data-tab={id}

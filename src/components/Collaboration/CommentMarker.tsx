@@ -39,7 +39,7 @@ export const CommentMarker: React.FC<CommentMarkerProps> = ({
   };
 
   return (
-    <button
+    <button type="button"
       className={`comment-marker ${positionClasses[position]} comment-marker--${size} ${hasUnresolved ? 'comment-marker--unresolved' : 'comment-marker--resolved'}`}
       onClick={onClick}
       title={`${commentCount} comment${commentCount !== 1 ? 's' : ''}`}
@@ -84,7 +84,7 @@ export const CommentCellOverlay: React.FC<CommentCellOverlayProps> = ({
         />
       ) : (
         isHovered && (
-          <button
+          <button type="button"
             className="comment-cell-overlay__add"
             onClick={onClick}
             title={`Add comment to ${cellRef}`}
@@ -142,7 +142,7 @@ export const NewCommentInput: React.FC<NewCommentInputProps> = ({
     <div className="new-comment-input">
       <div className="new-comment-input__header">
         <span className="new-comment-input__cell">{cellRef}</span>
-        <button
+        <button type="button"
           className="new-comment-input__close"
           onClick={onCancel}
           title="Cancel"
@@ -160,13 +160,13 @@ export const NewCommentInput: React.FC<NewCommentInputProps> = ({
         rows={3}
       />
       <div className="new-comment-input__actions">
-        <button
+        <button type="button"
           className="new-comment-input__btn new-comment-input__btn--secondary"
           onClick={onCancel}
         >
           Cancel
         </button>
-        <button
+        <button type="button"
           className="new-comment-input__btn new-comment-input__btn--primary"
           onClick={handleSubmit}
           disabled={!content.trim()}

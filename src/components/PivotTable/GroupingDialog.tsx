@@ -113,7 +113,7 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
             {isDateField ? <Calendar size={20} /> : <Hash size={20} />}
             <h2>Grouping - {fieldInfo?.name}</h2>
           </div>
-          <button className="pivot-dialog-close" onClick={onClose}>
+          <button type="button" className="pivot-dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -266,10 +266,10 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
         </div>
 
         <div className="pivot-dialog-footer">
-          <button className="pivot-btn-secondary" onClick={onClose}>
+          <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="pivot-btn-primary"
             onClick={handleApply}
             disabled={!isDateField && !isNumberField}

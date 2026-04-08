@@ -63,7 +63,7 @@ export const PictureToolbar: React.FC<PictureToolbarProps> = ({ sheetId }) => {
   return (
     <div className="picture-toolbar">
       {/* Rotate */}
-      <button
+      <button type="button"
         className="toolbar-btn"
         onClick={handleRotate}
         title="Rotate 90deg"
@@ -73,7 +73,7 @@ export const PictureToolbar: React.FC<PictureToolbarProps> = ({ sheetId }) => {
 
       {/* Opacity */}
       <div className="toolbar-group">
-        <button
+        <button type="button"
           className="toolbar-btn"
           onClick={() => {
             setShowOpacitySlider(!showOpacitySlider);
@@ -100,7 +100,7 @@ export const PictureToolbar: React.FC<PictureToolbarProps> = ({ sheetId }) => {
 
       {/* Border */}
       <div className="toolbar-group">
-        <button
+        <button type="button"
           className="toolbar-btn"
           onClick={() => {
             setShowBorderOptions(!showBorderOptions);
@@ -139,14 +139,14 @@ export const PictureToolbar: React.FC<PictureToolbarProps> = ({ sheetId }) => {
       <div className="toolbar-divider" />
 
       {/* Z-Index */}
-      <button
+      <button type="button"
         className="toolbar-btn"
         onClick={() => bringToFront(sheetId, selectedPicture.id)}
         title="Bring to Front"
       >
         <ArrowUp size={18} />
       </button>
-      <button
+      <button type="button"
         className="toolbar-btn"
         onClick={() => sendToBack(sheetId, selectedPicture.id)}
         title="Send to Back"
@@ -157,21 +157,21 @@ export const PictureToolbar: React.FC<PictureToolbarProps> = ({ sheetId }) => {
       <div className="toolbar-divider" />
 
       {/* Actions */}
-      <button
+      <button type="button"
         className="toolbar-btn"
         onClick={() => duplicatePicture(sheetId, selectedPicture.id)}
         title="Duplicate"
       >
         <Copy size={18} />
       </button>
-      <button
+      <button type="button"
         className="toolbar-btn"
         onClick={toggleLock}
         title={selectedPicture.locked ? 'Unlock' : 'Lock'}
       >
         {selectedPicture.locked ? <Lock size={18} /> : <Unlock size={18} />}
       </button>
-      <button
+      <button type="button"
         className="toolbar-btn delete"
         onClick={() => deletePicture(sheetId, selectedPicture.id)}
         title="Delete"

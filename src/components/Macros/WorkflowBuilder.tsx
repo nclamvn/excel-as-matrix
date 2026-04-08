@@ -132,7 +132,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       <div className="steps-container">
         <div className="steps-header">
           <span className="steps-title">Steps ({steps.length})</span>
-          <button
+          <button type="button"
             className="add-step-btn"
             onClick={() => {
               setEditingStepIndex(null);
@@ -150,7 +150,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
           {steps.length === 0 ? (
             <div className="empty-steps">
               <p>No steps yet. Add actions to build your workflow.</p>
-              <button
+              <button type="button"
                 className="add-first-step"
                 onClick={() => setShowActionPicker(true)}
               >
@@ -184,10 +184,10 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
 
       {/* Footer */}
       <div className="builder-footer">
-        <button className="cancel-btn" onClick={onCancel}>
+        <button type="button" className="cancel-btn" onClick={onCancel}>
           Cancel
         </button>
-        <button
+        <button type="button"
           className="save-btn"
           onClick={handleSave}
           disabled={steps.length === 0}

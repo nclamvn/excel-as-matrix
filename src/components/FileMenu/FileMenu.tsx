@@ -149,7 +149,7 @@ const MenuItemComponent: React.FC<{
 }> = ({ item, isActive, onClick }) => (
   <>
     {item.divider && <div className="file-menu__divider" />}
-    <button
+    <button type="button"
       className={`file-menu__item ${isActive ? 'file-menu__item--active' : ''}`}
       onClick={onClick}
     >
@@ -187,7 +187,7 @@ const RecentFileItem: React.FC<{
   };
 
   return (
-    <button className="recent-file" onClick={onClick}>
+    <button type="button" className="recent-file" onClick={onClick}>
       <div className="recent-file__icon">
         {getFileIcon(file.name)}
       </div>
@@ -206,21 +206,21 @@ const RecentFileItem: React.FC<{
 
 const NewSubmenu: React.FC<{ onSelect: (type: string) => void }> = ({ onSelect }) => (
   <div className="file-menu__submenu">
-    <button className="file-menu__submenu-item" onClick={() => onSelect('blank')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('blank')}>
       <FileSpreadsheet size={18} />
       <div>
         <span className="file-menu__submenu-title">Blank Workbook</span>
         <span className="file-menu__submenu-desc">Start with an empty spreadsheet</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('template')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('template')}>
       <FileText size={18} />
       <div>
         <span className="file-menu__submenu-title">From Template</span>
         <span className="file-menu__submenu-desc">Choose from pre-built templates</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('import')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('import')}>
       <Upload size={18} />
       <div>
         <span className="file-menu__submenu-title">Import Data</span>
@@ -232,28 +232,28 @@ const NewSubmenu: React.FC<{ onSelect: (type: string) => void }> = ({ onSelect }
 
 const SaveAsSubmenu: React.FC<{ onSelect: (format: string) => void }> = ({ onSelect }) => (
   <div className="file-menu__submenu">
-    <button className="file-menu__submenu-item" onClick={() => onSelect('xlsx')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('xlsx')}>
       <FileSpreadsheet size={18} />
       <div>
         <span className="file-menu__submenu-title">Excel Workbook (.xlsx)</span>
         <span className="file-menu__submenu-desc">Standard Excel format</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('xls')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('xls')}>
       <FileSpreadsheet size={18} />
       <div>
         <span className="file-menu__submenu-title">Excel 97-2003 (.xls)</span>
         <span className="file-menu__submenu-desc">Compatible with older Excel versions</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('csv')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('csv')}>
       <FileText size={18} />
       <div>
         <span className="file-menu__submenu-title">CSV (Comma delimited)</span>
         <span className="file-menu__submenu-desc">Plain text format</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('json')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('json')}>
       <FileCode size={18} />
       <div>
         <span className="file-menu__submenu-title">JSON</span>
@@ -265,21 +265,21 @@ const SaveAsSubmenu: React.FC<{ onSelect: (format: string) => void }> = ({ onSel
 
 const PrintSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSelect }) => (
   <div className="file-menu__submenu">
-    <button className="file-menu__submenu-item" onClick={() => onSelect('print')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('print')}>
       <Printer size={18} />
       <div>
         <span className="file-menu__submenu-title">Print</span>
         <span className="file-menu__submenu-desc">Print current sheet</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('preview')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('preview')}>
       <FileText size={18} />
       <div>
         <span className="file-menu__submenu-title">Print Preview</span>
         <span className="file-menu__submenu-desc">Preview before printing</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('settings')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('settings')}>
       <Settings size={18} />
       <div>
         <span className="file-menu__submenu-title">Page Setup</span>
@@ -291,21 +291,21 @@ const PrintSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSele
 
 const EncryptSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSelect }) => (
   <div className="file-menu__submenu">
-    <button className="file-menu__submenu-item" onClick={() => onSelect('password')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('password')}>
       <Lock size={18} />
       <div>
         <span className="file-menu__submenu-title">Set Password</span>
         <span className="file-menu__submenu-desc">Protect workbook with password</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('sheet')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('sheet')}>
       <Shield size={18} />
       <div>
         <span className="file-menu__submenu-title">Protect Sheet</span>
         <span className="file-menu__submenu-desc">Lock cells and formulas</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('remove')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('remove')}>
       <Lock size={18} />
       <div>
         <span className="file-menu__submenu-title">Remove Protection</span>
@@ -317,28 +317,28 @@ const EncryptSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSe
 
 const BackupSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSelect }) => (
   <div className="file-menu__submenu">
-    <button className="file-menu__submenu-item" onClick={() => onSelect('backup')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('backup')}>
       <Database size={18} />
       <div>
         <span className="file-menu__submenu-title">Create Backup</span>
         <span className="file-menu__submenu-desc">Save a backup copy</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('restore')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('restore')}>
       <RotateCcw size={18} />
       <div>
         <span className="file-menu__submenu-title">Restore Backup</span>
         <span className="file-menu__submenu-desc">Restore from previous backup</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('history')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('history')}>
       <History size={18} />
       <div>
         <span className="file-menu__submenu-title">Version History</span>
         <span className="file-menu__submenu-desc">View and restore previous versions</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('autosave')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('autosave')}>
       <Clock size={18} />
       <div>
         <span className="file-menu__submenu-title">Auto-save Settings</span>
@@ -350,21 +350,21 @@ const BackupSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSel
 
 const HelpSubmenu: React.FC<{ onSelect: (action: string) => void }> = ({ onSelect }) => (
   <div className="file-menu__submenu">
-    <button className="file-menu__submenu-item" onClick={() => onSelect('guide')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('guide')}>
       <HelpCircle size={18} />
       <div>
         <span className="file-menu__submenu-title">User Guide</span>
         <span className="file-menu__submenu-desc">Learn how to use ExcelAI</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('shortcuts')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('shortcuts')}>
       <FileText size={18} />
       <div>
         <span className="file-menu__submenu-title">Keyboard Shortcuts</span>
         <span className="file-menu__submenu-desc">View all shortcuts</span>
       </div>
     </button>
-    <button className="file-menu__submenu-item" onClick={() => onSelect('about')}>
+    <button type="button" className="file-menu__submenu-item" onClick={() => onSelect('about')}>
       <Globe size={18} />
       <div>
         <span className="file-menu__submenu-title">About ExcelAI</span>
@@ -885,7 +885,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
           <div className="file-menu__recent">
             <div className="file-menu__recent-header">
               <h3>Recent</h3>
-              <button onClick={clearRecentFiles} title="Clear recent files">
+              <button type="button" onClick={clearRecentFiles} title="Clear recent files">
                 <RefreshCw size={14} />
               </button>
             </div>
@@ -944,7 +944,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
               style={{ display: 'none' }}
               onChange={handleFileOpen}
             />
-            <button
+            <button type="button"
               className="file-menu__browse-btn"
               onClick={() => document.getElementById('file-input-open')?.click()}
             >

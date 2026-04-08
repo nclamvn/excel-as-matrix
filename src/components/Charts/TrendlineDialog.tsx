@@ -148,7 +148,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
             <TrendingUp size={18} />
             Add Trendline
           </h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -159,7 +159,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
             <label>Trendline Type</label>
             <div className="trendline-type-grid">
               {TRENDLINE_OPTIONS.map(option => (
-                <button
+                <button type="button"
                   key={option.type}
                   className={`trendline-type-btn ${selectedType === option.type ? 'active' : ''}`}
                   onClick={() => setSelectedType(option.type)}
@@ -180,7 +180,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
               <label>Polynomial Degree</label>
               <div className="degree-selector">
                 {[2, 3, 4, 5, 6].map(d => (
-                  <button
+                  <button type="button"
                     key={d}
                     className={`degree-btn ${degree === d ? 'active' : ''}`}
                     onClick={() => setDegree(d)}
@@ -272,7 +272,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                 <span>Color:</span>
                 <div className="color-options">
                   {COLOR_OPTIONS.map(c => (
-                    <button
+                    <button type="button"
                       key={c}
                       className={`color-btn ${color === c ? 'active' : ''}`}
                       style={{ backgroundColor: c }}
@@ -353,10 +353,10 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="dialog-btn-primary"
             onClick={handleApply}
             disabled={!previewResult || previewResult.points.length === 0}

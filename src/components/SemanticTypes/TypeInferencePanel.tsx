@@ -97,7 +97,7 @@ export const TypeInferencePanel: React.FC<TypeInferencePanelProps> = ({
         <div className="type-inference-reason">{inference.reason}</div>
 
         {!isSameType && (
-          <button
+          <button type="button"
             className="type-inference-apply-btn"
             onClick={() => onApply(inference.type)}
           >
@@ -117,7 +117,7 @@ export const TypeInferencePanel: React.FC<TypeInferencePanelProps> = ({
       {/* Alternates */}
       {inference.alternates && inference.alternates.length > 0 && (
         <div className="type-inference-alternates">
-          <button
+          <button type="button"
             className="type-inference-alternates-toggle"
             onClick={() => setShowAlternates(!showAlternates)}
           >
@@ -135,7 +135,7 @@ export const TypeInferencePanel: React.FC<TypeInferencePanelProps> = ({
                   <span className="type-inference-alt-confidence">
                     {Math.round(alt.confidence * 100)}%
                   </span>
-                  <button
+                  <button type="button"
                     className="type-inference-alt-apply"
                     onClick={() => onApply(alt.type)}
                     title="Apply this type"
@@ -227,7 +227,7 @@ export const TypeInferenceTooltip: React.FC<TypeInferenceTooltipProps> = ({
         <TypeBadge type={inference.type} size="small" />
         <span>{Math.round(inference.confidence * 100)}%</span>
       </div>
-      <button className="type-inference-tooltip-apply" onClick={() => onApply(inference.type)}>
+      <button type="button" className="type-inference-tooltip-apply" onClick={() => onApply(inference.type)}>
         Apply
       </button>
     </div>

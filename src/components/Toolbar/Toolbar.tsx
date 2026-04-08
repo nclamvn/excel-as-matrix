@@ -48,7 +48,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ workbookName }) => {
       <div className="w-px h-6 bg-gray-300 mx-2" />
 
       {/* Find */}
-      <button
+      <button type="button"
         className="toolbar-btn"
         onClick={() => openFind(false)}
         title="Find (Ctrl+F)"
@@ -60,14 +60,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({ workbookName }) => {
 
       {/* File Operations */}
       <div className="flex items-center gap-1">
-        <button
+        <button type="button"
           className="toolbar-btn"
           onClick={() => setShowImportDialog(true)}
           title="Import file"
         >
           Import
         </button>
-        <button
+        <button type="button"
           className="toolbar-btn"
           onClick={() => setShowExportDialog(true)}
           title="Export workbook"

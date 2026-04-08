@@ -135,12 +135,12 @@ const TaskStepRow: React.FC<TaskStepRowProps> = ({
       {/* Actions */}
       <div className="task-step__actions">
         {onRetry && (
-          <button className="task-step__retry" onClick={onRetry}>
+          <button type="button" className="task-step__retry" onClick={onRetry}>
             Retry
           </button>
         )}
         {onSkip && (
-          <button className="task-step__skip" onClick={onSkip}>
+          <button type="button" className="task-step__skip" onClick={onSkip}>
             Skip
           </button>
         )}

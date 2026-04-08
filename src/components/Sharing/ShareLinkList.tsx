@@ -32,7 +32,7 @@ const ShareLinkList: React.FC<ShareLinkListProps> = ({
     <div className="share-link-list">
       {/* Create button */}
       {canCreate && !showCreateForm && (
-        <button onClick={() => setShowCreateForm(true)} style={createButtonStyle}>
+        <button type="button" onClick={() => setShowCreateForm(true)} style={createButtonStyle}>
           <PlusIcon />
           Create share link
         </button>
@@ -146,20 +146,20 @@ const ShareLinkItem: React.FC<ShareLinkItemProps> = ({
       </div>
 
       <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={onCopy} style={actionButtonStyle} title="Copy link">
+        <button type="button" onClick={onCopy} style={actionButtonStyle} title="Copy link">
           {isCopied ? <CheckIcon /> : <CopyIcon />}
         </button>
         {canRevoke && link.isActive && (
           <>
             {showConfirmRevoke ? (
               <div style={{ display: 'flex', gap: 4 }}>
-                <button
+                <button type="button"
                   onClick={() => { onRevoke(); setShowConfirmRevoke(false); }}
                   style={{ ...actionButtonStyle, backgroundColor: '#fef2f2', color: '#dc2626' }}
                 >
                   Confirm
                 </button>
-                <button
+                <button type="button"
                   onClick={() => setShowConfirmRevoke(false)}
                   style={actionButtonStyle}
                 >
@@ -167,7 +167,7 @@ const ShareLinkItem: React.FC<ShareLinkItemProps> = ({
                 </button>
               </div>
             ) : (
-              <button
+              <button type="button"
                 onClick={() => setShowConfirmRevoke(true)}
                 style={actionButtonStyle}
                 title="Revoke link"

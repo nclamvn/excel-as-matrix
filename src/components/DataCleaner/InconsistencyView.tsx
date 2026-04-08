@@ -86,7 +86,7 @@ export const InconsistencyView: React.FC<InconsistencyViewProps> = ({
             className="inconsistency-view__search"
           />
           {onFixAll && (
-            <button className="inconsistency-view__fix-all" onClick={onFixAll}>
+            <button type="button" className="inconsistency-view__fix-all" onClick={onFixAll}>
               <ZapIcon />
               Fix All
             </button>
@@ -161,7 +161,7 @@ const InconsistencyGroupCard: React.FC<InconsistencyGroupCardProps> = ({
         </div>
         <div className="inconsistency-group__actions">
           {onFix && variantsToFix.length > 0 && (
-            <button
+            <button type="button"
               className="inconsistency-group__fix-btn"
               onClick={(e) => {
                 e.stopPropagation();
@@ -200,7 +200,7 @@ const InconsistencyGroupCard: React.FC<InconsistencyGroupCardProps> = ({
                 </div>
                 <div className="inconsistency-variant__actions">
                   {!variant.isCanonical && onSetCanonical && (
-                    <button
+                    <button type="button"
                       className="inconsistency-variant__set-canonical"
                       onClick={() => onSetCanonical(group.id, variant.value)}
                       title="Set as canonical value"

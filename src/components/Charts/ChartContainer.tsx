@@ -154,7 +154,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         {isSelected && (
           <div className="flex gap-1">
             {onEdit && (
-              <button
+              <button type="button"
                 onClick={(e) => { e.stopPropagation(); onEdit(); }}
                 className="p-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded"
               >
@@ -165,7 +165,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
               </button>
             )}
             {onDelete && (
-              <button
+              <button type="button"
                 onClick={(e) => { e.stopPropagation(); onDelete(); }}
                 className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded"
               >

@@ -48,7 +48,7 @@ export const FontPicker: React.FC<FontPickerProps> = ({ value, onChange }) => {
 
   return (
     <div className="font-picker" ref={ref}>
-      <button
+      <button type="button"
         className="font-picker-trigger"
         onClick={() => setOpen(!isOpen)}
       >
@@ -68,7 +68,7 @@ export const FontPicker: React.FC<FontPickerProps> = ({ value, onChange }) => {
           />
           <div className="font-list">
             {filteredFonts.map(font => (
-              <button
+              <button type="button"
                 key={font}
                 className={`font-option ${font === value ? 'selected' : ''}`}
                 style={{ fontFamily: font }}

@@ -96,7 +96,7 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
             <option value="warning">Warnings ({warnings.length})</option>
           </select>
           {onRerunValidation && (
-            <button
+            <button type="button"
               className="validation-report__rerun"
               onClick={onRerunValidation}
             >
@@ -210,7 +210,7 @@ const ValidationResultCard: React.FC<ValidationResultCardProps> = ({
               </span>
               <span className="validation-failure__message">{failure.message}</span>
               {onFixFailure && (
-                <button
+                <button type="button"
                   className="validation-failure__fix"
                   onClick={() => onFixFailure(failure)}
                 >
@@ -295,7 +295,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({
             <option key={col} value={col}>{col}</option>
           ))}
         </select>
-        <button
+        <button type="button"
           onClick={handleSubmit}
           disabled={!name}
           className="rule-builder__add"

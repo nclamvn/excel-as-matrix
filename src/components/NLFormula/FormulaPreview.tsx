@@ -104,7 +104,7 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
             </ul>
           </div>
         )}
-        <button className="formula-preview__dismiss" onClick={handleDismiss}>
+        <button type="button" className="formula-preview__dismiss" onClick={handleDismiss}>
           Dismiss
         </button>
       </div>
@@ -120,7 +120,7 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
           <span className="formula-preview__title">Interpreted Formula</span>
           <ConfidenceLabel confidence={confidence} />
         </div>
-        <button
+        <button type="button"
           className="formula-preview__details-toggle"
           onClick={() => setShowDetails(!showDetails)}
           title={showDetails ? 'Hide details' : 'Show details'}
@@ -132,7 +132,7 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
       {/* Formula with syntax highlighting */}
       <div className="formula-preview__formula">
         <FormulaHighlight formula={formula || ''} />
-        <button
+        <button type="button"
           className="formula-preview__copy"
           onClick={() => navigator.clipboard.writeText(formula || '')}
           title="Copy formula"
@@ -188,13 +188,13 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
 
       {/* Actions */}
       <div className="formula-preview__actions">
-        <button
+        <button type="button"
           className="formula-preview__action formula-preview__action--primary"
           onClick={handleAccept}
         >
           <CheckIcon /> Use this formula
         </button>
-        <button
+        <button type="button"
           className="formula-preview__action formula-preview__action--secondary"
           onClick={handleDismiss}
         >
@@ -458,7 +458,7 @@ export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({
     <div className="formula-history-panel">
       <div className="formula-history-panel__header">
         <h3>Recent Formulas</h3>
-        <button onClick={onClose} className="formula-history-panel__close">×</button>
+        <button type="button" onClick={onClose} className="formula-history-panel__close">×</button>
       </div>
       <ul className="formula-history-panel__list">
         {history.map((item, i) => (
@@ -478,7 +478,7 @@ export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({
           </li>
         ))}
       </ul>
-      <button
+      <button type="button"
         className="formula-history-panel__clear"
         onClick={() => {
           clearHistory();

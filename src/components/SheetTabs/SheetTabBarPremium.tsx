@@ -30,16 +30,16 @@ export const SheetTabBarPremium: React.FC = () => {
     <div className="sheet-tabs-premium">
       {/* Navigation Buttons */}
       <div className="sheet-tabs__nav">
-        <button className="sheet-tabs__nav-btn" title="First Sheet">
+        <button type="button" className="sheet-tabs__nav-btn" title="First Sheet">
           <ChevronFirst />
         </button>
-        <button className="sheet-tabs__nav-btn" title="Previous Sheet">
+        <button type="button" className="sheet-tabs__nav-btn" title="Previous Sheet">
           <ChevronLeft />
         </button>
-        <button className="sheet-tabs__nav-btn" title="Next Sheet">
+        <button type="button" className="sheet-tabs__nav-btn" title="Next Sheet">
           <ChevronRight />
         </button>
-        <button className="sheet-tabs__nav-btn" title="Last Sheet">
+        <button type="button" className="sheet-tabs__nav-btn" title="Last Sheet">
           <ChevronLast />
         </button>
       </div>
@@ -49,7 +49,7 @@ export const SheetTabBarPremium: React.FC = () => {
       {/* Sheet Tabs */}
       <div className="sheet-tabs__container">
         {sheetList.map((sheet) => (
-          <button
+          <button type="button"
             key={sheet.id}
             className={`sheet-tab-premium ${sheet.id === activeSheetId ? 'sheet-tab-premium--active' : ''}`}
             onClick={() => setActiveSheet(sheet.id)}
@@ -61,7 +61,7 @@ export const SheetTabBarPremium: React.FC = () => {
       </div>
 
       {/* Add Sheet Button */}
-      <button
+      <button type="button"
         className="sheet-tabs__add-btn"
         onClick={handleAddSheet}
         title="New Sheet"

@@ -31,7 +31,7 @@ export const SizeDropdown: React.FC<SizeDropdownProps> = ({ sheetId }) => {
 
   return (
     <div className="size-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="toolbar-2026__btn"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -46,7 +46,7 @@ export const SizeDropdown: React.FC<SizeDropdownProps> = ({ sheetId }) => {
         <div className="size-menu">
           <div className="menu-title">Paper Size</div>
           {PAGE_SIZES.map(size => (
-            <button
+            <button type="button"
               key={size.id}
               className={`size-item ${currentSize.id === size.id ? 'active' : ''}`}
               onClick={() => handleSelectSize(size)}

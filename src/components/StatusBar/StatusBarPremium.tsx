@@ -71,21 +71,21 @@ export const StatusBarPremium: React.FC = () => {
 
       <div className="status-bar__section status-bar__section--right">
         <div className="status-bar__view-btns">
-          <button
+          <button type="button"
             className={`status-bar__view-btn ${viewMode === 'normal' ? 'status-bar__view-btn--active' : ''}`}
             onClick={() => setViewMode('normal')}
             title="Normal View"
           >
             <LayoutGrid />
           </button>
-          <button
+          <button type="button"
             className={`status-bar__view-btn ${viewMode === 'page' ? 'status-bar__view-btn--active' : ''}`}
             onClick={() => setViewMode('page')}
             title="Page Layout View"
           >
             <Table2 />
           </button>
-          <button
+          <button type="button"
             className={`status-bar__view-btn ${viewMode === 'break' ? 'status-bar__view-btn--active' : ''}`}
             onClick={() => setViewMode('break')}
             title="Page Break Preview"
@@ -97,7 +97,7 @@ export const StatusBarPremium: React.FC = () => {
         <div className="status-bar__divider" />
 
         <div className="status-bar__zoom">
-          <button
+          <button type="button"
             className="status-bar__zoom-btn"
             onClick={() => handleZoomChange(zoom - 10)}
             title="Zoom Out"
@@ -112,7 +112,7 @@ export const StatusBarPremium: React.FC = () => {
             value={zoom}
             onChange={(e) => handleZoomChange(parseInt(e.target.value))}
           />
-          <button
+          <button type="button"
             className="status-bar__zoom-btn"
             onClick={() => handleZoomChange(zoom + 10)}
             title="Zoom In"

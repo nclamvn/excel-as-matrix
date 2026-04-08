@@ -77,7 +77,7 @@ export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
 
           {isEditMode && isSelected && (
             <div className="flex gap-1">
-              <button
+              <button type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete();

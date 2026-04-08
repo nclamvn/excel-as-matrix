@@ -35,7 +35,7 @@ export const CommentPanel: React.FC<CommentPanelProps> = ({ sheetId }) => {
     <div className="comment-panel">
       <div className="panel-header">
         <h3>Comments ({comments.length})</h3>
-        <button className="close-btn" onClick={toggleCommentsPanel}>
+        <button type="button" className="close-btn" onClick={toggleCommentsPanel}>
           <X size={18} />
         </button>
       </div>

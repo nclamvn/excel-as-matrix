@@ -204,7 +204,7 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
       }}
     >
       {/* Main FAB Button */}
-      <button
+      <button type="button"
         className={`fab-main ${isExpanded ? 'expanded' : ''} ${suggestions.some(s => s.priority === 'high') ? 'has-priority' : ''}`}
         onClick={handleMainClick}
         title="AI Assistant"
@@ -222,7 +222,7 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
           <div className="fab-menu-header">
             <Sparkles size={14} />
             <span>AI Suggestions</span>
-            <button className="fab-close" onClick={() => setIsExpanded(false)}>
+            <button type="button" className="fab-close" onClick={() => setIsExpanded(false)}>
               <X size={14} />
             </button>
           </div>
@@ -234,7 +234,7 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
               {suggestions.slice(0, 3).map(suggestion => {
                 const Icon = ICON_MAP[suggestion.icon] || Sparkles;
                 return (
-                  <button
+                  <button type="button"
                     key={suggestion.id}
                     className={`fab-suggestion ${suggestion.priority}`}
                     onClick={() => handleSuggestion(suggestion)}
@@ -260,7 +260,7 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
               {quickActions.map(action => {
                 const Icon = ICON_MAP[action.icon] || Sparkles;
                 return (
-                  <button
+                  <button type="button"
                     key={action.id}
                     className="fab-quick-action"
                     onClick={() => handleQuickAction(action.prompt)}
@@ -275,7 +275,7 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
           </div>
 
           {/* Open full AI panel */}
-          <button className="fab-open-panel" onClick={() => { openPanel(); setIsExpanded(false); }}>
+          <button type="button" className="fab-open-panel" onClick={() => { openPanel(); setIsExpanded(false); }}>
             <Sparkles size={14} />
             Open AI Copilot
             <span className="fab-shortcut">⌘J</span>

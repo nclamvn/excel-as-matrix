@@ -47,7 +47,7 @@ export const FillSeriesDialog: React.FC<FillSeriesDialogProps> = ({ onClose }) =
       <div className="dialog fill-series-dialog" onClick={(e) => e.stopPropagation()} style={{ width: 380 }}>
         <div className="dialog-header">
           <h2>Series</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -207,10 +207,10 @@ export const FillSeriesDialog: React.FC<FillSeriesDialogProps> = ({ onClose }) =
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleApply}>
+          <button type="button" className="dialog-btn-primary" onClick={handleApply}>
             OK
           </button>
         </div>

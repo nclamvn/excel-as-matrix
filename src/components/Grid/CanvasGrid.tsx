@@ -8,12 +8,14 @@ import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { useUIStore } from '../../stores/uiStore';
 import { useProtectionStore } from '../../stores/protectionStore';
+import { usePresenceStore } from '../../stores/presenceStore';
 import { loggers } from '@/utils/logger';
 import { useValidationStore } from '../../stores/validationStore';
 import { CellEditor } from './CellEditor';
 import { getCellKey } from '../../types/cell';
 import { FloatingAIButton } from '../AI/FloatingAIButton';
 import { UserCursors } from '../Collab/UserCursors';
+import { useRealtime } from '../../providers/RealtimeProvider';
 import { useScreenReaderAnnounce } from '../../hooks/useScreenReaderAnnounce';
 import { MAX_COLS, MAX_ROWS } from '../../constants/grid';
 import { useConditionalFormattingStore } from '../../stores/conditionalFormattingStore';
@@ -152,6 +154,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
   // Protection & Validation
   const canPerformAction = useProtectionStore((state) => state.canPerformAction);
+  const checkCellRangeProtection = useProtectionStore((state) => state.checkCellRangeProtection);
   const validateCell = useValidationStore((state) => state.validateCell);
   const getRuleForCell = useValidationStore((state) => state.getRuleForCell);
   const getInputMessage = useValidationStore((state) => state.getInputMessage);
@@ -263,6 +266,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const moveSelection = useSelectionStore((state) => state.moveSelection);
   const expandSelection = useSelectionStore((state) => state.expandSelection);
   const selectRange = useSelectionStore((state) => state.selectRange);
+
+  // Realtime cell locking
+  const { broadcastEditStart, broadcastEditEnd } = useRealtime();
+  const getLockedCellInfo = usePresenceStore((s) => s.getLockedCellInfo);
 
   // Get cell position from mouse coordinates
   const getCellFromMouse = useCallback((clientX: number, clientY: number) => {
@@ -934,10 +941,23 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         showToast('This cell contains a spilled value. Edit the formula in the origin cell.', 'info');
         return;
       }
+      // Cell locking check
+      const lockInfo = getLockedCellInfo(sheetId, cell.row, cell.col);
+      if (lockInfo) {
+        showToast(`${lockInfo.userName} is editing this cell`, 'info');
+        return;
+      }
+      // Range protection check
+      const rangeCheck = checkCellRangeProtection(sheetId, cell.row, cell.col, 'local-user');
+      if (rangeCheck.isProtected && !rangeCheck.canEdit && !rangeCheck.range?.warningOnly) {
+        showToast(rangeCheck.message || 'This cell is protected', 'error');
+        return;
+      }
       setSelectedCell(cell);
       setIsEditing(true);
+      broadcastEditStart(cell.row, cell.col);
     }
-  }, [getCellFromMouse, setSelectedCell, setIsEditing, canPerformAction, sheetId, showToast, sheet?.cells]);
+  }, [getCellFromMouse, setSelectedCell, setIsEditing, canPerformAction, sheetId, showToast, sheet?.cells, getLockedCellInfo, broadcastEditStart]);
 
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -1268,13 +1288,38 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     setValidationError(null);
     setIsEditing(false);
+    broadcastEditEnd(selectedCell.row, selectedCell.col);
     const isFormula = typeof value === 'string' && value.startsWith('=');
     updateCell(sheetId, selectedCell.row, selectedCell.col, {
       value,
       formula: isFormula ? value : null,
     });
     moveSelection('down');
-  }, [selectedCell, sheetId, setIsEditing, updateCell, moveSelection, canPerformAction, validateCell, getRuleForCell, showToast]);
+  }, [selectedCell, sheetId, setIsEditing, updateCell, moveSelection, canPerformAction, validateCell, getRuleForCell, showToast, broadcastEditEnd]);
+
+  // Helper: try to start editing with lock check + range protection
+  const tryStartEditing = useCallback(() => {
+    if (!selectedCell) return false;
+    // Realtime lock check
+    const lockInfo = getLockedCellInfo(sheetId, selectedCell.row, selectedCell.col);
+    if (lockInfo) {
+      showToast(`${lockInfo.userName} is editing this cell`, 'info');
+      return false;
+    }
+    // Range protection check
+    const rangeCheck = checkCellRangeProtection(sheetId, selectedCell.row, selectedCell.col, 'local-user');
+    if (rangeCheck.isProtected && !rangeCheck.canEdit) {
+      if (rangeCheck.range?.warningOnly) {
+        showToast(rangeCheck.message || 'This cell is in a protected range', 'warning');
+      } else {
+        showToast(rangeCheck.message || 'This cell is protected', 'error');
+        return false;
+      }
+    }
+    setIsEditing(true);
+    broadcastEditStart(selectedCell.row, selectedCell.col);
+    return true;
+  }, [selectedCell, sheetId, getLockedCellInfo, checkCellRangeProtection, setIsEditing, broadcastEditStart, showToast]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // KEYBOARD HANDLING
@@ -1313,7 +1358,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           if (e.shiftKey) {
             moveSelection('up');
           } else if (canEdit()) {
-            setIsEditing(true);
+            tryStartEditing();
           } else {
             showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
           }
@@ -1321,7 +1366,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         case 'F2':
           e.preventDefault();
           if (canEdit()) {
-            setIsEditing(true);
+            tryStartEditing();
           } else {
             showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
           }
@@ -1350,7 +1395,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.preventDefault();
             if (canEdit()) {
-              setIsEditing(true);
+              tryStartEditing();
             } else {
               showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
             }
@@ -1632,7 +1677,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             }}>
               or use File &gt; Open to browse
             </div>
-            <button
+            <button type="button"
               onClick={() => document.getElementById('file-input-open')?.click()}
               style={{
                 marginTop: 4,
@@ -1714,7 +1759,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
               outline: 'none',
             }}
           />
-          <button
+          <button type="button"
             onClick={() => goToCell(goToCellValue)}
             style={{
               padding: '4px 10px',
@@ -1728,7 +1773,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           >
             Go
           </button>
-          <button
+          <button type="button"
             onClick={() => { setShowGoToCell(false); setGoToCellValue(''); }}
             style={{
               padding: '4px 8px',

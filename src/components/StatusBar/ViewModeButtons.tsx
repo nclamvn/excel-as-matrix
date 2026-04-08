@@ -8,21 +8,21 @@ export const ViewModeButtons: React.FC = () => {
 
   return (
     <div className="view-mode-buttons">
-      <button
+      <button type="button"
         className={`view-mode-btn ${viewMode === 'normal' ? 'active' : ''}`}
         onClick={() => setViewMode('normal')}
         title="Normal View"
       >
         <LayoutGrid className="w-4 h-4" />
       </button>
-      <button
+      <button type="button"
         className={`view-mode-btn ${viewMode === 'page-layout' ? 'active' : ''}`}
         onClick={() => setViewMode('page-layout')}
         title="Page Layout View"
       >
         <FileText className="w-4 h-4" />
       </button>
-      <button
+      <button type="button"
         className={`view-mode-btn ${viewMode === 'page-break' ? 'active' : ''}`}
         onClick={() => setViewMode('page-break')}
         title="Page Break Preview"

@@ -1,0 +1,347 @@
+{
+  "timestamp": "2026-04-07T13:22:00+07:00",
+  "project": "ExcelAI",
+  "version": "1.0",
+
+  "build": {
+    "status": "success",
+    "warnings": 1,
+    "warningDetails": "Some chunks are larger than 500KB after minification",
+    "errors": 0,
+    "totalBundleSize": "3.0MB (dist/)",
+    "totalJS": "2.4MB",
+    "totalCSS": "568KB",
+    "buildTime": "17.01s",
+    "pwa": {
+      "precacheEntries": 29,
+      "precacheSize": "3030.92KB"
+    },
+    "chunks": [
+      {"name": "vendor-exceljs", "size": "931.15KB", "gzip": "256.37KB", "type": "vendor", "lazy": true},
+      {"name": "vendor-charts", "size": "395.11KB", "gzip": "110.50KB", "type": "vendor", "lazy": true},
+      {"name": "index-B5kf4bbk (main app)", "size": "377.34KB", "gzip": "94.04KB", "type": "app", "lazy": false},
+      {"name": "ai-runtime", "size": "302.38KB", "gzip": "81.61KB", "type": "feature", "lazy": true},
+      {"name": "vendor-react", "size": "140.88KB", "gzip": "45.11KB", "type": "vendor", "lazy": false},
+      {"name": "engine-functions", "size": "120.56KB", "gzip": "26.26KB", "type": "feature", "lazy": true},
+      {"name": "index-Ci8ZDG-f", "size": "84.77KB", "gzip": "19.53KB", "type": "app", "lazy": false},
+      {"name": "vendor-icons", "size": "30.58KB", "gzip": "9.42KB", "type": "vendor", "lazy": false},
+      {"name": "index-FuMxkLJh", "size": "24.46KB", "gzip": "6.70KB", "type": "app", "lazy": false},
+      {"name": "engine-core", "size": "18.76KB", "gzip": "5.27KB", "type": "feature", "lazy": true},
+      {"name": "collab", "size": "18.16KB", "gzip": "4.83KB", "type": "feature", "lazy": true},
+      {"name": "index-B0U5TLwl", "size": "14.22KB", "gzip": "3.56KB", "type": "app", "lazy": false},
+      {"name": "CompetitiveLanding", "size": "9.84KB", "gzip": "2.76KB", "type": "feature", "lazy": true},
+      {"name": "MobileGridOverlay", "size": "7.25KB", "gzip": "2.76KB", "type": "feature", "lazy": true},
+      {"name": "excel-io", "size": "7.30KB", "gzip": "3.14KB", "type": "feature", "lazy": true},
+      {"name": "vendor-zustand", "size": "6.81KB", "gzip": "2.55KB", "type": "vendor", "lazy": false},
+      {"name": "OnboardingTour", "size": "6.20KB", "gzip": "2.43KB", "type": "feature", "lazy": true},
+      {"name": "CrashRecoveryBanner", "size": "2.60KB", "gzip": "1.21KB", "type": "feature", "lazy": true}
+    ]
+  },
+
+  "typescript": {
+    "strictMode": true,
+    "strictErrors": 0,
+    "topErrorTypes": [],
+    "filesWithErrors": [],
+    "status": "CLEAN"
+  },
+
+  "eslint": {
+    "status": "NOT_INSTALLED",
+    "detail": "ESLint referenced in package.json 'lint' script but NOT in dependencies/devDependencies. Cannot run lint checks.",
+    "warnings": "N/A",
+    "errors": "N/A",
+    "topRules": [],
+    "worstFiles": []
+  },
+
+  "codeQuality": {
+    "consoleLogs": {
+      "total": 51,
+      "filesAffected": 5,
+      "breakdown": [
+        {"file": "src/tests/formula-engine.runner.ts", "count": 27, "note": "test runner file"},
+        {"file": "src/test/stress.test.ts", "count": 11, "note": "test file"},
+        {"file": "src/utils/benchmark.ts", "count": 7, "note": "benchmark utility"},
+        {"file": "src/utils/logger.ts", "count": 4, "note": "logger implementation"},
+        {"file": "src/tests/run-tests.ts", "count": 2, "note": "test runner"}
+      ],
+      "inProductionCode": 0
+    },
+    "todoCount": 0,
+    "fixmeCount": 0,
+    "hackCount": 0,
+    "technicalDebtMarkers": 0
+  },
+
+  "tests": {
+    "total": 1884,
+    "passed": 1884,
+    "failed": 0,
+    "skipped": 0,
+    "testFiles": 35,
+    "duration": "7.88s",
+    "coverage": "N/A (coverage not configured in default test command)",
+    "slowestTests": [
+      {"name": "50K rows x 100 cols batch update", "duration": "5352ms", "file": "stress.test.ts"}
+    ],
+    "status": "ALL_PASSING"
+  },
+
+  "dependencies": {
+    "unused": {
+      "dependencies": [
+        "@types/lodash-es",
+        "file-saver",
+        "lodash-es",
+        "oidc-client-ts",
+        "papaparse",
+        "react-dropzone",
+        "xlsx"
+      ],
+      "devDependencies": [
+        "@types/file-saver",
+        "@types/papaparse",
+        "@vitest/coverage-v8",
+        "autoprefixer",
+        "postcss",
+        "tailwindcss",
+        "workbox-background-sync",
+        "workbox-core",
+        "workbox-precaching",
+        "workbox-routing",
+        "workbox-strategies"
+      ]
+    },
+    "missing": {
+      "nanoid": ["picturesStore.ts", "shapesStore.ts", "sparklineStore.ts"],
+      "virtual:pwa-register": ["usePWA.ts (Vite virtual module — OK)"]
+    },
+    "vulnerabilities": {
+      "total": 16,
+      "critical": 0,
+      "high": 12,
+      "moderate": 4,
+      "details": [
+        {"package": "@isaacs/brace-expansion 5.0.0", "severity": "high", "issue": "Uncontrolled Resource Consumption"},
+        {"package": "ajv 7.0.0-alpha.0 - 8.17.1", "severity": "moderate", "issue": "ReDoS with $data option"},
+        {"package": "brace-expansion <1.1.13 || >=2.0.0", "severity": "moderate", "issue": "Zero-step sequence hang"},
+        {"package": "esbuild <=0.24.2", "severity": "moderate", "issue": "Dev server request exposure"},
+        {"package": "happy-dom <=20.8.8", "severity": "high", "issue": "Security vulnerability"},
+        {"package": "vite <=6.4.1", "severity": "high", "issue": "Depends on vulnerable esbuild"}
+      ]
+    },
+    "outdated": {
+      "total": 29,
+      "majorVersionBehind": [
+        {"package": "@vitejs/plugin-react", "current": "4.7.0", "latest": "6.0.1"},
+        {"package": "idb", "current": "7.1.1", "latest": "8.0.3"},
+        {"package": "jsdom", "current": "27.4.0", "latest": "29.0.2"},
+        {"package": "lucide-react", "current": "0.294.0", "latest": "1.7.0"},
+        {"package": "oidc-client-ts", "current": "2.5.0", "latest": "3.5.0"},
+        {"package": "react", "current": "18.3.1", "latest": "19.2.4"},
+        {"package": "react-dom", "current": "18.3.1", "latest": "19.2.4"},
+        {"package": "react-dropzone", "current": "14.3.8", "latest": "15.0.0"},
+        {"package": "rollup-plugin-visualizer", "current": "6.0.5", "latest": "7.0.1"},
+        {"package": "tailwindcss", "current": "3.4.19", "latest": "4.2.2"},
+        {"package": "typescript", "current": "5.9.3", "latest": "6.0.2"},
+        {"package": "vite", "current": "5.4.21", "latest": "8.0.5"},
+        {"package": "vite-plugin-pwa", "current": "0.17.5", "latest": "1.2.0"},
+        {"package": "zustand", "current": "4.5.7", "latest": "5.0.12"}
+      ]
+    }
+  },
+
+  "codebase": {
+    "tsxFiles": 311,
+    "tsFiles": 337,
+    "cssFiles": 38,
+    "testFiles": 35,
+    "totalFiles": 648,
+    "totalLOC": 183220,
+    "largestFiles": [
+      {"file": "src/nlformula/FunctionLibrary.ts", "lines": 2541},
+      {"file": "src/engine/functions/statistical.ts", "lines": 2367},
+      {"file": "src/stores/workbookStore.ts", "lines": 2018},
+      {"file": "src/components/Grid/CanvasGrid.tsx", "lines": 1788},
+      {"file": "src/engine/functions/financial.ts", "lines": 1300},
+      {"file": "src/types/visualization.ts", "lines": 1275},
+      {"file": "src/engine/functions/math_extra.ts", "lines": 1164},
+      {"file": "src/macros/WorkflowExecutor.ts", "lines": 1149},
+      {"file": "src/stores/__tests__/workbookStore.test.ts", "lines": 1135},
+      {"file": "src/components/FileMenu/FileMenu.tsx", "lines": 1002},
+      {"file": "src/components/Admin/SecuritySettings.tsx", "lines": 998},
+      {"file": "src/autoviz/ChartRecommender.ts", "lines": 903},
+      {"file": "src/engine/functions/array.ts", "lines": 859},
+      {"file": "src/ai/AIRuntime.ts", "lines": 826},
+      {"file": "src/components/Admin/GDPRTools.tsx", "lines": 796}
+    ]
+  },
+
+  "stores": {
+    "count": 42,
+    "withPersist": 20,
+    "totalLOC": 14738,
+    "largestStores": [
+      {"file": "workbookStore.ts", "lines": 2018},
+      {"file": "pivotStore.ts", "lines": 708},
+      {"file": "dashboardStore.ts", "lines": 605},
+      {"file": "authStore.ts", "lines": 439},
+      {"file": "adminStore.ts", "lines": 425},
+      {"file": "chartStore.ts", "lines": 375},
+      {"file": "tabsStore.ts", "lines": 359},
+      {"file": "shapesStore.ts", "lines": 347},
+      {"file": "uiStore.ts", "lines": 343}
+    ]
+  },
+
+  "accessibility": {
+    "ariaAttributes": 54,
+    "roleAttributes": 15,
+    "tabIndexUsage": 12,
+    "totalButtons": 1057,
+    "buttonsWithoutType": 1053,
+    "buttonsWithType": 4,
+    "percentButtonsMissingType": "99.6%",
+    "imgWithoutAlt": [
+      "src/components/Collaboration/PresenceIndicator.tsx:129",
+      "src/components/Pictures/PictureCanvas.tsx:206",
+      "src/components/Admin/UserManagement.tsx:365",
+      "src/components/Dashboard/DashboardWidget.tsx:186",
+      "src/components/Collab/UserCursors.tsx:111",
+      "src/components/Collab/PresenceAvatars.tsx:120"
+    ],
+    "filesWithButtonIssues": 220,
+    "wcagEstimate": "2/5 — significant gaps"
+  },
+
+  "collaboration": {
+    "websocketFiles": [
+      "src/collaboration/WebSocketClient.ts",
+      "src/collaboration/PresenceManager.ts",
+      "src/collaboration/CollaborationManager.ts",
+      "src/collaboration/CommentManager.ts",
+      "src/collaboration/CRDTEngine.ts",
+      "src/hooks/useWebSocket.ts",
+      "src/hooks/useCollaboration.ts",
+      "src/stores/connectionStore.ts",
+      "src/components/Connections/ConnectionManager.tsx"
+    ],
+    "crdtFiles": [
+      "src/collaboration/CRDTEngine.ts",
+      "src/collaboration/CollaborationManager.ts",
+      "src/hooks/useCollaboration.ts"
+    ],
+    "serverExists": true,
+    "serverFiles": ["server/index.ts", "server/routes/", "server/security/", "server/ws/"],
+    "serverStatus": "exists locally, NOT deployed"
+  },
+
+  "issues": {
+    "critical": [
+      {
+        "id": "CRIT-1",
+        "title": "ESLint NOT installed",
+        "detail": "Lint script exists but eslint is not in dependencies. No static analysis protection.",
+        "impact": "Code quality regressions go undetected"
+      },
+      {
+        "id": "CRIT-2",
+        "title": "99.6% buttons missing type attribute",
+        "detail": "1053 of 1057 <button> elements lack type= attribute. Default is type='submit' which causes form submission bugs.",
+        "impact": "Accessibility failure + potential form bugs across 220 files"
+      }
+    ],
+    "high": [
+      {
+        "id": "HIGH-1",
+        "title": "Main bundle still 377KB (gzip 94KB)",
+        "detail": "index-B5kf4bbk.js is the main eagerly-loaded chunk. Code-splitting helped vendors but main app code still large.",
+        "impact": "Slow initial load, especially mobile"
+      },
+      {
+        "id": "HIGH-2",
+        "title": "12 high-severity npm vulnerabilities",
+        "detail": "Mostly in happy-dom, brace-expansion, vite/esbuild chain",
+        "impact": "Security risk in dev tooling; happy-dom affects test environment"
+      },
+      {
+        "id": "HIGH-3",
+        "title": "7 unused production dependencies",
+        "detail": "lodash-es, file-saver, oidc-client-ts, papaparse, react-dropzone, xlsx, @types/lodash-es",
+        "impact": "Bloated node_modules, potential bundle impact if tree-shaking misses"
+      },
+      {
+        "id": "HIGH-4",
+        "title": "Missing dependency: nanoid",
+        "detail": "Used in picturesStore, shapesStore, sparklineStore but not in package.json",
+        "impact": "Build may break on clean install"
+      },
+      {
+        "id": "HIGH-5",
+        "title": "vendor-exceljs chunk 931KB",
+        "detail": "ExcelJS library alone is 931KB (256KB gzip). Largest single chunk.",
+        "impact": "Heavy download for file import/export feature"
+      }
+    ],
+    "medium": [
+      {
+        "id": "MED-1",
+        "title": "Accessibility score 2/5",
+        "detail": "Only 54 aria attributes, 15 roles, 12 tabIndex across 311 TSX files. 6 imgs without alt.",
+        "impact": "WCAG non-compliant"
+      },
+      {
+        "id": "MED-2",
+        "title": "14 major-version-behind packages",
+        "detail": "React 18→19, Vite 5→8, Tailwind 3→4, Zustand 4→5, TypeScript 5→6",
+        "impact": "Growing migration debt"
+      },
+      {
+        "id": "MED-3",
+        "title": "WebSocket server not deployed",
+        "detail": "server/ exists with WS code but only runs locally",
+        "impact": "Collaboration features non-functional in production"
+      },
+      {
+        "id": "MED-4",
+        "title": "Large files need refactoring",
+        "detail": "5 files exceed 1500 LOC: FunctionLibrary (2541), statistical (2367), workbookStore (2018), CanvasGrid (1788), financial (1300)",
+        "impact": "Maintenance difficulty, slow IDE performance"
+      },
+      {
+        "id": "MED-5",
+        "title": "Test coverage unknown",
+        "detail": "@vitest/coverage-v8 is installed but coverage not configured in default test command",
+        "impact": "Cannot verify code coverage"
+      }
+    ],
+    "low": [
+      {
+        "id": "LOW-1",
+        "title": "51 console.log calls remain",
+        "detail": "All in test/utility files (0 in production code). Acceptable but could be cleaner.",
+        "impact": "Minimal — test noise only"
+      },
+      {
+        "id": "LOW-2",
+        "title": "42 stores (was reported as 37)",
+        "detail": "Store count grew from 37 to 42 since last report",
+        "impact": "State management complexity increasing"
+      }
+    ]
+  },
+
+  "recommendations": [
+    "1. URGENT: Install ESLint as devDependency + create eslint.config.js (new flat config)",
+    "2. URGENT: Add type='button' to all non-submit buttons (1053 instances across 220 files)",
+    "3. HIGH: Run npm audit fix to address 16 vulnerabilities",
+    "4. HIGH: Remove 7 unused dependencies, add missing nanoid",
+    "5. HIGH: Further code-split main app chunk (377KB → target <200KB)",
+    "6. MEDIUM: Lazy-load vendor-exceljs (931KB) — only needed for import/export",
+    "7. MEDIUM: Enable test coverage reporting in vitest.config",
+    "8. MEDIUM: Refactor files >1500 LOC",
+    "9. LOW: Plan major version upgrades (React 19, Vite 8, Tailwind 4)",
+    "10. LOW: Add aria labels, roles, and alt attributes systematically"
+  ]
+}

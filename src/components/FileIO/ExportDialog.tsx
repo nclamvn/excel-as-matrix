@@ -103,7 +103,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
       <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-lg font-semibold">Export Workbook</h2>
-          <button
+          <button type="button"
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -120,7 +120,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             </label>
             <div className="grid grid-cols-2 gap-3">
               {(Object.keys(FORMAT_INFO) as ExportFormat[]).map((fmt) => (
-                <button
+                <button type="button"
                   key={fmt}
                   onClick={() => setFormat(fmt)}
                   className={`p-3 rounded-lg border text-left ${
@@ -162,7 +162,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
               </label>
               <div className="flex flex-wrap gap-2">
                 {sheetNames.map((name) => (
-                  <button
+                  <button type="button"
                     key={name}
                     onClick={() => toggleSheet(name)}
                     className={`px-3 py-1.5 rounded text-sm ${
@@ -271,13 +271,13 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
         </div>
 
         <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
-          <button
+          <button type="button"
             onClick={onClose}
             className="px-4 py-2 text-gray-600 hover:text-gray-800"
           >
             Cancel
           </button>
-          <button
+          <button type="button"
             onClick={handleExport}
             disabled={loading || selectedSheets.length === 0}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"

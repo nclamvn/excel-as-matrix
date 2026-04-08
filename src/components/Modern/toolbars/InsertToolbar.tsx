@@ -107,7 +107,7 @@ export const InsertToolbar: React.FC = () => {
       <div className="toolbar-2026">
         {/* Rows & Columns */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleInsertRow}
             title="Insert Row Above"
@@ -116,7 +116,7 @@ export const InsertToolbar: React.FC = () => {
             <Rows size={16} />
             <span>Row</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleInsertColumn}
             title="Insert Column Left"
@@ -125,7 +125,7 @@ export const InsertToolbar: React.FC = () => {
             <Columns size={16} />
             <span>Col</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleDeleteRow}
             title="Delete Row"
@@ -133,7 +133,7 @@ export const InsertToolbar: React.FC = () => {
             <Minus size={12} />
             <Rows size={16} />
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleDeleteColumn}
             title="Delete Column"
@@ -147,7 +147,7 @@ export const InsertToolbar: React.FC = () => {
 
         {/* Tables */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => setShowTableDialog(true)}
             title="Insert Table"
@@ -155,7 +155,7 @@ export const InsertToolbar: React.FC = () => {
             <Table size={16} />
             <span>Table</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => setShowPivotDialog(true)}
             title="Insert PivotTable"
@@ -169,7 +169,7 @@ export const InsertToolbar: React.FC = () => {
 
         {/* Charts */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => handleInsertChart('bar')}
             title="Bar Chart"
@@ -177,7 +177,7 @@ export const InsertToolbar: React.FC = () => {
             <BarChart3 size={16} />
             <span>Bar</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => handleInsertChart('line')}
             title="Line Chart"
@@ -185,7 +185,7 @@ export const InsertToolbar: React.FC = () => {
             <LineChart size={16} />
             <span>Line</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => handleInsertChart('pie')}
             title="Pie Chart"
@@ -199,7 +199,7 @@ export const InsertToolbar: React.FC = () => {
 
         {/* Sparklines */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => { setSparklineType('line'); setShowSparklineDialog(true); }}
             title="Line Sparkline"
@@ -207,7 +207,7 @@ export const InsertToolbar: React.FC = () => {
             <TrendingUp size={16} />
             <span>Spark</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => { setSparklineType('column'); setShowSparklineDialog(true); }}
             title="Column Sparkline"
@@ -215,7 +215,7 @@ export const InsertToolbar: React.FC = () => {
             <BarChart3 size={16} />
             <span>Col</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => { setSparklineType('winloss'); setShowSparklineDialog(true); }}
             title="Win/Loss Sparkline"
@@ -229,7 +229,7 @@ export const InsertToolbar: React.FC = () => {
 
         {/* Media */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={() => setShowPictureDialog(true)}
             title="Insert Picture"
@@ -244,7 +244,7 @@ export const InsertToolbar: React.FC = () => {
 
         {/* Links */}
         <div className="toolbar-2026__group">
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleInsertLink}
             title="Insert Hyperlink"
@@ -252,7 +252,7 @@ export const InsertToolbar: React.FC = () => {
             <Link size={16} />
             <span>Link</span>
           </button>
-          <button
+          <button type="button"
             className="toolbar-2026__btn"
             onClick={handleInsertComment}
             title="Insert Comment"

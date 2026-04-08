@@ -93,13 +93,13 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
         <div className="before-after__controls">
           {/* View Mode Toggle */}
           <div className="before-after__view-toggle">
-            <button
+            <button type="button"
               className={`before-after__view-btn ${viewMode === 'list' ? 'before-after__view-btn--active' : ''}`}
               onClick={() => setViewMode('list')}
             >
               <ListIcon />
             </button>
-            <button
+            <button type="button"
               className={`before-after__view-btn ${viewMode === 'grouped' ? 'before-after__view-btn--active' : ''}`}
               onClick={() => setViewMode('grouped')}
             >
@@ -122,10 +122,10 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
           </select>
 
           {/* Selection Controls */}
-          <button className="before-after__select-all" onClick={selectAll}>
+          <button type="button" className="before-after__select-all" onClick={selectAll}>
             Select All
           </button>
-          <button className="before-after__deselect-all" onClick={deselectAll}>
+          <button type="button" className="before-after__deselect-all" onClick={deselectAll}>
             Clear
           </button>
         </div>
@@ -134,13 +134,13 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
       {/* Bulk Actions */}
       <div className="before-after__actions">
         {onAcceptAll && (
-          <button className="before-after__accept-all" onClick={onAcceptAll}>
+          <button type="button" className="before-after__accept-all" onClick={onAcceptAll}>
             <CheckIcon />
             Accept All Changes
           </button>
         )}
         {onRejectAll && (
-          <button className="before-after__reject-all" onClick={onRejectAll}>
+          <button type="button" className="before-after__reject-all" onClick={onRejectAll}>
             <XIcon />
             Reject All
           </button>
@@ -225,7 +225,7 @@ const ChangesList: React.FC<ChangesListProps> = ({
           <div className="change-item__after">{formatValue(change.after)}</div>
           <div className="change-item__actions">
             {onAccept && (
-              <button
+              <button type="button"
                 className="change-item__accept"
                 onClick={() => onAccept(change)}
                 title="Accept"
@@ -234,7 +234,7 @@ const ChangesList: React.FC<ChangesListProps> = ({
               </button>
             )}
             {onReject && (
-              <button
+              <button type="button"
                 className="change-item__reject"
                 onClick={() => onReject(change)}
                 title="Reject"
@@ -323,12 +323,12 @@ const ChangesGrouped: React.FC<ChangesGroupedProps> = ({
                   <span className="change-item__after">{formatValue(change.after)}</span>
                   <div className="change-item__actions">
                     {onAccept && (
-                      <button onClick={() => onAccept(change)} title="Accept">
+                      <button type="button" onClick={() => onAccept(change)} title="Accept">
                         <CheckIcon small />
                       </button>
                     )}
                     {onReject && (
-                      <button onClick={() => onReject(change)} title="Reject">
+                      <button type="button" onClick={() => onReject(change)} title="Reject">
                         <XIcon small />
                       </button>
                     )}

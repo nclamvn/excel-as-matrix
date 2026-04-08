@@ -70,7 +70,7 @@ export const FindReplaceDialog: React.FC = () => {
             {isReplaceMode ? 'Find and Replace' : 'Find'}
           </span>
         </div>
-        <button onClick={close} className="p-1 hover:bg-gray-200 rounded">
+        <button type="button" onClick={close} className="p-1 hover:bg-gray-200 rounded">
           <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -95,7 +95,7 @@ export const FindReplaceDialog: React.FC = () => {
               </span>
             )}
           </div>
-          <button
+          <button type="button"
             onClick={() => search()}
             disabled={isSearching || !searchText.trim()}
             className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
@@ -119,7 +119,7 @@ export const FindReplaceDialog: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <div className="flex gap-1">
-            <button
+            <button type="button"
               onClick={findPrevious}
               disabled={matches.length === 0}
               className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
@@ -129,7 +129,7 @@ export const FindReplaceDialog: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
               </svg>
             </button>
-            <button
+            <button type="button"
               onClick={findNext}
               disabled={matches.length === 0}
               className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
@@ -143,14 +143,14 @@ export const FindReplaceDialog: React.FC = () => {
 
           {isReplaceMode && (
             <div className="flex gap-2">
-              <button
+              <button type="button"
                 onClick={replaceCurrent}
                 disabled={currentMatchIndex < 0}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
               >
                 Replace
               </button>
-              <button
+              <button type="button"
                 onClick={replaceAll}
                 disabled={matches.length === 0}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
@@ -160,7 +160,7 @@ export const FindReplaceDialog: React.FC = () => {
             </div>
           )}
 
-          <button
+          <button type="button"
             onClick={() => setShowOptions(!showOptions)}
             className={`p-2 rounded ${showOptions ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
           >

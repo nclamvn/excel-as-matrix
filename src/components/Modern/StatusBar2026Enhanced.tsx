@@ -218,7 +218,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
                   return null;
 
                 return (
-                  <button
+                  <button type="button"
                     key={opt.id}
                     className="status-bar-enhanced__stat"
                     onClick={() => copyStatValue(opt.label, value)}
@@ -238,7 +238,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
 
             {/* Customize Calculations */}
             <div className="status-bar-enhanced__calc-customize" ref={calcMenuRef}>
-              <button
+              <button type="button"
                 className="status-bar-enhanced__calc-btn"
                 onClick={() => setShowCalcMenu(!showCalcMenu)}
                 title="Customize status bar calculations"
@@ -279,21 +279,21 @@ export const StatusBar2026Enhanced: React.FC = () => {
       <div className="status-bar-enhanced__right">
         {/* View Mode Buttons */}
         <div className="status-bar-enhanced__view-modes">
-          <button
+          <button type="button"
             className={`view-mode-btn ${viewMode === 'normal' ? 'active' : ''}`}
             onClick={() => setViewMode('normal')}
             title="Normal View"
           >
             <Grid size={14} />
           </button>
-          <button
+          <button type="button"
             className={`view-mode-btn ${viewMode === 'pageBreak' ? 'active' : ''}`}
             onClick={() => setViewMode('pageBreak')}
             title="Page Break Preview"
           >
             <LayoutGrid size={14} />
           </button>
-          <button
+          <button type="button"
             className={`view-mode-btn ${viewMode === 'pageLayout' ? 'active' : ''}`}
             onClick={() => setViewMode('pageLayout')}
             title="Page Layout View"
@@ -304,7 +304,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
 
         {/* Zoom Controls */}
         <div className="status-bar-enhanced__zoom" ref={zoomSliderRef}>
-          <button
+          <button type="button"
             className="zoom-btn"
             onClick={() => setZoom(Math.max(25, zoom - 10))}
             title="Zoom Out"
@@ -313,7 +313,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
           </button>
 
           <div className="zoom-slider-container">
-            <button
+            <button type="button"
               className="zoom-value-btn"
               onClick={() => setShowZoomSlider(!showZoomSlider)}
               title="Click to see zoom presets"
@@ -334,7 +334,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
                 />
                 <div className="zoom-preset-buttons">
                   {zoomPresets.map((preset) => (
-                    <button
+                    <button type="button"
                       key={preset}
                       className={`zoom-preset ${zoom === preset ? 'active' : ''}`}
                       onClick={() => {
@@ -350,7 +350,7 @@ export const StatusBar2026Enhanced: React.FC = () => {
             )}
           </div>
 
-          <button
+          <button type="button"
             className="zoom-btn"
             onClick={() => setZoom(Math.min(400, zoom + 10))}
             title="Zoom In"

@@ -93,7 +93,7 @@ export const ConversationFlow: React.FC<ConversationFlowProps> = ({
 
         {/* Cancel button */}
         {onCancel && !['complete', 'cancelled', 'idle'].includes(context.state) && (
-          <button
+          <button type="button"
             className="conversation-flow__cancel"
             onClick={onCancel}
             title="Cancel"

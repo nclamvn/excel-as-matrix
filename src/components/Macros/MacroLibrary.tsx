@@ -124,7 +124,7 @@ export const MacroLibrary: React.FC<MacroLibraryProps> = ({
           </div>
 
           <div className="macro-actions">
-            <button
+            <button type="button"
               className="run-btn"
               onClick={() => onRun(macro.id)}
               disabled={!macro.enabled}
@@ -134,7 +134,7 @@ export const MacroLibrary: React.FC<MacroLibraryProps> = ({
               </svg>
               Run
             </button>
-            <button
+            <button type="button"
               className="edit-btn"
               onClick={() => onEdit(macro)}
             >
@@ -143,7 +143,7 @@ export const MacroLibrary: React.FC<MacroLibraryProps> = ({
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
               </svg>
             </button>
-            <button
+            <button type="button"
               className="delete-btn"
               onClick={() => onDelete(macro.id)}
             >

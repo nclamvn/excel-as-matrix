@@ -166,7 +166,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
             <Calculator size={20} />
             <h2>{editingField ? 'Edit Calculated Field' : 'Add Calculated Field'}</h2>
           </div>
-          <button className="pivot-dialog-close" onClick={onClose}>
+          <button type="button" className="pivot-dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -193,7 +193,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
           <div className="pivot-dialog-section">
             <div className="section-header-with-help">
               <h3>Formula</h3>
-              <button
+              <button type="button"
                 className="help-btn"
                 onClick={() => setShowHelp(!showHelp)}
                 title="Show formula help"
@@ -246,7 +246,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
             <p className="section-hint">Click a field to insert it into the formula</p>
             <div className="available-fields-grid">
               {availableFields.map(field => (
-                <button
+                <button type="button"
                   key={field.id}
                   className="field-insert-btn"
                   onClick={() => insertFieldReference(field)}
@@ -265,15 +265,15 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
 
         <div className="pivot-dialog-footer">
           {editingField && (
-            <button className="pivot-btn-danger" onClick={handleDelete}>
+            <button type="button" className="pivot-btn-danger" onClick={handleDelete}>
               Delete
             </button>
           )}
           <div className="footer-spacer" />
-          <button className="pivot-btn-secondary" onClick={onClose}>
+          <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="pivot-btn-primary"
             onClick={handleSave}
             disabled={!name.trim() || !formulaValidation.valid}

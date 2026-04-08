@@ -112,7 +112,7 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({
             <Lock className="w-4 h-4" />
             {isCurrentlyProtected ? 'Modify Sheet Protection' : 'Protect Sheet'}
           </h3>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -174,15 +174,15 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({
 
         <div className="dialog-footer">
           {isCurrentlyProtected && (
-            <button className="btn btn-danger" onClick={handleUnprotect}>
+            <button type="button" className="btn btn-danger" onClick={handleUnprotect}>
               Unprotect Sheet
             </button>
           )}
           <div className="footer-right">
-            <button className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button className="btn btn-primary" onClick={handleProtect}>
+            <button type="button" className="btn btn-primary" onClick={handleProtect}>
               {isCurrentlyProtected ? 'Update Protection' : 'Protect'}
             </button>
           </div>

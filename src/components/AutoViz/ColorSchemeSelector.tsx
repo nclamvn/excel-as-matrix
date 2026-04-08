@@ -43,7 +43,7 @@ export const ColorSchemeSelector: React.FC<ColorSchemeSelectorProps> = ({
 
       <div className="color-scheme-grid">
         {schemeEntries.map(([name, scheme]) => (
-          <button
+          <button type="button"
             key={name}
             className={`color-scheme-option ${selectedScheme === name ? 'selected' : ''}`}
             onClick={() => onChange(name)}

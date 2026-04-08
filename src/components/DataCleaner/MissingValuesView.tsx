@@ -82,7 +82,7 @@ export const MissingValuesView: React.FC<MissingValuesViewProps> = ({
             <option value="constant">Fill with Constant</option>
           </select>
           {onFillAll && (
-            <button
+            <button type="button"
               className="missing-values__fill-all"
               onClick={() => onFillAll(selectedStrategy)}
             >
@@ -111,7 +111,7 @@ export const MissingValuesView: React.FC<MissingValuesViewProps> = ({
       {onDeleteRows && allMissingRows.length > 0 && (
         <div className="missing-values__delete-option">
           <span>Or delete {allMissingRows.length} rows with missing values</span>
-          <button
+          <button type="button"
             className="missing-values__delete-btn"
             onClick={() => onDeleteRows(allMissingRows)}
           >
@@ -183,7 +183,7 @@ const MissingColumnCard: React.FC<MissingColumnCardProps> = ({
               <option value="delete_row">Delete Rows</option>
             </select>
             {onFill && (
-              <button
+              <button type="button"
                 className="missing-column__fill-btn"
                 onClick={() => onFill(column.column, strategy)}
               >

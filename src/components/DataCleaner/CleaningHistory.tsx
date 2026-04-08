@@ -68,7 +68,7 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
           <span>Cleaning History</span>
         </div>
         <div className="cleaning-history__controls">
-          <button
+          <button type="button"
             className="cleaning-history__undo"
             onClick={onUndo}
             disabled={!history.canUndo}
@@ -76,7 +76,7 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
           >
             <UndoIcon />
           </button>
-          <button
+          <button type="button"
             className="cleaning-history__redo"
             onClick={onRedo}
             disabled={!history.canRedo}
@@ -133,7 +133,7 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
       {/* Clear Button */}
       {onClearHistory && visibleSessions.length > 0 && (
         <div className="cleaning-history__footer">
-          <button
+          <button type="button"
             className="cleaning-history__clear"
             onClick={onClearHistory}
           >
@@ -234,7 +234,7 @@ const HistorySessionCard: React.FC<HistorySessionCardProps> = ({
             {/* Actions */}
             <div className="history-session__actions">
               {!session.undone && onUndo && (
-                <button
+                <button type="button"
                   className="history-session__action"
                   onClick={() => onUndo(session.id)}
                 >
@@ -243,7 +243,7 @@ const HistorySessionCard: React.FC<HistorySessionCardProps> = ({
                 </button>
               )}
               {onRevert && (
-                <button
+                <button type="button"
                   className="history-session__action"
                   onClick={() => onRevert(session.id)}
                 >
@@ -278,7 +278,7 @@ export const CompactHistoryBar: React.FC<CompactHistoryBarProps> = ({
 
   return (
     <div className="compact-history-bar">
-      <button
+      <button type="button"
         className="compact-history-bar__btn"
         onClick={onUndo}
         disabled={!history.canUndo}
@@ -293,7 +293,7 @@ export const CompactHistoryBar: React.FC<CompactHistoryBarProps> = ({
           <span>No changes</span>
         )}
       </div>
-      <button
+      <button type="button"
         className="compact-history-bar__btn"
         onClick={onRedo}
         disabled={!history.canRedo}

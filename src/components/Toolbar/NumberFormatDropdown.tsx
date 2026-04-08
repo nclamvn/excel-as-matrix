@@ -34,7 +34,7 @@ export const NumberFormatDropdown: React.FC<NumberFormatDropdownProps> = ({
 
   return (
     <div className="number-format-dropdown" ref={ref}>
-      <button
+      <button type="button"
         className="number-format-trigger"
         onClick={() => setOpen(!isOpen)}
       >
@@ -45,7 +45,7 @@ export const NumberFormatDropdown: React.FC<NumberFormatDropdownProps> = ({
       {isOpen && (
         <div className="number-format-menu">
           {options.map(option => (
-            <button
+            <button type="button"
               key={option.id}
               className={`number-format-option ${value === option.id ? 'selected' : ''}`}
               onClick={() => {

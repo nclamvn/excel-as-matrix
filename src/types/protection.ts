@@ -27,6 +27,30 @@ export interface WorkbookProtection {
   protectWindows: boolean;
 }
 
+export interface ProtectedRange {
+  id: string;
+  sheetId: string;
+  name: string;
+  description?: string;
+  startRow: number;
+  endRow: number;
+  startCol: number;
+  endCol: number;
+  ownerId: string;
+  ownerName: string;
+  editors: string[];
+  warningOnly: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface RangeProtectionCheck {
+  isProtected: boolean;
+  canEdit: boolean;
+  range?: ProtectedRange;
+  message?: string;
+}
+
 export const DEFAULT_SHEET_PROTECTION: SheetProtection = {
   enabled: false,
   allowedActions: {

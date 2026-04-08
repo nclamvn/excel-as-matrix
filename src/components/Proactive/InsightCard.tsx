@@ -34,7 +34,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
           {categoryConfig.icon}
         </div>
         <div className="insight-card__category">{categoryConfig.label}</div>
-        <button
+        <button type="button"
           className="insight-card__dismiss"
           onClick={() => onDismiss(insight.id)}
           title="Dismiss"
@@ -103,7 +103,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
 
       <div className="insight-card__actions">
         {insight.actions.map(action => (
-          <button
+          <button type="button"
             key={action.id}
             className={`insight-card__action insight-card__action--${action.type}`}
             onClick={() => onAction(insight.id, action.id)}

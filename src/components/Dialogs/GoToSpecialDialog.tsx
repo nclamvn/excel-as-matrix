@@ -209,7 +209,7 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
       >
         <div className="dialog-header">
           <h2>Go To Special</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -332,10 +332,10 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleGo}>
+          <button type="button" className="dialog-btn-primary" onClick={handleGo}>
             <Check size={14} style={{ marginRight: 6 }} />
             OK
           </button>

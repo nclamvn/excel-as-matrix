@@ -52,7 +52,7 @@ export const ViewToolbar: React.FC = () => {
 
       {/* Zoom */}
       <div className="toolbar-2026__group">
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           onClick={() => setZoom(Math.max(25, zoom - 10))}
           disabled={zoom <= 25}
@@ -61,7 +61,7 @@ export const ViewToolbar: React.FC = () => {
           <ZoomOut size={16} />
         </button>
         <span className="toolbar-2026__zoom-value">{zoom}%</span>
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           onClick={() => setZoom(Math.min(400, zoom + 10))}
           disabled={zoom >= 400}
@@ -69,7 +69,7 @@ export const ViewToolbar: React.FC = () => {
         >
           <ZoomIn size={16} />
         </button>
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           onClick={() => setZoom(100)}
           title="Reset to 100%"
@@ -83,7 +83,7 @@ export const ViewToolbar: React.FC = () => {
 
       {/* Theme */}
       <div className="toolbar-2026__group">
-        <button
+        <button type="button"
           className="toolbar-2026__btn"
           onClick={toggleTheme}
           title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}

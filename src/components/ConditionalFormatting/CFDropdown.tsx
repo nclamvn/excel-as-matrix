@@ -71,7 +71,7 @@ export const CFDropdown: React.FC = () => {
 
   return (
     <div className="cf-dropdown" ref={dropdownRef}>
-      <button
+      <button type="button"
         className="cf-dropdown-btn"
         onClick={() => setIsOpen(!isOpen)}
         title="Conditional Formatting"
@@ -174,7 +174,7 @@ export const CFDropdown: React.FC = () => {
           <div className="cf-menu-divider" />
 
           {/* New Rule */}
-          <button
+          <button type="button"
             className="cf-menu-item"
             onClick={() => { setShowNewRuleDialog(true); setIsOpen(false); }}
           >
@@ -193,13 +193,13 @@ export const CFDropdown: React.FC = () => {
 
             {subMenu === 'clear' && (
               <div className="cf-submenu">
-                <button
+                <button type="button"
                   className="cf-submenu-item"
                   onClick={() => handleClearRules('selection')}
                 >
                   Clear Rules from Selected Cells
                 </button>
-                <button
+                <button type="button"
                   className="cf-submenu-item"
                   onClick={() => handleClearRules('sheet')}
                 >
@@ -210,7 +210,7 @@ export const CFDropdown: React.FC = () => {
           </div>
 
           {/* Manage Rules */}
-          <button
+          <button type="button"
             className="cf-menu-item"
             onClick={() => { setShowManageRules(true); setIsOpen(false); }}
           >

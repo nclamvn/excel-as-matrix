@@ -38,18 +38,18 @@ export const RibbonSplitButton: React.FC<RibbonSplitButtonProps> = ({
 
   return (
     <div className={`ribbon-split-button ${size}`} ref={ref}>
-      <button className="split-main" onClick={onClick} title={label}>
+      <button type="button" className="split-main" onClick={onClick} title={label}>
         <Icon className={size === 'large' ? 'w-6 h-6' : 'w-4 h-4'} />
         {size === 'large' && <span>{label}</span>}
       </button>
-      <button className="split-dropdown" onClick={() => setOpen(!isOpen)}>
+      <button type="button" className="split-dropdown" onClick={() => setOpen(!isOpen)}>
         <ChevronDown className="w-3 h-3" />
       </button>
 
       {isOpen && (
         <div className="split-menu">
           {options.map(option => (
-            <button
+            <button type="button"
               key={option.id}
               className="dropdown-item"
               onClick={() => {

@@ -81,7 +81,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
 
       {action.status === 'pending' && (
         <div className="ai-action-card-actions">
-          <button
+          <button type="button"
             className="ai-action-btn ai-action-btn--approve"
             onClick={(e) => {
               e.stopPropagation();
@@ -91,7 +91,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
             <Check size={14} />
             <span>Approve</span>
           </button>
-          <button
+          <button type="button"
             className="ai-action-btn ai-action-btn--reject"
             onClick={(e) => {
               e.stopPropagation();

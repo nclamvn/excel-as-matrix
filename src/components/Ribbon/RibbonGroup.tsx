@@ -21,7 +21,7 @@ export const RibbonGroup: React.FC<RibbonGroupProps> = ({
       <div className="ribbon-group-label">
         <span>{label}</span>
         {showDialogLauncher && (
-          <button
+          <button type="button"
             className="dialog-launcher"
             onClick={onDialogLaunch}
             title={`${label} Settings`}

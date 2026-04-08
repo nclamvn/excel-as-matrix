@@ -138,7 +138,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   disabled = false,
   indent = false,
 }) => (
-  <button
+  <button type="button"
     onClick={onClick}
     disabled={disabled}
     className={`
@@ -170,7 +170,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ icon, label, children }) => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <button className="w-full flex items-center justify-between px-3 py-1.5 text-sm hover:bg-gray-100">
+      <button type="button" className="w-full flex items-center justify-between px-3 py-1.5 text-sm hover:bg-gray-100">
         <span className="flex items-center gap-2">
           {icon && <span className="w-4 h-4 text-gray-500">{icon}</span>}
           <span>{label}</span>

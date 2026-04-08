@@ -7,12 +7,15 @@ import { persist } from 'zustand/middleware';
 import {
   SheetProtection,
   WorkbookProtection,
+  ProtectedRange,
+  RangeProtectionCheck,
   DEFAULT_SHEET_PROTECTION,
 } from '../types/protection';
 
 interface ProtectionStore {
   sheetProtection: Record<string, SheetProtection>;
   workbookProtection: WorkbookProtection;
+  protectedRanges: ProtectedRange[];
 
   // Sheet Protection
   protectSheet: (sheetId: string, password?: string, options?: Partial<SheetProtection['allowedActions']>) => void;
@@ -22,6 +25,15 @@ interface ProtectionStore {
   // Workbook Protection
   protectWorkbook: (password?: string, options?: { structure?: boolean; windows?: boolean }) => void;
   unprotectWorkbook: (password?: string) => boolean;
+
+  // Range Protection
+  addProtectedRange: (range: Omit<ProtectedRange, 'id' | 'createdAt' | 'updatedAt'>) => string;
+  removeProtectedRange: (rangeId: string) => void;
+  updateProtectedRange: (rangeId: string, updates: Partial<ProtectedRange>) => void;
+  addRangeEditor: (rangeId: string, userId: string) => void;
+  removeRangeEditor: (rangeId: string, userId: string) => void;
+  checkCellRangeProtection: (sheetId: string, row: number, col: number, userId: string) => RangeProtectionCheck;
+  getProtectedRanges: (sheetId: string) => ProtectedRange[];
 
   // Checks
   isSheetProtected: (sheetId: string) => boolean;
@@ -44,6 +56,7 @@ export const useProtectionStore = create<ProtectionStore>()(
   persist(
     (set, get) => ({
       sheetProtection: {},
+      protectedRanges: [],
       workbookProtection: {
         enabled: false,
         protectStructure: true,
@@ -130,6 +143,80 @@ export const useProtectionStore = create<ProtectionStore>()(
         });
 
         return true;
+      },
+
+      // Range Protection
+      addProtectedRange: (rangeData) => {
+        const id = `pr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const range: ProtectedRange = {
+          ...rangeData,
+          id,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        set((state) => ({
+          protectedRanges: [...state.protectedRanges, range],
+        }));
+        return id;
+      },
+
+      removeProtectedRange: (rangeId) => {
+        set((state) => ({
+          protectedRanges: state.protectedRanges.filter((r) => r.id !== rangeId),
+        }));
+      },
+
+      updateProtectedRange: (rangeId, updates) => {
+        set((state) => ({
+          protectedRanges: state.protectedRanges.map((r) =>
+            r.id === rangeId ? { ...r, ...updates, updatedAt: Date.now() } : r
+          ),
+        }));
+      },
+
+      addRangeEditor: (rangeId, userId) => {
+        set((state) => ({
+          protectedRanges: state.protectedRanges.map((r) =>
+            r.id === rangeId && !r.editors.includes(userId)
+              ? { ...r, editors: [...r.editors, userId], updatedAt: Date.now() }
+              : r
+          ),
+        }));
+      },
+
+      removeRangeEditor: (rangeId, userId) => {
+        set((state) => ({
+          protectedRanges: state.protectedRanges.map((r) =>
+            r.id === rangeId
+              ? { ...r, editors: r.editors.filter((e) => e !== userId), updatedAt: Date.now() }
+              : r
+          ),
+        }));
+      },
+
+      checkCellRangeProtection: (sheetId, row, col, userId) => {
+        const ranges = get().protectedRanges.filter((r) => r.sheetId === sheetId);
+        for (const range of ranges) {
+          if (
+            row >= range.startRow && row <= range.endRow &&
+            col >= range.startCol && col <= range.endCol
+          ) {
+            const canEdit = range.ownerId === userId || range.editors.includes(userId);
+            return {
+              isProtected: true,
+              canEdit,
+              range,
+              message: canEdit
+                ? undefined
+                : `Protected by "${range.name}" (${range.ownerName})`,
+            };
+          }
+        }
+        return { isProtected: false, canEdit: true };
+      },
+
+      getProtectedRanges: (sheetId) => {
+        return get().protectedRanges.filter((r) => r.sheetId === sheetId);
       },
 
       isSheetProtected: (sheetId) => {

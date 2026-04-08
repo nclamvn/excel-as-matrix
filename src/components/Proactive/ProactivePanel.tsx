@@ -106,7 +106,7 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
         </div>
         <div className="proactive-panel__actions">
           {onOpenSettings && (
-            <button
+            <button type="button"
               className="proactive-panel__action"
               onClick={onOpenSettings}
               title="Settings"
@@ -114,7 +114,7 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
               <SettingsIcon />
             </button>
           )}
-          <button
+          <button type="button"
             className="proactive-panel__action"
             onClick={onClose}
             title="Close"
@@ -219,7 +219,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   onClick,
   icon,
 }) => (
-  <button
+  <button type="button"
     className={`proactive-panel__filter ${active ? 'proactive-panel__filter--active' : ''}`}
     onClick={onClick}
   >

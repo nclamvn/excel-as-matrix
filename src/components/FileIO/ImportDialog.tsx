@@ -265,7 +265,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-lg font-semibold">Import File</h2>
-          <button
+          <button type="button"
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -293,7 +293,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
               <p className="text-red-600">{error}</p>
-              <button
+              <button type="button"
                 onClick={() => {
                   setError(null);
                   setStep('upload');
@@ -322,7 +322,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {previewData.sheet_names.map((name) => (
-                      <button
+                      <button type="button"
                         key={name}
                         onClick={() => toggleSheet(name)}
                         className={`px-3 py-1.5 rounded text-sm ${
@@ -458,21 +458,21 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
 
         <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
           {step === 'preview' && (
-            <button
+            <button type="button"
               onClick={() => setStep('upload')}
               className="px-4 py-2 text-gray-600 hover:text-gray-800"
             >
               Back
             </button>
           )}
-          <button
+          <button type="button"
             onClick={onClose}
             className="px-4 py-2 text-gray-600 hover:text-gray-800"
           >
             Cancel
           </button>
           {step === 'preview' && (
-            <button
+            <button type="button"
               onClick={handleImport}
               disabled={selectedSheets.length === 0 && previewData !== null}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"

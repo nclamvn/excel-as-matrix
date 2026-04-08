@@ -29,7 +29,7 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
       <div className="dialog orientation-dialog" onClick={e => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Text Orientation</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -85,7 +85,7 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
 
           <div className="preset-buttons">
             {presets.map(deg => (
-              <button
+              <button type="button"
                 key={deg}
                 className={`preset-btn ${angle === deg ? 'active' : ''}`}
                 onClick={() => setAngle(deg)}
@@ -97,8 +97,8 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button onClick={onClose}>Cancel</button>
-          <button className="primary" onClick={() => onApply(angle)}>
+          <button type="button" onClick={onClose}>Cancel</button>
+          <button type="button" className="primary" onClick={() => onApply(angle)}>
             OK
           </button>
         </div>

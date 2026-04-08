@@ -211,14 +211,14 @@ const IssueItem: React.FC<IssueItemProps> = ({
 
         {/* Actions */}
         <div className="issue-item__actions">
-          <button
+          <button type="button"
             className="issue-item__action"
             onClick={() => onClick?.(issue)}
           >
             View Details
           </button>
           {issue.autoFixable && (
-            <button
+            <button type="button"
               className="issue-item__action issue-item__action--primary"
               onClick={() => onFix?.(issue)}
             >

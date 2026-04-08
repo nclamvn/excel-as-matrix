@@ -88,21 +88,21 @@ export const MacroPanel: React.FC<MacroPanelProps> = ({ isOpen, onClose }) => {
         </div>
         <div className="header-actions">
           {recording ? (
-            <button className="stop-btn" onClick={handleStopRecording}>
+            <button type="button" className="stop-btn" onClick={handleStopRecording}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <rect x="4" y="4" width="16" height="16" rx="2"/>
               </svg>
               Stop
             </button>
           ) : (
-            <button className="record-btn" onClick={handleStartRecording}>
+            <button type="button" className="record-btn" onClick={handleStartRecording}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="12" cy="12" r="10"/>
               </svg>
               Record
             </button>
           )}
-          <button className="close-btn" onClick={onClose}>
+          <button type="button" className="close-btn" onClick={onClose}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12"/>
             </svg>
@@ -115,7 +115,7 @@ export const MacroPanel: React.FC<MacroPanelProps> = ({ isOpen, onClose }) => {
 
       {/* Tabs */}
       <div className="macro-tabs">
-        <button
+        <button type="button"
           className={`tab ${activeTab === 'library' ? 'active' : ''}`}
           onClick={() => setActiveTab('library')}
         >
@@ -124,7 +124,7 @@ export const MacroPanel: React.FC<MacroPanelProps> = ({ isOpen, onClose }) => {
           </svg>
           Library
         </button>
-        <button
+        <button type="button"
           className={`tab ${activeTab === 'create' ? 'active' : ''}`}
           onClick={() => setActiveTab('create')}
         >
@@ -133,7 +133,7 @@ export const MacroPanel: React.FC<MacroPanelProps> = ({ isOpen, onClose }) => {
           </svg>
           Create
         </button>
-        <button
+        <button type="button"
           className={`tab ${activeTab === 'nl' ? 'active' : ''}`}
           onClick={() => setActiveTab('nl')}
         >
@@ -142,7 +142,7 @@ export const MacroPanel: React.FC<MacroPanelProps> = ({ isOpen, onClose }) => {
           </svg>
           AI Create
         </button>
-        <button
+        <button type="button"
           className={`tab ${activeTab === 'history' ? 'active' : ''}`}
           onClick={() => setActiveTab('history')}
         >

@@ -12,7 +12,7 @@ export const UndoRedoButtons: React.FC = () => {
   return (
     <div className="flex items-center gap-1 relative">
       <div className="flex">
-        <button
+        <button type="button"
           onClick={undo}
           disabled={!canUndo()}
           className="p-2 hover:bg-gray-100 rounded-l disabled:opacity-50 disabled:cursor-not-allowed"
@@ -22,7 +22,7 @@ export const UndoRedoButtons: React.FC = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
           </svg>
         </button>
-        <button
+        <button type="button"
           onClick={() => setShowHistory(!showHistory)}
           disabled={!canUndo()}
           className="p-1 hover:bg-gray-100 rounded-r border-l disabled:opacity-50"
@@ -33,7 +33,7 @@ export const UndoRedoButtons: React.FC = () => {
         </button>
       </div>
 
-      <button
+      <button type="button"
         onClick={redo}
         disabled={!canRedo()}
         className="p-2 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
@@ -99,7 +99,7 @@ const HistoryDropdown: React.FC<HistoryDropdownProps> = ({
         .slice()
         .reverse()
         .map((action) => (
-          <button
+          <button type="button"
             key={action.id}
             onClick={() => onSelect(action.id)}
             className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100"

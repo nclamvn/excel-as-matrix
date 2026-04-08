@@ -248,7 +248,7 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
           </div>
           <span className="inline-suggestion-message">{suggestion.message}</span>
           {suggestion.action && (
-            <button
+            <button type="button"
               className="inline-suggestion-action"
               onClick={() => handleAction(suggestion)}
             >
@@ -256,7 +256,7 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
               <ArrowRight size={10} />
             </button>
           )}
-          <button
+          <button type="button"
             className="inline-suggestion-dismiss"
             onClick={() => handleDismiss(suggestion.id)}
           >
@@ -299,7 +299,7 @@ export const FormulaBarAIHint: React.FC<{ formula: string }> = ({ formula }) => 
     <div className="formula-bar-ai-hint">
       <Sparkles size={12} />
       <span>{hint}</span>
-      <button onClick={() => { openPanel(); setCurrentInput('Help me with this formula: ' + formula); }}>
+      <button type="button" onClick={() => { openPanel(); setCurrentInput('Help me with this formula: ' + formula); }}>
         Ask AI
       </button>
     </div>

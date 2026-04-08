@@ -185,7 +185,7 @@ export const GDPRTools: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">GDPR Compliance Tools</h1>
           <p className="text-gray-500 mt-1">Manage data subject requests and consent records</p>
         </div>
-        <button
+        <button type="button"
           onClick={() => setShowNewRequestModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
@@ -196,7 +196,7 @@ export const GDPRTools: React.FC = () => {
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
-        <button
+        <button type="button"
           onClick={() => setActiveTab('requests')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeTab === 'requests'
@@ -206,7 +206,7 @@ export const GDPRTools: React.FC = () => {
         >
           Data Subject Requests
         </button>
-        <button
+        <button type="button"
           onClick={() => setActiveTab('consents')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeTab === 'consents'
@@ -216,7 +216,7 @@ export const GDPRTools: React.FC = () => {
         >
           Consent Records
         </button>
-        <button
+        <button type="button"
           onClick={() => setActiveTab('export')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeTab === 'export'
@@ -272,7 +272,7 @@ export const GDPRTools: React.FC = () => {
                 ))}
               </select>
 
-              <button
+              <button type="button"
                 onClick={fetchRequests}
                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               >
@@ -337,7 +337,7 @@ export const GDPRTools: React.FC = () => {
                         {formatDate(request.requestedAt)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <button
+                        <button type="button"
                           onClick={() => setSelectedRequest(request)}
                           className="p-1 hover:bg-gray-100 rounded"
                         >
@@ -550,7 +550,7 @@ const BulkExportPanel: React.FC = () => {
           </div>
         )}
 
-        <button
+        <button type="button"
           onClick={handleExport}
           disabled={!email || exporting}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
@@ -585,7 +585,7 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
       <div className="bg-white rounded-xl shadow-2xl p-6 max-w-lg w-full mx-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Request Details</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
             <X className="w-6 h-6 text-gray-400" />
           </button>
         </div>
@@ -646,14 +646,14 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
               </div>
 
               <div className="flex gap-3">
-                <button
+                <button type="button"
                   onClick={() => handleAction('reject')}
                   disabled={processing}
                   className="flex-1 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50"
                 >
                   Reject
                 </button>
-                <button
+                <button type="button"
                   onClick={() => handleAction('approve')}
                   disabled={processing}
                   className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
@@ -665,7 +665,7 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
           )}
 
           {request.status !== 'pending' && (
-            <button
+            <button type="button"
               onClick={onClose}
               className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
             >

@@ -75,7 +75,7 @@ export const ConflictResolutionDialog: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {/* Local version */}
-                <button
+                <button type="button"
                   onClick={() => handleResolve(conflict, 'local')}
                   className="flex items-start gap-2 p-2 rounded border border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors text-left"
                 >
@@ -92,7 +92,7 @@ export const ConflictResolutionDialog: React.FC = () => {
                 </button>
 
                 {/* Server version */}
-                <button
+                <button type="button"
                   onClick={() => handleResolve(conflict, 'server')}
                   className="flex items-start gap-2 p-2 rounded border border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors text-left"
                 >
@@ -115,13 +115,13 @@ export const ConflictResolutionDialog: React.FC = () => {
         {/* Footer with bulk actions */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
           <div className="flex gap-2">
-            <button
+            <button type="button"
               onClick={() => handleResolveAll('local')}
               className="px-3 py-1.5 text-sm rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
             >
               Keep All Local
             </button>
-            <button
+            <button type="button"
               onClick={() => handleResolveAll('server')}
               className="px-3 py-1.5 text-sm rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
             >

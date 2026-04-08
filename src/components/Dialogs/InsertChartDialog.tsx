@@ -176,7 +176,7 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
         <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 480 }}>
           <div className="dialog-header">
             <h2>Insert Chart</h2>
-            <button className="dialog-close" onClick={onClose}>
+            <button type="button" className="dialog-close" onClick={onClose}>
               <X size={18} />
             </button>
           </div>
@@ -190,7 +190,7 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
                   <div className="template-badge">
                     <Layers size={14} />
                     <span>{selectedTemplate.name}</span>
-                    <button
+                    <button type="button"
                       className="clear-template-btn"
                       onClick={() => {
                         setSelectedTemplate(null);
@@ -213,7 +213,7 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
                   )}
                 </div>
               ) : (
-                <button
+                <button type="button"
                   className="browse-templates-btn"
                   onClick={() => setShowTemplatesDialog(true)}
                 >
@@ -227,28 +227,28 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
             <div className="dialog-field">
               <label>Chart Type</label>
               <div className="chart-type-selector">
-                <button
+                <button type="button"
                   className={`chart-type-btn ${chartType === 'bar' ? 'active' : ''}`}
                   onClick={() => { setChartType('bar'); setSelectedTemplate(null); }}
                 >
                   <BarChart3 size={24} />
                   <span>Bar</span>
                 </button>
-                <button
+                <button type="button"
                   className={`chart-type-btn ${chartType === 'line' ? 'active' : ''}`}
                   onClick={() => { setChartType('line'); setSelectedTemplate(null); }}
                 >
                   <LineChart size={24} />
                   <span>Line</span>
                 </button>
-                <button
+                <button type="button"
                   className={`chart-type-btn ${chartType === 'pie' ? 'active' : ''}`}
                   onClick={() => { setChartType('pie'); setSelectedTemplate(null); }}
                 >
                   <PieChart size={24} />
                   <span>Pie</span>
                 </button>
-                <button
+                <button type="button"
                   className={`chart-type-btn ${selectedTemplate && !['bar', 'line', 'pie'].includes(chartType) ? 'active' : ''}`}
                   onClick={() => setShowTemplatesDialog(true)}
                   title="More chart types"
@@ -285,10 +285,10 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
           </div>
 
           <div className="dialog-footer">
-            <button className="dialog-btn-secondary" onClick={onClose}>
+            <button type="button" className="dialog-btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button className="dialog-btn-primary" onClick={handleInsert}>
+            <button type="button" className="dialog-btn-primary" onClick={handleInsert}>
               Insert Chart
             </button>
           </div>

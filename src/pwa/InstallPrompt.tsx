@@ -43,7 +43,7 @@ export const InstallPrompt: React.FC = () => {
                 Install for faster access and offline editing
               </p>
             </div>
-            <button
+            <button type="button"
               onClick={dismissInstall}
               className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
             >
@@ -78,13 +78,13 @@ export const InstallPrompt: React.FC = () => {
 
         {/* Actions */}
         <div className="flex border-t">
-          <button
+          <button type="button"
             onClick={dismissInstall}
             className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
           >
             Not now
           </button>
-          <button
+          <button type="button"
             onClick={handleInstall}
             disabled={installing}
             className="flex-1 px-4 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -118,7 +118,7 @@ export const InstallButton: React.FC = () => {
   if (!isInstallable) return null;
 
   return (
-    <button
+    <button type="button"
       onClick={install}
       className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
     >

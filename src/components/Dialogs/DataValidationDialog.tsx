@@ -173,7 +173,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
       <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 450 }}>
         <div className="dialog-header">
           <h2>Data Validation</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -395,13 +395,13 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-danger" onClick={handleClear} style={{ marginRight: 'auto' }}>
+          <button type="button" className="dialog-btn-danger" onClick={handleClear} style={{ marginRight: 'auto' }}>
             Clear All
           </button>
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleApply}>
+          <button type="button" className="dialog-btn-primary" onClick={handleApply}>
             OK
           </button>
         </div>

@@ -29,7 +29,7 @@ export const UnhideSheetDialog: React.FC<UnhideSheetDialogProps> = ({ onClose })
       <div className="dialog unhide-sheet-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Unhide Sheet</h3>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -57,10 +57,10 @@ export const UnhideSheetDialog: React.FC<UnhideSheetDialogProps> = ({ onClose })
         </div>
 
         <div className="dialog-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="btn btn-primary"
             onClick={handleUnhide}
             disabled={!selectedSheetId}

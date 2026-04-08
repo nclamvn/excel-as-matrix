@@ -188,7 +188,7 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
           <span className="auto-viz-subtitle">{t.subtitle}</span>
         </div>
         {onClose && (
-          <button className="auto-viz-close" onClick={onClose}>
+          <button type="button" className="auto-viz-close" onClick={onClose}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
@@ -198,19 +198,19 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
 
       {/* Tabs */}
       <div className="auto-viz-tabs">
-        <button
+        <button type="button"
           className={`auto-viz-tab ${activeTab === 'recommend' ? 'active' : ''}`}
           onClick={() => setActiveTab('recommend')}
         >
           {t.recommend}
         </button>
-        <button
+        <button type="button"
           className={`auto-viz-tab ${activeTab === 'customize' ? 'active' : ''}`}
           onClick={() => setActiveTab('customize')}
         >
           {t.customize}
         </button>
-        <button
+        <button type="button"
           className={`auto-viz-tab ${activeTab === 'nlquery' ? 'active' : ''}`}
           onClick={() => setActiveTab('nlquery')}
         >
@@ -305,14 +305,14 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
 
       {/* Footer */}
       <div className="auto-viz-footer">
-        <button
+        <button type="button"
           className="auto-viz-btn auto-viz-btn-secondary"
           onClick={handleAnalyze}
           disabled={!data || isAnalyzing}
         >
           {isAnalyzing ? t.analyzing : t.analyze}
         </button>
-        <button
+        <button type="button"
           className="auto-viz-btn auto-viz-btn-primary"
           onClick={handleCreate}
           disabled={!currentConfig}

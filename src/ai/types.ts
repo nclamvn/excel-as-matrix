@@ -44,6 +44,7 @@ export interface AIMessageMetadata {
   toolCalls?: AIToolCall[];
   sources?: AISource[];
   confidence?: number;
+  reasoningTraceId?: string;
 }
 
 export interface AISource {
@@ -195,12 +196,15 @@ export interface AIActionHistory {
 // Configuration Types
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type AIAutonomyMode = 'copilot' | 'autopilot';
+
 export interface AIConfig {
   apiKey?: string;
   model: string;
   maxTokens: number;
   temperature: number;
   mockMode: boolean;
+  autonomyMode: AIAutonomyMode;
   autoApprove: {
     enabled: boolean;
     maxCells: number;
@@ -213,6 +217,7 @@ export const DEFAULT_AI_CONFIG: AIConfig = {
   maxTokens: 4096,
   temperature: 0.7,
   mockMode: true, // Start in mock mode
+  autonomyMode: 'copilot', // Default: user approves everything
   autoApprove: {
     enabled: false,
     maxCells: 10,

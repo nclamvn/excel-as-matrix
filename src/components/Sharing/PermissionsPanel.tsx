@@ -268,7 +268,7 @@ const PermissionItem: React.FC<PermissionItemProps> = ({
             <option value="Commenter">Commenter</option>
             <option value="Editor">Editor</option>
           </select>
-          <button onClick={onRemove} style={removeButtonStyle} title="Remove access">
+          <button type="button" onClick={onRemove} style={removeButtonStyle} title="Remove access">
             <RemoveIcon />
           </button>
         </div>

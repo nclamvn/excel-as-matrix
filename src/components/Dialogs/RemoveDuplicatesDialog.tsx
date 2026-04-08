@@ -158,7 +158,7 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
               <GitCompare className="w-4 h-4" />
               Remove Duplicates
             </h3>
-            <button className="dialog-close" onClick={onClose}>
+            <button type="button" className="dialog-close" onClick={onClose}>
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -169,7 +169,7 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
             </div>
           </div>
           <div className="dialog-footer">
-            <button className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
               Close
             </button>
           </div>
@@ -186,7 +186,7 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
             <GitCompare className="w-4 h-4" />
             Remove Duplicates
           </h3>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -215,11 +215,11 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
             <div className="columns-header">
               <label className="field-label">Select columns to compare:</label>
               <div className="columns-actions">
-                <button className="btn-link" onClick={handleSelectAll}>
+                <button type="button" className="btn-link" onClick={handleSelectAll}>
                   Select All
                 </button>
                 <span className="separator">|</span>
-                <button className="btn-link" onClick={handleDeselectAll}>
+                <button type="button" className="btn-link" onClick={handleDeselectAll}>
                   Deselect All
                 </button>
               </div>
@@ -272,10 +272,10 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
         </div>
 
         <div className="dialog-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button
+          <button type="button"
             className="btn btn-primary"
             onClick={handleRemoveDuplicates}
             disabled={selectedColumns.size === 0}

@@ -155,7 +155,7 @@ export const AuditLog: React.FC<AuditLogProps> = ({
       {error && (
         <div style={errorStyle}>
           {error}
-          <button onClick={() => fetchAuditLog(true)} style={{ marginLeft: 8 }}>
+          <button type="button" onClick={() => fetchAuditLog(true)} style={{ marginLeft: 8 }}>
             Retry
           </button>
         </div>
@@ -181,7 +181,7 @@ export const AuditLog: React.FC<AuditLogProps> = ({
         )}
 
         {hasMore && !isLoading && (
-          <button onClick={handleLoadMore} style={loadMoreStyle}>
+          <button type="button" onClick={handleLoadMore} style={loadMoreStyle}>
             Load more
           </button>
         )}

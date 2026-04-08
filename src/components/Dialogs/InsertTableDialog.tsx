@@ -144,7 +144,7 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
       <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 380 }}>
         <div className="dialog-header">
           <h2>Create Table</h2>
-          <button className="dialog-close" onClick={onClose}>
+          <button type="button" className="dialog-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -185,10 +185,10 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
         </div>
 
         <div className="dialog-footer">
-          <button className="dialog-btn-secondary" onClick={onClose}>
+          <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="dialog-btn-primary" onClick={handleCreate}>
+          <button type="button" className="dialog-btn-primary" onClick={handleCreate}>
             Create Table
           </button>
         </div>

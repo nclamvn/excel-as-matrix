@@ -241,7 +241,7 @@ export const SecuritySettings: React.FC = () => {
     section: string;
     description?: string;
   }> = ({ title, icon, section, description }) => (
-    <button
+    <button type="button"
       onClick={() => toggleSection(section)}
       className="w-full flex items-center justify-between p-4 hover:bg-gray-50"
     >
@@ -277,7 +277,7 @@ export const SecuritySettings: React.FC = () => {
               Saved
             </span>
           )}
-          <button
+          <button type="button"
             onClick={saveSettings}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -789,7 +789,7 @@ export const SecuritySettings: React.FC = () => {
                         placeholder="192.168.1.0/24"
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
-                      <button
+                      <button type="button"
                         onClick={addIpToWhitelist}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                       >
@@ -803,7 +803,7 @@ export const SecuritySettings: React.FC = () => {
                           className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm"
                         >
                           {ip}
-                          <button
+                          <button type="button"
                             onClick={() => removeIpFromWhitelist(ip)}
                             className="hover:text-red-600"
                           >
@@ -958,7 +958,7 @@ export const SecuritySettings: React.FC = () => {
                         placeholder="example.com"
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
-                      <button
+                      <button type="button"
                         onClick={addDomainToEnforce}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                       >
@@ -975,7 +975,7 @@ export const SecuritySettings: React.FC = () => {
                           className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm"
                         >
                           {domain}
-                          <button
+                          <button type="button"
                             onClick={() => removeDomainFromEnforce(domain)}
                             className="hover:text-red-600"
                           >

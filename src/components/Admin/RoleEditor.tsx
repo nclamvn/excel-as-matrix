@@ -249,7 +249,7 @@ export const RoleEditor: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Role Management</h1>
           <p className="text-gray-500 mt-1">Create and manage roles with granular permissions</p>
         </div>
-        <button
+        <button type="button"
           onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
@@ -270,7 +270,7 @@ export const RoleEditor: React.FC = () => {
                 <div className="p-4 text-center text-gray-500">Loading roles...</div>
               ) : (
                 roles.map((role) => (
-                  <button
+                  <button type="button"
                     key={role.id}
                     onClick={() => {
                       setSelectedRole(role);
@@ -354,7 +354,7 @@ export const RoleEditor: React.FC = () => {
                   <div className="flex items-center gap-2">
                     {isEditing ? (
                       <>
-                        <button
+                        <button type="button"
                           onClick={() => {
                             setIsEditing(false);
                             fetchRoles();
@@ -363,7 +363,7 @@ export const RoleEditor: React.FC = () => {
                         >
                           <X className="w-5 h-5" />
                         </button>
-                        <button
+                        <button type="button"
                           onClick={saveRole}
                           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
@@ -375,13 +375,13 @@ export const RoleEditor: React.FC = () => {
                       <>
                         {!selectedRole.isSystem && (
                           <>
-                            <button
+                            <button type="button"
                               onClick={() => setIsEditing(true)}
                               className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                             >
                               <Edit className="w-5 h-5" />
                             </button>
-                            <button
+                            <button type="button"
                               onClick={() => deleteRole(selectedRole.id)}
                               className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
                             >
@@ -417,7 +417,7 @@ export const RoleEditor: React.FC = () => {
                         key={categoryKey}
                         className="border border-gray-200 rounded-lg overflow-hidden"
                       >
-                        <button
+                        <button type="button"
                           onClick={() => toggleCategory(categoryKey)}
                           className="w-full flex items-center justify-between p-3 hover:bg-gray-50"
                         >
@@ -433,7 +433,7 @@ export const RoleEditor: React.FC = () => {
                             </span>
                           </div>
                           {isEditing && (
-                            <button
+                            <button type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleCategoryPermissions(categoryKey);

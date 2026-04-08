@@ -168,7 +168,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
       {/* Section Tabs */}
       <div className="customizer-tabs">
         {['preset', 'title', 'appearance', 'legend'].map((section) => (
-          <button
+          <button type="button"
             key={section}
             className={`customizer-tab ${activeSection === section ? 'active' : ''}`}
             onClick={() => setActiveSection(section)}
@@ -183,7 +183,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
         <div className="customizer-section">
           <div className="preset-grid">
             {PRESETS.map((preset) => (
-              <button
+              <button type="button"
                 key={preset.value}
                 className="preset-button"
                 onClick={() => handlePresetChange(preset.value)}
@@ -233,7 +233,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.animation}</span>
-              <button
+              <button type="button"
                 className={`toggle-button ${config.style.animation ? 'active' : ''}`}
                 onClick={() => handleToggle('animation')}
               >
@@ -247,7 +247,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.shadow}</span>
-              <button
+              <button type="button"
                 className={`toggle-button ${config.style.shadow ? 'active' : ''}`}
                 onClick={() => handleToggle('shadow')}
               >
@@ -261,7 +261,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.showGrid}</span>
-              <button
+              <button type="button"
                 className={`toggle-button ${config.yAxis?.showGrid ? 'active' : ''}`}
                 onClick={() => handleToggle('showGrid')}
               >
@@ -308,7 +308,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.showLegend}</span>
-              <button
+              <button type="button"
                 className={`toggle-button ${config.legend?.show ? 'active' : ''}`}
                 onClick={() => handleToggle('showLegend')}
               >
@@ -324,7 +324,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
               <label>{t.legendPosition}</label>
               <div className="position-buttons">
                 {(['top', 'bottom', 'left', 'right'] as const).map((pos) => (
-                  <button
+                  <button type="button"
                     key={pos}
                     className={`position-button ${config.legend?.position === pos ? 'active' : ''}`}
                     onClick={() => handleLegendPosition(pos)}
