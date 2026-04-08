@@ -241,8 +241,66 @@ function excelJSCellToFormat(cell: ExcelJS.Cell): CellFormat | undefined {
   return Object.keys(format).length > 0 ? format : undefined;
 }
 
+/**
+ * Import legacy .xls (BIFF) format using SheetJS.
+ * ExcelJS only supports .xlsx, so we fall back to SheetJS for .xls files.
+ */
+async function importXlsLegacy(arrayBuffer: ArrayBuffer, _fileName: string): Promise<ImportResult> {
+  const XLSX = await import('xlsx');
+  const wb = XLSX.read(arrayBuffer, { type: 'array' });
+  const sheets: ImportResult['sheets'] = [];
+
+  for (const sheetName of wb.SheetNames) {
+    const ws = wb.Sheets[sheetName];
+    if (!ws) continue;
+
+    const cells: Record<string, CellData> = {};
+    const ref = typeof ws['!ref'] === 'string' ? ws['!ref'] : 'A1';
+    const range = XLSX.utils.decode_range(ref);
+
+    for (let r = range.s.r; r <= range.e.r; r++) {
+      for (let c = range.s.c; c <= range.e.c; c++) {
+        const addr = XLSX.utils.encode_cell({ r, c });
+        const cell = ws[addr];
+        if (!cell) continue;
+
+        const key = getCellKey(r, c);
+        let value: string | number | boolean | null = null;
+        let formula: string | null = null;
+
+        if (cell.f) formula = `=${cell.f}`;
+
+        if (typeof cell.v === 'number') value = cell.v;
+        else if (typeof cell.v === 'boolean') value = cell.v;
+        else if (cell.v !== undefined && cell.v !== null) value = String(cell.v);
+
+        cells[key] = {
+          value: value ?? '',
+          displayValue: cell.w || String(value ?? ''),
+          formula,
+        };
+      }
+    }
+
+    sheets.push({
+      name: sheetName,
+      cells,
+      columnWidths: {},
+      rowHeights: {},
+    });
+  }
+
+  return { sheets, charts: [] };
+}
+
 export const importExcelFile = async (file: File): Promise<ImportResult> => {
   const arrayBuffer = await file.arrayBuffer();
+
+  // .xls (old binary BIFF format) — use SheetJS which supports it
+  if (file.name.toLowerCase().endsWith('.xls')) {
+    return importXlsLegacy(arrayBuffer, file.name);
+  }
+
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(arrayBuffer);
 

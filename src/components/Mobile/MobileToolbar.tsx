@@ -62,9 +62,6 @@ export const MobileToolbar: React.FC = () => {
   const zoom = useWorkbookStore((state) => state.zoom);
   const setZoom = useWorkbookStore((state) => state.setZoom);
 
-  // Don't render on desktop
-  if (!isMobile) return null;
-
   const isDark = resolvedTheme === 'dark';
 
   // ── Panel toggle ────────────────────────────────────────────────────────
@@ -224,6 +221,9 @@ export const MobileToolbar: React.FC = () => {
     { id: 'ai', label: 'AI', icon: <Sparkles size={20} /> },
     { id: 'more', label: 'More', icon: <MoreHorizontal size={20} /> },
   ];
+
+  // Don't render on desktop
+  if (!isMobile) return null;
 
   // ── Render ──────────────────────────────────────────────────────────────
 

@@ -32,9 +32,6 @@ export const MobileSheetTabs: React.FC = () => {
 
   const isDark = resolvedTheme === 'dark';
 
-  // Don't render on desktop
-  if (!isMobile) return null;
-
   // Focus rename input when it becomes visible
   useEffect(() => {
     if (renamingSheetId && renameInputRef.current) {
@@ -136,6 +133,9 @@ export const MobileSheetTabs: React.FC = () => {
   const orderedSheets = sheetOrder
     .map((id) => sheets[id])
     .filter(Boolean);
+
+  // Don't render on desktop
+  if (!isMobile) return null;
 
   // ── Render ──────────────────────────────────────────────────────────────
 

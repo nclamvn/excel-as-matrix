@@ -725,7 +725,8 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
 
     } catch (err) {
       loggers.ui.error('Error parsing file:', err);
-      alert('Lỗi khi đọc file. Vui lòng kiểm tra định dạng file.');
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      alert(`Import failed: ${msg}`);
     }
 
     onClose();

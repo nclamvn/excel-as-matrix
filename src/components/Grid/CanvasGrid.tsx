@@ -1692,8 +1692,59 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             }}>
               or use File &gt; Open to browse
             </div>
+            <input
+              type="file"
+              id="empty-state-file-input"
+              accept=".xlsx,.xls,.csv,.tsv"
+              style={{ display: 'none' }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                  const fileName = file.name.toLowerCase();
+                  if (fileName.endsWith('.csv') || fileName.endsWith('.tsv')) {
+                    const { importCSVFile } = await import('../../utils/excelIO');
+                    const result = await importCSVFile(file);
+                    const wbStore = useWorkbookStore.getState();
+                    const wbId = `local-${Date.now()}`;
+                    wbStore.setWorkbook(wbId, file.name.replace(/\.[^/.]+$/, ''));
+                    const sid = `sheet-${Date.now()}`;
+                    wbStore.addSheet({ id: sid, name: 'Sheet1', index: 0, cells: {} });
+                    const updates: Array<{ row: number; col: number; data: { value: string | number | boolean; displayValue: string } }> = [];
+                    for (const [key, cell] of Object.entries(result.sheets[0].cells)) {
+                      const [r, c] = key.split(':').map(Number);
+                      const v = cell.value ?? '';
+                      updates.push({ row: r, col: c, data: { value: v as string | number | boolean, displayValue: String(v) } });
+                    }
+                    wbStore.batchUpdateCells(sid, updates);
+                  } else {
+                    const { importExcelFile } = await import('../../utils/excelIO');
+                    const result = await importExcelFile(file);
+                    const wbStore = useWorkbookStore.getState();
+                    const wbId = `local-${Date.now()}`;
+                    wbStore.setWorkbook(wbId, file.name.replace(/\.[^/.]+$/, ''));
+                    for (let i = 0; i < result.sheets.length; i++) {
+                      const sd = result.sheets[i];
+                      const sid = `sheet-${Date.now()}-${i}`;
+                      wbStore.addSheet({ id: sid, name: sd.name || `Sheet${i + 1}`, index: i, cells: {}, columnWidths: sd.columnWidths, rowHeights: sd.rowHeights, freezePane: sd.freezePane });
+                      const updates: Array<{ row: number; col: number; data: { value: string | number | boolean; displayValue: string; formula?: string | null } }> = [];
+                      for (const [key, cell] of Object.entries(sd.cells)) {
+                        const [r, c] = key.split(':').map(Number);
+                        const v = cell.value ?? '';
+                        updates.push({ row: r, col: c, data: { value: v as string | number | boolean, displayValue: cell.displayValue || String(v), formula: cell.formula || null } });
+                      }
+                      if (updates.length > 0) wbStore.batchUpdateCells(sid, updates);
+                    }
+                  }
+                  showToast('File imported successfully', 'success');
+                } catch (err) {
+                  showToast(`Import failed: ${err instanceof Error ? err.message : 'Unknown error'}`, 'error');
+                }
+                e.target.value = '';
+              }}
+            />
             <button type="button"
-              onClick={() => document.getElementById('file-input-open')?.click()}
+              onClick={() => document.getElementById('empty-state-file-input')?.click()}
               style={{
                 marginTop: 4,
                 padding: '8px 20px',

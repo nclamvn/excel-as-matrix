@@ -46,10 +46,6 @@ export const MobileGridOverlay: React.FC = () => {
   const zoom = useWorkbookStore((s) => s.zoom);
 
   const isDark = resolvedTheme === 'dark';
-
-  // Don't render on desktop
-  if (!isMobile) return null;
-
   const scale = zoom / 100;
 
   // ── Hit-test: convert touch coordinates to cell position ────────────────
@@ -160,6 +156,9 @@ export const MobileGridOverlay: React.FC = () => {
 
   const selectionStyle = getSelectionStyle();
   const cellAddress = selectedCell ? `${colToLetter(selectedCell.col)}${selectedCell.row + 1}` : '';
+
+  // Don't render on desktop
+  if (!isMobile) return null;
 
   return (
     <>

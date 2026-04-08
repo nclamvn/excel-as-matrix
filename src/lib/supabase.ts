@@ -8,8 +8,15 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
  * Used for SSO session detection and Realtime collaboration.
  * Returns null if credentials are not configured (graceful degradation).
  */
+// Don't create client with placeholder/invalid values
+const isValidConfig =
+  supabaseUrl &&
+  supabaseAnonKey &&
+  !supabaseUrl.includes('your-project') &&
+  !supabaseAnonKey.includes('your-anon-key');
+
 export const supabase: SupabaseClient | null =
-  supabaseUrl && supabaseAnonKey
+  isValidConfig
     ? createClient(supabaseUrl, supabaseAnonKey, {
         realtime: {
           params: {
