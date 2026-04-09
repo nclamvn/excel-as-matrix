@@ -68,6 +68,7 @@ const CursorIndicator: React.FC<CursorIndicatorProps> = ({
 
   return (
     <div
+      data-testid="remote-cursor"
       style={{
         position: 'absolute',
         left: x,

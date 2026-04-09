@@ -26,6 +26,8 @@ export const ToastContainer: React.FC = () => {
         <div
           key={toast.id}
           className={`toast toast--${toast.type}`}
+          data-testid="toast"
+          role="alert"
         >
           {getIcon(toast.type)}
           <span className="toast-message">{toast.message}</span>
