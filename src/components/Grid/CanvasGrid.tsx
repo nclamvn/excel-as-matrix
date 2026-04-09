@@ -1718,20 +1718,23 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
                     }
                     wbStore.batchUpdateCells(sid, updates);
                   } else {
+                    // Use the same robust import logic as FileMenu
                     const { importExcelFile } = await import('../../utils/excelIO');
                     const result = await importExcelFile(file);
                     const wbStore = useWorkbookStore.getState();
-                    const wbId = `local-${Date.now()}`;
-                    wbStore.setWorkbook(wbId, file.name.replace(/\.[^/.]+$/, ''));
+                    wbStore.setWorkbook(`local-${Date.now()}`, file.name.replace(/\.[^/.]+$/, ''));
                     for (let i = 0; i < result.sheets.length; i++) {
                       const sd = result.sheets[i];
                       const sid = `sheet-${Date.now()}-${i}`;
                       wbStore.addSheet({ id: sid, name: sd.name || `Sheet${i + 1}`, index: i, cells: {}, columnWidths: sd.columnWidths, rowHeights: sd.rowHeights, freezePane: sd.freezePane });
                       const updates: Array<{ row: number; col: number; data: { value: string | number | boolean; displayValue: string; formula?: string | null } }> = [];
                       for (const [key, cell] of Object.entries(sd.cells)) {
+                        if (!cell) continue;
                         const [r, c] = key.split(':').map(Number);
-                        const v = cell.value ?? '';
-                        updates.push({ row: r, col: c, data: { value: v as string | number | boolean, displayValue: cell.displayValue || String(v), formula: cell.formula || null } });
+                        if (isNaN(r) || isNaN(c)) continue;
+                        const v = cell.value != null ? cell.value : '';
+                        const dv = cell.displayValue != null ? cell.displayValue : String(v != null ? v : '');
+                        updates.push({ row: r, col: c, data: { value: v as string | number | boolean, displayValue: dv, formula: cell.formula || null } });
                       }
                       if (updates.length > 0) wbStore.batchUpdateCells(sid, updates);
                     }

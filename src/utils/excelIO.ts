@@ -367,20 +367,28 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
             else if ('error' in cellValue) {
               value = String((cellValue as ExcelJS.CellErrorValue).error);
             }
+            // Hyperlink: { text, hyperlink }
+            else if ('hyperlink' in cellValue) {
+              value = (cellValue as { text?: string; hyperlink?: string }).text || (cellValue as { hyperlink?: string }).hyperlink || '';
+            }
             else {
-              value = String(cellValue);
+              try { value = String(cellValue); } catch { value = ''; }
             }
           } else if (typeof cellValue === 'number') {
             value = cellValue;
           } else if (typeof cellValue === 'boolean') {
             value = cellValue;
           } else {
-            value = String(cellValue);
+            try { value = String(cellValue); } catch { value = ''; }
           }
         }
 
         // Use cell.text for formatted display value (ExcelJS formats it)
-        displayValue = cell.text || String(value ?? '');
+        try {
+          displayValue = cell.text || String(value ?? '');
+        } catch {
+          displayValue = String(value ?? '');
+        }
 
         if (value === null && !formula) return; // Skip truly empty cells
 
