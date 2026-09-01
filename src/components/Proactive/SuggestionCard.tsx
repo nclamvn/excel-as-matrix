@@ -39,14 +39,15 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
           {typeConfig.icon}
         </div>
         <div className="suggestion-card__title-section">
-          <div className="suggestion-card__label">
-            {typeConfig.label}
-          </div>
-          <div className={`suggestion-card__priority suggestion-card__priority--${suggestion.priority}`}>
+          <div className="suggestion-card__label">{typeConfig.label}</div>
+          <div
+            className={`suggestion-card__priority suggestion-card__priority--${suggestion.priority}`}
+          >
             {priorityConfig.label}
           </div>
         </div>
-        <button type="button"
+        <button
+          type="button"
           className="suggestion-card__dismiss"
           onClick={() => onDismiss(suggestion.id)}
           title="Dismiss"
@@ -65,16 +66,15 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
           <div className="suggestion-card__impact">
             <span className="suggestion-card__impact-label">Impact:</span>
             <span className="suggestion-card__impact-value">
-              {suggestion.impact.cellCount} cell{suggestion.impact.cellCount !== 1 ? 's' : ''} affected
+              {suggestion.impact.cellCount} cell{suggestion.impact.cellCount !== 1 ? 's' : ''}{' '}
+              affected
             </span>
           </div>
         )}
 
         {/* Expanded details */}
         {isExpanded && suggestion.details && (
-          <div className="suggestion-card__details">
-            {suggestion.details}
-          </div>
+          <div className="suggestion-card__details">{suggestion.details}</div>
         )}
 
         {/* Confidence bar */}
@@ -91,8 +91,9 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
 
       {/* Actions */}
       <div className="suggestion-card__actions">
-        {suggestion.actions.slice(0, 2).map(action => (
-          <button type="button"
+        {suggestion.actions.slice(0, 2).map((action) => (
+          <button
+            type="button"
             key={action.id}
             className={`suggestion-card__action suggestion-card__action--${action.type}`}
             onClick={() => onAction(suggestion.id, action.id)}
@@ -102,7 +103,8 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
           </button>
         ))}
         {suggestion.actions.length > 2 && (
-          <button type="button"
+          <button
+            type="button"
             className="suggestion-card__action suggestion-card__action--more"
             onClick={() => setIsExpanded(!isExpanded)}
           >

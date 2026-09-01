@@ -5,14 +5,14 @@
 export type PageOrientation = 'portrait' | 'landscape';
 
 export type PaperSize =
-  | 'letter'    // 8.5 x 11 in
-  | 'legal'     // 8.5 x 14 in
-  | 'a4'        // 210 x 297 mm
-  | 'a3'        // 297 x 420 mm
-  | 'tabloid';  // 11 x 17 in
+  | 'letter' // 8.5 x 11 in
+  | 'legal' // 8.5 x 14 in
+  | 'a4' // 210 x 297 mm
+  | 'a3' // 297 x 420 mm
+  | 'tabloid'; // 11 x 17 in
 
 export interface PaperDimensions {
-  width: number;   // in pixels at 96 DPI
+  width: number; // in pixels at 96 DPI
   height: number;
   label: string;
 }
@@ -55,18 +55,18 @@ export interface PrintSettings {
 
   // Scaling
   scalingMode: 'actual' | 'fitToPage' | 'fitToWidth' | 'custom';
-  customScale: number;  // 10-400%
+  customScale: number; // 10-400%
   fitToPagesWide: number;
   fitToPagesTall: number;
 
   // Print Area
-  printArea: string | null;  // e.g., "A1:H20" or null for all
+  printArea: string | null; // e.g., "A1:H20" or null for all
 
   // Print Titles
   printTitles?: PrintTitles;
 
   // Background
-  background?: string;  // URL or data URL for background image
+  background?: string; // URL or data URL for background image
 
   // Headers & Footers
   header: HeaderFooterContent;

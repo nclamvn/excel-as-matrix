@@ -269,7 +269,15 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCell, isEditing, moveSelection, expandSelection, setIsEditing, setSelectionRange, handleCellSubmit]);
+  }, [
+    selectedCell,
+    isEditing,
+    moveSelection,
+    expandSelection,
+    setIsEditing,
+    setSelectionRange,
+    handleCellSubmit,
+  ]);
 
   // Memoized visible cells - optimized: no per-cell range check, use overlay instead
   const visibleCells = useMemo(() => {
@@ -309,7 +317,18 @@ export const Grid: React.FC<GridProps> = ({ sheetId }) => {
       }
     }
     return cells;
-  }, [startRow, endRow, startCol, endCol, sheet?.cells, sheetId, selectedCell, handleCellMouseDown, handleCellMouseEnter, handleCellDoubleClick]);
+  }, [
+    startRow,
+    endRow,
+    startCol,
+    endCol,
+    sheet?.cells,
+    sheetId,
+    selectedCell,
+    handleCellMouseDown,
+    handleCellMouseEnter,
+    handleCellDoubleClick,
+  ]);
 
   return (
     <div className="relative h-full overflow-hidden" style={{ background: 'var(--surface-0)' }}>

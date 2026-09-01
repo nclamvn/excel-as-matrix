@@ -80,9 +80,7 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
         case 'showGrid':
           newConfig = {
             ...config,
-            yAxis: config.yAxis
-              ? { ...config.yAxis, showGrid: !config.yAxis.showGrid }
-              : undefined,
+            yAxis: config.yAxis ? { ...config.yAxis, showGrid: !config.yAxis.showGrid } : undefined,
           };
           break;
       }
@@ -168,7 +166,8 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
       {/* Section Tabs */}
       <div className="customizer-tabs">
         {['preset', 'title', 'appearance', 'legend'].map((section) => (
-          <button type="button"
+          <button
+            type="button"
             key={section}
             className={`customizer-tab ${activeSection === section ? 'active' : ''}`}
             onClick={() => setActiveSection(section)}
@@ -183,15 +182,23 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
         <div className="customizer-section">
           <div className="preset-grid">
             {PRESETS.map((preset) => (
-              <button type="button"
+              <button
+                type="button"
                 key={preset.value}
                 className="preset-button"
                 onClick={() => handlePresetChange(preset.value)}
               >
                 <span className="preset-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <path d="M3 9h18M9 21V9"/>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 9h18M9 21V9" />
                   </svg>
                 </span>
                 <span className="preset-label">
@@ -233,7 +240,8 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.animation}</span>
-              <button type="button"
+              <button
+                type="button"
                 className={`toggle-button ${config.style.animation ? 'active' : ''}`}
                 onClick={() => handleToggle('animation')}
               >
@@ -247,7 +255,8 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.shadow}</span>
-              <button type="button"
+              <button
+                type="button"
                 className={`toggle-button ${config.style.shadow ? 'active' : ''}`}
                 onClick={() => handleToggle('shadow')}
               >
@@ -261,7 +270,8 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.showGrid}</span>
-              <button type="button"
+              <button
+                type="button"
                 className={`toggle-button ${config.yAxis?.showGrid ? 'active' : ''}`}
                 onClick={() => handleToggle('showGrid')}
               >
@@ -308,7 +318,8 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
           <div className="toggle-group">
             <label className="toggle-label">
               <span>{t.showLegend}</span>
-              <button type="button"
+              <button
+                type="button"
                 className={`toggle-button ${config.legend?.show ? 'active' : ''}`}
                 onClick={() => handleToggle('showLegend')}
               >
@@ -324,7 +335,8 @@ export const ChartCustomizer: React.FC<ChartCustomizerProps> = ({
               <label>{t.legendPosition}</label>
               <div className="position-buttons">
                 {(['top', 'bottom', 'left', 'right'] as const).map((pos) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={pos}
                     className={`position-button ${config.legend?.position === pos ? 'active' : ''}`}
                     onClick={() => handleLegendPosition(pos)}

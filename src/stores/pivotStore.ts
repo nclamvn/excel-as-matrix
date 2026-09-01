@@ -67,11 +67,7 @@ interface PivotStore {
   ) => void;
 
   // Field Settings
-  setAggregateFunction: (
-    pivotId: string,
-    fieldId: string,
-    func: AggregateFunction
-  ) => void;
+  setAggregateFunction: (pivotId: string, fieldId: string, func: AggregateFunction) => void;
 
   setSortOrder: (
     pivotId: string,
@@ -80,23 +76,11 @@ interface PivotStore {
     order: SortOrder
   ) => void;
 
-  setDateGrouping: (
-    pivotId: string,
-    fieldId: string,
-    grouping: DateGrouping | undefined
-  ) => void;
+  setDateGrouping: (pivotId: string, fieldId: string, grouping: DateGrouping | undefined) => void;
 
-  setNumberFormat: (
-    pivotId: string,
-    fieldId: string,
-    format: string | undefined
-  ) => void;
+  setNumberFormat: (pivotId: string, fieldId: string, format: string | undefined) => void;
 
-  setCustomName: (
-    pivotId: string,
-    fieldId: string,
-    name: string | undefined
-  ) => void;
+  setCustomName: (pivotId: string, fieldId: string, name: string | undefined) => void;
 
   // Filters
   setFilter: (pivotId: string, filter: PivotFilter) => void;
@@ -104,24 +88,20 @@ interface PivotStore {
   clearFilters: (pivotId: string) => void;
 
   // Options
-  setShowGrandTotals: (
-    pivotId: string,
-    rows: boolean,
-    cols: boolean
-  ) => void;
+  setShowGrandTotals: (pivotId: string, rows: boolean, cols: boolean) => void;
 
-  setShowSubtotals: (
-    pivotId: string,
-    rows: boolean,
-    cols: boolean
-  ) => void;
+  setShowSubtotals: (pivotId: string, rows: boolean, cols: boolean) => void;
 
   setCompactForm: (pivotId: string, compact: boolean) => void;
   setRepeatLabels: (pivotId: string, repeat: boolean) => void;
 
   // Calculated Fields
   addCalculatedField: (pivotId: string, field: CalculatedField) => void;
-  updateCalculatedField: (pivotId: string, fieldId: string, updates: Partial<CalculatedField>) => void;
+  updateCalculatedField: (
+    pivotId: string,
+    fieldId: string,
+    updates: Partial<CalculatedField>
+  ) => void;
   removeCalculatedField: (pivotId: string, fieldId: string) => void;
 
   // Expansion State
@@ -184,7 +164,7 @@ export const usePivotStore = create<PivotStore>()(
           ...DEFAULT_PIVOT_OPTIONS,
         };
 
-        set(state => ({
+        set((state) => ({
           pivotTables: {
             ...state.pivotTables,
             [id]: pivot,
@@ -196,7 +176,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       updatePivotTable: (id, updates) => {
-        set(state => {
+        set((state) => {
           const existing = state.pivotTables[id];
           if (!existing) return state;
 
@@ -210,7 +190,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       deletePivotTable: (id) => {
-        set(state => {
+        set((state) => {
           const { [id]: _, ...rest } = state.pivotTables;
           return {
             pivotTables: rest,
@@ -224,13 +204,11 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       getPivotTablesForSheet: (sheetId) => {
-        return Object.values(get().pivotTables).filter(
-          pivot => pivot.sheetId === sheetId
-        );
+        return Object.values(get().pivotTables).filter((pivot) => pivot.sheetId === sheetId);
       },
 
       addFieldToArea: (pivotId, area, field) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -238,7 +216,7 @@ export const usePivotStore = create<PivotStore>()(
           const currentFields = pivot[areaKey] as PivotAreaField[];
 
           // Don't add duplicate
-          if (currentFields.some(f => f.fieldId === field.fieldId)) {
+          if (currentFields.some((f) => f.fieldId === field.fieldId)) {
             return state;
           }
 
@@ -255,7 +233,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       removeFieldFromArea: (pivotId, area, fieldId) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -267,7 +245,7 @@ export const usePivotStore = create<PivotStore>()(
               ...state.pivotTables,
               [pivotId]: {
                 ...pivot,
-                [areaKey]: currentFields.filter(f => f.fieldId !== fieldId),
+                [areaKey]: currentFields.filter((f) => f.fieldId !== fieldId),
               },
             },
           };
@@ -275,7 +253,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       moveField: (pivotId, fieldId, fromArea, toArea, toIndex) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -283,11 +261,10 @@ export const usePivotStore = create<PivotStore>()(
           const toKey = `${toArea}Fields` as keyof PivotTable;
 
           const fromFields = [...(pivot[fromKey] as PivotAreaField[])];
-          const toFields = fromArea === toArea
-            ? fromFields
-            : [...(pivot[toKey] as PivotAreaField[])];
+          const toFields =
+            fromArea === toArea ? fromFields : [...(pivot[toKey] as PivotAreaField[])];
 
-          const fieldIndex = fromFields.findIndex(f => f.fieldId === fieldId);
+          const fieldIndex = fromFields.findIndex((f) => f.fieldId === fieldId);
           if (fieldIndex === -1) return state;
 
           const [field] = fromFields.splice(fieldIndex, 1);
@@ -325,7 +302,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       reorderFieldInArea: (pivotId, area, fromIndex, toIndex) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -348,11 +325,11 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       setAggregateFunction: (pivotId, fieldId, func) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
-          const valueFields = pivot.valueFields.map(f =>
+          const valueFields = pivot.valueFields.map((f) =>
             f.fieldId === fieldId ? { ...f, aggregateFunction: func } : f
           );
 
@@ -366,12 +343,12 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       setSortOrder: (pivotId, fieldId, area, order) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
           const areaKey = `${area}Fields` as keyof PivotTable;
-          const fields = (pivot[areaKey] as PivotAreaField[]).map(f =>
+          const fields = (pivot[areaKey] as PivotAreaField[]).map((f) =>
             f.fieldId === fieldId ? { ...f, sortOrder: order } : f
           );
 
@@ -385,14 +362,12 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       setDateGrouping: (pivotId, fieldId, grouping) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
           const updateFields = (fields: PivotAreaField[]) =>
-            fields.map(f =>
-              f.fieldId === fieldId ? { ...f, dateGrouping: grouping } : f
-            );
+            fields.map((f) => (f.fieldId === fieldId ? { ...f, dateGrouping: grouping } : f));
 
           return {
             pivotTables: {
@@ -408,11 +383,11 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       setNumberFormat: (pivotId, fieldId, format) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
-          const valueFields = pivot.valueFields.map(f =>
+          const valueFields = pivot.valueFields.map((f) =>
             f.fieldId === fieldId ? { ...f, numberFormat: format } : f
           );
 
@@ -426,14 +401,12 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       setCustomName: (pivotId, fieldId, name) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
           const updateFields = (fields: PivotAreaField[]) =>
-            fields.map(f =>
-              f.fieldId === fieldId ? { ...f, customName: name } : f
-            );
+            fields.map((f) => (f.fieldId === fieldId ? { ...f, customName: name } : f));
 
           return {
             pivotTables: {
@@ -451,14 +424,15 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       setFilter: (pivotId, filter) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
-          const existing = pivot.filters.findIndex(f => f.fieldId === filter.fieldId);
-          const filters = existing >= 0
-            ? pivot.filters.map((f, i) => i === existing ? filter : f)
-            : [...pivot.filters, filter];
+          const existing = pivot.filters.findIndex((f) => f.fieldId === filter.fieldId);
+          const filters =
+            existing >= 0
+              ? pivot.filters.map((f, i) => (i === existing ? filter : f))
+              : [...pivot.filters, filter];
 
           return {
             pivotTables: {
@@ -470,7 +444,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       removeFilter: (pivotId, fieldId) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -479,7 +453,7 @@ export const usePivotStore = create<PivotStore>()(
               ...state.pivotTables,
               [pivotId]: {
                 ...pivot,
-                filters: pivot.filters.filter(f => f.fieldId !== fieldId),
+                filters: pivot.filters.filter((f) => f.fieldId !== fieldId),
               },
             },
           };
@@ -487,7 +461,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       clearFilters: (pivotId) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -523,7 +497,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       addCalculatedField: (pivotId, field) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -540,7 +514,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       updateCalculatedField: (pivotId, fieldId, updates) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -549,7 +523,7 @@ export const usePivotStore = create<PivotStore>()(
               ...state.pivotTables,
               [pivotId]: {
                 ...pivot,
-                calculatedFields: pivot.calculatedFields.map(f =>
+                calculatedFields: pivot.calculatedFields.map((f) =>
                   f.id === fieldId ? { ...f, ...updates } : f
                 ),
               },
@@ -559,7 +533,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       removeCalculatedField: (pivotId, fieldId) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -568,7 +542,7 @@ export const usePivotStore = create<PivotStore>()(
               ...state.pivotTables,
               [pivotId]: {
                 ...pivot,
-                calculatedFields: pivot.calculatedFields.filter(f => f.id !== fieldId),
+                calculatedFields: pivot.calculatedFields.filter((f) => f.id !== fieldId),
               },
             },
           };
@@ -576,7 +550,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       toggleRowExpansion: (pivotId, rowKey) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -596,13 +570,13 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       expandAll: (pivotId) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
           // Set all existing keys to true
           const expanded: Record<string, boolean> = {};
-          Object.keys(pivot.isExpanded).forEach(key => {
+          Object.keys(pivot.isExpanded).forEach((key) => {
             expanded[key] = true;
           });
 
@@ -616,7 +590,7 @@ export const usePivotStore = create<PivotStore>()(
       },
 
       collapseAll: (pivotId) => {
-        set(state => {
+        set((state) => {
           const pivot = state.pivotTables[pivotId];
           if (!pivot) return state;
 
@@ -667,18 +641,18 @@ export function aggregate(values: number[], func: AggregateFunction): number {
     case 'product':
       return values.reduce((a, b) => a * b, 1);
     case 'countNumbers':
-      return values.filter(v => !isNaN(v)).length;
+      return values.filter((v) => !isNaN(v)).length;
     case 'stdDev': {
       if (values.length < 2) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+      const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
       const variance = squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1);
       return Math.sqrt(variance);
     }
     case 'variance': {
       if (values.length < 2) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+      const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
       return squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1);
     }
     default:

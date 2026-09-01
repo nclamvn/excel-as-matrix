@@ -16,23 +16,31 @@ export const compatibilityFunctions: FunctionDef[] = [
   // ═══ Text extras ═══
   {
     name: 'BAHTTEXT',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => `${ensureNum(args[0])} Baht`,
   },
   {
     name: 'FIXED',
-    minArgs: 1, maxArgs: 3,
+    minArgs: 1,
+    maxArgs: 3,
     fn: (args) => {
       const num = ensureNum(args[0]);
       const decimals = args[1] !== undefined ? ensureNum(args[1]) : 2;
       const noCommas = args[2] ? Boolean(args[2]) : false;
       const str = num.toFixed(decimals);
-      return noCommas ? str : parseFloat(str).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+      return noCommas
+        ? str
+        : parseFloat(str).toLocaleString(undefined, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
+          });
     },
   },
   {
     name: 'DOLLAR',
-    minArgs: 1, maxArgs: 2,
+    minArgs: 1,
+    maxArgs: 2,
     fn: (args) => {
       const num = ensureNum(args[0]);
       const decimals = args[1] !== undefined ? ensureNum(args[1]) : 2;
@@ -41,7 +49,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'YEN',
-    minArgs: 1, maxArgs: 2,
+    minArgs: 1,
+    maxArgs: 2,
     fn: (args) => {
       const num = ensureNum(args[0]);
       const decimals = args[1] !== undefined ? ensureNum(args[1]) : 0;
@@ -50,27 +59,32 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'PHONETIC',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => toString(args[0]),
   },
   {
     name: 'ASC',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => toString(args[0]),
   },
   {
     name: 'JIS',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => toString(args[0]),
   },
   {
     name: 'UNICHAR',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => String.fromCodePoint(ensureNum(args[0])),
   },
   {
     name: 'UNICODE',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => {
       const s = toString(args[0]);
       return s.codePointAt(0) ?? 0;
@@ -80,7 +94,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   // ═══ Math extras ═══
   {
     name: 'SUBTOTAL',
-    minArgs: 2, maxArgs: 256,
+    minArgs: 2,
+    maxArgs: 256,
     fn: (args) => {
       const funcNum = ensureNum(args[0]);
       const values: number[] = [];
@@ -100,36 +115,49 @@ export const compatibilityFunctions: FunctionDef[] = [
       }
       const fn = funcNum > 100 ? funcNum - 100 : funcNum;
       switch (fn) {
-        case 1: return values.reduce((a, b) => a + b, 0) / (values.length || 1); // AVERAGE
-        case 2: return values.length; // COUNT
-        case 3: return values.length; // COUNTA
-        case 4: return values.length > 0 ? Math.max(...values) : 0; // MAX
-        case 5: return values.length > 0 ? Math.min(...values) : 0; // MIN
-        case 6: return values.reduce((a, b) => a * b, 1); // PRODUCT
-        case 7: { // STDEV
+        case 1:
+          return values.reduce((a, b) => a + b, 0) / (values.length || 1); // AVERAGE
+        case 2:
+          return values.length; // COUNT
+        case 3:
+          return values.length; // COUNTA
+        case 4:
+          return values.length > 0 ? Math.max(...values) : 0; // MAX
+        case 5:
+          return values.length > 0 ? Math.min(...values) : 0; // MIN
+        case 6:
+          return values.reduce((a, b) => a * b, 1); // PRODUCT
+        case 7: {
+          // STDEV
           const mean = values.reduce((a, b) => a + b, 0) / values.length;
           return Math.sqrt(values.reduce((s, v) => s + (v - mean) ** 2, 0) / (values.length - 1));
         }
-        case 8: { // STDEVP
+        case 8: {
+          // STDEVP
           const mean = values.reduce((a, b) => a + b, 0) / values.length;
           return Math.sqrt(values.reduce((s, v) => s + (v - mean) ** 2, 0) / values.length);
         }
-        case 9: return values.reduce((a, b) => a + b, 0); // SUM
-        case 10: { // VAR
+        case 9:
+          return values.reduce((a, b) => a + b, 0); // SUM
+        case 10: {
+          // VAR
           const mean = values.reduce((a, b) => a + b, 0) / values.length;
           return values.reduce((s, v) => s + (v - mean) ** 2, 0) / (values.length - 1);
         }
-        case 11: { // VARP
+        case 11: {
+          // VARP
           const mean = values.reduce((a, b) => a + b, 0) / values.length;
           return values.reduce((s, v) => s + (v - mean) ** 2, 0) / values.length;
         }
-        default: throw new FormulaError('#VALUE!', `Invalid SUBTOTAL function number: ${funcNum}`);
+        default:
+          throw new FormulaError('#VALUE!', `Invalid SUBTOTAL function number: ${funcNum}`);
       }
     },
   },
   {
     name: 'AGGREGATE',
-    minArgs: 3, maxArgs: 256,
+    minArgs: 3,
+    maxArgs: 256,
     fn: (args) => {
       const funcNum = ensureNum(args[0]);
       // options arg[1] ignored for now
@@ -149,23 +177,32 @@ export const compatibilityFunctions: FunctionDef[] = [
         }
       }
       switch (funcNum) {
-        case 1: return values.reduce((a, b) => a + b, 0) / (values.length || 1);
-        case 2: return values.length;
-        case 4: return values.length > 0 ? Math.max(...values) : 0;
-        case 5: return values.length > 0 ? Math.min(...values) : 0;
-        case 6: return values.reduce((a, b) => a * b, 1);
-        case 9: return values.reduce((a, b) => a + b, 0);
-        case 14: { // LARGE
+        case 1:
+          return values.reduce((a, b) => a + b, 0) / (values.length || 1);
+        case 2:
+          return values.length;
+        case 4:
+          return values.length > 0 ? Math.max(...values) : 0;
+        case 5:
+          return values.length > 0 ? Math.min(...values) : 0;
+        case 6:
+          return values.reduce((a, b) => a * b, 1);
+        case 9:
+          return values.reduce((a, b) => a + b, 0);
+        case 14: {
+          // LARGE
           const k = args.length > 3 ? ensureNum(args[args.length - 1]) : 1;
           const sorted = [...values].sort((a, b) => b - a);
           return sorted[k - 1] ?? new FormulaError('#NUM!');
         }
-        case 15: { // SMALL
+        case 15: {
+          // SMALL
           const k = args.length > 3 ? ensureNum(args[args.length - 1]) : 1;
           const sorted = [...values].sort((a, b) => a - b);
           return sorted[k - 1] ?? new FormulaError('#NUM!');
         }
-        default: return values.reduce((a, b) => a + b, 0);
+        default:
+          return values.reduce((a, b) => a + b, 0);
       }
     },
   },
@@ -173,7 +210,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   // ═══ Lookup extras ═══
   {
     name: 'XMATCH',
-    minArgs: 2, maxArgs: 3,
+    minArgs: 2,
+    maxArgs: 3,
     fn: (args) => {
       const lookupValue = args[0];
       const lookupArray = args[1];
@@ -199,7 +237,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'ADDRESS',
-    minArgs: 2, maxArgs: 5,
+    minArgs: 2,
+    maxArgs: 5,
     fn: (args) => {
       const row = ensureNum(args[0]);
       const col = ensureNum(args[1]);
@@ -217,10 +256,17 @@ export const compatibilityFunctions: FunctionDef[] = [
       let ref: string;
       if (a1) {
         switch (absNum) {
-          case 1: ref = `$${colLetter}$${row}`; break;
-          case 2: ref = `${colLetter}$${row}`; break;
-          case 3: ref = `$${colLetter}${row}`; break;
-          default: ref = `${colLetter}${row}`;
+          case 1:
+            ref = `$${colLetter}$${row}`;
+            break;
+          case 2:
+            ref = `${colLetter}$${row}`;
+            break;
+          case 3:
+            ref = `$${colLetter}${row}`;
+            break;
+          default:
+            ref = `${colLetter}${row}`;
         }
       } else {
         ref = `R${row}C${col}`;
@@ -231,25 +277,32 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'AREAS',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: () => 1, // Single reference = 1 area
   },
 
   // ═══ Date extras ═══
   {
     name: 'DAYS360',
-    minArgs: 2, maxArgs: 3,
+    minArgs: 2,
+    maxArgs: 3,
     fn: (args) => {
       const d1 = new Date(toString(args[0]));
       const d2 = new Date(toString(args[1]));
-      const y1 = d1.getFullYear(), m1 = d1.getMonth(), day1 = Math.min(d1.getDate(), 30);
-      const y2 = d2.getFullYear(), m2 = d2.getMonth(), day2 = Math.min(d2.getDate(), 30);
+      const y1 = d1.getFullYear(),
+        m1 = d1.getMonth(),
+        day1 = Math.min(d1.getDate(), 30);
+      const y2 = d2.getFullYear(),
+        m2 = d2.getMonth(),
+        day2 = Math.min(d2.getDate(), 30);
       return (y2 - y1) * 360 + (m2 - m1) * 30 + (day2 - day1);
     },
   },
   {
     name: 'WORKDAY.INTL',
-    minArgs: 2, maxArgs: 4,
+    minArgs: 2,
+    maxArgs: 4,
     fn: (args) => {
       const start = new Date(toString(args[0]));
       let days = ensureNum(args[1]);
@@ -263,7 +316,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'NETWORKDAYS.INTL',
-    minArgs: 2, maxArgs: 4,
+    minArgs: 2,
+    maxArgs: 4,
     fn: (args) => {
       const start = new Date(toString(args[0]));
       const end = new Date(toString(args[1]));
@@ -280,7 +334,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   // ═══ Statistical extras ═══
   {
     name: 'CONFIDENCE',
-    minArgs: 3, maxArgs: 3,
+    minArgs: 3,
+    maxArgs: 3,
     fn: (args) => {
       const alpha = ensureNum(args[0]);
       const stddev = ensureNum(args[1]);
@@ -288,30 +343,40 @@ export const compatibilityFunctions: FunctionDef[] = [
       // z-score approximation for common alpha values
       const zScores: Record<string, number> = { '0.05': 1.96, '0.01': 2.576, '0.1': 1.645 };
       const z = zScores[alpha.toString()] || 1.96;
-      return z * stddev / Math.sqrt(size);
+      return (z * stddev) / Math.sqrt(size);
     },
   },
   {
     name: 'CONFIDENCE.NORM',
-    minArgs: 3, maxArgs: 3,
+    minArgs: 3,
+    maxArgs: 3,
     fn: (args) => {
       const alpha = ensureNum(args[0]);
       const stddev = ensureNum(args[1]);
       const size = ensureNum(args[2]);
       const zScores: Record<string, number> = { '0.05': 1.96, '0.01': 2.576, '0.1': 1.645 };
       const z = zScores[alpha.toString()] || 1.96;
-      return z * stddev / Math.sqrt(size);
+      return (z * stddev) / Math.sqrt(size);
     },
   },
   {
     name: 'COVARIANCE.P',
-    minArgs: 2, maxArgs: 2,
+    minArgs: 2,
+    maxArgs: 2,
     fn: (args) => {
       if (!Array.isArray(args[0]) || !Array.isArray(args[1])) throw new FormulaError('#VALUE!');
       const x: number[] = [];
       const y: number[] = [];
-      for (const row of args[0] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) x.push(n); }
-      for (const row of args[1] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) y.push(n); }
+      for (const row of args[0] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) x.push(n);
+        }
+      for (const row of args[1] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) y.push(n);
+        }
       const n = Math.min(x.length, y.length);
       if (n === 0) return 0;
       const mx = x.reduce((a, b) => a + b, 0) / n;
@@ -323,13 +388,22 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'COVARIANCE.S',
-    minArgs: 2, maxArgs: 2,
+    minArgs: 2,
+    maxArgs: 2,
     fn: (args) => {
       if (!Array.isArray(args[0]) || !Array.isArray(args[1])) throw new FormulaError('#VALUE!');
       const x: number[] = [];
       const y: number[] = [];
-      for (const row of args[0] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) x.push(n); }
-      for (const row of args[1] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) y.push(n); }
+      for (const row of args[0] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) x.push(n);
+        }
+      for (const row of args[1] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) y.push(n);
+        }
       const n = Math.min(x.length, y.length);
       if (n <= 1) return 0;
       const mx = x.reduce((a, b) => a + b, 0) / n;
@@ -341,12 +415,17 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'PERCENTILE.INC',
-    minArgs: 2, maxArgs: 2,
+    minArgs: 2,
+    maxArgs: 2,
     fn: (args) => {
       if (!Array.isArray(args[0])) throw new FormulaError('#VALUE!');
       const k = ensureNum(args[1]);
       const values: number[] = [];
-      for (const row of args[0] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
+      for (const row of args[0] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       values.sort((a, b) => a - b);
       const n = values.length;
       const idx = k * (n - 1);
@@ -358,12 +437,17 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'PERCENTILE.EXC',
-    minArgs: 2, maxArgs: 2,
+    minArgs: 2,
+    maxArgs: 2,
     fn: (args) => {
       if (!Array.isArray(args[0])) throw new FormulaError('#VALUE!');
       const k = ensureNum(args[1]);
       const values: number[] = [];
-      for (const row of args[0] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
+      for (const row of args[0] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       values.sort((a, b) => a - b);
       const n = values.length;
       const idx = k * (n + 1) - 1;
@@ -376,12 +460,17 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'QUARTILE.INC',
-    minArgs: 2, maxArgs: 2,
+    minArgs: 2,
+    maxArgs: 2,
     fn: (args) => {
       if (!Array.isArray(args[0])) throw new FormulaError('#VALUE!');
       const q = ensureNum(args[1]);
       const values: number[] = [];
-      for (const row of args[0] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
+      for (const row of args[0] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       values.sort((a, b) => a - b);
       const n = values.length;
       const idx = (q / 4) * (n - 1);
@@ -393,28 +482,41 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'RANK.AVG',
-    minArgs: 2, maxArgs: 3,
+    minArgs: 2,
+    maxArgs: 3,
     fn: (args) => {
       const num = ensureNum(args[0]);
       if (!Array.isArray(args[1])) throw new FormulaError('#VALUE!');
       const order = args[2] !== undefined ? ensureNum(args[2]) : 0;
       const values: number[] = [];
-      for (const row of args[1] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
+      for (const row of args[1] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       const sorted = order ? [...values].sort((a, b) => a - b) : [...values].sort((a, b) => b - a);
-      const ranks = sorted.reduce((acc, v, i) => { if (v === num) acc.push(i + 1); return acc; }, [] as number[]);
+      const ranks = sorted.reduce((acc, v, i) => {
+        if (v === num) acc.push(i + 1);
+        return acc;
+      }, [] as number[]);
       if (ranks.length === 0) throw new FormulaError('#N/A');
       return ranks.reduce((a, b) => a + b, 0) / ranks.length;
     },
   },
   {
     name: 'RANK.EQ',
-    minArgs: 2, maxArgs: 3,
+    minArgs: 2,
+    maxArgs: 3,
     fn: (args) => {
       const num = ensureNum(args[0]);
       if (!Array.isArray(args[1])) throw new FormulaError('#VALUE!');
       const order = args[2] !== undefined ? ensureNum(args[2]) : 0;
       const values: number[] = [];
-      for (const row of args[1] as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
+      for (const row of args[1] as FormulaValue[][])
+        for (const c of row) {
+          const n = toNumber(c);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       const sorted = order ? [...values].sort((a, b) => a - b) : [...values].sort((a, b) => b - a);
       const idx = sorted.indexOf(num);
       if (idx === -1) throw new FormulaError('#N/A');
@@ -423,20 +525,32 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'MODE.SNGL',
-    minArgs: 1, maxArgs: 256,
+    minArgs: 1,
+    maxArgs: 256,
     fn: (args) => {
       const values: number[] = [];
       for (const arg of args) {
         if (Array.isArray(arg)) {
-          for (const row of arg as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
-        } else { const n = toNumber(arg); if (!(n instanceof FormulaError)) values.push(n); }
+          for (const row of arg as FormulaValue[][])
+            for (const c of row) {
+              const n = toNumber(c);
+              if (!(n instanceof FormulaError)) values.push(n);
+            }
+        } else {
+          const n = toNumber(arg);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       }
       const counts = new Map<number, number>();
-      let maxCount = 0; let mode = values[0];
+      let maxCount = 0;
+      let mode = values[0];
       for (const v of values) {
         const c = (counts.get(v) || 0) + 1;
         counts.set(v, c);
-        if (c > maxCount) { maxCount = c; mode = v; }
+        if (c > maxCount) {
+          maxCount = c;
+          mode = v;
+        }
       }
       if (maxCount <= 1) throw new FormulaError('#N/A', 'No mode found');
       return mode;
@@ -444,13 +558,21 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'STDEV.S',
-    minArgs: 1, maxArgs: 256,
+    minArgs: 1,
+    maxArgs: 256,
     fn: (args) => {
       const values: number[] = [];
       for (const arg of args) {
         if (Array.isArray(arg)) {
-          for (const row of arg as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
-        } else { const n = toNumber(arg); if (!(n instanceof FormulaError)) values.push(n); }
+          for (const row of arg as FormulaValue[][])
+            for (const c of row) {
+              const n = toNumber(c);
+              if (!(n instanceof FormulaError)) values.push(n);
+            }
+        } else {
+          const n = toNumber(arg);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       }
       if (values.length < 2) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
@@ -459,13 +581,21 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'STDEV.P',
-    minArgs: 1, maxArgs: 256,
+    minArgs: 1,
+    maxArgs: 256,
     fn: (args) => {
       const values: number[] = [];
       for (const arg of args) {
         if (Array.isArray(arg)) {
-          for (const row of arg as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
-        } else { const n = toNumber(arg); if (!(n instanceof FormulaError)) values.push(n); }
+          for (const row of arg as FormulaValue[][])
+            for (const c of row) {
+              const n = toNumber(c);
+              if (!(n instanceof FormulaError)) values.push(n);
+            }
+        } else {
+          const n = toNumber(arg);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       }
       if (values.length === 0) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
@@ -474,13 +604,21 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'VAR.S',
-    minArgs: 1, maxArgs: 256,
+    minArgs: 1,
+    maxArgs: 256,
     fn: (args) => {
       const values: number[] = [];
       for (const arg of args) {
         if (Array.isArray(arg)) {
-          for (const row of arg as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
-        } else { const n = toNumber(arg); if (!(n instanceof FormulaError)) values.push(n); }
+          for (const row of arg as FormulaValue[][])
+            for (const c of row) {
+              const n = toNumber(c);
+              if (!(n instanceof FormulaError)) values.push(n);
+            }
+        } else {
+          const n = toNumber(arg);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       }
       if (values.length < 2) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
@@ -489,13 +627,21 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'VAR.P',
-    minArgs: 1, maxArgs: 256,
+    minArgs: 1,
+    maxArgs: 256,
     fn: (args) => {
       const values: number[] = [];
       for (const arg of args) {
         if (Array.isArray(arg)) {
-          for (const row of arg as FormulaValue[][]) for (const c of row) { const n = toNumber(c); if (!(n instanceof FormulaError)) values.push(n); }
-        } else { const n = toNumber(arg); if (!(n instanceof FormulaError)) values.push(n); }
+          for (const row of arg as FormulaValue[][])
+            for (const c of row) {
+              const n = toNumber(c);
+              if (!(n instanceof FormulaError)) values.push(n);
+            }
+        } else {
+          const n = toNumber(arg);
+          if (!(n instanceof FormulaError)) values.push(n);
+        }
       }
       if (values.length === 0) return 0;
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
@@ -504,7 +650,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'FISHER',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => {
       const x = ensureNum(args[0]);
       if (x <= -1 || x >= 1) throw new FormulaError('#NUM!');
@@ -513,7 +660,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'FISHERINV',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => {
       const y = ensureNum(args[0]);
       return (Math.exp(2 * y) - 1) / (Math.exp(2 * y) + 1);
@@ -521,7 +669,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'STANDARDIZE',
-    minArgs: 3, maxArgs: 3,
+    minArgs: 3,
+    maxArgs: 3,
     fn: (args) => {
       const x = ensureNum(args[0]);
       const mean = ensureNum(args[1]);
@@ -532,7 +681,8 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'PHI',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => {
       const x = ensureNum(args[0]);
       return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
@@ -540,12 +690,18 @@ export const compatibilityFunctions: FunctionDef[] = [
   },
   {
     name: 'GAUSS',
-    minArgs: 1, maxArgs: 1,
+    minArgs: 1,
+    maxArgs: 1,
     fn: (args) => {
       const x = ensureNum(args[0]);
       // Gauss = NORM.S.DIST(x, TRUE) - 0.5
       const erf = (z: number) => {
-        const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+        const a1 = 0.254829592,
+          a2 = -0.284496736,
+          a3 = 1.421413741,
+          a4 = -1.453152027,
+          a5 = 1.061405429,
+          p = 0.3275911;
         const sign = z < 0 ? -1 : 1;
         z = Math.abs(z);
         const t = 1 / (1 + p * z);

@@ -105,11 +105,7 @@ export function setupWorkbookWithData(
   store.setWorkbook('test-workbook', 'Test Workbook');
 
   data.forEach((sheetData, index) => {
-    const sheet = createTestSheet(
-      sheetData.sheetId,
-      sheetData.sheetName,
-      sheetData.cells
-    );
+    const sheet = createTestSheet(sheetData.sheetId, sheetData.sheetName, sheetData.cells);
     sheet.index = index;
     store.addSheet(sheet);
   });
@@ -153,12 +149,7 @@ export function createCellsWithFormulas(
 }
 
 // Set selection in workbook store
-export function setTestSelection(
-  row: number,
-  col: number,
-  endRow?: number,
-  endCol?: number
-): void {
+export function setTestSelection(row: number, col: number, endRow?: number, endCol?: number): void {
   const store = useWorkbookStore.getState();
   const range: CellRange = {
     start: { row, col },
@@ -268,12 +259,7 @@ export function batchUpdateTestCells(
 }
 
 // Simulate user typing in a cell
-export function simulateCellInput(
-  sheetId: string,
-  row: number,
-  col: number,
-  value: string
-): void {
+export function simulateCellInput(sheetId: string, row: number, col: number, value: string): void {
   const store = useWorkbookStore.getState();
   const isFormula = value.startsWith('=');
 

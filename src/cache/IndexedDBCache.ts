@@ -360,10 +360,7 @@ export class IndexedDBCache {
     const allCells = await this.getCellsBySheet(workbookId, sheetId);
     return allCells.filter(
       (cell) =>
-        cell.row >= startRow &&
-        cell.row <= endRow &&
-        cell.col >= startCol &&
-        cell.col <= endCol
+        cell.row >= startRow && cell.row <= endRow && cell.col >= startCol && cell.col <= endCol
     );
   }
 
@@ -391,7 +388,9 @@ export class IndexedDBCache {
 
   // ============ Pending Changes (Offline Sync) ============
 
-  async addPendingChange(change: Omit<PendingChange, 'id' | 'timestamp' | 'retryCount'>): Promise<void> {
+  async addPendingChange(
+    change: Omit<PendingChange, 'id' | 'timestamp' | 'retryCount'>
+  ): Promise<void> {
     const pendingChange: PendingChange = {
       ...change,
       id: `change_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,

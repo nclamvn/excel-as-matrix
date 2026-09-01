@@ -33,9 +33,7 @@ export class ContextAnalyzer {
   /**
    * Infer data type from sample values
    */
-  private inferDataType(
-    samples: unknown[]
-  ): 'number' | 'text' | 'date' | 'currency' | 'mixed' {
+  private inferDataType(samples: unknown[]): 'number' | 'text' | 'date' | 'currency' | 'mixed' {
     if (!samples || !Array.isArray(samples) || samples.length === 0) return 'text';
 
     const types = samples.map((v) => this.detectValueType(v));
@@ -48,9 +46,7 @@ export class ContextAnalyzer {
   /**
    * Detect single value type
    */
-  private detectValueType(
-    value: unknown
-  ): 'number' | 'text' | 'date' | 'currency' {
+  private detectValueType(value: unknown): 'number' | 'text' | 'date' | 'currency' {
     if (value === null || value === undefined) return 'text';
 
     if (typeof value === 'number') {
@@ -84,10 +80,7 @@ export class ContextAnalyzer {
   /**
    * Analyze data range
    */
-  private analyzeDataRange(
-    range: DataRange,
-    headers: ColumnHeader[]
-  ): DataRange {
+  private analyzeDataRange(range: DataRange, headers: ColumnHeader[]): DataRange {
     const defaultRange: DataRange = {
       startRow: 0,
       endRow: 100,
@@ -110,28 +103,19 @@ export class ContextAnalyzer {
   /**
    * Find column by name or letter
    */
-  findColumn(
-    identifier: string,
-    headers: ColumnHeader[]
-  ): ColumnHeader | undefined {
+  findColumn(identifier: string, headers: ColumnHeader[]): ColumnHeader | undefined {
     if (!headers || !Array.isArray(headers) || !identifier) return undefined;
 
     // Check by letter
-    const byLetter = headers.find(
-      (h) => h.colLetter?.toUpperCase() === identifier.toUpperCase()
-    );
+    const byLetter = headers.find((h) => h.colLetter?.toUpperCase() === identifier.toUpperCase());
     if (byLetter) return byLetter;
 
     // Check by name (case-insensitive)
-    const byName = headers.find(
-      (h) => h.name?.toLowerCase() === identifier.toLowerCase()
-    );
+    const byName = headers.find((h) => h.name?.toLowerCase() === identifier.toLowerCase());
     if (byName) return byName;
 
     // Check by partial name match
-    const byPartial = headers.find((h) =>
-      h.name?.toLowerCase().includes(identifier.toLowerCase())
-    );
+    const byPartial = headers.find((h) => h.name?.toLowerCase().includes(identifier.toLowerCase()));
     return byPartial;
   }
 
@@ -145,9 +129,7 @@ export class ContextAnalyzer {
 
     return headers
       .filter(
-        (h) =>
-          h.name?.toLowerCase().includes(lower) ||
-          h.colLetter?.toLowerCase().includes(lower)
+        (h) => h.name?.toLowerCase().includes(lower) || h.colLetter?.toLowerCase().includes(lower)
       )
       .sort((a, b) => {
         // Exact match first
@@ -163,9 +145,7 @@ export class ContextAnalyzer {
    */
   getNumericColumns(headers: ColumnHeader[]): ColumnHeader[] {
     if (!headers || !Array.isArray(headers)) return [];
-    return headers.filter(
-      (h) => h.dataType === 'number' || h.dataType === 'currency'
-    );
+    return headers.filter((h) => h.dataType === 'number' || h.dataType === 'currency');
   }
 
   /**

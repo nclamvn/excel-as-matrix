@@ -94,25 +94,29 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
 
       {/* Tabs */}
       <div className="formula-assistant__tabs">
-        <button type="button"
+        <button
+          type="button"
           className={`formula-assistant__tab ${activeTab === 'create' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('create')}
         >
           Create
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`formula-assistant__tab ${activeTab === 'explain' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('explain')}
         >
           Explain
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`formula-assistant__tab ${activeTab === 'debug' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('debug')}
         >
           Debug
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`formula-assistant__tab ${activeTab === 'examples' ? 'formula-assistant__tab--active' : ''}`}
           onClick={() => setActiveTab('examples')}
         >
@@ -143,7 +147,8 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
                 }
                 rows={3}
               />
-              <button type="button"
+              <button
+                type="button"
                 className="formula-assistant__button formula-assistant__button--primary"
                 onClick={handleInterpret}
                 disabled={isProcessing || !nlInput.trim()}
@@ -163,17 +168,17 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
                         {Math.round(interpretation.confidence * 100)}% confident
                       </span>
                     </div>
-                    <p className="formula-assistant__explanation">
-                      {interpretation.explanation}
-                    </p>
+                    <p className="formula-assistant__explanation">{interpretation.explanation}</p>
                     <div className="formula-assistant__result-actions">
-                      <button type="button"
+                      <button
+                        type="button"
                         className="formula-assistant__button formula-assistant__button--primary"
                         onClick={handleInsert}
                       >
                         Insert Formula
                       </button>
-                      <button type="button"
+                      <button
+                        type="button"
                         className="formula-assistant__button formula-assistant__button--secondary"
                         onClick={() => setInterpretation(null)}
                       >
@@ -230,10 +235,7 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
         {activeTab === 'debug' && (
           <div className="formula-assistant__debug">
             {currentFormula && currentFormula.startsWith('=') ? (
-              <FormulaDebugPanel
-                formula={currentFormula}
-                onApplyFix={onInsertFormula}
-              />
+              <FormulaDebugPanel formula={currentFormula} onApplyFix={onInsertFormula} />
             ) : (
               <div className="formula-assistant__empty">
                 <EmptyIcon />
@@ -254,16 +256,8 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
               title={language === 'vi' ? 'Phép tính cơ bản' : 'Basic Calculations'}
               examples={
                 language === 'vi'
-                  ? [
-                      'Tính tổng cột A',
-                      'Tính trung bình cột B',
-                      'Đếm số ô trong cột C',
-                    ]
-                  : [
-                      'Sum of column A',
-                      'Average of column B',
-                      'Count cells in column C',
-                    ]
+                  ? ['Tính tổng cột A', 'Tính trung bình cột B', 'Đếm số ô trong cột C']
+                  : ['Sum of column A', 'Average of column B', 'Count cells in column C']
               }
               onExampleClick={handleExampleClick}
             />
@@ -288,14 +282,8 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
               title={language === 'vi' ? 'Tra cứu' : 'Lookups'}
               examples={
                 language === 'vi'
-                  ? [
-                      'Tìm giá trị A1 trong cột B',
-                      'Tra cứu tên theo ID',
-                    ]
-                  : [
-                      'Look up A1 in column B',
-                      'Find name by ID',
-                    ]
+                  ? ['Tìm giá trị A1 trong cột B', 'Tra cứu tên theo ID']
+                  : ['Look up A1 in column B', 'Find name by ID']
               }
               onExampleClick={handleExampleClick}
             />
@@ -303,14 +291,8 @@ export const FormulaAssistant: React.FC<FormulaAssistantProps> = ({
               title={language === 'vi' ? 'Logic' : 'Logic'}
               examples={
                 language === 'vi'
-                  ? [
-                      'Nếu A1 > 100 thì "Cao" ngược lại "Thấp"',
-                      'Nếu A1 trống thì 0 ngược lại A1',
-                    ]
-                  : [
-                      'If A1 > 100 then "High" else "Low"',
-                      'If A1 is empty then 0 otherwise A1',
-                    ]
+                  ? ['Nếu A1 > 100 thì "Cao" ngược lại "Thấp"', 'Nếu A1 trống thì 0 ngược lại A1']
+                  : ['If A1 > 100 then "High" else "Low"', 'If A1 is empty then 0 otherwise A1']
               }
               onExampleClick={handleExampleClick}
             />
@@ -338,11 +320,7 @@ interface ExampleCategoryProps {
   onExampleClick: (example: string) => void;
 }
 
-const ExampleCategory: React.FC<ExampleCategoryProps> = ({
-  title,
-  examples,
-  onExampleClick,
-}) => (
+const ExampleCategory: React.FC<ExampleCategoryProps> = ({ title, examples, onExampleClick }) => (
   <div className="formula-assistant__example-category">
     <h4 className="formula-assistant__example-title">{title}</h4>
     <ul className="formula-assistant__example-list">

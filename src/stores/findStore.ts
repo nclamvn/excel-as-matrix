@@ -145,7 +145,11 @@ export const useFindStore = create<FindState>((set, get) => ({
     set({ matches: newMatches, currentMatchIndex: newIndex });
 
     if (newMatches.length > 0 && newIndex >= 0) {
-      navigateToCell(newMatches[newIndex].sheetId, newMatches[newIndex].row, newMatches[newIndex].col);
+      navigateToCell(
+        newMatches[newIndex].sheetId,
+        newMatches[newIndex].row,
+        newMatches[newIndex].col
+      );
     }
   },
 
@@ -173,9 +177,10 @@ async function searchCells(pattern: RegExp, options: FindOptions): Promise<FindM
   const { sheets, activeSheetId } = workbookStore;
   const matches: FindMatch[] = [];
 
-  const sheetsToSearch = options.searchScope === 'workbook'
-    ? Object.entries(sheets)
-    : Object.entries(sheets).filter(([id]) => id === activeSheetId);
+  const sheetsToSearch =
+    options.searchScope === 'workbook'
+      ? Object.entries(sheets)
+      : Object.entries(sheets).filter(([id]) => id === activeSheetId);
 
   for (const [sheetId, sheet] of sheetsToSearch) {
     for (const [key, cell] of Object.entries(sheet.cells)) {

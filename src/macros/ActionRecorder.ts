@@ -2,13 +2,7 @@
 // ACTION RECORDER — Record user actions and convert to workflows
 // =============================================================================
 
-import type {
-  RecordedAction,
-  RecordingSession,
-  Workflow,
-  WorkflowStep,
-  ActionType,
-} from './types';
+import type { RecordedAction, RecordingSession, Workflow, WorkflowStep, ActionType } from './types';
 
 /**
  * User action from the application
@@ -148,18 +142,18 @@ export class ActionRecorder {
   private convertToRecordedAction(action: UserAction): RecordedAction | null {
     // Map user action to recorded action
     const actionMap: Record<string, ActionType> = {
-      'cell_edit': 'apply_formula',
-      'range_copy': 'copy_range',
-      'range_paste': 'paste_range',
-      'range_clear': 'clear_range',
-      'row_insert': 'insert_rows',
-      'row_delete': 'delete_rows',
-      'format_change': 'format_cells',
-      'sort': 'sort_data',
-      'filter': 'filter_data',
-      'chart_create': 'create_chart',
-      'sheet_add': 'add_sheet',
-      'sheet_delete': 'delete_sheet',
+      cell_edit: 'apply_formula',
+      range_copy: 'copy_range',
+      range_paste: 'paste_range',
+      range_clear: 'clear_range',
+      row_insert: 'insert_rows',
+      row_delete: 'delete_rows',
+      format_change: 'format_cells',
+      sort: 'sort_data',
+      filter: 'filter_data',
+      chart_create: 'create_chart',
+      sheet_add: 'add_sheet',
+      sheet_delete: 'delete_sheet',
     };
 
     const type = actionMap[action.type];
@@ -212,7 +206,7 @@ export class ActionRecorder {
       params.range = action.range;
     } else {
       // Combine ranges
-      params.ranges = group.actions.map(a => a.range);
+      params.ranges = group.actions.map((a) => a.range);
     }
 
     return params;

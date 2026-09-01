@@ -19,11 +19,7 @@ interface InsightCardProps {
 // Insight Card Component
 // -----------------------------------------------------------------------------
 
-export const InsightCard: React.FC<InsightCardProps> = ({
-  insight,
-  onAction,
-  onDismiss,
-}) => {
+export const InsightCard: React.FC<InsightCardProps> = ({ insight, onAction, onDismiss }) => {
   const categoryConfig = getCategoryConfig(insight.category);
   const metadata = insight.metadata as InsightMetadata | undefined;
 
@@ -34,7 +30,8 @@ export const InsightCard: React.FC<InsightCardProps> = ({
           {categoryConfig.icon}
         </div>
         <div className="insight-card__category">{categoryConfig.label}</div>
-        <button type="button"
+        <button
+          type="button"
           className="insight-card__dismiss"
           onClick={() => onDismiss(insight.id)}
           title="Dismiss"
@@ -80,9 +77,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
         {/* Anomaly highlight */}
         {insight.category === 'anomaly' && metadata?.anomaly && (
           <div className="insight-card__anomaly">
-            <div className="insight-card__anomaly-value">
-              {metadata.anomaly.value}
-            </div>
+            <div className="insight-card__anomaly-value">{metadata.anomaly.value}</div>
             <div className="insight-card__anomaly-expected">
               Expected: {metadata.anomaly.expected}
             </div>
@@ -102,8 +97,9 @@ export const InsightCard: React.FC<InsightCardProps> = ({
       </div>
 
       <div className="insight-card__actions">
-        {insight.actions.map(action => (
-          <button type="button"
+        {insight.actions.map((action) => (
+          <button
+            type="button"
             key={action.id}
             className={`insight-card__action insight-card__action--${action.type}`}
             onClick={() => onAction(insight.id, action.id)}
@@ -133,7 +129,8 @@ const TrendIndicator: React.FC<TrendIndicatorProps> = ({ direction, percentage }
     {direction === 'stable' && <TrendStableIcon />}
     {percentage !== undefined && (
       <span className="trend-indicator__value">
-        {percentage > 0 ? '+' : ''}{percentage.toFixed(1)}%
+        {percentage > 0 ? '+' : ''}
+        {percentage.toFixed(1)}%
       </span>
     )}
   </div>
@@ -162,7 +159,8 @@ const CorrelationBar: React.FC<CorrelationBarProps> = ({ value }) => {
       </div>
       <div className="correlation-bar__label">
         <span className={`correlation-bar__strength correlation-bar__strength--${strength}`}>
-          {strength.charAt(0).toUpperCase() + strength.slice(1)} {isPositive ? 'positive' : 'negative'}
+          {strength.charAt(0).toUpperCase() + strength.slice(1)}{' '}
+          {isPositive ? 'positive' : 'negative'}
         </span>
         <span className="correlation-bar__value">{value.toFixed(2)}</span>
       </div>
@@ -224,7 +222,9 @@ function getCategoryConfig(category?: string) {
       bgColor: '#e0e7ff',
     },
   };
-  return configs[category || ''] || { label: 'Insight', icon: <LightbulbIcon />, bgColor: '#f3f4f6' };
+  return (
+    configs[category || ''] || { label: 'Insight', icon: <LightbulbIcon />, bgColor: '#f3f4f6' }
+  );
 }
 
 // -----------------------------------------------------------------------------

@@ -61,8 +61,7 @@ export class FormulaOptimizer {
       pattern: /COUNT\s*\(\s*IF\s*\(\s*([^=<>]+)\s*=\s*([^,]+),\s*1\s*,\s*0\s*\)\s*\)/gi,
       name: 'COUNT(IF()) to COUNTIF',
       type: 'simplification',
-      transform: (_match, range, criteria) =>
-        `COUNTIF(${range.trim()},${criteria.trim()})`,
+      transform: (_match, range, criteria) => `COUNTIF(${range.trim()},${criteria.trim()})`,
       improvement: {
         type: 'readability',
         description: 'COUNTIF is simpler and more efficient',
@@ -142,11 +141,7 @@ export class FormulaOptimizer {
   /**
    * Analyze a single formula
    */
-  private analyzeFormula(
-    formula: string,
-    cellRef: string,
-    data: SheetData
-  ): FormulaOptimization[] {
+  private analyzeFormula(formula: string, cellRef: string, data: SheetData): FormulaOptimization[] {
     const results: FormulaOptimization[] = [];
     const analysis = this.getFormulaAnalysis(formula, cellRef);
 
@@ -182,28 +177,30 @@ export class FormulaOptimizer {
             description: rule.improvement.description,
           },
 
-          actions: rule.transform ? [
-            {
-              id: 'apply-opt',
-              label: 'Apply fix',
-              type: 'primary',
-              action: 'optimize_formula',
-              params: { formula: optimizedFormula, cellRef },
-            },
-            {
-              id: 'learn-more',
-              label: 'Learn more',
-              type: 'secondary',
-              action: 'learn_more',
-            },
-          ] : [
-            {
-              id: 'learn-more',
-              label: 'Learn more',
-              type: 'primary',
-              action: 'learn_more',
-            },
-          ],
+          actions: rule.transform
+            ? [
+                {
+                  id: 'apply-opt',
+                  label: 'Apply fix',
+                  type: 'primary',
+                  action: 'optimize_formula',
+                  params: { formula: optimizedFormula, cellRef },
+                },
+                {
+                  id: 'learn-more',
+                  label: 'Learn more',
+                  type: 'secondary',
+                  action: 'learn_more',
+                },
+              ]
+            : [
+                {
+                  id: 'learn-more',
+                  label: 'Learn more',
+                  type: 'primary',
+                  action: 'learn_more',
+                },
+              ],
 
           detectedAt: Date.now(),
           category: 'formula_optimization',
@@ -328,7 +325,7 @@ export class FormulaOptimizer {
         // Merge into single optimization
         const merged = { ...group[0] };
         merged.id = `opt-${key}-merged`;
-        merged.affectedCells = group.flatMap(o => o.affectedCells);
+        merged.affectedCells = group.flatMap((o) => o.affectedCells);
         merged.title = `${group[0].title} (${group.length} cells)`;
         merged.impact = {
           ...merged.impact,

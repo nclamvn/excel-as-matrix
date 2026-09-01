@@ -25,7 +25,7 @@ import {
   XCircle,
   History,
   Shield,
-  Lock
+  Lock,
 } from 'lucide-react';
 import './ReviewTab.css';
 
@@ -87,7 +87,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
       {/* Comments Group */}
       <div className="ribbon-group">
         <div className="ribbon-group-content">
-          <button type="button"
+          <button
+            type="button"
             className="ribbon-btn-large"
             onClick={handleNewComment}
             title="New Comment"
@@ -98,7 +99,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
           </button>
 
           <div className="ribbon-btn-stack">
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={handleDeleteComment}
               disabled={!activeCommentId}
@@ -106,7 +108,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
             >
               <Trash2 size={14} /> Delete
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={() => goToPrevComment(sheetId)}
               disabled={comments.length === 0}
@@ -114,7 +117,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
             >
               <ChevronLeft size={14} /> Previous
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={() => goToNextComment(sheetId)}
               disabled={comments.length === 0}
@@ -125,13 +129,15 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
           </div>
 
           <div className="ribbon-btn-stack">
-            <button type="button"
+            <button
+              type="button"
               className={`ribbon-btn-small ${showCommentsPanel ? 'active' : ''}`}
               onClick={toggleCommentsPanel}
             >
               <MessageSquare size={14} /> Show Panel
             </button>
-            <button type="button"
+            <button
+              type="button"
               className={`ribbon-btn-small ${showAllComments ? 'active' : ''}`}
               onClick={toggleShowAllComments}
             >
@@ -145,7 +151,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
       {/* Track Changes Group */}
       <div className="ribbon-group">
         <div className="ribbon-group-content">
-          <button type="button"
+          <button
+            type="button"
             className={`ribbon-btn-large ${trackSettings.enabled ? 'active' : ''}`}
             onClick={toggleTrackChanges}
             title="Track Changes"
@@ -156,14 +163,16 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
           </button>
 
           <div className="ribbon-btn-stack">
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={() => selectedChangeId && acceptChange(selectedChangeId, sheetId)}
               disabled={!selectedChangeId}
             >
               <Check size={14} color="#16a34a" /> Accept
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={() => selectedChangeId && rejectChange(selectedChangeId, sheetId)}
               disabled={!selectedChangeId}
@@ -173,14 +182,16 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
           </div>
 
           <div className="ribbon-btn-stack">
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={() => acceptAllChanges(sheetId)}
               disabled={pendingChanges.length === 0}
             >
               <CheckCheck size={14} color="#16a34a" /> Accept All
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="ribbon-btn-small"
               onClick={() => rejectAllChanges(sheetId)}
               disabled={pendingChanges.length === 0}
@@ -189,7 +200,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
             </button>
           </div>
 
-          <button type="button"
+          <button
+            type="button"
             className={`ribbon-btn-small ${showChangesPanel ? 'active' : ''}`}
             onClick={toggleChangesPanel}
           >
@@ -202,7 +214,8 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
       {/* Protection Group */}
       <div className="ribbon-group">
         <div className="ribbon-group-content">
-          <button type="button"
+          <button
+            type="button"
             className={`ribbon-btn-large ${isSheetProtected(sheetId) ? 'active' : ''}`}
             onClick={() => setShowProtectDialog(true)}
             title="Protect Sheet"
@@ -212,14 +225,16 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
             <span className="btn-sublabel">Sheet</span>
           </button>
 
-          <button type="button"
+          <button
+            type="button"
             className={`ribbon-btn-small ${isWorkbookProtected() ? 'active' : ''}`}
             title="Protect Workbook"
           >
             <Lock size={14} /> Workbook
           </button>
 
-          <button type="button"
+          <button
+            type="button"
             className="ribbon-btn-small"
             onClick={() => setShowRangeProtect(true)}
             title="Protect Range"
@@ -236,10 +251,7 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
 
       {/* Dialogs */}
       {showProtectDialog && (
-        <ProtectSheetDialog
-          sheetId={sheetId}
-          onClose={() => setShowProtectDialog(false)}
-        />
+        <ProtectSheetDialog sheetId={sheetId} onClose={() => setShowProtectDialog(false)} />
       )}
 
       <ProtectedRangeDialog
@@ -248,7 +260,16 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ sheetId, selectedCell }) =
         sheetId={sheetId}
         userId="local-user"
         userName="Local User"
-        selection={selectedCell ? { startRow: selectedCell.row, endRow: selectedCell.row, startCol: selectedCell.col, endCol: selectedCell.col } : null}
+        selection={
+          selectedCell
+            ? {
+                startRow: selectedCell.row,
+                endRow: selectedCell.row,
+                startCol: selectedCell.col,
+                endCol: selectedCell.col,
+              }
+            : null
+        }
       />
     </div>
   );

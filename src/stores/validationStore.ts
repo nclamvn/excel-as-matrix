@@ -1,9 +1,5 @@
 import { create } from 'zustand';
-import {
-  ValidationRule,
-  InputMessage,
-  ComparisonOperator,
-} from '../types/cell';
+import { ValidationRule, InputMessage, ComparisonOperator } from '../types/cell';
 
 // Validation result
 export interface ValidationResult {
@@ -24,7 +20,14 @@ interface ValidationState {
   updateRule: (ruleId: string, updates: Partial<ValidationRule>) => void;
   removeRule: (ruleId: string) => void;
   applyToCell: (ruleId: string, sheetId: string, row: number, col: number) => void;
-  applyToRange: (ruleId: string, sheetId: string, startRow: number, startCol: number, endRow: number, endCol: number) => void;
+  applyToRange: (
+    ruleId: string,
+    sheetId: string,
+    startRow: number,
+    startCol: number,
+    endRow: number,
+    endCol: number
+  ) => void;
   clearCellValidation: (sheetId: string, row: number, col: number) => void;
 
   // Validation
@@ -51,7 +54,12 @@ const initialState = {
 const cellKey = (sheetId: string, row: number, col: number): string => `${sheetId}:${row}:${col}`;
 
 // Helper to check comparison
-const checkComparison = (value: number, operator: ComparisonOperator, v1: number, v2?: number): boolean => {
+const checkComparison = (
+  value: number,
+  operator: ComparisonOperator,
+  v1: number,
+  v2?: number
+): boolean => {
   switch (operator) {
     case 'between':
       return v2 !== undefined && value >= v1 && value <= v2;
@@ -95,7 +103,9 @@ const validateValue = (value: string, rule: ValidationRule): ValidationResult =>
       if (isNaN(num) || num.toString() !== value) {
         return { isValid: false, message: 'Value must be a whole number' };
       }
-      if (!checkComparison(num, validationType.operator, validationType.value1, validationType.value2)) {
+      if (
+        !checkComparison(num, validationType.operator, validationType.value1, validationType.value2)
+      ) {
         return {
           isValid: false,
           message: `Value must be ${validationType.operator} ${validationType.value1}${validationType.value2 !== undefined ? ` and ${validationType.value2}` : ''}`,
@@ -109,7 +119,9 @@ const validateValue = (value: string, rule: ValidationRule): ValidationResult =>
       if (isNaN(num)) {
         return { isValid: false, message: 'Value must be a number' };
       }
-      if (!checkComparison(num, validationType.operator, validationType.value1, validationType.value2)) {
+      if (
+        !checkComparison(num, validationType.operator, validationType.value1, validationType.value2)
+      ) {
         return {
           isValid: false,
           message: `Value must be ${validationType.operator} ${validationType.value1}${validationType.value2 !== undefined ? ` and ${validationType.value2}` : ''}`,
@@ -133,7 +145,9 @@ const validateValue = (value: string, rule: ValidationRule): ValidationResult =>
 
     case 'textLength': {
       const len = value.length;
-      if (!checkComparison(len, validationType.operator, validationType.value1, validationType.value2)) {
+      if (
+        !checkComparison(len, validationType.operator, validationType.value1, validationType.value2)
+      ) {
         return {
           isValid: false,
           message: `Text length must be ${validationType.operator} ${validationType.value1}${validationType.value2 !== undefined ? ` and ${validationType.value2}` : ''}`,

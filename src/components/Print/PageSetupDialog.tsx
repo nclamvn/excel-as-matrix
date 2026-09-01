@@ -21,10 +21,7 @@ interface PageSetupDialogProps {
 
 type TabType = 'page' | 'margins' | 'headerFooter';
 
-export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
-  sheetId,
-  onClose,
-}) => {
+export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({ sheetId, onClose }) => {
   const [activeTab, setActiveTab] = useState<TabType>('page');
   const { getSettings, updateSettings, setMargins } = usePrintStore();
   const settings = getSettings(sheetId);
@@ -62,7 +59,7 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog page-setup-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog page-setup-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Page Setup</h3>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -72,19 +69,22 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
 
         {/* Tabs */}
         <div className="page-setup-tabs">
-          <button type="button"
+          <button
+            type="button"
             className={activeTab === 'page' ? 'active' : ''}
             onClick={() => setActiveTab('page')}
           >
             Page
           </button>
-          <button type="button"
+          <button
+            type="button"
             className={activeTab === 'margins' ? 'active' : ''}
             onClick={() => setActiveTab('margins')}
           >
             Margins
           </button>
-          <button type="button"
+          <button
+            type="button"
             className={activeTab === 'headerFooter' ? 'active' : ''}
             onClick={() => setActiveTab('headerFooter')}
           >
@@ -122,10 +122,14 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                 <label>Paper Size</label>
                 <select
                   value={settings.paperSize}
-                  onChange={(e) => updateSettings(sheetId, { paperSize: e.target.value as PaperSize })}
+                  onChange={(e) =>
+                    updateSettings(sheetId, { paperSize: e.target.value as PaperSize })
+                  }
                 >
                   {Object.entries(PAPER_SIZES).map(([key, val]) => (
-                    <option key={key} value={key}>{val.label}</option>
+                    <option key={key} value={key}>
+                      {val.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -136,7 +140,9 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                   <label>
                     <input
                       type="radio"
-                      checked={settings.scalingMode === 'actual' || settings.scalingMode === 'custom'}
+                      checked={
+                        settings.scalingMode === 'actual' || settings.scalingMode === 'custom'
+                      }
                       onChange={() => updateSettings(sheetId, { scalingMode: 'actual' })}
                     />
                     Adjust to:
@@ -145,7 +151,12 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                       min="10"
                       max="400"
                       value={settings.customScale}
-                      onChange={(e) => updateSettings(sheetId, { scalingMode: 'custom', customScale: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        updateSettings(sheetId, {
+                          scalingMode: 'custom',
+                          customScale: parseInt(e.target.value),
+                        })
+                      }
                       className="scale-number-input"
                     />
                     % normal size
@@ -168,7 +179,9 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                     <input
                       type="checkbox"
                       checked={settings.printGridlines}
-                      onChange={(e) => updateSettings(sheetId, { printGridlines: e.target.checked })}
+                      onChange={(e) =>
+                        updateSettings(sheetId, { printGridlines: e.target.checked })
+                      }
                     />
                     Gridlines
                   </label>
@@ -176,7 +189,9 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                     <input
                       type="checkbox"
                       checked={settings.printRowColHeaders}
-                      onChange={(e) => updateSettings(sheetId, { printRowColHeaders: e.target.checked })}
+                      onChange={(e) =>
+                        updateSettings(sheetId, { printRowColHeaders: e.target.checked })
+                      }
                     />
                     Row and column headings
                   </label>
@@ -265,7 +280,9 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                   <input
                     type="checkbox"
                     checked={settings.centerHorizontally}
-                    onChange={(e) => updateSettings(sheetId, { centerHorizontally: e.target.checked })}
+                    onChange={(e) =>
+                      updateSettings(sheetId, { centerHorizontally: e.target.checked })
+                    }
                   />
                   Center on page horizontally
                 </label>
@@ -273,7 +290,9 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                   <input
                     type="checkbox"
                     checked={settings.centerVertically}
-                    onChange={(e) => updateSettings(sheetId, { centerVertically: e.target.checked })}
+                    onChange={(e) =>
+                      updateSettings(sheetId, { centerVertically: e.target.checked })
+                    }
                   />
                   Center on page vertically
                 </label>
@@ -336,7 +355,8 @@ export const PageSetupDialog: React.FC<PageSetupDialogProps> = ({
                 <label>Insert codes:</label>
                 <div className="code-buttons">
                   {Object.entries(HEADER_FOOTER_CODES).map(([code, label]) => (
-                    <button type="button"
+                    <button
+                      type="button"
                       key={code}
                       className="code-btn"
                       title={`Insert ${label}`}

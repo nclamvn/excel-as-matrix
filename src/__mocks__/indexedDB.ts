@@ -61,15 +61,9 @@ interface MockIDBDatabase {
   version: number;
   objectStoreNames: DOMStringList;
 
-  createObjectStore(
-    name: string,
-    options?: IDBObjectStoreParameters
-  ): MockIDBObjectStore;
+  createObjectStore(name: string, options?: IDBObjectStoreParameters): MockIDBObjectStore;
   deleteObjectStore(name: string): void;
-  transaction(
-    storeNames: string | string[],
-    mode?: IDBTransactionMode
-  ): MockTransaction;
+  transaction(storeNames: string | string[], mode?: IDBTransactionMode): MockTransaction;
   close(): void;
 }
 
@@ -144,7 +138,8 @@ function createMockObjectStore(
 
     add(value: unknown, key?: IDBValidKey) {
       const request = createMockRequest(this, transaction);
-      const actualKey = key || (keyPath ? (value as Record<string, unknown>)[keyPath as string] : undefined);
+      const actualKey =
+        key || (keyPath ? (value as Record<string, unknown>)[keyPath as string] : undefined);
 
       if (data.has(String(actualKey))) {
         rejectRequest(request, 'Key already exists');
@@ -157,7 +152,8 @@ function createMockObjectStore(
 
     put(value: unknown, key?: IDBValidKey) {
       const request = createMockRequest(this, transaction);
-      const actualKey = key || (keyPath ? (value as Record<string, unknown>)[keyPath as string] : undefined);
+      const actualKey =
+        key || (keyPath ? (value as Record<string, unknown>)[keyPath as string] : undefined);
       data.set(String(actualKey), value);
       resolveRequest(request, actualKey);
       return request;

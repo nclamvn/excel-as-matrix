@@ -2,12 +2,7 @@
 // WORKFLOW OPTIMIZER — Optimize workflows for better performance
 // =============================================================================
 
-import type {
-  Workflow,
-  WorkflowStep,
-  OptimizationSuggestion,
-  ActionType,
-} from './types';
+import type { Workflow, WorkflowStep, OptimizationSuggestion, ActionType } from './types';
 
 /**
  * Optimize workflows
@@ -43,7 +38,7 @@ export class WorkflowOptimizer {
         description: `Merge ${group.length} consecutive ${group[0].action.type} actions`,
         descriptionVi: `Gộp ${group.length} hành động ${group[0].action.type} liên tiếp`,
         impact: 'medium',
-        affectedSteps: group.map(s => s.id),
+        affectedSteps: group.map((s) => s.id),
       });
     }
 
@@ -56,7 +51,7 @@ export class WorkflowOptimizer {
         description: `Run ${parallelizable.length} independent steps in parallel`,
         descriptionVi: `Chạy ${parallelizable.length} bước độc lập song song`,
         impact: 'high',
-        affectedSteps: parallelizable.map(s => s.id),
+        affectedSteps: parallelizable.map((s) => s.id),
       });
     }
 
@@ -87,7 +82,7 @@ export class WorkflowOptimizer {
    */
   applySuggestion(workflow: Workflow, suggestionId: string): Workflow {
     const suggestions = this.getSuggestions(workflow);
-    const suggestion = suggestions.find(s => s.id === suggestionId);
+    const suggestion = suggestions.find((s) => s.id === suggestionId);
     if (!suggestion) return workflow;
 
     switch (suggestion.type) {
@@ -121,8 +116,7 @@ export class WorkflowOptimizer {
         const group = [step];
         let j = i + 1;
 
-        while (j < workflow.steps.length &&
-               workflow.steps[j].action.type === step.action.type) {
+        while (j < workflow.steps.length && workflow.steps[j].action.type === step.action.type) {
           group.push(workflow.steps[j]);
           j++;
         }
@@ -232,8 +226,7 @@ export class WorkflowOptimizer {
         const group = [step];
         let j = i + 1;
 
-        while (j < workflow.steps.length &&
-               workflow.steps[j].action.type === step.action.type) {
+        while (j < workflow.steps.length && workflow.steps[j].action.type === step.action.type) {
           group.push(workflow.steps[j]);
           j++;
         }
@@ -261,9 +254,7 @@ export class WorkflowOptimizer {
       'export_csv',
     ];
 
-    return workflow.steps.filter(step =>
-      independentTypes.includes(step.action.type)
-    );
+    return workflow.steps.filter((step) => independentTypes.includes(step.action.type));
   }
 
   private findRedundantSteps(workflow: Workflow): WorkflowStep[] {
@@ -300,7 +291,7 @@ export class WorkflowOptimizer {
           description: 'Data operations should come before exports',
           descriptionVi: 'Thao tác dữ liệu nên đặt trước xuất file',
           impact: 'high',
-          affectedSteps: workflow.steps.map(s => s.id),
+          affectedSteps: workflow.steps.map((s) => s.id),
         });
         break;
       }
@@ -311,8 +302,10 @@ export class WorkflowOptimizer {
 
   private findParallelGroups(steps: WorkflowStep[]): WorkflowStep[][] {
     // Simple heuristic: export and notification steps can be parallel
-    const exportSteps = steps.filter(s =>
-      ['export_pdf', 'export_excel', 'export_csv', 'send_email', 'show_notification'].includes(s.action.type)
+    const exportSteps = steps.filter((s) =>
+      ['export_pdf', 'export_excel', 'export_csv', 'send_email', 'show_notification'].includes(
+        s.action.type
+      )
     );
 
     return exportSteps.length >= 2 ? [exportSteps] : [];
@@ -321,7 +314,7 @@ export class WorkflowOptimizer {
   private hasStepDependencies(steps: WorkflowStep[]): boolean {
     // Check if any step uses output from another
     for (const step of steps) {
-      if (step.action.inputMapping?.some(m => m.source === 'variable')) {
+      if (step.action.inputMapping?.some((m) => m.source === 'variable')) {
         return true;
       }
     }
@@ -334,7 +327,7 @@ export class WorkflowOptimizer {
 
   private mergeSteps(steps: WorkflowStep[]): WorkflowStep {
     const first = steps[0];
-    const ranges = steps.map(s => s.action.params.range).filter(Boolean);
+    const ranges = steps.map((s) => s.action.params.range).filter(Boolean);
 
     return {
       ...first,
@@ -352,13 +345,13 @@ export class WorkflowOptimizer {
   }
 
   private applyMerge(workflow: Workflow, stepIds: string[]): Workflow {
-    const stepsToMerge = workflow.steps.filter(s => stepIds.includes(s.id));
-    const otherSteps = workflow.steps.filter(s => !stepIds.includes(s.id));
+    const stepsToMerge = workflow.steps.filter((s) => stepIds.includes(s.id));
+    const otherSteps = workflow.steps.filter((s) => !stepIds.includes(s.id));
 
     if (stepsToMerge.length < 2) return workflow;
 
     const merged = this.mergeSteps(stepsToMerge);
-    const insertIndex = workflow.steps.findIndex(s => s.id === stepIds[0]);
+    const insertIndex = workflow.steps.findIndex((s) => s.id === stepIds[0]);
 
     const newSteps = [...otherSteps];
     newSteps.splice(insertIndex, 0, merged);
@@ -373,8 +366,8 @@ export class WorkflowOptimizer {
 
   private applyParallelize(workflow: Workflow, stepIds: string[]): Workflow {
     // Create a parallel step containing the selected steps
-    const parallelSteps = workflow.steps.filter(s => stepIds.includes(s.id));
-    const otherSteps = workflow.steps.filter(s => !stepIds.includes(s.id));
+    const parallelSteps = workflow.steps.filter((s) => stepIds.includes(s.id));
+    const otherSteps = workflow.steps.filter((s) => !stepIds.includes(s.id));
 
     const parallelStep: WorkflowStep = {
       id: crypto.randomUUID(),
@@ -385,17 +378,19 @@ export class WorkflowOptimizer {
         type: 'copy_range', // Placeholder, parallel handles internally
         params: {},
       },
-      branches: [{
-        id: crypto.randomUUID(),
-        name: 'Parallel Execution',
-        condition: { type: 'value', operator: 'equals', rightOperand: true },
-        steps: parallelSteps,
-      }],
+      branches: [
+        {
+          id: crypto.randomUUID(),
+          name: 'Parallel Execution',
+          condition: { type: 'value', operator: 'equals', rightOperand: true },
+          steps: parallelSteps,
+        },
+      ],
       enabled: true,
       label: `Parallel (${parallelSteps.length} steps)`,
     };
 
-    const insertIndex = workflow.steps.findIndex(s => s.id === stepIds[0]);
+    const insertIndex = workflow.steps.findIndex((s) => s.id === stepIds[0]);
     const newSteps = [...otherSteps];
     newSteps.splice(insertIndex, 0, parallelStep);
 
@@ -408,7 +403,7 @@ export class WorkflowOptimizer {
   }
 
   private applySimplify(workflow: Workflow, stepIds: string[]): Workflow {
-    const newSteps = workflow.steps.filter(s => !stepIds.includes(s.id));
+    const newSteps = workflow.steps.filter((s) => !stepIds.includes(s.id));
 
     // Renumber
     newSteps.forEach((step, i) => {

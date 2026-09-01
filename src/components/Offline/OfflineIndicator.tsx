@@ -85,11 +85,11 @@ export const OfflineIndicatorCompact: React.FC = () => {
         className={`w-2 h-2 rounded-full ${
           isOnline ? (pendingCount > 0 ? 'bg-blue-500' : 'bg-green-500') : 'bg-red-500'
         }`}
-        title={isOnline ? (pendingCount > 0 ? `${pendingCount} changes pending` : 'Online') : 'Offline'}
+        title={
+          isOnline ? (pendingCount > 0 ? `${pendingCount} changes pending` : 'Online') : 'Offline'
+        }
       />
-      {pendingCount > 0 && (
-        <span className="text-xs text-gray-500">{pendingCount}</span>
-      )}
+      {pendingCount > 0 && <span className="text-xs text-gray-500">{pendingCount}</span>}
     </div>
   );
 };

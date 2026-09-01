@@ -57,7 +57,9 @@ export class PresenceManager {
     });
 
     this.wsClient.on('selection_change', (message) => {
-      this.handleSelectionChange(message.payload as { userId: string; selection: SelectionRange | null });
+      this.handleSelectionChange(
+        message.payload as { userId: string; selection: SelectionRange | null }
+      );
     });
   }
 
@@ -221,7 +223,11 @@ export class PresenceManager {
     this.notifyHandlers();
   }
 
-  private handlePresenceUpdate(data: { userId: string; activeSheet?: string; isTyping?: boolean }): void {
+  private handlePresenceUpdate(data: {
+    userId: string;
+    activeSheet?: string;
+    isTyping?: boolean;
+  }): void {
     const session = this.sessions.get(data.userId);
     if (session) {
       session.lastActiveAt = new Date();

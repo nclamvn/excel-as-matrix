@@ -78,10 +78,7 @@ export class UncertaintyTracker {
   /**
    * Add multiple uncertainties at once
    */
-  addUncertainties(
-    responseId: string,
-    types: UncertaintyType[]
-  ): UncertaintyItem[] {
+  addUncertainties(responseId: string, types: UncertaintyType[]): UncertaintyItem[] {
     return types.map((type) => this.addUncertainty(responseId, type));
   }
 

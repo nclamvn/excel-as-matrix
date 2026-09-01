@@ -41,8 +41,8 @@ export function extractPivotChartData(
   const seriesLabels = useRowsAsCategories ? colLabels : rowLabels;
 
   // Get value fields to chart
-  const valueFields = pivot.valueFields.filter(vf =>
-    !selectedValueFields || selectedValueFields.includes(vf.fieldId)
+  const valueFields = pivot.valueFields.filter(
+    (vf) => !selectedValueFields || selectedValueFields.includes(vf.fieldId)
   );
 
   // Build series data
@@ -51,7 +51,7 @@ export function extractPivotChartData(
   if (seriesLabels.length === 0) {
     // No column/row grouping - one series per value field
     valueFields.forEach((vf, idx) => {
-      const fieldDef = pivot.fields.find(f => f.id === vf.fieldId);
+      const fieldDef = pivot.fields.find((f) => f.id === vf.fieldId);
       const seriesData = buildSeriesFromValues(
         pivot,
         sourceData,
@@ -110,7 +110,7 @@ function getFieldUniqueValues(
   if (areaFields.length === 0) return [];
 
   const firstField = areaFields[0];
-  const fieldDef = pivot.fields.find(f => f.id === firstField.fieldId);
+  const fieldDef = pivot.fields.find((f) => f.id === firstField.fieldId);
   if (!fieldDef) return [];
 
   const colIndex = fieldDef.sourceColumn;
@@ -158,29 +158,28 @@ function buildSeriesFromValues(
   categories: string[],
   useRowsAsCategories: boolean
 ): number[] {
-  const fieldDef = pivot.fields.find(f => f.id === valueField.fieldId);
+  const fieldDef = pivot.fields.find((f) => f.id === valueField.fieldId);
   if (!fieldDef) return categories.map(() => 0);
 
   const valueColIndex = fieldDef.sourceColumn;
-  const categoryField = useRowsAsCategories
-    ? pivot.rowFields[0]
-    : pivot.columnFields[0];
+  const categoryField = useRowsAsCategories ? pivot.rowFields[0] : pivot.columnFields[0];
 
   if (!categoryField) {
     // No grouping - aggregate all values
-    const allValues = sourceData.slice(1)
-      .map(row => parseFloat(String(row[valueColIndex] ?? '')) || 0);
+    const allValues = sourceData
+      .slice(1)
+      .map((row) => parseFloat(String(row[valueColIndex] ?? '')) || 0);
     return [aggregate(allValues, valueField.aggregateFunction || 'sum')];
   }
 
-  const categoryFieldDef = pivot.fields.find(f => f.id === categoryField.fieldId);
+  const categoryFieldDef = pivot.fields.find((f) => f.id === categoryField.fieldId);
   if (!categoryFieldDef) return categories.map(() => 0);
 
   const categoryColIndex = categoryFieldDef.sourceColumn;
 
   // Group values by category
   const valuesByCategory = new Map<string, number[]>();
-  categories.forEach(cat => valuesByCategory.set(cat, []));
+  categories.forEach((cat) => valuesByCategory.set(cat, []));
 
   for (let i = 1; i < sourceData.length; i++) {
     const row = sourceData[i];
@@ -193,7 +192,7 @@ function buildSeriesFromValues(
   }
 
   // Aggregate values for each category
-  return categories.map(cat => {
+  return categories.map((cat) => {
     const values = valuesByCategory.get(cat) || [];
     return aggregate(values, valueField.aggregateFunction || 'sum');
   });
@@ -210,22 +209,18 @@ function buildSeriesForLabel(
   seriesLabel: string,
   useRowsAsCategories: boolean
 ): number[] {
-  const valueFieldDef = pivot.fields.find(f => f.id === valueField.fieldId);
+  const valueFieldDef = pivot.fields.find((f) => f.id === valueField.fieldId);
   if (!valueFieldDef) return categories.map(() => 0);
 
   const valueColIndex = valueFieldDef.sourceColumn;
 
-  const categoryField = useRowsAsCategories
-    ? pivot.rowFields[0]
-    : pivot.columnFields[0];
-  const seriesField = useRowsAsCategories
-    ? pivot.columnFields[0]
-    : pivot.rowFields[0];
+  const categoryField = useRowsAsCategories ? pivot.rowFields[0] : pivot.columnFields[0];
+  const seriesField = useRowsAsCategories ? pivot.columnFields[0] : pivot.rowFields[0];
 
   if (!categoryField || !seriesField) return categories.map(() => 0);
 
-  const categoryFieldDef = pivot.fields.find(f => f.id === categoryField.fieldId);
-  const seriesFieldDef = pivot.fields.find(f => f.id === seriesField.fieldId);
+  const categoryFieldDef = pivot.fields.find((f) => f.id === categoryField.fieldId);
+  const seriesFieldDef = pivot.fields.find((f) => f.id === seriesField.fieldId);
 
   if (!categoryFieldDef || !seriesFieldDef) return categories.map(() => 0);
 
@@ -234,7 +229,7 @@ function buildSeriesForLabel(
 
   // Group values by category for this series
   const valuesByCategory = new Map<string, number[]>();
-  categories.forEach(cat => valuesByCategory.set(cat, []));
+  categories.forEach((cat) => valuesByCategory.set(cat, []));
 
   for (let i = 1; i < sourceData.length; i++) {
     const row = sourceData[i];
@@ -247,7 +242,7 @@ function buildSeriesForLabel(
     }
   }
 
-  return categories.map(cat => {
+  return categories.map((cat) => {
     const values = valuesByCategory.get(cat) || [];
     return aggregate(values, valueField.aggregateFunction || 'sum');
   });
@@ -310,7 +305,7 @@ export function getRecommendedChartTypes(pivot: PivotTable): ChartType[] {
  * Convert pivot chart data to ChartData format for the chart renderer
  */
 export function toChartData(chartId: string, pivotChartData: PivotChartData): ChartData {
-  const allValues = pivotChartData.series.flatMap(s => s.values);
+  const allValues = pivotChartData.series.flatMap((s) => s.values);
   const minValue = Math.min(...allValues, 0);
   const maxValue = Math.max(...allValues);
   const range = maxValue - minValue;

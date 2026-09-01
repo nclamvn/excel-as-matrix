@@ -73,14 +73,7 @@ export const ArrowOverlay: React.FC<ArrowOverlayProps> = ({
         >
           <polygon points="0 0, 8 3, 0 6" fill="#3b82f6" />
         </marker>
-        <marker
-          id="arrowhead-red"
-          markerWidth="8"
-          markerHeight="6"
-          refX="8"
-          refY="3"
-          orient="auto"
-        >
+        <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
           <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
         </marker>
       </defs>
@@ -125,8 +118,17 @@ export const WatchWindow: React.FC = () => {
     if (!selectedCell || !activeSheetId) return;
     const label = `${String.fromCharCode(65 + selectedCell.col)}${selectedCell.row + 1}`;
     // Avoid duplicates
-    if (watchItems.some((w) => w.sheetId === activeSheetId && w.row === selectedCell.row && w.col === selectedCell.col)) return;
-    setWatchItems((prev) => [...prev, { sheetId: activeSheetId, row: selectedCell.row, col: selectedCell.col, label }]);
+    if (
+      watchItems.some(
+        (w) =>
+          w.sheetId === activeSheetId && w.row === selectedCell.row && w.col === selectedCell.col
+      )
+    )
+      return;
+    setWatchItems((prev) => [
+      ...prev,
+      { sheetId: activeSheetId, row: selectedCell.row, col: selectedCell.col, label },
+    ]);
   }, [selectedCell, activeSheetId, watchItems]);
 
   const removeWatch = useCallback((index: number) => {
@@ -135,7 +137,8 @@ export const WatchWindow: React.FC = () => {
 
   if (!isOpen) {
     return (
-      <button type="button"
+      <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="fixed bottom-4 right-4 z-40 px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg shadow-lg text-sm flex items-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-700"
       >
@@ -149,12 +152,22 @@ export const WatchWindow: React.FC = () => {
     <div className="fixed bottom-4 right-4 z-40 w-72 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-200 dark:border-neutral-700">
-        <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">Watch Window</span>
+        <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
+          Watch Window
+        </span>
         <div className="flex gap-1">
-          <button type="button" onClick={addWatch} className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50">
+          <button
+            type="button"
+            onClick={addWatch}
+            className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50"
+          >
             + Add
           </button>
-          <button type="button" onClick={() => setIsOpen(false)} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+          >
             <EyeOff size={14} />
           </button>
         </div>
@@ -181,13 +194,22 @@ export const WatchWindow: React.FC = () => {
                 const key = getCellKey(item.row, item.col);
                 const cellData = sheet?.cells[key];
                 return (
-                  <tr key={i} className="border-b border-neutral-50 dark:border-neutral-700/50 hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
-                    <td className="px-3 py-1.5 font-mono text-blue-600 dark:text-blue-400">{item.label}</td>
+                  <tr
+                    key={i}
+                    className="border-b border-neutral-50 dark:border-neutral-700/50 hover:bg-neutral-50 dark:hover:bg-neutral-700/30"
+                  >
+                    <td className="px-3 py-1.5 font-mono text-blue-600 dark:text-blue-400">
+                      {item.label}
+                    </td>
                     <td className="px-2 py-1.5 text-neutral-700 dark:text-neutral-300 truncate max-w-[120px]">
                       {cellData?.displayValue || cellData?.value?.toString() || '(empty)'}
                     </td>
                     <td className="px-1">
-                      <button type="button" onClick={() => removeWatch(i)} className="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded">
+                      <button
+                        type="button"
+                        onClick={() => removeWatch(i)}
+                        className="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                      >
                         <X size={12} className="text-neutral-400" />
                       </button>
                     </td>
@@ -239,7 +261,11 @@ export function useFormulaAudit() {
 
     if (showDependents) {
       // Get cells that depend on the selected cell
-      const dependentKeys = formulaEngine.getDependentCells(activeSheetId, selectedCell.row, selectedCell.col);
+      const dependentKeys = formulaEngine.getDependentCells(
+        activeSheetId,
+        selectedCell.row,
+        selectedCell.col
+      );
       for (const depKey of dependentKeys) {
         const parsed = formulaEngine.parseCellKey(depKey);
         if (parsed.sheetId === activeSheetId) {
@@ -263,7 +289,10 @@ export function useFormulaAudit() {
     showDependents,
     togglePrecedents: () => setShowPrecedents((v) => !v),
     toggleDependents: () => setShowDependents((v) => !v),
-    clearArrows: () => { setShowPrecedents(false); setShowDependents(false); },
+    clearArrows: () => {
+      setShowPrecedents(false);
+      setShowDependents(false);
+    },
   };
 }
 
@@ -288,7 +317,8 @@ export const AuditToolbar: React.FC<AuditToolbarProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-1">
-      <button type="button"
+      <button
+        type="button"
         onClick={onTogglePrecedents}
         className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
           showPrecedents
@@ -300,7 +330,8 @@ export const AuditToolbar: React.FC<AuditToolbarProps> = ({
         <ArrowUpRight size={14} />
         Precedents
       </button>
-      <button type="button"
+      <button
+        type="button"
         onClick={onToggleDependents}
         className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
           showDependents
@@ -313,7 +344,8 @@ export const AuditToolbar: React.FC<AuditToolbarProps> = ({
         Dependents
       </button>
       {(showPrecedents || showDependents) && (
-        <button type="button"
+        <button
+          type="button"
           onClick={onClear}
           className="px-2 py-1 text-xs rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-500"
           title="Remove Arrows"

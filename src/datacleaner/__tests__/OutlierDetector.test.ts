@@ -9,7 +9,7 @@ function createNumericData(values: number[], columnName = 'Amount'): CleanerShee
     sheetName: 'Test Sheet',
     rowCount: values.length,
     colCount: 1,
-    cells: values.map(v => [{ value: v, isEmpty: false }]),
+    cells: values.map((v) => [{ value: v, isEmpty: false }]),
     headers: [columnName],
     columnTypes: ['number'],
   };
@@ -22,8 +22,8 @@ function createMultiColumnData(rows: unknown[][], types: string[]): CleanerSheet
     sheetName: 'Test Sheet',
     rowCount: rows.length,
     colCount: rows[0]?.length || 0,
-    cells: rows.map(row =>
-      row.map(v => ({
+    cells: rows.map((row) =>
+      row.map((v) => ({
         value: v,
         isEmpty: v === null || v === undefined || v === '',
       }))
@@ -65,7 +65,7 @@ describe('OutlierDetector', () => {
         const results = detector.detect(data);
 
         expect(results.length).toBeGreaterThan(0);
-        const highOutlier = results[0].outliers.find(o => o.value === 1000);
+        const highOutlier = results[0].outliers.find((o) => o.value === 1000);
         expect(highOutlier).toBeDefined();
         expect(highOutlier?.direction).toBe('high');
       });
@@ -77,7 +77,7 @@ describe('OutlierDetector', () => {
         const results = detector.detect(data);
 
         expect(results.length).toBeGreaterThan(0);
-        const lowOutlier = results[0].outliers.find(o => o.value === -500);
+        const lowOutlier = results[0].outliers.find((o) => o.value === -500);
         expect(lowOutlier).toBeDefined();
         expect(lowOutlier?.direction).toBe('low');
       });
@@ -186,7 +186,7 @@ describe('OutlierDetector', () => {
         const results = detector.detect(data);
 
         // Should only check column 0
-        const hasColumn1 = results.some(r => r.column === 1);
+        const hasColumn1 = results.some((r) => r.column === 1);
         expect(hasColumn1).toBe(false);
       });
     });
@@ -258,8 +258,16 @@ describe('OutlierDetector', () => {
       it('handles currency-formatted values', () => {
         const data = createMultiColumnData(
           [
-            ['$100.00'], ['$100.00'], ['$100.00'], ['$100.00'], ['$100.00'],
-            ['$100.00'], ['$100.00'], ['$100.00'], ['$100.00'], ['$1,000.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$100.00'],
+            ['$1,000.00'],
           ],
           ['currency']
         );
@@ -271,10 +279,7 @@ describe('OutlierDetector', () => {
 
       it('ignores non-numeric cells', () => {
         const data = createMultiColumnData(
-          [
-            [100], [100], [100], [100], [100],
-            [100], [100], ['invalid'], [100], [100], [1000],
-          ],
+          [[100], [100], [100], [100], [100], [100], [100], ['invalid'], [100], [100], [1000]],
           ['number']
         );
         const results = detector.detect(data);
@@ -334,11 +339,11 @@ describe('OutlierDetector', () => {
       const actions = detector.getSuggestedActions(outlierInfo);
 
       expect(actions.length).toBeGreaterThan(0);
-      expect(actions.some(a => a.type === 'cap')).toBe(true);
-      expect(actions.some(a => a.type === 'replace_median')).toBe(true);
-      expect(actions.some(a => a.type === 'replace_mean')).toBe(true);
-      expect(actions.some(a => a.type === 'remove')).toBe(true);
-      expect(actions.some(a => a.type === 'flag')).toBe(true);
+      expect(actions.some((a) => a.type === 'cap')).toBe(true);
+      expect(actions.some((a) => a.type === 'replace_median')).toBe(true);
+      expect(actions.some((a) => a.type === 'replace_mean')).toBe(true);
+      expect(actions.some((a) => a.type === 'remove')).toBe(true);
+      expect(actions.some((a) => a.type === 'flag')).toBe(true);
     });
 
     it('includes severity levels', () => {
@@ -351,17 +356,17 @@ describe('OutlierDetector', () => {
       };
       const actions = detector.getSuggestedActions(outlierInfo);
 
-      const removeAction = actions.find(a => a.type === 'remove');
+      const removeAction = actions.find((a) => a.type === 'remove');
       expect(removeAction?.severity).toBe('destructive');
 
-      const flagAction = actions.find(a => a.type === 'flag');
+      const flagAction = actions.find((a) => a.type === 'flag');
       expect(flagAction?.severity).toBe('safe');
     });
   });
 
   describe('applyCap', () => {
     it('caps high outliers to upper bound', () => {
-      const values = Array.from({ length: 10 }, (_, i) => i === 9 ? 1000 : 100);
+      const values = Array.from({ length: 10 }, (_, i) => (i === 9 ? 1000 : 100));
       const data = createNumericData(values);
       const results = detector.detect(data);
 
@@ -372,7 +377,7 @@ describe('OutlierDetector', () => {
     });
 
     it('caps low outliers to lower bound', () => {
-      const values = Array.from({ length: 10 }, (_, i) => i === 9 ? -100 : 100);
+      const values = Array.from({ length: 10 }, (_, i) => (i === 9 ? -100 : 100));
       const data = createNumericData(values);
       const results = detector.detect(data);
 
@@ -385,7 +390,7 @@ describe('OutlierDetector', () => {
 
   describe('applyReplaceWithMedian', () => {
     it('replaces outliers with median value', () => {
-      const values = Array.from({ length: 10 }, (_, i) => i === 9 ? 1000 : 100);
+      const values = Array.from({ length: 10 }, (_, i) => (i === 9 ? 1000 : 100));
       const data = createNumericData(values);
       const results = detector.detect(data);
 
@@ -400,7 +405,7 @@ describe('OutlierDetector', () => {
 
   describe('applyReplaceWithMean', () => {
     it('replaces outliers with mean value', () => {
-      const values = Array.from({ length: 10 }, (_, i) => i === 9 ? 1000 : 100);
+      const values = Array.from({ length: 10 }, (_, i) => (i === 9 ? 1000 : 100));
       const data = createNumericData(values);
       const results = detector.detect(data);
 
@@ -421,7 +426,16 @@ describe('OutlierDetector', () => {
           { row: 2, col: 0, ref: 'A3', value: -100, score: -4, direction: 'low' },
           { row: 8, col: 0, ref: 'A9', value: 1000, score: 6, direction: 'high' },
         ],
-        stats: { mean: 100, median: 100, stdDev: 10, min: -100, max: 1000, q1: 95, q3: 105, iqr: 10 },
+        stats: {
+          mean: 100,
+          median: 100,
+          stdDev: 10,
+          min: -100,
+          max: 1000,
+          q1: 95,
+          q3: 105,
+          iqr: 10,
+        },
         method: 'zscore',
       };
 
@@ -434,7 +448,7 @@ describe('OutlierDetector', () => {
     it('updates configuration', () => {
       detector.updateConfig({ method: 'iqr', iqrMultiplier: 2.0 });
 
-      const values = Array.from({ length: 15 }, (_, i) => i === 14 ? 100 : 10);
+      const values = Array.from({ length: 15 }, (_, i) => (i === 14 ? 100 : 10));
       const data = createNumericData(values);
       const results = detector.detect(data);
 

@@ -228,10 +228,7 @@ export const PieChart: React.FC<PieChartProps> = ({
         <div className="pie-inline-legend">
           {slices.map((slice, i) => (
             <div key={i} className="inline-legend-item">
-              <span
-                className="legend-dot"
-                style={{ backgroundColor: slice.color }}
-              />
+              <span className="legend-dot" style={{ backgroundColor: slice.color }} />
               <span className="legend-text">
                 {slice.label} ({slice.percentage.toFixed(0)}%)
               </span>

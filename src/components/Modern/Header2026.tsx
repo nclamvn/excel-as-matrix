@@ -24,7 +24,10 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'view', label: 'View' },
 ];
 
-export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette, onOpenVersionHistory }) => {
+export const Header2026: React.FC<Header2026Props> = ({
+  onOpenCommandPalette,
+  onOpenVersionHistory,
+}) => {
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const { workbookName } = useWorkbookStore();
   const { activeTab, setActiveTab } = useToolbarStore();
@@ -42,7 +45,8 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette, on
     <>
       <header className="header-2026">
         {/* Back to Landing */}
-        <button type="button"
+        <button
+          type="button"
           className="header-2026__back"
           onClick={handleBackToLanding}
           title="Back to Landing"
@@ -52,7 +56,8 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette, on
         <span className="header-2026__separator">|</span>
 
         {/* Brand / File Menu Button */}
-        <button type="button"
+        <button
+          type="button"
           className="header-2026__brand"
           onClick={() => setIsFileMenuOpen(true)}
           title="File Menu"
@@ -64,108 +69,103 @@ export const Header2026: React.FC<Header2026Props> = ({ onOpenCommandPalette, on
         {/* Navigation */}
         <nav className="header-2026__nav">
           {TABS.map((tab) => (
-          <button type="button"
-            key={tab.id}
-            className={`header-2026__nav-item ${activeTab === tab.id ? 'header-2026__nav-item--active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
+            <button
+              type="button"
+              key={tab.id}
+              className={`header-2026__nav-item ${activeTab === tab.id ? 'header-2026__nav-item--active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Title */}
+        <div className="header-2026__title">{workbookName || 'Untitled'}</div>
+
+        {/* Actions */}
+        <div className="header-2026__actions">
+          <button type="button" className="header-2026__cmd-hint" onClick={onOpenCommandPalette}>
+            <Search style={{ width: 14, height: 14 }} />
+            <span>Search commands...</span>
+            <kbd>⌘K</kbd>
           </button>
-        ))}
-      </nav>
 
-      {/* Title */}
-      <div className="header-2026__title">
-        {workbookName || 'Untitled'}
-      </div>
+          {/* Presence: online users + connection status */}
+          {isEnabled && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 4 }}>
+              <PresenceAvatars size="sm" maxVisible={4} />
+              <span
+                title={isConnected ? 'Live — real-time sync active' : 'Offline'}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontSize: 11,
+                  color: isConnected ? '#22c55e' : '#9ca3af',
+                }}
+              >
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    backgroundColor: isConnected ? '#22c55e' : '#9ca3af',
+                    display: 'inline-block',
+                  }}
+                />
+                {isConnected ? 'Live' : 'Offline'}
+              </span>
+            </div>
+          )}
 
-      {/* Actions */}
-      <div className="header-2026__actions">
-        <button type="button"
-          className="header-2026__cmd-hint"
-          onClick={onOpenCommandPalette}
-        >
-          <Search style={{ width: 14, height: 14 }} />
-          <span>Search commands...</span>
-          <kbd>⌘K</kbd>
-        </button>
-
-        {/* Presence: online users + connection status */}
-        {isEnabled && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 4 }}>
-            <PresenceAvatars size="sm" maxVisible={4} />
-            <span
-              title={isConnected ? 'Live — real-time sync active' : 'Offline'}
+          {/* Version History */}
+          {onOpenVersionHistory && (
+            <button
+              type="button"
+              className="header-2026__history-btn"
+              onClick={onOpenVersionHistory}
+              title="Version History"
               style={{
-                display: 'inline-flex',
+                display: 'flex',
                 alignItems: 'center',
                 gap: 4,
-                fontSize: 11,
-                color: isConnected ? '#22c55e' : '#9ca3af',
+                padding: '4px 10px',
+                height: 28,
+                background: 'transparent',
+                border: '1px solid var(--surface-3, #d4d4d4)',
+                borderRadius: 5,
+                fontSize: 12,
+                color: 'var(--text-2, #525252)',
+                cursor: 'pointer',
               }}
             >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  backgroundColor: isConnected ? '#22c55e' : '#9ca3af',
-                  display: 'inline-block',
-                }}
-              />
-              {isConnected ? 'Live' : 'Offline'}
-            </span>
-          </div>
-        )}
+              <History size={14} />
+              <span>History</span>
+            </button>
+          )}
 
-        {/* Version History */}
-        {onOpenVersionHistory && (
-          <button type="button"
-            className="header-2026__history-btn"
-            onClick={onOpenVersionHistory}
-            title="Version History"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              padding: '4px 10px',
-              height: 28,
-              background: 'transparent',
-              border: '1px solid var(--surface-3, #d4d4d4)',
-              borderRadius: 5,
-              fontSize: 12,
-              color: 'var(--text-2, #525252)',
-              cursor: 'pointer',
-            }}
+          {/* Notification Bell */}
+          <NotificationBell userId={localUser?.userId || 'anonymous'} />
+
+          {/* Share Button */}
+          <ShareButton />
+
+          {/* AI Copilot Toggle */}
+          <button
+            type="button"
+            className={`ai-toggle-btn ${isAIOpen ? 'ai-toggle-btn--active' : ''}`}
+            onClick={toggleAIPanel}
+            title="AI Copilot"
           >
-            <History size={14} />
-            <span>History</span>
+            <Sparkles size={14} />
+            <span>AI Copilot</span>
           </button>
-        )}
-
-        {/* Notification Bell */}
-        <NotificationBell userId={localUser?.userId || 'anonymous'} />
-
-        {/* Share Button */}
-        <ShareButton />
-
-        {/* AI Copilot Toggle */}
-        <button type="button"
-          className={`ai-toggle-btn ${isAIOpen ? 'ai-toggle-btn--active' : ''}`}
-          onClick={toggleAIPanel}
-          title="AI Copilot"
-        >
-          <Sparkles size={14} />
-          <span>AI Copilot</span>
-        </button>
-      </div>
-    </header>
+        </div>
+      </header>
 
       {/* File Menu Modal */}
-      <FileMenu
-        isOpen={isFileMenuOpen}
-        onClose={() => setIsFileMenuOpen(false)}
-      />
+      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} />
     </>
   );
 };

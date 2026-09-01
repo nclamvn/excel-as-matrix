@@ -68,7 +68,16 @@ export function useAutoSave({ workbookId, userId, userName, enabled = true }: Us
       markAutoSaved();
       await cleanOldSnapshots(workbookId);
     },
-    [workbookId, userId, userName, enabled, getSnapshotData, createSnapshot, markAutoSaved, cleanOldSnapshots]
+    [
+      workbookId,
+      userId,
+      userName,
+      enabled,
+      getSnapshotData,
+      createSnapshot,
+      markAutoSaved,
+      cleanOldSnapshots,
+    ]
   );
 
   // Load snapshots on mount

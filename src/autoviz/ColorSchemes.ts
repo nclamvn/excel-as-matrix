@@ -201,11 +201,7 @@ export function getColorByIndex(scheme: ColorScheme, index: number): string {
 /**
  * Generate gradient colors between two colors
  */
-export function generateGradient(
-  startColor: string,
-  endColor: string,
-  steps: number
-): string[] {
+export function generateGradient(startColor: string, endColor: string, steps: number): string[] {
   const start = hexToRgb(startColor);
   const end = hexToRgb(endColor);
 
@@ -387,10 +383,7 @@ export const SEQUENTIAL_PALETTES = {
  * Get sequential palette by name
  */
 export function getSequentialPalette(name: string): string[] {
-  return (
-    SEQUENTIAL_PALETTES[name as keyof typeof SEQUENTIAL_PALETTES] ||
-    SEQUENTIAL_PALETTES.blues
-  );
+  return SEQUENTIAL_PALETTES[name as keyof typeof SEQUENTIAL_PALETTES] || SEQUENTIAL_PALETTES.blues;
 }
 
 // =============================================================================
@@ -407,8 +400,5 @@ export const DIVERGING_PALETTES = {
  * Get diverging palette by name
  */
 export function getDivergingPalette(name: string): string[] {
-  return (
-    DIVERGING_PALETTES[name as keyof typeof DIVERGING_PALETTES] ||
-    DIVERGING_PALETTES.redBlue
-  );
+  return DIVERGING_PALETTES[name as keyof typeof DIVERGING_PALETTES] || DIVERGING_PALETTES.redBlue;
 }

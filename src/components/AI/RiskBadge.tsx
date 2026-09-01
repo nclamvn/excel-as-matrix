@@ -57,9 +57,7 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
     <div className={`risk-badge risk-badge--${level} risk-badge--${size}`}>
       <span className="risk-badge-icon">{getIcon()}</span>
       <span className="risk-badge-label">{getLabel()}</span>
-      {showScore && score !== undefined && (
-        <span className="risk-badge-score">{score}/100</span>
-      )}
+      {showScore && score !== undefined && <span className="risk-badge-score">{score}/100</span>}
     </div>
   );
 };
@@ -68,10 +66,7 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
 // Risk Details Component
 // -----------------------------------------------------------------------------
 
-export const RiskDetails: React.FC<RiskDetailsProps> = ({
-  risks,
-  compact = false,
-}) => {
+export const RiskDetails: React.FC<RiskDetailsProps> = ({ risks, compact = false }) => {
   if (risks.length === 0) {
     return (
       <div className="risk-details risk-details--empty">
@@ -118,9 +113,7 @@ export const RiskDetails: React.FC<RiskDetailsProps> = ({
         {risks.map((risk, index) => (
           <li key={index} className={`risk-item risk-item--${risk.severity}`}>
             <div className="risk-item-header">
-              <span className="risk-item-icon">
-                {getSeverityIcon(risk.severity)}
-              </span>
+              <span className="risk-item-icon">{getSeverityIcon(risk.severity)}</span>
               <span className="risk-item-factor">{formatFactor(risk.factor)}</span>
             </div>
             <p className="risk-item-description">{risk.description}</p>
@@ -138,9 +131,7 @@ export const RiskDetails: React.FC<RiskDetailsProps> = ({
                   </span>
                 ))}
                 {risk.affectedCells.length > 5 && (
-                  <span className="risk-item-cell-more">
-                    +{risk.affectedCells.length - 5} more
-                  </span>
+                  <span className="risk-item-cell-more">+{risk.affectedCells.length - 5} more</span>
                 )}
               </div>
             )}
@@ -173,14 +164,10 @@ export const RiskSummary: React.FC<RiskSummaryProps> = ({
       <RiskBadge level={level} score={score} showScore />
       <div className="risk-summary-status">
         {canAutoApply && (
-          <span className="risk-status-tag risk-status-tag--auto">
-            Can Auto-Apply
-          </span>
+          <span className="risk-status-tag risk-status-tag--auto">Can Auto-Apply</span>
         )}
         {requiresApproval && (
-          <span className="risk-status-tag risk-status-tag--approval">
-            Requires Approval
-          </span>
+          <span className="risk-status-tag risk-status-tag--approval">Requires Approval</span>
         )}
       </div>
     </div>

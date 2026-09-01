@@ -3,7 +3,18 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useRef, useEffect, useCallback } from 'react';
-import { ArrowRight, Loader2, AlertCircle, Trash2, Bot, User, X, Calculator, BarChart3, Zap } from 'lucide-react';
+import {
+  ArrowRight,
+  Loader2,
+  AlertCircle,
+  Trash2,
+  Bot,
+  User,
+  X,
+  Calculator,
+  BarChart3,
+  Zap,
+} from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
 import type { AIMessage } from '../../ai/types';
 
@@ -25,9 +36,7 @@ const ChatMessage: React.FC<{ message: AIMessage }> = ({ message }) => {
       <div className="ai-chat-message-content">
         <div className="ai-chat-message-text">{message.content}</div>
         {message.metadata?.tokensUsed && (
-          <div className="ai-chat-message-meta">
-            {message.metadata.tokensUsed} tokens
-          </div>
+          <div className="ai-chat-message-meta">{message.metadata.tokensUsed} tokens</div>
         )}
       </div>
     </div>
@@ -68,13 +77,15 @@ export const ChatPanel: React.FC = () => {
   const streamingText = useAIStore((state) => state.streamingText);
   const currentInput = useAIStore((state) => state.currentInput);
   const error = useAIStore((state) => state.error);
-  const config = useAIStore((state) => state.config);
+  const availability = useAIStore((state) => state.availability);
 
   const setCurrentInput = useAIStore((state) => state.setCurrentInput);
   const sendMessage = useAIStore((state) => state.sendMessage);
   const streamMessage = useAIStore((state) => state.streamMessage);
   const clearMessages = useAIStore((state) => state.clearMessages);
   const clearError = useAIStore((state) => state.clearError);
+  const updateConfig = useAIStore((state) => state.updateConfig);
+  const refreshAvailability = useAIStore((state) => state.refreshAvailability);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -90,15 +101,20 @@ export const ChatPanel: React.FC = () => {
     if (!currentInput.trim() || isLoading) return;
 
     // Use streaming in mock mode for better UX
-    if (config.mockMode) {
+    if (availability.mode === 'mock') {
       await streamMessage(currentInput);
     } else {
       await sendMessage(currentInput);
     }
-  }, [currentInput, isLoading, config.mockMode, sendMessage, streamMessage]);
+  }, [currentInput, isLoading, availability.mode, sendMessage, streamMessage]);
+
+  const aiUnavailable = availability.mode === 'offline' || availability.mode === 'checking';
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      // The spreadsheet owns global keyboard shortcuts; chat keystrokes must
+      // never leak through and move/edit the grid behind the Copilot dock.
+      e.stopPropagation();
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         handleSend();
@@ -121,12 +137,8 @@ export const ChatPanel: React.FC = () => {
         {messages.length === 0 && !isStreaming && (
           <div className="ai-welcome">
             {/* Title */}
-            <h2 className="ai-welcome-title">
-              AI Copilot
-            </h2>
-            <p className="ai-welcome-subtitle">
-              Trợ lý thông minh cho spreadsheet
-            </p>
+            <h2 className="ai-welcome-title">AI Copilot</h2>
+            <p className="ai-welcome-subtitle">Trợ lý thông minh cho spreadsheet</p>
 
             {/* Feature Cards */}
             <div className="ai-welcome-features">
@@ -148,19 +160,22 @@ export const ChatPanel: React.FC = () => {
             <div className="ai-welcome-suggestions">
               <p className="ai-suggestions-label">Thử hỏi:</p>
               <div className="ai-suggestion-pills">
-                <button type="button"
+                <button
+                  type="button"
                   className="ai-suggestion-pill"
                   onClick={() => setCurrentInput('Tính tổng cột A')}
                 >
                   Tính tổng cột A
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="ai-suggestion-pill"
                   onClick={() => setCurrentInput('Tìm giá trị lớn nhất')}
                 >
                   Giá trị lớn nhất
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="ai-suggestion-pill"
                   onClick={() => setCurrentInput('Giải thích formula này')}
                 >
@@ -175,9 +190,7 @@ export const ChatPanel: React.FC = () => {
           <ChatMessage key={message.id} message={message} />
         ))}
 
-        {isStreaming && streamingText && (
-          <StreamingMessage text={streamingText} />
-        )}
+        {isStreaming && streamingText && <StreamingMessage text={streamingText} />}
 
         {isLoading && !isStreaming && (
           <div className="ai-chat-loading">
@@ -202,6 +215,25 @@ export const ChatPanel: React.FC = () => {
 
       {/* Input */}
       <div className="ai-chat-input-container">
+        {aiUnavailable && (
+          <div className="ai-chat-availability" role="status" data-testid="ai-availability-message">
+            <AlertCircle size={16} />
+            <div>
+              <strong>
+                {availability.mode === 'checking' ? 'Checking AI service' : 'AI offline'}
+              </strong>
+              <span>{availability.reason}</span>
+            </div>
+            <button type="button" onClick={() => void refreshAvailability()}>
+              Retry
+            </button>
+            {availability.mode === 'offline' && (
+              <button type="button" onClick={() => updateConfig({ mockMode: true })}>
+                Enable demo
+              </button>
+            )}
+          </div>
+        )}
         <div className="ai-chat-input-wrapper">
           <textarea
             ref={inputRef}
@@ -210,19 +242,25 @@ export const ChatPanel: React.FC = () => {
             value={currentInput}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            disabled={isLoading}
+            disabled={isLoading || aiUnavailable}
             rows={1}
           />
-          <button type="button"
+          <button
+            type="button"
             className="ai-chat-send-btn"
             onClick={handleSend}
-            disabled={!currentInput.trim() || isLoading}
+            disabled={!currentInput.trim() || isLoading || aiUnavailable}
           >
-            {isLoading ? <Loader2 size={18} className="ai-chat-spinner" /> : <ArrowRight size={18} />}
+            {isLoading ? (
+              <Loader2 size={18} className="ai-chat-spinner" />
+            ) : (
+              <ArrowRight size={18} />
+            )}
           </button>
         </div>
         <div className="ai-chat-input-footer">
-          <button type="button"
+          <button
+            type="button"
             className="ai-chat-clear-btn"
             onClick={clearMessages}
             disabled={messages.length === 0}
@@ -230,8 +268,11 @@ export const ChatPanel: React.FC = () => {
             <Trash2 size={14} />
             <span>Xóa chat</span>
           </button>
-          {config.mockMode && (
-            <span className="ai-chat-mode-indicator">Demo Mode</span>
+          {availability.mode === 'mock' && (
+            <span className="ai-chat-mode-indicator">Demo Mode · simulated answers</span>
+          )}
+          {availability.transport === 'browser-key' && (
+            <span className="ai-chat-mode-indicator">Browser key · prefer server proxy</span>
           )}
         </div>
       </div>

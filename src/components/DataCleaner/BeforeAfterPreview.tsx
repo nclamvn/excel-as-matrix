@@ -46,9 +46,8 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
 
   const changeTypes = Array.from(groupedChanges.keys());
 
-  const filteredChanges = filterType === 'all'
-    ? changes
-    : changes.filter(c => c.changeType === filterType);
+  const filteredChanges =
+    filterType === 'all' ? changes : changes.filter((c) => c.changeType === filterType);
 
   const toggleChange = (ref: string) => {
     const newSelected = new Set(selectedChanges);
@@ -61,7 +60,7 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
   };
 
   const selectAll = () => {
-    setSelectedChanges(new Set(filteredChanges.map(c => c.ref)));
+    setSelectedChanges(new Set(filteredChanges.map((c) => c.ref)));
   };
 
   const deselectAll = () => {
@@ -85,21 +84,21 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
         <div className="before-after__summary">
           <span className="before-after__count">{changes.length} changes</span>
           {selectedChanges.size > 0 && (
-            <span className="before-after__selected">
-              {selectedChanges.size} selected
-            </span>
+            <span className="before-after__selected">{selectedChanges.size} selected</span>
           )}
         </div>
         <div className="before-after__controls">
           {/* View Mode Toggle */}
           <div className="before-after__view-toggle">
-            <button type="button"
+            <button
+              type="button"
               className={`before-after__view-btn ${viewMode === 'list' ? 'before-after__view-btn--active' : ''}`}
               onClick={() => setViewMode('list')}
             >
               <ListIcon />
             </button>
-            <button type="button"
+            <button
+              type="button"
               className={`before-after__view-btn ${viewMode === 'grouped' ? 'before-after__view-btn--active' : ''}`}
               onClick={() => setViewMode('grouped')}
             >
@@ -114,7 +113,7 @@ export const BeforeAfterPreview: React.FC<BeforeAfterPreviewProps> = ({
             className="before-after__filter"
           >
             <option value="all">All Types ({changes.length})</option>
-            {changeTypes.map(type => (
+            {changeTypes.map((type) => (
               <option key={type} value={type}>
                 {formatChangeType(type)} ({groupedChanges.get(type)?.length || 0})
               </option>
@@ -225,7 +224,8 @@ const ChangesList: React.FC<ChangesListProps> = ({
           <div className="change-item__after">{formatValue(change.after)}</div>
           <div className="change-item__actions">
             {onAccept && (
-              <button type="button"
+              <button
+                type="button"
                 className="change-item__accept"
                 onClick={() => onAccept(change)}
                 title="Accept"
@@ -234,7 +234,8 @@ const ChangesList: React.FC<ChangesListProps> = ({
               </button>
             )}
             {onReject && (
-              <button type="button"
+              <button
+                type="button"
                 className="change-item__reject"
                 onClick={() => onReject(change)}
                 title="Reject"
@@ -246,9 +247,7 @@ const ChangesList: React.FC<ChangesListProps> = ({
         </div>
       ))}
       {changes.length > 100 && (
-        <div className="changes-list__more">
-          +{changes.length - 100} more changes
-        </div>
+        <div className="changes-list__more">+{changes.length - 100} more changes</div>
       )}
     </div>
   </div>
@@ -287,18 +286,16 @@ const ChangesGrouped: React.FC<ChangesGroupedProps> = ({
     setExpandedGroups(newExpanded);
   };
 
-  const filteredGroups = filterType === 'all'
-    ? Array.from(groups.entries())
-    : Array.from(groups.entries()).filter(([type]) => type === filterType);
+  const filteredGroups =
+    filterType === 'all'
+      ? Array.from(groups.entries())
+      : Array.from(groups.entries()).filter(([type]) => type === filterType);
 
   return (
     <div className="changes-grouped">
       {filteredGroups.map(([type, changes]) => (
         <div key={type} className="change-group">
-          <div
-            className="change-group__header"
-            onClick={() => toggleGroup(type)}
-          >
+          <div className="change-group__header" onClick={() => toggleGroup(type)}>
             <span className={`change-type-badge change-type-badge--${type}`}>
               {formatChangeType(type)}
             </span>
@@ -336,9 +333,7 @@ const ChangesGrouped: React.FC<ChangesGroupedProps> = ({
                 </div>
               ))}
               {changes.length > 50 && (
-                <div className="change-group__more">
-                  +{changes.length - 50} more
-                </div>
+                <div className="change-group__more">+{changes.length - 50} more</div>
               )}
             </div>
           )}
@@ -364,7 +359,8 @@ export const DiffView: React.FC<DiffViewProps> = ({ before, after }) => {
   // Simple char-level diff
   const diffs: Array<{ type: 'same' | 'removed' | 'added'; char: string }> = [];
 
-  let i = 0, j = 0;
+  let i = 0,
+    j = 0;
   while (i < beforeChars.length || j < afterChars.length) {
     if (i < beforeChars.length && j < afterChars.length && beforeChars[i] === afterChars[j]) {
       diffs.push({ type: 'same', char: beforeChars[i] });
@@ -480,7 +476,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>

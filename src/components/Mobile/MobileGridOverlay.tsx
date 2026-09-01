@@ -32,7 +32,11 @@ const DOUBLE_TAP_INTERVAL = 300;
 export const MobileGridOverlay: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showActions, setShowActions] = useState(false);
-  const lastTapRef = useRef<{ time: number; row: number; col: number }>({ time: 0, row: -1, col: -1 });
+  const lastTapRef = useRef<{ time: number; row: number; col: number }>({
+    time: 0,
+    row: -1,
+    col: -1,
+  });
 
   const isMobile = useUIStore((s) => s.isMobile);
   const resolvedTheme = useUIStore((s) => s.resolvedTheme);
@@ -81,11 +85,7 @@ export const MobileGridOverlay: React.FC = () => {
       const last = lastTapRef.current;
 
       // Double-tap detection
-      if (
-        now - last.time < DOUBLE_TAP_INTERVAL &&
-        cell.row === last.row &&
-        cell.col === last.col
-      ) {
+      if (now - last.time < DOUBLE_TAP_INTERVAL && cell.row === last.row && cell.col === last.col) {
         // Double tap → open editor
         setIsEditing(true);
         setShowActions(false);
@@ -139,7 +139,9 @@ export const MobileGridOverlay: React.FC = () => {
     try {
       const text = await navigator.clipboard.readText();
       const parsed = isNaN(Number(text)) ? text : Number(text);
-      useWorkbookStore.getState().setCellValue(activeSheetId, selectedCell.row, selectedCell.col, parsed);
+      useWorkbookStore
+        .getState()
+        .setCellValue(activeSheetId, selectedCell.row, selectedCell.col, parsed);
       showToast('Pasted', 'info');
     } catch {
       showToast('Paste not available', 'error');
@@ -149,7 +151,9 @@ export const MobileGridOverlay: React.FC = () => {
 
   const handleDelete = useCallback(() => {
     if (!selectedCell || !activeSheetId) return;
-    useWorkbookStore.getState().setCellValue(activeSheetId, selectedCell.row, selectedCell.col, null);
+    useWorkbookStore
+      .getState()
+      .setCellValue(activeSheetId, selectedCell.row, selectedCell.col, null);
     showToast('Deleted', 'info');
     setShowActions(false);
   }, [selectedCell, activeSheetId, showToast]);
@@ -194,24 +198,47 @@ export const MobileGridOverlay: React.FC = () => {
 
           <div className={`w-px h-5 ${isDark ? 'bg-neutral-700' : 'bg-neutral-200'}`} />
 
-          <ActionButton icon={<Copy size={16} />} label="Copy" onClick={handleCopy} isDark={isDark} />
-          <ActionButton icon={<ClipboardPaste size={16} />} label="Paste" onClick={handlePaste} isDark={isDark} />
-          <ActionButton icon={<Scissors size={16} />} label="Cut" onClick={() => { handleCopy(); handleDelete(); }} isDark={isDark} />
-          <ActionButton icon={<Trash2 size={16} />} label="Delete" onClick={handleDelete} isDark={isDark} />
+          <ActionButton
+            icon={<Copy size={16} />}
+            label="Copy"
+            onClick={handleCopy}
+            isDark={isDark}
+          />
+          <ActionButton
+            icon={<ClipboardPaste size={16} />}
+            label="Paste"
+            onClick={handlePaste}
+            isDark={isDark}
+          />
+          <ActionButton
+            icon={<Scissors size={16} />}
+            label="Cut"
+            onClick={() => {
+              handleCopy();
+              handleDelete();
+            }}
+            isDark={isDark}
+          />
+          <ActionButton
+            icon={<Trash2 size={16} />}
+            label="Delete"
+            onClick={handleDelete}
+            isDark={isDark}
+          />
           <ActionButton
             icon={<MoreHorizontal size={16} />}
             label="Edit"
-            onClick={() => { setIsEditing(true); setShowActions(false); }}
+            onClick={() => {
+              setIsEditing(true);
+              setShowActions(false);
+            }}
             isDark={isDark}
           />
         </div>
       )}
 
       {/* Full-screen cell editor */}
-      <MobileCellEditor
-        isOpen={isEditing}
-        onClose={() => setIsEditing(false)}
-      />
+      <MobileCellEditor isOpen={isEditing} onClose={() => setIsEditing(false)} />
     </>
   );
 };
@@ -224,14 +251,16 @@ const ActionButton: React.FC<{
   onClick: () => void;
   isDark: boolean;
 }> = ({ icon, label, onClick, isDark }) => (
-  <button type="button"
+  <button
+    type="button"
     onClick={onClick}
     className={`
       flex items-center justify-center w-9 h-9 rounded-lg
       transition-colors active:scale-95
-      ${isDark
-        ? 'text-neutral-300 hover:bg-neutral-700 active:bg-neutral-600'
-        : 'text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200'
+      ${
+        isDark
+          ? 'text-neutral-300 hover:bg-neutral-700 active:bg-neutral-600'
+          : 'text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200'
       }
     `}
     aria-label={label}

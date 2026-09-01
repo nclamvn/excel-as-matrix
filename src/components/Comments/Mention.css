@@ -236,9 +236,15 @@
 
 /* Cell flash highlight — triggered on notification click */
 @keyframes cell-flash {
-  0% { background-color: rgba(59, 130, 246, 0.5); }
-  50% { background-color: rgba(59, 130, 246, 0.2); }
-  100% { background-color: transparent; }
+  0% {
+    background-color: rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    background-color: rgba(59, 130, 246, 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 .cell-highlight-flash {

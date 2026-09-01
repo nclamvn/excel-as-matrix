@@ -64,10 +64,15 @@ function generateId(): string {
 
 export function useCalcWorker(): UseCalcWorkerResult {
   const workerRef = useRef<Worker | null>(null);
-  const pendingRef = useRef<Map<string, {
-    resolve: (value: unknown) => void;
-    reject: (error: Error) => void;
-  }>>(new Map());
+  const pendingRef = useRef<
+    Map<
+      string,
+      {
+        resolve: (value: unknown) => void;
+        reject: (error: Error) => void;
+      }
+    >
+  >(new Map());
 
   const [state, setState] = useState<CalcWorkerState>({
     isReady: false,
@@ -153,7 +158,7 @@ export function useCalcWorker(): UseCalcWorkerResult {
   }, []);
 
   // Send message to worker
-  const sendMessage = useCallback(<T,>(message: CalcWorkerMessage): Promise<T> => {
+  const sendMessage = useCallback(<T>(message: CalcWorkerMessage): Promise<T> => {
     return new Promise((resolve, reject) => {
       if (!workerRef.current) {
         reject(new Error('Worker not initialized'));

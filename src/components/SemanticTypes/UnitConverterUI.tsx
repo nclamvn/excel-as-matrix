@@ -40,10 +40,7 @@ export const UnitConverterUI: React.FC<UnitConverterUIProps> = ({
   const [copied, setCopied] = useState(false);
 
   const dimensions = useMemo(() => getDimensions(), []);
-  const units = useMemo(
-    () => (dimension ? getUnitsForDimension(dimension) : []),
-    [dimension]
-  );
+  const units = useMemo(() => (dimension ? getUnitsForDimension(dimension) : []), [dimension]);
 
   // Update conversion when inputs change
   useEffect(() => {
@@ -131,7 +128,8 @@ export const UnitConverterUI: React.FC<UnitConverterUIProps> = ({
         </div>
 
         {/* Swap button */}
-        <button type="button"
+        <button
+          type="button"
           className="unit-converter-swap"
           onClick={handleSwap}
           disabled={!fromUnit || !toUnit}

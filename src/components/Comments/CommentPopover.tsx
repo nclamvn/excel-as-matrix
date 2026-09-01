@@ -14,12 +14,7 @@ interface CommentPopoverProps {
   onClose: () => void;
 }
 
-export const CommentPopover: React.FC<CommentPopoverProps> = ({
-  row,
-  col,
-  position,
-  onClose,
-}) => {
+export const CommentPopover: React.FC<CommentPopoverProps> = ({ row, col, position, onClose }) => {
   const { addComment, editComment, deleteComment, getComment } = useWorkbookStore();
   const existingComment = getComment(row, col);
 
@@ -87,10 +82,7 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
           addNotification(notificationData);
 
           // Broadcast via Supabase Realtime (for remote users)
-          broadcastMentionNotification(
-            localUser?.workbookId || '',
-            notificationData
-          );
+          broadcastMentionNotification(localUser?.workbookId || '', notificationData);
         }
       }
 
@@ -115,9 +107,7 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
       <div className="comment-header">
         <div className="comment-header-left">
           <MessageSquare size={14} />
-          <span className="comment-author">
-            {existingComment?.author || 'New Comment'}
-          </span>
+          <span className="comment-author">{existingComment?.author || 'New Comment'}</span>
         </div>
         <button type="button" className="comment-close" onClick={onClose}>
           <X size={14} />
@@ -125,9 +115,7 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
       </div>
 
       {existingComment && (
-        <div className="comment-date">
-          {new Date(existingComment.createdAt).toLocaleString()}
-        </div>
+        <div className="comment-date">{new Date(existingComment.createdAt).toLocaleString()}</div>
       )}
 
       <MentionInput
@@ -147,7 +135,8 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
               <Trash2 size={14} />
             </button>
           )}
-          <button type="button"
+          <button
+            type="button"
             className="comment-btn-save"
             onClick={handleSave}
             disabled={!text.trim()}
@@ -162,6 +151,4 @@ export const CommentPopover: React.FC<CommentPopoverProps> = ({
 };
 
 // Comment indicator for cells with comments
-export const CommentIndicator: React.FC = () => (
-  <div className="comment-indicator" />
-);
+export const CommentIndicator: React.FC = () => <div className="comment-indicator" />;

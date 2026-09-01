@@ -181,8 +181,7 @@ export const useConnectionStore = create<ConnectionState>()((set) => ({
     set((state) => ({
       connections: state.connections.filter((conn) => conn.id !== id),
       queries: state.queries.filter((q) => q.connectionId !== id),
-      selectedConnectionId:
-        state.selectedConnectionId === id ? null : state.selectedConnectionId,
+      selectedConnectionId: state.selectedConnectionId === id ? null : state.selectedConnectionId,
     })),
 
   setQueries: (queries) => set({ queries }),

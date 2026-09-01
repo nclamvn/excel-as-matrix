@@ -123,8 +123,8 @@ export class FormatStandardizer {
 
     // Try common formats
     const patterns = [
-      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/, // MM/DD/YYYY or DD/MM/YYYY
-      /^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/, // YYYY-MM-DD
+      /^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/, // MM/DD/YYYY or DD/MM/YYYY
+      /^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/, // YYYY-MM-DD
       /^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/, // DD.MM.YYYY
     ];
 
@@ -208,8 +208,9 @@ export class FormatStandardizer {
 
     switch (this.config.nameFormat) {
       case 'title':
-        return trimmed.replace(/\w\S*/g, txt =>
-          txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        return trimmed.replace(
+          /\w\S*/g,
+          (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
         );
       case 'upper':
         return trimmed.toUpperCase();
@@ -227,7 +228,7 @@ export class FormatStandardizer {
    */
   private standardizeCurrency(value: string): string {
     // Extract number
-    const num = parseFloat(value.replace(/[^0-9.\-]/g, ''));
+    const num = parseFloat(value.replace(/[^0-9.-]/g, ''));
     if (isNaN(num)) return value;
 
     // Format with currency symbol
@@ -241,7 +242,7 @@ export class FormatStandardizer {
    * Standardize number
    */
   private standardizeNumber(value: string): string {
-    const num = parseFloat(value.replace(/[^0-9.\-]/g, ''));
+    const num = parseFloat(value.replace(/[^0-9.-]/g, ''));
     if (isNaN(num)) return value;
 
     return new Intl.NumberFormat('en-US', {

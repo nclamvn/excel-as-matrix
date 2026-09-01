@@ -32,60 +32,69 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
   const isSelected = selectedChartId === chart.id;
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    selectChart(chart.id);
-  }, [chart.id, selectChart]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      selectChart(chart.id);
+    },
+    [chart.id, selectChart]
+  );
 
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsDragging(true);
 
-    const startX = e.clientX - chart.position.x;
-    const startY = e.clientY - chart.position.y;
+      const startX = e.clientX - chart.position.x;
+      const startY = e.clientY - chart.position.y;
 
-    const handleMove = (moveEvent: MouseEvent) => {
-      updatePosition(chart.id, {
-        x: moveEvent.clientX - startX,
-        y: moveEvent.clientY - startY,
-      });
-    };
+      const handleMove = (moveEvent: MouseEvent) => {
+        updatePosition(chart.id, {
+          x: moveEvent.clientX - startX,
+          y: moveEvent.clientY - startY,
+        });
+      };
 
-    const handleUp = () => {
-      setIsDragging(false);
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
+      const handleUp = () => {
+        setIsDragging(false);
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('mouseup', handleUp);
+      };
 
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [chart.id, chart.position.x, chart.position.y, updatePosition]);
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleUp);
+    },
+    [chart.id, chart.position.x, chart.position.y, updatePosition]
+  );
 
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(true);
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
 
-    const startWidth = chart.position.width;
-    const startHeight = chart.position.height;
-    const startX = e.clientX;
-    const startY = e.clientY;
+      const startWidth = chart.position.width;
+      const startHeight = chart.position.height;
+      const startX = e.clientX;
+      const startY = e.clientY;
 
-    const handleMove = (moveEvent: MouseEvent) => {
-      const newWidth = Math.max(200, startWidth + (moveEvent.clientX - startX));
-      const newHeight = Math.max(150, startHeight + (moveEvent.clientY - startY));
-      updatePosition(chart.id, { width: newWidth, height: newHeight });
-    };
+      const handleMove = (moveEvent: MouseEvent) => {
+        const newWidth = Math.max(200, startWidth + (moveEvent.clientX - startX));
+        const newHeight = Math.max(150, startHeight + (moveEvent.clientY - startY));
+        updatePosition(chart.id, { width: newWidth, height: newHeight });
+      };
 
-    const handleUp = () => {
-      setIsResizing(false);
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
+      const handleUp = () => {
+        setIsResizing(false);
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('mouseup', handleUp);
+      };
 
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [chart.id, chart.position.width, chart.position.height, updatePosition]);
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleUp);
+    },
+    [chart.id, chart.position.width, chart.position.height, updatePosition]
+  );
 
   const renderChart = () => {
     if (!data) {
@@ -136,7 +145,9 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         width: chart.position.width,
         height: chart.position.height,
         backgroundColor: chart.style.backgroundColor,
-        border: chart.style.borderColor ? `${chart.style.borderWidth}px solid ${chart.style.borderColor}` : 'none',
+        border: chart.style.borderColor
+          ? `${chart.style.borderWidth}px solid ${chart.style.borderColor}`
+          : 'none',
         borderRadius: chart.style.roundedCorners ? '8px' : '0',
         zIndex: chart.position.zIndex + (isSelected ? 100 : 0),
       }}
@@ -154,24 +165,40 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         {isSelected && (
           <div className="flex gap-1">
             {onEdit && (
-              <button type="button"
-                onClick={(e) => { e.stopPropagation(); onEdit(); }}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
                 className="p-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
                 </svg>
               </button>
             )}
             {onDelete && (
-              <button type="button"
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
                 className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
                 </svg>
               </button>
             )}
@@ -180,9 +207,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       </div>
 
       {/* Chart Content */}
-      <div className="p-4 h-[calc(100%-44px)]">
-        {renderChart()}
-      </div>
+      <div className="p-4 h-[calc(100%-44px)]">{renderChart()}</div>
 
       {/* Resize Handle */}
       {isSelected && (

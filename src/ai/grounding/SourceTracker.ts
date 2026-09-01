@@ -222,7 +222,12 @@ export class SourceTracker {
   /**
    * Get tracking statistics
    */
-  getStats(): { totalSources: number; cellReads: number; rangeReads: number; formulaEvals: number } {
+  getStats(): {
+    totalSources: number;
+    cellReads: number;
+    rangeReads: number;
+    formulaEvals: number;
+  } {
     let cellReads = 0;
     let rangeReads = 0;
     let formulaEvals = 0;

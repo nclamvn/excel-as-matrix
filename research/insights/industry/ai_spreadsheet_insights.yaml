@@ -1,0 +1,59 @@
+library: ai_spreadsheet_landscape
+generated: '2026-08-27'
+ethical_review:
+  result: PASS
+  note: Public product documentation and local repository facts only; no personal or sensitive customer data.
+insights:
+  - id: INSIGHT-001
+    tier_hint: H
+    statement: >
+      AI spreadsheet parity has moved beyond chat and formula generation toward direct workbook actions,
+      charts, optimization, recovery checkpoints and web research.
+    support:
+      - "Google Sheets Gemini: workbook editing, charts and optimization claims"
+      - "Microsoft Excel Copilot: workbook editing through native Excel tools"
+      - "Rows AI: checkpoints, charts and real-time web research"
+    falsification: >
+      Treat this as false if independent user tests show these actions are unavailable to the target plan,
+      unreliable in normal workbooks, or irrelevant to ExcelAI's chosen user segment.
+    implication: Feature-count parity is not a defensible product strategy.
+
+  - id: INSIGHT-002
+    tier_hint: H
+    statement: >
+      Trust and recoverability are becoming part of the AI interaction contract, not an optional admin feature.
+    support:
+      - "Rows automatically creates recovery checkpoints"
+      - "Microsoft says workbook content stays editable and the user controls modifications"
+      - "ExcelAI already contains sandbox, diff, risk, confidence and approval modules"
+    falsification: >
+      Treat this as false if target-user studies show they accept opaque AI writes and do not value preview,
+      attribution, undo or rollback enough to affect adoption.
+    implication: ExcelAI should integrate its existing trust modules into one visible action lifecycle.
+
+  - id: INSIGHT-003
+    tier_hint: H
+    statement: >
+      ExcelAI's plausible wedge is an offline-capable, auditable AI spreadsheet rather than a broader clone of Excel.
+    support:
+      - "ExcelAI claims offline single-user operation without Supabase"
+      - "The codebase contains PWA, IndexedDB, AI grounding, sandbox and audit subsystems"
+      - "Competitor sources emphasize cloud assistants and connected data workflows"
+    falsification: >
+      Treat this as false if customer discovery finds no meaningful offline/privacy need, or if offline support
+      prevents reliable AI and collaboration for the chosen segment.
+    implication: Validate this wedge before funding more low-differentiation spreadsheet features.
+
+  - id: INSIGHT-004
+    tier_hint: H
+    statement: >
+      Credibility and release engineering are the immediate product bottleneck, not missing feature breadth.
+    support:
+      - "Standard npm ci fails"
+      - "Server TypeScript build fails with seven errors"
+      - "E2E times out before tests and lint reports 197 errors"
+      - "README and status documents still claim production-ready and passing E2E"
+    falsification: >
+      Treat this as false only if a clean independent CI environment can reproduce install, frontend and server
+      builds, lint, and all critical E2E paths with current source and lockfile.
+    implication: Stabilization must precede another feature wave.

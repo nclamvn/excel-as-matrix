@@ -42,100 +42,111 @@ const PermissionsPanel: React.FC<PermissionsPanelProps> = ({
     fetchPermissions();
   }, [workbookId, onPermissionsChange]);
 
-  const handleAddPermission = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
+  const handleAddPermission = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!email.trim()) return;
 
-    setIsLoading(true);
-    setError(null);
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const response = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeaders(),
-        },
-        body: JSON.stringify({
-          granteeType: 'User',
-          granteeId: email, // In production, would lookup user by email
-          role,
-        }),
-      });
+      try {
+        const response = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify({
+            granteeType: 'User',
+            granteeId: email, // In production, would lookup user by email
+            role,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to add permission');
+        if (!response.ok) {
+          throw new Error('Failed to add permission');
+        }
+
+        // Refresh permissions
+        const refreshResponse = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
+          headers: getAuthHeaders(),
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          onPermissionsChange(data);
+        }
+
+        setEmail('');
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to add permission');
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [email, role, workbookId, onPermissionsChange]
+  );
 
-      // Refresh permissions
-      const refreshResponse = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
-        headers: getAuthHeaders(),
-      });
-      if (refreshResponse.ok) {
-        const data = await refreshResponse.json();
-        onPermissionsChange(data);
+  const handleRemovePermission = useCallback(
+    async (perm: WorkbookPermission) => {
+      try {
+        const response = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify({
+            granteeType: perm.granteeType,
+            granteeId: perm.granteeId,
+          }),
+        });
+
+        if (response.ok) {
+          onPermissionsChange(
+            permissions.filter(
+              (p) => p.granteeType !== perm.granteeType || p.granteeId !== perm.granteeId
+            )
+          );
+        }
+      } catch (e) {
+        setError('Failed to remove permission');
       }
+    },
+    [workbookId, permissions, onPermissionsChange]
+  );
 
-      setEmail('');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to add permission');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [email, role, workbookId, onPermissionsChange]);
+  const handleRoleChange = useCallback(
+    async (perm: WorkbookPermission, newRole: WorkbookRole) => {
+      try {
+        const response = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify({
+            granteeType: perm.granteeType,
+            granteeId: perm.granteeId,
+            role: newRole,
+          }),
+        });
 
-  const handleRemovePermission = useCallback(async (perm: WorkbookPermission) => {
-    try {
-      const response = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeaders(),
-        },
-        body: JSON.stringify({
-          granteeType: perm.granteeType,
-          granteeId: perm.granteeId,
-        }),
-      });
-
-      if (response.ok) {
-        onPermissionsChange(permissions.filter((p) =>
-          p.granteeType !== perm.granteeType || p.granteeId !== perm.granteeId
-        ));
+        if (response.ok) {
+          onPermissionsChange(
+            permissions.map((p) =>
+              p.granteeType === perm.granteeType && p.granteeId === perm.granteeId
+                ? { ...p, role: newRole }
+                : p
+            )
+          );
+        }
+      } catch (e) {
+        setError('Failed to update permission');
       }
-    } catch (e) {
-      setError('Failed to remove permission');
-    }
-  }, [workbookId, permissions, onPermissionsChange]);
-
-  const handleRoleChange = useCallback(async (perm: WorkbookPermission, newRole: WorkbookRole) => {
-    try {
-      const response = await fetch(`${API_BASE}/workbooks/${workbookId}/permissions`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeaders(),
-        },
-        body: JSON.stringify({
-          granteeType: perm.granteeType,
-          granteeId: perm.granteeId,
-          role: newRole,
-        }),
-      });
-
-      if (response.ok) {
-        onPermissionsChange(
-          permissions.map((p) =>
-            p.granteeType === perm.granteeType && p.granteeId === perm.granteeId
-              ? { ...p, role: newRole }
-              : p
-          )
-        );
-      }
-    } catch (e) {
-      setError('Failed to update permission');
-    }
-  }, [workbookId, permissions, onPermissionsChange]);
+    },
+    [workbookId, permissions, onPermissionsChange]
+  );
 
   return (
     <div className="permissions-panel">
@@ -167,11 +178,7 @@ const PermissionsPanel: React.FC<PermissionsPanelProps> = ({
       )}
 
       {/* Error message */}
-      {error && (
-        <div style={errorStyle}>
-          {error}
-        </div>
-      )}
+      {error && <div style={errorStyle}>{error}</div>}
 
       {/* Permissions list */}
       <div style={{ marginTop: 16 }}>
@@ -242,16 +249,12 @@ const PermissionItem: React.FC<PermissionItemProps> = ({
   return (
     <div style={itemStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-        <div style={iconContainerStyle}>
-          {getIcon()}
-        </div>
+        <div style={iconContainerStyle}>{getIcon()}</div>
         <div>
           <div style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>
             {getGranteeDisplay()}
           </div>
-          <div style={{ fontSize: 12, color: '#6b7280' }}>
-            {permission.granteeType}
-          </div>
+          <div style={{ fontSize: 12, color: '#6b7280' }}>{permission.granteeType}</div>
         </div>
       </div>
 
@@ -347,7 +350,9 @@ const GeneralAccessControl: React.FC<GeneralAccessControlProps> = ({
   return (
     <div style={generalAccessStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ ...iconContainerStyle, backgroundColor: isRestricted ? '#f3f4f6' : '#dbeafe' }}>
+        <div
+          style={{ ...iconContainerStyle, backgroundColor: isRestricted ? '#f3f4f6' : '#dbeafe' }}
+        >
           {isRestricted ? <LockIcon /> : <GlobeIcon />}
         </div>
         <div style={{ flex: 1 }}>

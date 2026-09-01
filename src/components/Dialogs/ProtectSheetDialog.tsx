@@ -26,10 +26,7 @@ interface ProtectionOptions {
   editScenarios: boolean;
 }
 
-export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({
-  sheetId,
-  onClose,
-}) => {
+export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({ sheetId, onClose }) => {
   const { sheets } = useWorkbookStore();
   const { showToast } = useUIStore();
 
@@ -58,7 +55,7 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({
   });
 
   const handleOptionChange = (key: keyof ProtectionOptions) => {
-    setOptions(prev => ({ ...prev, [key]: !prev[key] }));
+    setOptions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleProtect = () => {
@@ -73,9 +70,7 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({
 
     // Update the sheet in the store (would need to add protectSheet action)
     showToast(
-      isCurrentlyProtected
-        ? 'Sheet protection updated'
-        : 'Sheet protected successfully',
+      isCurrentlyProtected ? 'Sheet protection updated' : 'Sheet protected successfully',
       'success'
     );
     onClose();

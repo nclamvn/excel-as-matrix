@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { Hono } from 'hono';
+import { serverConfig } from '../config/env.js';
 
 export const complianceRouter = new Hono();
 
@@ -35,7 +36,7 @@ complianceRouter.get('/health', (c) => {
       category: 'security',
       name: 'API Key Protection',
       description: 'API keys stored server-side, never exposed to browser',
-      status: process.env.ANTHROPIC_API_KEY ? 'pass' : 'not_configured',
+      status: serverConfig.anthropicApiKey ? 'pass' : 'not_configured',
       evidence: 'Server proxy at /api/ai/chat hides API key; client uses proxy URL only',
       lastChecked: now,
     },
@@ -80,7 +81,7 @@ complianceRouter.get('/health', (c) => {
       category: 'security',
       name: 'SCIM Provisioning',
       description: 'Automated user provisioning via SCIM 2.0',
-      status: process.env.SCIM_BEARER_TOKEN ? 'pass' : 'not_configured',
+      status: serverConfig.scimBearerToken ? 'pass' : 'not_configured',
       evidence: 'server/routes/scim.ts — RFC 7644 compliant /Users + /Groups endpoints',
       lastChecked: now,
     },

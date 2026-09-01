@@ -346,9 +346,11 @@ export class Tokenizer {
     // Check for two-character operators
     if (this.pos < this.input.length) {
       const next = this.input[this.pos];
-      if ((value === '<' && (next === '=' || next === '>')) ||
-          (value === '>' && next === '=') ||
-          (value === '=' && next === '=')) {
+      if (
+        (value === '<' && (next === '=' || next === '>')) ||
+        (value === '>' && next === '=') ||
+        (value === '=' && next === '=')
+      ) {
         value += next;
         this.pos++;
       }
@@ -366,7 +368,7 @@ export class Tokenizer {
     // Valid error literals: #N/A, #VALUE!, #DIV/0!, #REF!, #NAME?, #NUM!, #NULL!, #ERROR!
     while (this.pos < this.input.length) {
       const char = this.input[this.pos];
-      if (/[A-Za-z0-9\/!?]/.test(char)) {
+      if (/[A-Za-z0-9/!?]/.test(char)) {
         value += char;
         this.pos++;
         // Stop after ! or ?
@@ -380,7 +382,16 @@ export class Tokenizer {
 
     // Validate it's a known error type
     const upperValue = value.toUpperCase();
-    const validErrors = ['#N/A', '#VALUE!', '#DIV/0!', '#REF!', '#NAME?', '#NUM!', '#NULL!', '#ERROR!'];
+    const validErrors = [
+      '#N/A',
+      '#VALUE!',
+      '#DIV/0!',
+      '#REF!',
+      '#NAME?',
+      '#NUM!',
+      '#NULL!',
+      '#ERROR!',
+    ];
     if (!validErrors.includes(upperValue)) {
       throw new FormulaError('#ERROR!', `Unknown error literal: ${value}`);
     }
@@ -412,7 +423,6 @@ export class Parser {
   private current(): Token {
     return this.tokens[this.pos] || { type: 'EOF', value: '', position: 0 };
   }
-
 
   private consume(type?: TokenType): Token {
     const token = this.current();

@@ -29,7 +29,13 @@ interface PresenceState {
 
   // Actions
   setLocalUser: (presence: Partial<UserPresence>) => void;
-  initLocalUser: (userId: string, displayName: string, workbookId: string, sheetId: string, avatarUrl?: string) => void;
+  initLocalUser: (
+    userId: string,
+    displayName: string,
+    workbookId: string,
+    sheetId: string,
+    avatarUrl?: string
+  ) => void;
   updateCursor: (position: CursorPosition) => void;
   updateSelection: (selection: SelectionRange | null) => void;
   updateSheet: (sheetId: string) => void;
@@ -245,10 +251,7 @@ export const usePresenceStore = create<PresenceState>()((set, get) => ({
   getUsersAtCell: (sheetId, row, col) => {
     const { remoteUsers } = get();
     return Array.from(remoteUsers.values()).filter(
-      (u) =>
-        u.sheetId === sheetId &&
-        u.cursorPosition?.row === row &&
-        u.cursorPosition?.col === col
+      (u) => u.sheetId === sheetId && u.cursorPosition?.row === row && u.cursorPosition?.col === col
     );
   },
 

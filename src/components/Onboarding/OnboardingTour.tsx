@@ -37,7 +37,8 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to ExcelAI',
-    description: 'Your AI-powered spreadsheet that understands your data. Let us show you the essentials.',
+    description:
+      'Your AI-powered spreadsheet that understands your data. Let us show you the essentials.',
     icon: <Sparkles size={32} className="text-emerald-500" />,
     tips: [
       'ExcelAI works like Excel — with AI superpowers built in',
@@ -66,7 +67,7 @@ const TOUR_STEPS: TourStep[] = [
       'Press Cmd+K to open the AI command palette',
       'Ask questions in natural language: "Sum column A"',
       'AI always cites its sources with cell references',
-      'Review and approve AI changes before they\'re applied',
+      "Review and approve AI changes before they're applied",
     ],
   },
   {
@@ -168,7 +169,10 @@ export const OnboardingTour: React.FC = () => {
   const progress = ((currentStep + 1) / TOUR_STEPS.length) * 100;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4" data-testid="onboarding-tour">
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      data-testid="onboarding-tour"
+    >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
@@ -188,7 +192,8 @@ export const OnboardingTour: React.FC = () => {
         </div>
 
         {/* Skip button */}
-        <button type="button"
+        <button
+          type="button"
           onClick={handleSkip}
           className={`
             absolute top-4 right-4 p-1.5 rounded-full z-10
@@ -209,11 +214,12 @@ export const OnboardingTour: React.FC = () => {
                 key={idx}
                 className={`
                   h-1.5 rounded-full transition-all duration-300
-                  ${idx === currentStep
-                    ? 'w-8 bg-emerald-500'
-                    : idx < currentStep
-                      ? 'w-4 bg-emerald-300'
-                      : `w-4 ${isDark ? 'bg-neutral-700' : 'bg-neutral-200'}`
+                  ${
+                    idx === currentStep
+                      ? 'w-8 bg-emerald-500'
+                      : idx < currentStep
+                        ? 'w-4 bg-emerald-300'
+                        : `w-4 ${isDark ? 'bg-neutral-700' : 'bg-neutral-200'}`
                   }
                 `}
               />
@@ -268,17 +274,19 @@ export const OnboardingTour: React.FC = () => {
           `}
         >
           {/* Back button */}
-          <button type="button"
+          <button
+            type="button"
             onClick={handlePrev}
             disabled={isFirst}
             className={`
               flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium
               transition-colors
-              ${isFirst
-                ? 'opacity-0 cursor-default'
-                : isDark
-                  ? 'text-neutral-400 hover:bg-neutral-800'
-                  : 'text-neutral-500 hover:bg-neutral-100'
+              ${
+                isFirst
+                  ? 'opacity-0 cursor-default'
+                  : isDark
+                    ? 'text-neutral-400 hover:bg-neutral-800'
+                    : 'text-neutral-500 hover:bg-neutral-100'
               }
             `}
           >
@@ -293,7 +301,8 @@ export const OnboardingTour: React.FC = () => {
 
           {/* Next / Finish button */}
           {isLast ? (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleFinish}
               className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
               data-testid="onboarding-finish"
@@ -302,7 +311,8 @@ export const OnboardingTour: React.FC = () => {
               <Sparkles size={16} />
             </button>
           ) : (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleNext}
               className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
               data-testid="onboarding-next"

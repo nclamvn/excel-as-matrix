@@ -56,13 +56,12 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<ValidationStatus | 'all'>('all');
 
-  const passed = results.filter(r => r.status === 'passed');
-  const failed = results.filter(r => r.status === 'failed');
-  const warnings = results.filter(r => r.status === 'warning');
+  const passed = results.filter((r) => r.status === 'passed');
+  const failed = results.filter((r) => r.status === 'failed');
+  const warnings = results.filter((r) => r.status === 'warning');
 
-  const filteredResults = filterStatus === 'all'
-    ? results
-    : results.filter(r => r.status === filterStatus);
+  const filteredResults =
+    filterStatus === 'all' ? results : results.filter((r) => r.status === filterStatus);
 
   const totalFailures = results.reduce((sum, r) => sum + r.failCount, 0);
 
@@ -96,10 +95,7 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
             <option value="warning">Warnings ({warnings.length})</option>
           </select>
           {onRerunValidation && (
-            <button type="button"
-              className="validation-report__rerun"
-              onClick={onRerunValidation}
-            >
+            <button type="button" className="validation-report__rerun" onClick={onRerunValidation}>
               <RefreshIcon />
               Rerun
             </button>
@@ -108,7 +104,9 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
       </div>
 
       {/* Overall Status */}
-      <div className={`validation-report__status validation-report__status--${failed.length > 0 ? 'failed' : 'passed'}`}>
+      <div
+        className={`validation-report__status validation-report__status--${failed.length > 0 ? 'failed' : 'passed'}`}
+      >
         {failed.length > 0 ? (
           <>
             <XCircleIcon />
@@ -129,9 +127,9 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
             key={result.rule.id}
             result={result}
             isExpanded={expandedRule === result.rule.id}
-            onToggle={() => setExpandedRule(
-              expandedRule === result.rule.id ? null : result.rule.id
-            )}
+            onToggle={() =>
+              setExpandedRule(expandedRule === result.rule.id ? null : result.rule.id)
+            }
             onFixFailure={onFixFailure}
           />
         ))}
@@ -188,9 +186,7 @@ const ValidationResultCard: React.FC<ValidationResultCardProps> = ({
             </span>
           )}
         </div>
-        {result.failedCells.length > 0 && (
-          <ChevronIcon expanded={isExpanded} />
-        )}
+        {result.failedCells.length > 0 && <ChevronIcon expanded={isExpanded} />}
       </div>
 
       {/* Failures List */}
@@ -210,7 +206,8 @@ const ValidationResultCard: React.FC<ValidationResultCardProps> = ({
               </span>
               <span className="validation-failure__message">{failure.message}</span>
               {onFixFailure && (
-                <button type="button"
+                <button
+                  type="button"
                   className="validation-failure__fix"
                   onClick={() => onFixFailure(failure)}
                 >
@@ -239,10 +236,7 @@ interface RuleBuilderProps {
   columns: string[];
 }
 
-export const RuleBuilder: React.FC<RuleBuilderProps> = ({
-  onAddRule,
-  columns,
-}) => {
+export const RuleBuilder: React.FC<RuleBuilderProps> = ({ onAddRule, columns }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState<ValidationRule['type']>('required');
   const [column, setColumn] = useState('');
@@ -292,14 +286,12 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({
         >
           <option value="">All Columns</option>
           {columns.map((col) => (
-            <option key={col} value={col}>{col}</option>
+            <option key={col} value={col}>
+              {col}
+            </option>
           ))}
         </select>
-        <button type="button"
-          onClick={handleSubmit}
-          disabled={!name}
-          className="rule-builder__add"
-        >
+        <button type="button" onClick={handleSubmit} disabled={!name} className="rule-builder__add">
           Add Rule
         </button>
       </div>
@@ -413,7 +405,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>

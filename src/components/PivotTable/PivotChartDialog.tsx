@@ -3,15 +3,7 @@
 // ============================================================
 
 import React, { useState, useMemo } from 'react';
-import {
-  X,
-  BarChart2,
-  LineChart,
-  PieChart,
-  AreaChart,
-  TrendingUp,
-  Layers,
-} from 'lucide-react';
+import { X, BarChart2, LineChart, PieChart, AreaChart, TrendingUp, Layers } from 'lucide-react';
 import { useChartStore } from '../../stores/chartStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { PivotTable, PivotCellValue } from '../../types/pivot';
@@ -95,11 +87,7 @@ const CHART_TYPE_OPTIONS: ChartTypeOption[] = [
   },
 ];
 
-export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
-  isOpen,
-  onClose,
-  pivot,
-}) => {
+export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({ isOpen, onClose, pivot }) => {
   const { activeSheetId, getCellValue } = useWorkbookStore();
   const { createChart, setChartData } = useChartStore();
 
@@ -107,14 +95,11 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
   const [chartTitle, setChartTitle] = useState(`${pivot.name} Chart`);
   const [useRowsAsCategories, setUseRowsAsCategories] = useState(true);
   const [selectedValueFields, setSelectedValueFields] = useState<string[]>(
-    pivot.valueFields.map(vf => vf.fieldId)
+    pivot.valueFields.map((vf) => vf.fieldId)
   );
 
   // Get recommended chart types
-  const recommendedTypes = useMemo(
-    () => getRecommendedChartTypes(pivot),
-    [pivot]
-  );
+  const recommendedTypes = useMemo(() => getRecommendedChartTypes(pivot), [pivot]);
 
   // Get source data using getCellValue
   const sourceData = useMemo(() => {
@@ -161,9 +146,9 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
   }, [pivot, sourceData, selectedType, chartTitle, useRowsAsCategories, selectedValueFields]);
 
   const handleValueFieldToggle = (fieldId: string) => {
-    setSelectedValueFields(prev => {
+    setSelectedValueFields((prev) => {
       if (prev.includes(fieldId)) {
-        return prev.filter(id => id !== fieldId);
+        return prev.filter((id) => id !== fieldId);
       } else {
         return [...prev, fieldId];
       }
@@ -191,10 +176,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
 
   return (
     <div className="pivot-dialog-overlay" onClick={onClose}>
-      <div
-        className="pivot-dialog pivot-chart-dialog"
-        onClick={e => e.stopPropagation()}
-      >
+      <div className="pivot-dialog pivot-chart-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="pivot-dialog-header">
           <div className="pivot-dialog-title">
             <BarChart2 size={20} />
@@ -212,7 +194,7 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
             <input
               type="text"
               value={chartTitle}
-              onChange={e => setChartTitle(e.target.value)}
+              onChange={(e) => setChartTitle(e.target.value)}
               className="pivot-dialog-input"
               placeholder="Enter chart title..."
             />
@@ -221,12 +203,11 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
           {/* Chart Type Selection */}
           <div className="pivot-dialog-section">
             <h3>Chart Type</h3>
-            <p className="section-hint">
-              Recommended: {recommendedTypes.slice(0, 3).join(', ')}
-            </p>
+            <p className="section-hint">Recommended: {recommendedTypes.slice(0, 3).join(', ')}</p>
             <div className="chart-type-grid">
-              {CHART_TYPE_OPTIONS.map(option => (
-                <button type="button"
+              {CHART_TYPE_OPTIONS.map((option) => (
+                <button
+                  type="button"
                   key={option.type}
                   className={`chart-type-btn ${selectedType === option.type ? 'selected' : ''} ${recommendedTypes.includes(option.type) ? 'recommended' : ''}`}
                   onClick={() => setSelectedType(option.type)}
@@ -268,8 +249,8 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
               <h3>Value Fields</h3>
               <p className="section-hint">Select which value fields to include in the chart</p>
               <div className="value-field-list">
-                {pivot.valueFields.map(vf => {
-                  const fieldDef = pivot.fields.find(f => f.id === vf.fieldId);
+                {pivot.valueFields.map((vf) => {
+                  const fieldDef = pivot.fields.find((f) => f.id === vf.fieldId);
                   return (
                     <label key={vf.fieldId} className="value-field-option">
                       <input
@@ -295,14 +276,12 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
                   <div className="preview-summary">
                     <strong>{previewData.title}</strong>
                     <span className="preview-stats">
-                      {previewData.categories.length} categories,{' '}
-                      {previewData.series.length} series
+                      {previewData.categories.length} categories, {previewData.series.length} series
                     </span>
                   </div>
                   <div className="preview-data">
                     <div className="preview-categories">
-                      <strong>Categories:</strong>{' '}
-                      {previewData.categories.slice(0, 5).join(', ')}
+                      <strong>Categories:</strong> {previewData.categories.slice(0, 5).join(', ')}
                       {previewData.categories.length > 5 && '...'}
                     </div>
                     <div className="preview-series">
@@ -311,7 +290,9 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
                         <span
                           key={s.id}
                           className="series-badge"
-                          style={{ backgroundColor: DEFAULT_CHART_COLORS[i % DEFAULT_CHART_COLORS.length] }}
+                          style={{
+                            backgroundColor: DEFAULT_CHART_COLORS[i % DEFAULT_CHART_COLORS.length],
+                          }}
                         >
                           {s.name}
                         </span>
@@ -350,7 +331,8 @@ export const PivotChartDialog: React.FC<PivotChartDialogProps> = ({
           <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="pivot-btn-primary"
             onClick={handleCreateChart}
             disabled={!previewData}

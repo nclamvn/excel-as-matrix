@@ -51,8 +51,11 @@ export const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape }) => {
             color: textStyle.color,
             textAlign: textStyle.align,
             justifyContent:
-              textStyle.verticalAlign === 'top' ? 'flex-start' :
-              textStyle.verticalAlign === 'bottom' ? 'flex-end' : 'center',
+              textStyle.verticalAlign === 'top'
+                ? 'flex-start'
+                : textStyle.verticalAlign === 'bottom'
+                  ? 'flex-end'
+                  : 'center',
           }}
         >
           {textStyle.text}

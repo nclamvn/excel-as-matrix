@@ -19,11 +19,16 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
 
   const getCategoryTitle = (cat: string) => {
     switch (cat) {
-      case 'directional': return 'Directional';
-      case 'shapes': return 'Shapes';
-      case 'indicators': return 'Indicators';
-      case 'ratings': return 'Ratings';
-      default: return cat;
+      case 'directional':
+        return 'Directional';
+      case 'shapes':
+        return 'Shapes';
+      case 'indicators':
+        return 'Indicators';
+      case 'ratings':
+        return 'Ratings';
+      default:
+        return cat;
     }
   };
 
@@ -35,7 +40,7 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
     return `${startCol}${start.row + 1}:${endCol}${end.row + 1}`;
   };
 
-  const handleSelect = (iconDef: typeof ICON_SET_DEFINITIONS[0]) => {
+  const handleSelect = (iconDef: (typeof ICON_SET_DEFINITIONS)[0]) => {
     const range = getSelectionRangeString();
     if (!range) return;
 
@@ -48,7 +53,7 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
         iconStyle: iconDef.id,
         showValue: true,
         reverseOrder: false,
-        thresholds: iconDef.defaultThresholds.map(t => ({
+        thresholds: iconDef.defaultThresholds.map((t) => ({
           type: 'percent',
           value: t,
           operator: '>=',
@@ -62,7 +67,7 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
   return (
     <div className="icon-sets-preview">
       {categories.map((category) => {
-        const icons = ICON_SET_DEFINITIONS.filter(i => i.category === category);
+        const icons = ICON_SET_DEFINITIONS.filter((i) => i.category === category);
         if (icons.length === 0) return null;
 
         return (
@@ -70,7 +75,8 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
             <div className="preview-section-title">{getCategoryTitle(category)}</div>
             <div className="icon-sets-grid">
               {icons.map((iconDef) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={iconDef.id}
                   className="icon-set-item"
                   onClick={() => handleSelect(iconDef)}
@@ -78,7 +84,9 @@ export const IconSetsPreview: React.FC<IconSetsPreviewProps> = ({ onSelect }) =>
                 >
                   <div className="icon-set-icons">
                     {iconDef.icons.map((icon, idx) => (
-                      <span key={idx} className="icon-preview">{icon}</span>
+                      <span key={idx} className="icon-preview">
+                        {icon}
+                      </span>
                     ))}
                   </div>
                 </button>

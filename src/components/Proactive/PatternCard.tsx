@@ -19,11 +19,7 @@ interface PatternCardProps {
 // Pattern Card Component
 // -----------------------------------------------------------------------------
 
-export const PatternCard: React.FC<PatternCardProps> = ({
-  pattern,
-  onAction,
-  onDismiss,
-}) => {
+export const PatternCard: React.FC<PatternCardProps> = ({ pattern, onAction, onDismiss }) => {
   const metadata = pattern.metadata as PatternMetadata | undefined;
   const categoryConfig = getCategoryConfig(pattern.category);
 
@@ -42,7 +38,8 @@ export const PatternCard: React.FC<PatternCardProps> = ({
             </div>
           )}
         </div>
-        <button type="button"
+        <button
+          type="button"
           className="pattern-card__dismiss"
           onClick={() => onDismiss(pattern.id)}
           title="Dismiss"
@@ -89,9 +86,7 @@ export const PatternCard: React.FC<PatternCardProps> = ({
         {metadata?.suggestedAutomation && (
           <div className="pattern-card__automation">
             <div className="pattern-card__automation-label">Suggested Automation:</div>
-            <code className="pattern-card__automation-code">
-              {metadata.suggestedAutomation}
-            </code>
+            <code className="pattern-card__automation-code">{metadata.suggestedAutomation}</code>
           </div>
         )}
 
@@ -108,8 +103,9 @@ export const PatternCard: React.FC<PatternCardProps> = ({
       </div>
 
       <div className="pattern-card__actions">
-        {pattern.actions.map(action => (
-          <button type="button"
+        {pattern.actions.map((action) => (
+          <button
+            type="button"
             key={action.id}
             className={`pattern-card__action pattern-card__action--${action.type}`}
             onClick={() => onAction(pattern.id, action.id)}

@@ -34,10 +34,7 @@ export const CleaningProgress: React.FC<CleaningProgressProps> = ({
 
       <div className="cleaning-progress__bar-container">
         <div className="cleaning-progress__bar">
-          <div
-            className="cleaning-progress__bar-fill"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="cleaning-progress__bar-fill" style={{ width: `${progress}%` }} />
         </div>
         <span className="cleaning-progress__percent">{Math.round(progress)}%</span>
       </div>
@@ -72,10 +69,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
   return (
     <div className="step-progress">
       {steps.map((step, index) => (
-        <div
-          key={step.id}
-          className={`step-progress__item step-progress__item--${step.status}`}
-        >
+        <div key={step.id} className={`step-progress__item step-progress__item--${step.status}`}>
           <div className="step-progress__indicator">
             {step.status === 'completed' && <CheckIcon />}
             {step.status === 'running' && <SpinnerIcon />}
@@ -170,7 +164,15 @@ const CheckIcon = () => (
 );
 
 const SpinnerIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="step-progress__spinner">
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    className="step-progress__spinner"
+  >
     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
   </svg>
 );

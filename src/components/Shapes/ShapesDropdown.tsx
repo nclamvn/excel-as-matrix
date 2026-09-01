@@ -6,15 +6,8 @@ import React, { useState, useRef } from 'react';
 import { Shapes, ChevronRight } from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useShapesStore } from '../../stores/shapesStore';
-import {
-  SHAPES_BY_CATEGORY,
-  getRecentShapes,
-} from '../../data/shapeDefinitions';
-import {
-  ShapeCategory,
-  CATEGORY_LABELS,
-  CATEGORY_ORDER,
-} from '../../types/shapes';
+import { SHAPES_BY_CATEGORY, getRecentShapes } from '../../data/shapeDefinitions';
+import { ShapeCategory, CATEGORY_LABELS, CATEGORY_ORDER } from '../../types/shapes';
 import './Shapes.css';
 
 interface ShapesDropdownProps {
@@ -35,9 +28,10 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
 
   const handleSelectShape = (shapeId: string) => {
     // Add shape at center of visible area
-    const gridElement = document.querySelector('.grid-container') ||
-                       document.querySelector('.canvas-grid-container') ||
-                       document.querySelector('.flex-1.overflow-hidden');
+    const gridElement =
+      document.querySelector('.grid-container') ||
+      document.querySelector('.canvas-grid-container') ||
+      document.querySelector('.flex-1.overflow-hidden');
     const rect = gridElement?.getBoundingClientRect();
     const x = rect ? rect.width / 2 - 75 : 200;
     const y = rect ? rect.height / 2 - 50 : 200;
@@ -51,7 +45,8 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
 
   return (
     <div className="shapes-dropdown" ref={dropdownRef}>
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-2026__btn"
         onClick={() => setIsOpen(!isOpen)}
         title="Insert Shapes"
@@ -67,8 +62,9 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
             <div className="shapes-section">
               <div className="section-title">Recently Used</div>
               <div className="shapes-grid recent">
-                {recentShapes.map(shape => (
-                  <button type="button"
+                {recentShapes.map((shape) => (
+                  <button
+                    type="button"
                     key={shape.id}
                     className="shape-item"
                     onClick={() => handleSelectShape(shape.id)}
@@ -90,7 +86,7 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
 
           {/* Categories */}
           <div className="shapes-categories">
-            {CATEGORY_ORDER.map(category => (
+            {CATEGORY_ORDER.map((category) => (
               <div
                 key={category}
                 className={`category-item ${activeCategory === category ? 'active' : ''}`}
@@ -104,8 +100,9 @@ export const ShapesDropdown: React.FC<ShapesDropdownProps> = ({ sheetId }) => {
                   <div className="shapes-submenu">
                     <div className="submenu-title">{CATEGORY_LABELS[category]}</div>
                     <div className="shapes-grid">
-                      {SHAPES_BY_CATEGORY[category].map(shape => (
-                        <button type="button"
+                      {SHAPES_BY_CATEGORY[category].map((shape) => (
+                        <button
+                          type="button"
                           key={shape.id}
                           className="shape-item"
                           onClick={() => handleSelectShape(shape.id)}

@@ -7,12 +7,14 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { createNodeWebSocket } from '@hono/node-ws';
-import { aiRouter } from './routes/ai';
-import { webhookRouter } from './routes/webhooks';
-import { billingRouter } from './routes/billing';
-import { scimRouter } from './routes/scim';
-import { complianceRouter } from './routes/compliance';
-import { wsManager } from './ws/WebSocketManager';
+import { serverConfig } from './config/env.js';
+import { toProxyErrorStatus } from './http/upstreamStatus.js';
+import { aiRouter } from './routes/ai.js';
+import { webhookRouter } from './routes/webhooks.js';
+import { billingRouter } from './routes/billing.js';
+import { scimRouter } from './routes/scim.js';
+import { complianceRouter } from './routes/compliance.js';
+import { wsManager } from './ws/WebSocketManager.js';
 
 const app = new Hono();
 
@@ -24,7 +26,7 @@ app.use('*', logger());
 app.use(
   '*',
   cors({
-    origin: ['http://localhost:5174', 'http://localhost:5173'],
+    origin: serverConfig.corsOrigins,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -41,7 +43,7 @@ const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 app.get(
   '/ws/:roomId',
   upgradeWebSocket((c) => {
-    const roomId = c.req.param('roomId');
+    const roomId = c.req.param('roomId') || '';
     const userId = c.req.query('userId') || 'anonymous';
     const userName = c.req.query('userName') || 'Anonymous';
 
@@ -84,10 +86,12 @@ app.get('/api/google-sheets-proxy', async (c) => {
     const response = await fetch(exportUrl, { redirect: 'follow' });
 
     if (!response.ok) {
-      const status = response.status === 401 || response.status === 403 ? 403 : response.status;
+      const status = response.status === 401 || response.status === 403
+        ? 403
+        : toProxyErrorStatus(response.status);
       return c.json(
         { error: status === 403 ? 'Sheet is not public' : `Google returned ${response.status}` },
-        status as 403 | 404 | 500
+        status
       );
     }
 
@@ -119,9 +123,7 @@ app.route('/api/compliance', complianceRouter);
 // Start Server
 // ─────────────────────────────────────────────────────────────────────────────
 
-const port = parseInt(process.env.PORT || '3001', 10);
-
-const server = serve({ fetch: app.fetch, port }, (info) => {
+const server = serve({ fetch: app.fetch, port: serverConfig.port }, (info) => {
   console.log(`ExcelAI Server running on http://localhost:${info.port}`);
   console.log(`  WebSocket: ws://localhost:${info.port}/ws/:roomId`);
   console.log(`  AI Proxy:  http://localhost:${info.port}/api/ai/chat`);

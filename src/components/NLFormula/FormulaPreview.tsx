@@ -66,8 +66,7 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
   showAlternatives = true,
   originalInput = '',
 }) => {
-  const { success, formula, confidence, explanation, alternatives, warnings } =
-    interpretation;
+  const { success, formula, confidence, explanation, alternatives, warnings } = interpretation;
   const [showDetails, setShowDetails] = useState(false);
 
   // Handle accept with history tracking
@@ -120,7 +119,8 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
           <span className="formula-preview__title">Interpreted Formula</span>
           <ConfidenceLabel confidence={confidence} />
         </div>
-        <button type="button"
+        <button
+          type="button"
           className="formula-preview__details-toggle"
           onClick={() => setShowDetails(!showDetails)}
           title={showDetails ? 'Hide details' : 'Show details'}
@@ -132,7 +132,8 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
       {/* Formula with syntax highlighting */}
       <div className="formula-preview__formula">
         <FormulaHighlight formula={formula || ''} />
-        <button type="button"
+        <button
+          type="button"
           className="formula-preview__copy"
           onClick={() => navigator.clipboard.writeText(formula || '')}
           title="Copy formula"
@@ -171,15 +172,11 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
       {/* Alternatives */}
       {showAlternatives && alternatives && alternatives.length > 0 && (
         <div className="formula-preview__alternatives">
-          <span className="formula-preview__alternatives-label">
-            Alternative formulas:
-          </span>
+          <span className="formula-preview__alternatives-label">Alternative formulas:</span>
           {alternatives.map((alt, i) => (
             <div key={i} className="formula-preview__alternative">
               <code>{alt.formula}</code>
-              <span className="formula-preview__alternative-explanation">
-                {alt.explanation}
-              </span>
+              <span className="formula-preview__alternative-explanation">{alt.explanation}</span>
               <ConfidenceLabel confidence={alt.confidence} mini />
             </div>
           ))}
@@ -188,13 +185,15 @@ export const FormulaPreview: React.FC<FormulaPreviewProps> = ({
 
       {/* Actions */}
       <div className="formula-preview__actions">
-        <button type="button"
+        <button
+          type="button"
           className="formula-preview__action formula-preview__action--primary"
           onClick={handleAccept}
         >
           <CheckIcon /> Use this formula
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="formula-preview__action formula-preview__action--secondary"
           onClick={handleDismiss}
         >
@@ -224,7 +223,7 @@ const ConfidenceRing: React.FC<ConfidenceRingProps> = ({ confidence, size = 48 }
   const strokeWidth = 4;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (confidence * circumference);
+  const offset = circumference - confidence * circumference;
 
   const getColor = () => {
     if (percent >= 85) return 'var(--green-accent, #22c55e)';
@@ -294,11 +293,7 @@ const ConfidenceLabel: React.FC<ConfidenceLabelProps> = ({ confidence, mini = fa
     );
   }
 
-  return (
-    <span className={`confidence-label confidence-label--${level}`}>
-      {label}
-    </span>
-  );
+  return <span className={`confidence-label confidence-label--${level}`}>{label}</span>;
 };
 
 // -----------------------------------------------------------------------------
@@ -331,12 +326,13 @@ const ConfidenceExplanation: React.FC<ConfidenceExplanationProps> = ({ confidenc
 
   return (
     <div className="confidence-explanation">
-      <div className="confidence-explanation__header">
-        Why {percent}% confidence?
-      </div>
+      <div className="confidence-explanation__header">Why {percent}% confidence?</div>
       <ul className="confidence-explanation__factors">
         {getFactors().map((f, i) => (
-          <li key={i} className={`confidence-explanation__factor confidence-explanation__factor--${f.impact}`}>
+          <li
+            key={i}
+            className={`confidence-explanation__factor confidence-explanation__factor--${f.impact}`}
+          >
             <span className="confidence-explanation__icon">
               {f.impact === 'positive' ? '✓' : f.impact === 'negative' ? '!' : '•'}
             </span>
@@ -412,7 +408,14 @@ const FormulaHighlight: React.FC<FormulaHighlightProps> = ({ formula }) => {
 // -----------------------------------------------------------------------------
 
 const CheckIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  >
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -433,10 +436,7 @@ interface FormulaHistoryPanelProps {
   onClose: () => void;
 }
 
-export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({
-  onSelect,
-  onClose,
-}) => {
+export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({ onSelect, onClose }) => {
   const [history, setHistory] = useState<FormulaHistoryItem[]>([]);
 
   useEffect(() => {
@@ -447,9 +447,7 @@ export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({
     return (
       <div className="formula-history-panel formula-history-panel--empty">
         <p>No formula history yet</p>
-        <p className="formula-history-panel__hint">
-          Interpreted formulas will appear here
-        </p>
+        <p className="formula-history-panel__hint">Interpreted formulas will appear here</p>
       </div>
     );
   }
@@ -458,7 +456,9 @@ export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({
     <div className="formula-history-panel">
       <div className="formula-history-panel__header">
         <h3>Recent Formulas</h3>
-        <button type="button" onClick={onClose} className="formula-history-panel__close">×</button>
+        <button type="button" onClick={onClose} className="formula-history-panel__close">
+          ×
+        </button>
       </div>
       <ul className="formula-history-panel__list">
         {history.map((item, i) => (
@@ -478,7 +478,8 @@ export const FormulaHistoryPanel: React.FC<FormulaHistoryPanelProps> = ({
           </li>
         ))}
       </ul>
-      <button type="button"
+      <button
+        type="button"
         className="formula-history-panel__clear"
         onClick={() => {
           clearHistory();

@@ -3,19 +3,10 @@
 // =============================================================================
 
 // Collaborators List
-export {
-  CollaboratorsList,
-  UserAvatar,
-  CompactUserList,
-} from './CollaboratorsList';
+export { CollaboratorsList, UserAvatar, CompactUserList } from './CollaboratorsList';
 
 // Remote Cursor
-export {
-  RemoteCursor,
-  RemoteCursorsOverlay,
-  CursorLabel,
-  useVisibleCursors,
-} from './RemoteCursor';
+export { RemoteCursor, RemoteCursorsOverlay, CursorLabel, useVisibleCursors } from './RemoteCursor';
 
 // Remote Selection
 export {
@@ -26,17 +17,10 @@ export {
 } from './RemoteSelection';
 
 // Comment Thread
-export {
-  CommentThread,
-  CommentPanel,
-} from './CommentThread';
+export { CommentThread, CommentPanel } from './CommentThread';
 
 // Comment Marker
-export {
-  CommentMarker,
-  CommentCellOverlay,
-  NewCommentInput,
-} from './CommentMarker';
+export { CommentMarker, CommentCellOverlay, NewCommentInput } from './CommentMarker';
 
 // Attribution Badge
 export {
@@ -54,4 +38,3 @@ export {
   TypingIndicator,
   LiveIndicator,
 } from './PresenceIndicator';
-

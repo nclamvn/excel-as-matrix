@@ -34,21 +34,27 @@ export const AutonomyModeToggle: React.FC<AutonomyModeToggleProps> = ({
 
   if (compact) {
     return (
-      <button type="button"
+      <button
+        type="button"
         onClick={handleToggle}
         className={`
           flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
           transition-all duration-200
-          ${isCopilot
-            ? isDark
-              ? 'bg-blue-900/30 text-blue-400 hover:bg-blue-900/50'
-              : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
-            : isDark
-              ? 'bg-amber-900/30 text-amber-400 hover:bg-amber-900/50'
-              : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+          ${
+            isCopilot
+              ? isDark
+                ? 'bg-blue-900/30 text-blue-400 hover:bg-blue-900/50'
+                : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+              : isDark
+                ? 'bg-amber-900/30 text-amber-400 hover:bg-amber-900/50'
+                : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
           }
         `}
-        title={isCopilot ? 'Copilot: AI suggests, you approve' : 'Autopilot: AI executes low-risk actions automatically'}
+        title={
+          isCopilot
+            ? 'Copilot: AI suggests, you approve'
+            : 'Autopilot: AI executes low-risk actions automatically'
+        }
         aria-label={`AI mode: ${mode}. Click to switch.`}
         data-testid="autonomy-mode-toggle"
       >
@@ -69,18 +75,23 @@ export const AutonomyModeToggle: React.FC<AutonomyModeToggleProps> = ({
       data-testid="autonomy-mode-group"
     >
       {/* Copilot */}
-      <button type="button"
-        onClick={() => { onModeChange('copilot'); getAIRuntime().setAutonomyMode('copilot'); }}
+      <button
+        type="button"
+        onClick={() => {
+          onModeChange('copilot');
+          getAIRuntime().setAutonomyMode('copilot');
+        }}
         className={`
           flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
           transition-all duration-200
-          ${isCopilot
-            ? isDark
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-blue-600 text-white shadow-sm'
-            : isDark
-              ? 'text-neutral-400 hover:text-neutral-200'
-              : 'text-neutral-500 hover:text-neutral-700'
+          ${
+            isCopilot
+              ? isDark
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-blue-600 text-white shadow-sm'
+              : isDark
+                ? 'text-neutral-400 hover:text-neutral-200'
+                : 'text-neutral-500 hover:text-neutral-700'
           }
         `}
         role="radio"
@@ -92,18 +103,23 @@ export const AutonomyModeToggle: React.FC<AutonomyModeToggleProps> = ({
       </button>
 
       {/* Autopilot */}
-      <button type="button"
-        onClick={() => { onModeChange('autopilot'); getAIRuntime().setAutonomyMode('autopilot'); }}
+      <button
+        type="button"
+        onClick={() => {
+          onModeChange('autopilot');
+          getAIRuntime().setAutonomyMode('autopilot');
+        }}
         className={`
           flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
           transition-all duration-200
-          ${!isCopilot
-            ? isDark
-              ? 'bg-amber-600 text-white shadow-sm'
-              : 'bg-amber-600 text-white shadow-sm'
-            : isDark
-              ? 'text-neutral-400 hover:text-neutral-200'
-              : 'text-neutral-500 hover:text-neutral-700'
+          ${
+            !isCopilot
+              ? isDark
+                ? 'bg-amber-600 text-white shadow-sm'
+                : 'bg-amber-600 text-white shadow-sm'
+              : isDark
+                ? 'text-neutral-400 hover:text-neutral-200'
+                : 'text-neutral-500 hover:text-neutral-700'
           }
         `}
         role="radio"

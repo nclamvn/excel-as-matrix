@@ -18,8 +18,14 @@
 }
 
 @keyframes vh-slide-in {
-  from { transform: translateX(320px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(320px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Header */
@@ -84,7 +90,9 @@
   border-radius: 8px;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .vh-item:hover {
@@ -235,8 +243,12 @@
 }
 
 @keyframes vh-slide-down {
-  from { transform: translateY(-44px); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(-44px);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 .vh-preview-info {

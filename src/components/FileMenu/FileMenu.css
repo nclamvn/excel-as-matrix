@@ -20,8 +20,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -391,37 +395,37 @@
    DARK MODE
    ═══════════════════════════════════════════════════════════════════════════ */
 
-:root[data-theme="dark"] .file-menu {
+:root[data-theme='dark'] .file-menu {
   background: var(--surface-0);
 }
 
-:root[data-theme="dark"] .file-menu__sidebar {
+:root[data-theme='dark'] .file-menu__sidebar {
   background: linear-gradient(180deg, #0a2818 0%, #052e16 100%);
 }
 
-:root[data-theme="dark"] .file-menu__content {
+:root[data-theme='dark'] .file-menu__content {
   background: var(--surface-1);
 }
 
-:root[data-theme="dark"] .file-menu__close:hover {
+:root[data-theme='dark'] .file-menu__close:hover {
   background: var(--surface-2);
 }
 
-:root[data-theme="dark"] .recent-file {
+:root[data-theme='dark'] .recent-file {
   background: var(--surface-2);
   border-color: var(--surface-3);
 }
 
-:root[data-theme="dark"] .recent-file:hover {
+:root[data-theme='dark'] .recent-file:hover {
   background: rgba(5, 150, 105, 0.15);
 }
 
-:root[data-theme="dark"] .file-menu__submenu-item {
+:root[data-theme='dark'] .file-menu__submenu-item {
   background: var(--surface-2);
   border-color: var(--surface-3);
 }
 
-:root[data-theme="dark"] .file-menu__submenu-item:hover {
+:root[data-theme='dark'] .file-menu__submenu-item:hover {
   background: rgba(5, 150, 105, 0.15);
 }
 

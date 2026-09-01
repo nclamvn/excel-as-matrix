@@ -20,7 +20,7 @@ function createTestSheetData(options: {
       if (options.cells && options.cells[r] && options.cells[r][c]) {
         rowData.push({
           value: options.cells[r][c].value,
-          isEmpty: options.cells[r][c].isEmpty || false
+          isEmpty: options.cells[r][c].isEmpty || false,
         });
       } else {
         rowData.push({ value: `Cell ${r},${c}`, isEmpty: false });
@@ -133,7 +133,7 @@ describe('DataCleanerEngine', () => {
       const data = createTestSheetData({ rows: 5, cols: 3 });
       engine.analyze(data);
 
-      expect(events.some(e => e.type === 'analysis_started')).toBe(true);
+      expect(events.some((e) => e.type === 'analysis_started')).toBe(true);
     });
 
     it('emits analysis_completed event', () => {
@@ -143,7 +143,7 @@ describe('DataCleanerEngine', () => {
       const data = createTestSheetData({ rows: 5, cols: 3 });
       engine.analyze(data);
 
-      expect(events.some(e => e.type === 'analysis_completed')).toBe(true);
+      expect(events.some((e) => e.type === 'analysis_completed')).toBe(true);
     });
   });
 
@@ -191,17 +191,19 @@ describe('DataCleanerEngine', () => {
       ];
       const data = createTestSheetData({ rows: 2, cols: 2, cells });
 
-      const duplicateGroups: DuplicateGroup[] = [{
-        id: 'dup-1',
-        type: 'exact',
-        similarity: 1,
-        rows: [
-          { rowIndex: 0, values: ['A', 1], isOriginal: true },
-          { rowIndex: 1, values: ['A', 1], isOriginal: false },
-        ],
-        columns: [0, 1],
-        keepRow: 0,
-      }];
+      const duplicateGroups: DuplicateGroup[] = [
+        {
+          id: 'dup-1',
+          type: 'exact',
+          similarity: 1,
+          rows: [
+            { rowIndex: 0, values: ['A', 1], isOriginal: true },
+            { rowIndex: 1, values: ['A', 1], isOriginal: false },
+          ],
+          columns: [0, 1],
+          keepRow: 0,
+        },
+      ];
 
       const changes = engine.removeDuplicates(data, duplicateGroups);
       expect(changes.length).toBeGreaterThan(0);
@@ -238,8 +240,14 @@ describe('DataCleanerEngine', () => {
 
     it('detects empty cells', () => {
       const cells = [
-        [{ value: 'A', isEmpty: false }, { value: '', isEmpty: true }],
-        [{ value: 'B', isEmpty: false }, { value: 'X', isEmpty: false }],
+        [
+          { value: 'A', isEmpty: false },
+          { value: '', isEmpty: true },
+        ],
+        [
+          { value: 'B', isEmpty: false },
+          { value: 'X', isEmpty: false },
+        ],
       ];
       const data = createTestSheetData({ rows: 2, cols: 2, cells });
       const missing = engine.analyzeMissingValues(data);
@@ -283,7 +291,7 @@ describe('DataCleanerEngine', () => {
       const data = createTestSheetData({
         rows: 20,
         cols: 2,
-        columnTypes: ['text', 'number']
+        columnTypes: ['text', 'number'],
       });
       const outliers = engine.detectOutliers(data);
 
@@ -316,7 +324,7 @@ describe('DataCleanerEngine', () => {
       const data = createTestSheetData({ rows: 5, cols: 3 });
       await engine.executePipeline(data);
 
-      expect(events.some(e => e.type === 'cleaning_started')).toBe(true);
+      expect(events.some((e) => e.type === 'cleaning_started')).toBe(true);
     });
 
     it('emits cleaning_completed event', async () => {
@@ -326,7 +334,7 @@ describe('DataCleanerEngine', () => {
       const data = createTestSheetData({ rows: 5, cols: 3 });
       await engine.executePipeline(data);
 
-      expect(events.some(e => e.type === 'cleaning_completed')).toBe(true);
+      expect(events.some((e) => e.type === 'cleaning_completed')).toBe(true);
     });
 
     it('calls progress callback', async () => {
@@ -350,14 +358,16 @@ describe('DataCleanerEngine', () => {
   describe('previewCleaning', () => {
     it('generates preview of changes', () => {
       const data = createTestSheetData({ rows: 5, cols: 3 });
-      const changes = [{
-        row: 0,
-        col: 0,
-        ref: 'A1',
-        before: 'old',
-        after: 'new',
-        changeType: 'modified' as const,
-      }];
+      const changes = [
+        {
+          row: 0,
+          col: 0,
+          ref: 'A1',
+          before: 'old',
+          after: 'new',
+          changeType: 'modified' as const,
+        },
+      ];
       const preview = engine.previewCleaning(data, changes);
 
       expect(preview).toBeDefined();
@@ -373,13 +383,11 @@ describe('DataCleanerEngine', () => {
     });
 
     it('trims whitespace', async () => {
-      const cells = [
-        [{ value: '  test  ', isEmpty: false }],
-      ];
+      const cells = [[{ value: '  test  ', isEmpty: false }]];
       const data = createTestSheetData({ rows: 1, cols: 1, cells });
       const changes = await engine.fixAllAutoFixable(data);
 
-      const trimChange = changes.find(c => c.changeType === 'trimmed');
+      const trimChange = changes.find((c) => c.changeType === 'trimmed');
       expect(trimChange).toBeDefined();
     });
   });
@@ -425,7 +433,7 @@ describe('DataCleanerEngine', () => {
         const sessions = engine.getSessions();
         if (sessions.length > 0) {
           engine.undoSession(sessions[0].id);
-          expect(events.some(e => e.type === 'cleaning_undone')).toBe(true);
+          expect(events.some((e) => e.type === 'cleaning_undone')).toBe(true);
         }
       });
 

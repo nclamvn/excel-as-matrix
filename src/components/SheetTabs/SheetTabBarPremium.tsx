@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import {
-  ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Plus
-} from 'lucide-react';
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { SheetContextMenu } from './SheetContextMenu';
 
 export const SheetTabBarPremium: React.FC = () => {
   const { sheets, activeSheetId, setActiveSheet, addSheet } = useWorkbookStore();
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sheetId: string } | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sheetId: string } | null>(
+    null
+  );
 
   const handleContextMenu = (e: React.MouseEvent, sheetId: string) => {
     e.preventDefault();
@@ -49,7 +49,8 @@ export const SheetTabBarPremium: React.FC = () => {
       {/* Sheet Tabs */}
       <div className="sheet-tabs__container">
         {sheetList.map((sheet) => (
-          <button type="button"
+          <button
+            type="button"
             key={sheet.id}
             className={`sheet-tab-premium ${sheet.id === activeSheetId ? 'sheet-tab-premium--active' : ''}`}
             onClick={() => setActiveSheet(sheet.id)}
@@ -61,7 +62,8 @@ export const SheetTabBarPremium: React.FC = () => {
       </div>
 
       {/* Add Sheet Button */}
-      <button type="button"
+      <button
+        type="button"
         className="sheet-tabs__add-btn"
         onClick={handleAddSheet}
         title="New Sheet"

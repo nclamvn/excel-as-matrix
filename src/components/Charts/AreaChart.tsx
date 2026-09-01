@@ -116,9 +116,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 
   const generateLinePath = (values: number[]) => {
     if (values.length === 0) return '';
-    return values
-      .map((v, i) => `${i === 0 ? 'M' : 'L'} ${scaleX(i)} ${scaleY(v)}`)
-      .join(' ');
+    return values.map((v, i) => `${i === 0 ? 'M' : 'L'} ${scaleX(i)} ${scaleY(v)}`).join(' ');
   };
 
   return (
@@ -127,7 +125,14 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       {gradient && (
         <defs>
           {series.map((s, i) => (
-            <linearGradient key={`gradient-${i}`} id={`area-gradient-${i}`} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient
+              key={`gradient-${i}`}
+              id={`area-gradient-${i}`}
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
               <stop offset="0%" stopColor={s.color} stopOpacity={0.6} />
               <stop offset="100%" stopColor={s.color} stopOpacity={0.1} />
             </linearGradient>
@@ -137,17 +142,18 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {/* Grid lines */}
-        {axes.yAxis.gridlines && yTicks.map((tick, i) => (
-          <line
-            key={`grid-${i}`}
-            x1={0}
-            y1={scaleY(tick)}
-            x2={chartWidth}
-            y2={scaleY(tick)}
-            stroke="#E5E7EB"
-            strokeDasharray="4,4"
-          />
-        ))}
+        {axes.yAxis.gridlines &&
+          yTicks.map((tick, i) => (
+            <line
+              key={`grid-${i}`}
+              x1={0}
+              y1={scaleY(tick)}
+              x2={chartWidth}
+              y2={scaleY(tick)}
+              stroke="#E5E7EB"
+              strokeDasharray="4,4"
+            />
+          ))}
 
         {/* Y Axis */}
         {axes.yAxis.visible && (
@@ -169,17 +175,19 @@ export const AreaChart: React.FC<AreaChartProps> = ({
         {/* X Axis */}
         {axes.xAxis.visible && (
           <>
-            <line x1={0} y1={chartHeight} x2={chartWidth} y2={chartHeight} stroke="#9CA3AF" strokeWidth={1} />
+            <line
+              x1={0}
+              y1={chartHeight}
+              x2={chartWidth}
+              y2={chartHeight}
+              stroke="#9CA3AF"
+              strokeWidth={1}
+            />
             {categories.map((cat, i) => (
               <g key={`x-tick-${i}`} transform={`translate(${scaleX(i)}, ${chartHeight})`}>
                 <line x1={0} y1={0} x2={0} y2={5} stroke="#9CA3AF" />
                 {axes.xAxis.labelsVisible && (
-                  <text
-                    x={0}
-                    y={18}
-                    textAnchor="middle"
-                    className="text-xs fill-gray-500"
-                  >
+                  <text x={0} y={18} textAnchor="middle" className="text-xs fill-gray-500">
                     {cat}
                   </text>
                 )}

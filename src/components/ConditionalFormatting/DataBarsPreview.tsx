@@ -15,8 +15,8 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
   const { addRule } = useConditionalFormattingStore();
   const { selectionRange } = useSelectionStore();
 
-  const gradientPresets = DATA_BAR_PRESETS.filter(p => p.config.dataBar?.fillType === 'gradient');
-  const solidPresets = DATA_BAR_PRESETS.filter(p => p.config.dataBar?.fillType === 'solid');
+  const gradientPresets = DATA_BAR_PRESETS.filter((p) => p.config.dataBar?.fillType === 'gradient');
+  const solidPresets = DATA_BAR_PRESETS.filter((p) => p.config.dataBar?.fillType === 'solid');
 
   const getSelectionRangeString = (): string | null => {
     if (!selectionRange) return null;
@@ -26,7 +26,7 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
     return `${startCol}${start.row + 1}:${endCol}${end.row + 1}`;
   };
 
-  const handleSelect = (preset: typeof DATA_BAR_PRESETS[0]) => {
+  const handleSelect = (preset: (typeof DATA_BAR_PRESETS)[0]) => {
     const range = getSelectionRangeString();
     if (!range) return;
 
@@ -47,16 +47,14 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
         <div className="preview-section-title">Gradient Fill</div>
         <div className="preview-grid">
           {gradientPresets.map((preset) => (
-            <button type="button"
+            <button
+              type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
               title={preset.name}
             >
-              <div
-                className="data-bar-sample"
-                style={{ background: preset.preview }}
-              >
+              <div className="data-bar-sample" style={{ background: preset.preview }}>
                 <span className="sample-value">75</span>
               </div>
             </button>
@@ -68,7 +66,8 @@ export const DataBarsPreview: React.FC<DataBarsPreviewProps> = ({ onSelect }) =>
         <div className="preview-section-title">Solid Fill</div>
         <div className="preview-grid">
           {solidPresets.map((preset) => (
-            <button type="button"
+            <button
+              type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}

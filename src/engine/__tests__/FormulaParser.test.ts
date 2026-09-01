@@ -367,8 +367,24 @@ describe('FormulaParser', () => {
         const tokenizer = new Tokenizer('=SUM(A1:B10)+IF(C1>0,100,0)');
         const tokens = tokenizer.tokenize();
         expect(tokens.map((t) => t.value)).toEqual([
-          'SUM', '(', 'A1', ':', 'B10', ')', '+', 'IF', '(',
-          'C1', '>', '0', ',', '100', ',', '0', ')', '',
+          'SUM',
+          '(',
+          'A1',
+          ':',
+          'B10',
+          ')',
+          '+',
+          'IF',
+          '(',
+          'C1',
+          '>',
+          '0',
+          ',',
+          '100',
+          ',',
+          '0',
+          ')',
+          '',
         ]);
       });
     });
@@ -647,7 +663,13 @@ describe('FormulaParser', () => {
         const ast = parseFormula('={1,2,3}');
         expect(ast).toMatchObject({
           type: 'Array',
-          elements: [[{ type: 'Number', value: 1 }, { type: 'Number', value: 2 }, { type: 'Number', value: 3 }]],
+          elements: [
+            [
+              { type: 'Number', value: 1 },
+              { type: 'Number', value: 2 },
+              { type: 'Number', value: 3 },
+            ],
+          ],
         });
       });
 
@@ -655,7 +677,11 @@ describe('FormulaParser', () => {
         const ast = parseFormula('={1;2;3}');
         expect(ast).toMatchObject({
           type: 'Array',
-          elements: [[{ type: 'Number', value: 1 }], [{ type: 'Number', value: 2 }], [{ type: 'Number', value: 3 }]],
+          elements: [
+            [{ type: 'Number', value: 1 }],
+            [{ type: 'Number', value: 2 }],
+            [{ type: 'Number', value: 3 }],
+          ],
         });
       });
 

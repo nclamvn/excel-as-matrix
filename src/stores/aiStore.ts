@@ -11,6 +11,7 @@ import type {
   AIConfig,
   AIContext,
   AICopilotTab,
+  AIAvailability,
 } from '../ai/types';
 import { DEFAULT_AI_CONFIG } from '../ai/types';
 import { getAIRuntime } from '../ai/AIRuntime';
@@ -43,6 +44,7 @@ interface AIState {
 
   // Config
   config: AIConfig;
+  availability: AIAvailability;
 
   // Actions
   togglePanel: () => void;
@@ -62,10 +64,12 @@ interface AIState {
   selectAction: (action: AIProposedAction | null) => void;
   approveAction: (actionId: string) => Promise<void>;
   rejectAction: (actionId: string) => Promise<void>;
+  rollbackAction: (historyId: string) => Promise<void>;
 
   // Config
   setApiKey: (key: string) => void;
   updateConfig: (config: Partial<AIConfig>) => void;
+  refreshAvailability: () => Promise<void>;
 
   // Reset
   reset: () => void;
@@ -90,6 +94,11 @@ const initialState = {
   actionHistory: [] as AIActionHistory[],
   context: null as AIContext | null,
   config: DEFAULT_AI_CONFIG,
+  availability: {
+    mode: DEFAULT_AI_CONFIG.mockMode ? 'mock' : 'checking',
+    transport: null,
+    reason: 'Checking server AI configuration',
+  } as AIAvailability,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -230,6 +239,7 @@ export const useAIStore = create<AIState>()(
       },
 
       approveAction: async (actionId) => {
+        set({ error: null });
         const runtime = getAIRuntime();
         const success = await runtime.approveAction(actionId);
 
@@ -242,10 +252,15 @@ export const useAIStore = create<AIState>()(
               selectedAction: null,
             });
           }
+        } else {
+          set({
+            error: 'Action was not applied. Check the payload, target sheet, and audit storage.',
+          });
         }
       },
 
       rejectAction: async (actionId) => {
+        set({ error: null });
         const runtime = getAIRuntime();
         const success = await runtime.rejectAction(actionId);
 
@@ -257,6 +272,19 @@ export const useAIStore = create<AIState>()(
               selectedAction: null,
             });
           }
+        } else {
+          set({ error: 'Action rejection could not be recorded in the audit trail.' });
+        }
+      },
+
+      rollbackAction: async (historyId) => {
+        set({ error: null });
+        const runtime = getAIRuntime();
+        if (await runtime.rollbackAction(historyId)) {
+          const conversation = runtime.getConversation();
+          if (conversation) set({ actionHistory: [...conversation.history] });
+        } else {
+          set({ error: 'Rollback was not completed or this action was already reverted.' });
         }
       },
 
@@ -270,6 +298,7 @@ export const useAIStore = create<AIState>()(
         set((state) => ({
           config: { ...state.config, apiKey: key, mockMode: false },
         }));
+        void runtime.getAvailability().then((availability) => set({ availability }));
       },
 
       updateConfig: (newConfig) => {
@@ -278,6 +307,19 @@ export const useAIStore = create<AIState>()(
         set((state) => ({
           config: { ...state.config, ...newConfig },
         }));
+        void runtime.getAvailability().then((availability) => set({ availability }));
+      },
+
+      refreshAvailability: async () => {
+        set({
+          availability: {
+            mode: 'checking',
+            transport: null,
+            reason: 'Checking server AI configuration',
+          },
+        });
+        const availability = await getAIRuntime().refreshAvailability();
+        set({ availability });
       },
 
       // ─────────────────────────────────────────────────────────────────────
@@ -291,7 +333,8 @@ export const useAIStore = create<AIState>()(
       },
     }),
     {
-      name: 'ai-copilot-storage',
+      // New key intentionally avoids inheriting the old default mockMode=true state.
+      name: 'ai-copilot-storage-v2',
       partialize: (state) => ({
         // Only persist these fields
         isDocked: state.isDocked,

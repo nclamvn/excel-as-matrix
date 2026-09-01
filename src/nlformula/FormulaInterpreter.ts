@@ -48,8 +48,8 @@ export class FormulaInterpreter {
         } else {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1, // substitution
-            matrix[i][j - 1] + 1,     // insertion
-            matrix[i - 1][j] + 1      // deletion
+            matrix[i][j - 1] + 1, // insertion
+            matrix[i - 1][j] + 1 // deletion
           );
         }
       }
@@ -96,10 +96,11 @@ export class FormulaInterpreter {
       // Check if input is contained in header name or vice versa (partial match)
       const headerLower = header.name.toLowerCase();
       if (headerLower.includes(normalizedInput) || normalizedInput.includes(headerLower)) {
-        const containSimilarity = Math.max(
-          normalizedInput.length / headerLower.length,
-          headerLower.length / normalizedInput.length
-        ) * 0.85; // Slight penalty for partial matches
+        const containSimilarity =
+          Math.max(
+            normalizedInput.length / headerLower.length,
+            headerLower.length / normalizedInput.length
+          ) * 0.85; // Slight penalty for partial matches
 
         if (!bestMatch || containSimilarity > bestMatch.similarity) {
           bestMatch = { header, similarity: containSimilarity };
@@ -129,8 +130,7 @@ export class FormulaInterpreter {
    */
   async interpret(input: NLInput): Promise<InterpretationResult> {
     const { text, context } = input;
-    const language =
-      input.language === 'auto' ? this.detectLanguage(text) : input.language;
+    const language = input.language === 'auto' ? this.detectLanguage(text) : input.language;
 
     // Parse natural language
     const parsed = this.parser.parse(text, language);
@@ -152,10 +152,7 @@ export class FormulaInterpreter {
   /**
    * Map parsed intent to formula
    */
-  private mapToFormula(
-    parsed: ParsedNL,
-    context: CellContext
-  ): InterpretationResult {
+  private mapToFormula(parsed: ParsedNL, context: CellContext): InterpretationResult {
     const { intent, entities, modifiers } = parsed;
 
     let formula: string;
@@ -206,34 +203,19 @@ export class FormulaInterpreter {
       // CONDITIONAL AGGREGATION
       // =========================================================================
       case 'sumif':
-        formula = this.buildConditionalAggregation(
-          'SUMIF',
-          entities,
-          modifiers,
-          context
-        );
+        formula = this.buildConditionalAggregation('SUMIF', entities, modifiers, context);
         explanation = `Sum of ${entities.sumRange} where ${entities.criteriaRange} equals ${entities.criteria}`;
         confidence = 0.85;
         break;
 
       case 'countif':
-        formula = this.buildConditionalAggregation(
-          'COUNTIF',
-          entities,
-          modifiers,
-          context
-        );
+        formula = this.buildConditionalAggregation('COUNTIF', entities, modifiers, context);
         explanation = `Count where ${entities.criteriaRange} equals ${entities.criteria}`;
         confidence = 0.85;
         break;
 
       case 'averageif':
-        formula = this.buildConditionalAggregation(
-          'AVERAGEIF',
-          entities,
-          modifiers,
-          context
-        );
+        formula = this.buildConditionalAggregation('AVERAGEIF', entities, modifiers, context);
         explanation = `Average of ${entities.sumRange} where ${entities.criteriaRange} equals ${entities.criteria}`;
         confidence = 0.85;
         break;
@@ -353,10 +335,7 @@ export class FormulaInterpreter {
     entities: Record<string, unknown>,
     context: CellContext
   ): string {
-    const range = this.resolveRange(
-      (entities.range || entities.column) as string,
-      context
-    );
+    const range = this.resolveRange((entities.range || entities.column) as string, context);
     return `${func}(${range})`;
   }
 
@@ -370,10 +349,7 @@ export class FormulaInterpreter {
       (entities.criteriaRange || entities.criteriaColumn) as string,
       context
     );
-    const criteria = this.formatCriteria(
-      entities.criteria as string,
-      modifiers.operator as string
-    );
+    const criteria = this.formatCriteria(entities.criteria as string, modifiers.operator as string);
 
     if (func === 'COUNTIF') {
       return `${func}(${criteriaRange},${criteria})`;
@@ -415,11 +391,8 @@ export class FormulaInterpreter {
     }
 
     // Fallback to tableRange if provided
-    const tableRange = this.resolveRange(entities.tableRange as string || 'A:B', context);
-    const colIndex = this.resolveColumnIndex(
-      entities.returnColumn as string,
-      context
-    );
+    const tableRange = this.resolveRange((entities.tableRange as string) || 'A:B', context);
+    const colIndex = this.resolveColumnIndex(entities.returnColumn as string, context);
 
     return `VLOOKUP(${lookupValue},${tableRange},${colIndex},${exactMatch})`;
   }
@@ -436,10 +409,7 @@ export class FormulaInterpreter {
     return col;
   }
 
-  private buildIndexMatch(
-    entities: Record<string, unknown>,
-    context: CellContext
-  ): string {
+  private buildIndexMatch(entities: Record<string, unknown>, context: CellContext): string {
     const lookupValue = this.resolveValue(entities.lookupValue as string, context);
     const returnRange = this.resolveRange(entities.returnColumn as string, context);
     const lookupRange = this.resolveRange(entities.lookupColumn as string, context);
@@ -447,29 +417,18 @@ export class FormulaInterpreter {
     return `=INDEX(${returnRange},MATCH(${lookupValue},${lookupRange},0))`;
   }
 
-  private buildIf(
-    entities: Record<string, unknown>,
-    context: CellContext
-  ): string {
+  private buildIf(entities: Record<string, unknown>, context: CellContext): string {
     const condition = this.buildCondition(entities.condition, context);
     const trueValue = this.resolveValue(entities.trueValue as string, context);
-    const falseValue = this.resolveValue(
-      (entities.falseValue as string) || '""',
-      context
-    );
+    const falseValue = this.resolveValue((entities.falseValue as string) || '""', context);
 
     return `IF(${condition},${trueValue},${falseValue})`;
   }
 
-  private buildConcat(
-    entities: Record<string, unknown>,
-    context: CellContext
-  ): string {
+  private buildConcat(entities: Record<string, unknown>, context: CellContext): string {
     const ranges = entities.ranges as string[];
     const parts = ranges.map((r: string) => this.resolveValue(r, context));
-    const separator = entities.separator
-      ? `"${entities.separator}"`
-      : '';
+    const separator = entities.separator ? `"${entities.separator}"` : '';
 
     if (separator) {
       return `TEXTJOIN(${separator},TRUE,${parts.join(',')})`;
@@ -497,10 +456,7 @@ export class FormulaInterpreter {
     }
   }
 
-  private buildPercentage(
-    entities: Record<string, unknown>,
-    context: CellContext
-  ): string {
+  private buildPercentage(entities: Record<string, unknown>, context: CellContext): string {
     const part = this.resolveValue(entities.part as string, context);
     const total = this.resolveValue(entities.total as string, context);
 
@@ -642,9 +598,11 @@ export class FormulaInterpreter {
     return `${leftVal}${ops[cond.operator] || '='}${rightVal}`;
   }
 
-  private validateFormula(
-    formula: string
-  ): { valid: boolean; message: string; suggestion?: string } {
+  private validateFormula(formula: string): {
+    valid: boolean;
+    message: string;
+    suggestion?: string;
+  } {
     // Check balanced parentheses
     let depth = 0;
     for (const char of formula) {
@@ -670,22 +628,17 @@ export class FormulaInterpreter {
     return { valid: true, message: 'OK' };
   }
 
-  private describeRange(
-    entities: Record<string, unknown>,
-    context: CellContext
-  ): string {
+  private describeRange(entities: Record<string, unknown>, context: CellContext): string {
     const range = (entities.range || entities.column) as string;
     const header = context.headers.find(
-      (h) =>
-        h.colLetter === range || h.name.toLowerCase() === range?.toLowerCase()
+      (h) => h.colLetter === range || h.name.toLowerCase() === range?.toLowerCase()
     );
 
     return header ? `"${header.name}" column` : range || 'selected range';
   }
 
   private detectLanguage(text: string): 'en' | 'vi' {
-    const viPatterns =
-      /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+    const viPatterns = /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
     return viPatterns.test(text) ? 'vi' : 'en';
   }
 

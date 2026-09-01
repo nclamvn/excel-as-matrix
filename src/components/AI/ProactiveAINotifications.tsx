@@ -79,7 +79,7 @@ export const useAINotificationStore = create<NotificationStore>((set, get) => ({
       createdAt: Date.now(),
     };
 
-    set(state => ({
+    set((state) => ({
       notifications: [newNotification, ...state.notifications].slice(0, 5), // Max 5 notifications
     }));
 
@@ -92,8 +92,8 @@ export const useAINotificationStore = create<NotificationStore>((set, get) => ({
   },
 
   removeNotification: (id) => {
-    set(state => ({
-      notifications: state.notifications.filter(n => n.id !== id),
+    set((state) => ({
+      notifications: state.notifications.filter((n) => n.id !== id),
     }));
   },
 
@@ -102,7 +102,7 @@ export const useAINotificationStore = create<NotificationStore>((set, get) => ({
   },
 
   toggleMute: () => {
-    set(state => ({ muted: !state.muted }));
+    set((state) => ({ muted: !state.muted }));
   },
 }));
 
@@ -150,16 +150,20 @@ const NotificationItem: React.FC<{
 
 // Main notifications container
 export const ProactiveAINotifications: React.FC = () => {
-  const { notifications, removeNotification, clearAll, muted, toggleMute } = useAINotificationStore();
+  const { notifications, removeNotification, clearAll, muted, toggleMute } =
+    useAINotificationStore();
   const { openPanel, setCurrentInput } = useAIStore();
 
-  const handleAction = useCallback((notification: AINotification) => {
-    if (notification.action?.prompt) {
-      openPanel();
-      setCurrentInput(notification.action.prompt);
-    }
-    removeNotification(notification.id);
-  }, [openPanel, setCurrentInput, removeNotification]);
+  const handleAction = useCallback(
+    (notification: AINotification) => {
+      if (notification.action?.prompt) {
+        openPanel();
+        setCurrentInput(notification.action.prompt);
+      }
+      removeNotification(notification.id);
+    },
+    [openPanel, setCurrentInput, removeNotification]
+  );
 
   if (notifications.length === 0 && !muted) return null;
 
@@ -175,7 +179,8 @@ export const ProactiveAINotifications: React.FC = () => {
           )}
         </div>
         <div className="ai-notifications-actions">
-          <button type="button"
+          <button
+            type="button"
             className={`ai-notifications-mute ${muted ? 'muted' : ''}`}
             onClick={toggleMute}
             title={muted ? 'Unmute notifications' : 'Mute notifications'}
@@ -201,7 +206,7 @@ export const ProactiveAINotifications: React.FC = () => {
       {/* Notifications list */}
       {!muted && (
         <div className="ai-notifications-list">
-          {notifications.map(notification => (
+          {notifications.map((notification) => (
             <NotificationItem
               key={notification.id}
               notification={notification}
@@ -222,33 +227,36 @@ export function useProactiveAITriggers() {
   const lastActionRef = useRef<{ type: string; count: number; timestamp: number } | null>(null);
 
   // Track repeated actions for automation suggestions
-  const trackAction = useCallback((actionType: string) => {
-    const now = Date.now();
-    const last = lastActionRef.current;
+  const trackAction = useCallback(
+    (actionType: string) => {
+      const now = Date.now();
+      const last = lastActionRef.current;
 
-    if (last && last.type === actionType && now - last.timestamp < 5000) {
-      last.count++;
-      last.timestamp = now;
+      if (last && last.type === actionType && now - last.timestamp < 5000) {
+        last.count++;
+        last.timestamp = now;
 
-      // Suggest automation after 3 repeated actions
-      if (last.count === 3) {
-        addNotification({
-          type: 'automation',
-          priority: 'medium',
-          title: 'Repeated Action Detected',
-          message: `You've done this ${last.count} times. Want to automate it?`,
-          action: {
-            label: 'Automate with AI',
-            prompt: `I've been repeating this action: ${actionType}. Help me automate it or create a more efficient workflow.`,
-          },
-          dismissible: true,
-          autoHide: 10000,
-        });
+        // Suggest automation after 3 repeated actions
+        if (last.count === 3) {
+          addNotification({
+            type: 'automation',
+            priority: 'medium',
+            title: 'Repeated Action Detected',
+            message: `You've done this ${last.count} times. Want to automate it?`,
+            action: {
+              label: 'Automate with AI',
+              prompt: `I've been repeating this action: ${actionType}. Help me automate it or create a more efficient workflow.`,
+            },
+            dismissible: true,
+            autoHide: 10000,
+          });
+        }
+      } else {
+        lastActionRef.current = { type: actionType, count: 1, timestamp: now };
       }
-    } else {
-      lastActionRef.current = { type: actionType, count: 1, timestamp: now };
-    }
-  }, [addNotification]);
+    },
+    [addNotification]
+  );
 
   // Check for data quality issues periodically
   useEffect(() => {
@@ -261,7 +269,7 @@ export function useProactiveAITriggers() {
       const cells = Object.values(sheet.cells);
       let errorCount = 0;
 
-      cells.forEach(cell => {
+      cells.forEach((cell) => {
         if (typeof cell.value === 'string' && cell.value.startsWith('#')) {
           errorCount++;
         }
@@ -301,15 +309,21 @@ export function generateInsight(data: {
   addNotification({
     type: 'insight',
     priority: 'low',
-    title: data.type === 'trend' ? 'Trend Detected' :
-           data.type === 'outlier' ? 'Outlier Found' :
-           data.type === 'pattern' ? 'Pattern Recognized' :
-           'Correlation Found',
+    title:
+      data.type === 'trend'
+        ? 'Trend Detected'
+        : data.type === 'outlier'
+          ? 'Outlier Found'
+          : data.type === 'pattern'
+            ? 'Pattern Recognized'
+            : 'Correlation Found',
     message: data.description,
-    action: data.details ? {
-      label: 'Learn more',
-      prompt: `Tell me more about this insight: ${data.description}. ${data.details}`,
-    } : undefined,
+    action: data.details
+      ? {
+          label: 'Learn more',
+          prompt: `Tell me more about this insight: ${data.description}. ${data.details}`,
+        }
+      : undefined,
     dismissible: true,
     autoHide: 15000,
   });

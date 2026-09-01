@@ -15,7 +15,7 @@ export interface NamedItem {
   name: string;
   type: NameType;
   scope: NameScope;
-  refersTo: string;  // The formula/range/value it refers to
+  refersTo: string; // The formula/range/value it refers to
   comment?: string;
   // For LAMBDA functions
   parameters?: string[];
@@ -26,10 +26,17 @@ export interface NamedItem {
 }
 
 interface NameManagerState {
-  names: Record<string, NamedItem>;  // id -> NamedItem
+  names: Record<string, NamedItem>; // id -> NamedItem
 
   // Actions
-  createName: (name: string, type: NameType, refersTo: string, scope?: NameScope, comment?: string, parameters?: string[]) => NamedItem | null;
+  createName: (
+    name: string,
+    type: NameType,
+    refersTo: string,
+    scope?: NameScope,
+    comment?: string,
+    parameters?: string[]
+  ) => NamedItem | null;
   updateName: (id: string, updates: Partial<NamedItem>) => void;
   deleteName: (id: string) => void;
 
@@ -51,8 +58,24 @@ interface NameManagerState {
 // Excel-style naming rules
 const NAME_PATTERN = /^[A-Za-z_\\][A-Za-z0-9_.]*$/;
 const RESERVED_NAMES = new Set([
-  'TRUE', 'FALSE', 'NULL', 'ERROR', 'NA', 'REF', 'VALUE', 'NAME', 'DIV', 'NUM',
-  'PI', 'E', 'TODAY', 'NOW', 'ROW', 'COLUMN', 'SHEET', 'CELL',
+  'TRUE',
+  'FALSE',
+  'NULL',
+  'ERROR',
+  'NA',
+  'REF',
+  'VALUE',
+  'NAME',
+  'DIV',
+  'NUM',
+  'PI',
+  'E',
+  'TODAY',
+  'NOW',
+  'ROW',
+  'COLUMN',
+  'SHEET',
+  'CELL',
 ]);
 
 export const useNameManagerStore = create<NameManagerState>()(
@@ -90,7 +113,7 @@ export const useNameManagerStore = create<NameManagerState>()(
           updatedAt: now,
         };
 
-        set(state => ({
+        set((state) => ({
           names: { ...state.names, [id]: namedItem },
         }));
 
@@ -98,7 +121,7 @@ export const useNameManagerStore = create<NameManagerState>()(
       },
 
       updateName: (id, updates) => {
-        set(state => {
+        set((state) => {
           const existing = state.names[id];
           if (!existing) return state;
 
@@ -129,7 +152,7 @@ export const useNameManagerStore = create<NameManagerState>()(
       },
 
       deleteName: (id) => {
-        set(state => {
+        set((state) => {
           const { [id]: removed, ...rest } = state.names;
           return { names: rest };
         });
@@ -141,16 +164,12 @@ export const useNameManagerStore = create<NameManagerState>()(
 
         // First try exact scope match
         if (scope) {
-          const scopeMatch = allNames.find(
-            n => n.name === upperName && n.scope === scope
-          );
+          const scopeMatch = allNames.find((n) => n.name === upperName && n.scope === scope);
           if (scopeMatch) return scopeMatch;
         }
 
         // Then try workbook scope
-        return allNames.find(
-          n => n.name === upperName && n.scope === 'workbook'
-        );
+        return allNames.find((n) => n.name === upperName && n.scope === 'workbook');
       },
 
       getNameById: (id) => {
@@ -158,17 +177,15 @@ export const useNameManagerStore = create<NameManagerState>()(
       },
 
       getNamesByType: (type) => {
-        return Object.values(get().names).filter(n => n.type === type);
+        return Object.values(get().names).filter((n) => n.type === type);
       },
 
       getNamesByScope: (scope) => {
-        return Object.values(get().names).filter(n => n.scope === scope);
+        return Object.values(get().names).filter((n) => n.scope === scope);
       },
 
       getAllNames: () => {
-        return Object.values(get().names).sort((a, b) =>
-          a.name.localeCompare(b.name)
-        );
+        return Object.values(get().names).sort((a, b) => a.name.localeCompare(b.name));
       },
 
       isValidName: (name) => {
@@ -194,10 +211,11 @@ export const useNameManagerStore = create<NameManagerState>()(
         const upperName = name.toUpperCase();
         const allNames = Object.values(get().names);
 
-        return !allNames.some(n =>
-          n.name === upperName &&
-          (n.scope === scope || n.scope === 'workbook' || scope === 'workbook') &&
-          n.id !== excludeId
+        return !allNames.some(
+          (n) =>
+            n.name === upperName &&
+            (n.scope === scope || n.scope === 'workbook' || scope === 'workbook') &&
+            n.id !== excludeId
         );
       },
 

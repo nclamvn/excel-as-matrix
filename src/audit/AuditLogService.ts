@@ -10,13 +10,7 @@ import { loggers } from '@/utils/logger';
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type AuditCategory =
-  | 'auth'
-  | 'data'
-  | 'ai'
-  | 'sharing'
-  | 'admin'
-  | 'system';
+export type AuditCategory = 'auth' | 'data' | 'ai' | 'sharing' | 'admin' | 'system';
 
 export type AuditSeverity = 'info' | 'warning' | 'critical';
 
@@ -246,27 +240,57 @@ class AuditLogService {
   // Convenience logging methods
   // ─────────────────────────────────────────────────────────────────────────
 
-  async logAuth(action: string, description: string, userId?: string, metadata?: Record<string, unknown>) {
+  async logAuth(
+    action: string,
+    description: string,
+    userId?: string,
+    metadata?: Record<string, unknown>
+  ) {
     return this.log('auth', action, description, { userId, metadata });
   }
 
-  async logData(action: string, description: string, options?: { userId?: string; workbookId?: string; metadata?: Record<string, unknown> }) {
+  async logData(
+    action: string,
+    description: string,
+    options?: { userId?: string; workbookId?: string; metadata?: Record<string, unknown> }
+  ) {
     return this.log('data', action, description, options);
   }
 
-  async logAI(action: string, description: string, options?: { userId?: string; workbookId?: string; severity?: AuditSeverity; metadata?: Record<string, unknown> }) {
+  async logAI(
+    action: string,
+    description: string,
+    options?: {
+      userId?: string;
+      workbookId?: string;
+      severity?: AuditSeverity;
+      metadata?: Record<string, unknown>;
+    }
+  ) {
     return this.log('ai', action, description, options);
   }
 
-  async logSharing(action: string, description: string, options?: { userId?: string; workbookId?: string; metadata?: Record<string, unknown> }) {
+  async logSharing(
+    action: string,
+    description: string,
+    options?: { userId?: string; workbookId?: string; metadata?: Record<string, unknown> }
+  ) {
     return this.log('sharing', action, description, options);
   }
 
-  async logAdmin(action: string, description: string, options?: { userId?: string; severity?: AuditSeverity; metadata?: Record<string, unknown> }) {
+  async logAdmin(
+    action: string,
+    description: string,
+    options?: { userId?: string; severity?: AuditSeverity; metadata?: Record<string, unknown> }
+  ) {
     return this.log('admin', action, description, options);
   }
 
-  async logSystem(action: string, description: string, options?: { severity?: AuditSeverity; metadata?: Record<string, unknown> }) {
+  async logSystem(
+    action: string,
+    description: string,
+    options?: { severity?: AuditSeverity; metadata?: Record<string, unknown> }
+  ) {
     return this.log('system', action, description, options);
   }
 
@@ -403,9 +427,7 @@ class AuditLogService {
 
       const expectedChecksum = await computeChecksum(checksumData);
       if (entry.checksum !== expectedChecksum) {
-        errors.push(
-          `Tampered entry ${entry.id}: checksum mismatch`
-        );
+        errors.push(`Tampered entry ${entry.id}: checksum mismatch`);
       }
 
       previousChecksum = entry.checksum;
@@ -468,10 +490,15 @@ class AuditLogService {
     if (toDelete.length === 0) return 0;
 
     // Log the purge action before deleting
-    await this.log('system', 'audit.purge', `Purging ${toDelete.length} entries older than ${days} days`, {
-      severity: 'warning',
-      metadata: { purgedCount: toDelete.length, retentionDays: days },
-    });
+    await this.log(
+      'system',
+      'audit.purge',
+      `Purging ${toDelete.length} entries older than ${days} days`,
+      {
+        severity: 'warning',
+        metadata: { purgedCount: toDelete.length, retentionDays: days },
+      }
+    );
 
     const tx = db.transaction('auditEntries', 'readwrite');
     for (const entry of toDelete) {

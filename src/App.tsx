@@ -27,14 +27,26 @@ import './styles/responsive.css';
 import { useResponsiveClass } from './hooks/useResponsive';
 
 // Lazy load non-critical overlays
-const CrashRecoveryBanner = lazy(() => import('./components/Recovery/CrashRecoveryBanner').then(m => ({ default: m.CrashRecoveryBanner })));
-const MobileGridOverlay = lazy(() => import('./components/Mobile/MobileGridOverlay').then(m => ({ default: m.MobileGridOverlay })));
-const MobileToolbar = lazy(() => import('./components/Mobile/MobileToolbar').then(m => ({ default: m.MobileToolbar })));
-const MobileSheetTabs = lazy(() => import('./components/Mobile/MobileSheetTabs').then(m => ({ default: m.MobileSheetTabs })));
+const CrashRecoveryBanner = lazy(() =>
+  import('./components/Recovery/CrashRecoveryBanner').then((m) => ({
+    default: m.CrashRecoveryBanner,
+  }))
+);
+const MobileGridOverlay = lazy(() =>
+  import('./components/Mobile/MobileGridOverlay').then((m) => ({ default: m.MobileGridOverlay }))
+);
+const MobileToolbar = lazy(() =>
+  import('./components/Mobile/MobileToolbar').then((m) => ({ default: m.MobileToolbar }))
+);
+const MobileSheetTabs = lazy(() =>
+  import('./components/Mobile/MobileSheetTabs').then((m) => ({ default: m.MobileSheetTabs }))
+);
 const OnboardingTour = lazy(() => import('./components/Onboarding/OnboardingTour'));
 
 // Landing Page — lazy since only shown on first visit
-const CompetitiveLanding = lazy(() => import('./components/Landing/CompetitiveLanding').then(m => ({ default: m.CompetitiveLanding })));
+const CompetitiveLanding = lazy(() =>
+  import('./components/Landing/CompetitiveLanding').then((m) => ({ default: m.CompetitiveLanding }))
+);
 
 // Modern 2026 Components (critical path — not lazy)
 import {
@@ -50,15 +62,33 @@ import { StatusBar2026Enhanced } from './components/Modern/StatusBar2026Enhanced
 import { FileTabs } from './components/FileTabs';
 
 // Lazy load non-critical modules for smaller initial bundle
-const FindReplaceDialog = lazy(() => import('./components/FindReplace').then(m => ({ default: m.FindReplaceDialog })));
-const AICopilotDock = lazy(() => import('./components/AI').then(m => ({ default: m.AICopilotDock })));
-const ProactiveAINotifications = lazy(() => import('./components/AI').then(m => ({ default: m.ProactiveAINotifications })));
-const ChartOverlay = lazy(() => import('./components/Charts').then(m => ({ default: m.ChartOverlay })));
-const ShapeCanvas = lazy(() => import('./components/Shapes').then(m => ({ default: m.ShapeCanvas })));
-const ShapeToolbar = lazy(() => import('./components/Shapes').then(m => ({ default: m.ShapeToolbar })));
-const PictureCanvas = lazy(() => import('./components/Pictures').then(m => ({ default: m.PictureCanvas })));
-const PictureToolbar = lazy(() => import('./components/Pictures').then(m => ({ default: m.PictureToolbar })));
-const PrintPreviewDialog = lazy(() => import('./components/Print').then(m => ({ default: m.PrintPreviewDialog })));
+const FindReplaceDialog = lazy(() =>
+  import('./components/FindReplace').then((m) => ({ default: m.FindReplaceDialog }))
+);
+const AICopilotDock = lazy(() =>
+  import('./components/AI').then((m) => ({ default: m.AICopilotDock }))
+);
+const ProactiveAINotifications = lazy(() =>
+  import('./components/AI').then((m) => ({ default: m.ProactiveAINotifications }))
+);
+const ChartOverlay = lazy(() =>
+  import('./components/Charts').then((m) => ({ default: m.ChartOverlay }))
+);
+const ShapeCanvas = lazy(() =>
+  import('./components/Shapes').then((m) => ({ default: m.ShapeCanvas }))
+);
+const ShapeToolbar = lazy(() =>
+  import('./components/Shapes').then((m) => ({ default: m.ShapeToolbar }))
+);
+const PictureCanvas = lazy(() =>
+  import('./components/Pictures').then((m) => ({ default: m.PictureCanvas }))
+);
+const PictureToolbar = lazy(() =>
+  import('./components/Pictures').then((m) => ({ default: m.PictureToolbar }))
+);
+const PrintPreviewDialog = lazy(() =>
+  import('./components/Print').then((m) => ({ default: m.PrintPreviewDialog }))
+);
 
 // Styles
 import './styles/mobile.css';
@@ -132,13 +162,20 @@ function App() {
   // Use ?mock=true for local testing without a real WebSocket server
   const collabConfig: CollaborationConfig | undefined = (() => {
     const params = new URLSearchParams(window.location.search);
-    const collabEnabled = params.get('collab') === 'true' || import.meta.env.VITE_COLLAB_ENABLED === 'true';
+    const collabEnabled =
+      params.get('collab') === 'true' || import.meta.env.VITE_COLLAB_ENABLED === 'true';
     if (!collabEnabled || !workbookId) return undefined;
     const useMock = params.get('mock') === 'true';
     const userId = params.get('userId') || `user-${Math.random().toString(36).slice(2, 8)}`;
     const userName = params.get('userName') || `User ${userId.slice(-4)}`;
     const wsUrl = import.meta.env.VITE_WS_URL || `ws://${window.location.hostname}:3001`;
-    return { wsUrl: `${wsUrl}/ws/${workbookId}`, documentId: workbookId, userId, userName, useMock };
+    return {
+      wsUrl: `${wsUrl}/ws/${workbookId}`,
+      documentId: workbookId,
+      userId,
+      userName,
+      useMock,
+    };
   })();
 
   const { isConnected: _collabConnected, userCount: _collabUserCount } = useCollaboration({
@@ -165,22 +202,25 @@ function App() {
   }, []);
 
   // Command Palette shortcut (⌘K), AI Copilot shortcut (⌘J), Print shortcut (⌘P)
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      setIsCommandPaletteOpen(true);
-    }
-    // AI Copilot toggle (⌘J or Ctrl+J)
-    if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
-      e.preventDefault();
-      toggleAIPanel();
-    }
-    // Print Preview (⌘P or Ctrl+P)
-    if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
-      e.preventDefault();
-      setShowPrintPreview(true);
-    }
-  }, [toggleAIPanel]);
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
+      }
+      // AI Copilot toggle (⌘J or Ctrl+J)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+        e.preventDefault();
+        toggleAIPanel();
+      }
+      // Print Preview (⌘P or Ctrl+P)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
+        e.preventDefault();
+        setShowPrintPreview(true);
+      }
+    },
+    [toggleAIPanel]
+  );
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -216,24 +256,22 @@ function App() {
     });
 
     // Audit data operations via workbook store subscription
-    const unsubAudit = useWorkbookStore.subscribe(
-      (state, prev) => {
-        // Log sheet additions
-        const newSheets = Object.keys(state.sheets).filter(k => !prev.sheets[k]);
-        for (const sid of newSheets) {
-          auditLog.logData('sheet.create', `Sheet created: ${state.sheets[sid]?.name}`, {
-            workbookId: state.workbookId || undefined,
-            metadata: { sheetId: sid },
-          });
-        }
-        // Log workbook changes
-        if (state.workbookId !== prev.workbookId && state.workbookId) {
-          auditLog.logData('workbook.open', `Workbook opened: ${state.workbookName}`, {
-            workbookId: state.workbookId,
-          });
-        }
+    const unsubAudit = useWorkbookStore.subscribe((state, prev) => {
+      // Log sheet additions
+      const newSheets = Object.keys(state.sheets).filter((k) => !prev.sheets[k]);
+      for (const sid of newSheets) {
+        auditLog.logData('sheet.create', `Sheet created: ${state.sheets[sid]?.name}`, {
+          workbookId: state.workbookId || undefined,
+          metadata: { sheetId: sid },
+        });
       }
-    );
+      // Log workbook changes
+      if (state.workbookId !== prev.workbookId && state.workbookId) {
+        auditLog.logData('workbook.open', `Workbook opened: ${state.workbookName}`, {
+          workbookId: state.workbookId,
+        });
+      }
+    });
 
     crashRecovery.init().then(() => {
       crashRecovery.cleanup();
@@ -327,7 +365,13 @@ function App() {
   // Show landing page if user hasn't entered app yet
   if (showLanding) {
     return (
-      <Suspense fallback={<div className="h-full flex items-center justify-center"><div className="text-sm text-gray-500">Loading...</div></div>}>
+      <Suspense
+        fallback={
+          <div className="h-full flex items-center justify-center">
+            <div className="text-sm text-gray-500">Loading...</div>
+          </div>
+        }
+      >
         <CompetitiveLanding onEnterApp={handleEnterApp} />
       </Suspense>
     );
@@ -337,7 +381,10 @@ function App() {
     return (
       <div className="h-full flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-lg font-semibold mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+          <div
+            className="text-lg font-semibold mb-2"
+            style={{ fontFamily: 'IBM Plex Mono, monospace' }}
+          >
             <span className="text-green-800">Excel</span>
             <span className="text-gray-400"> - </span>
             <span className="text-amber-700">Claude Code</span>
@@ -371,174 +418,206 @@ function App() {
         });
       }}
     >
-    <div className={`h-full flex flex-col ${responsiveClass}`} style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}>
-      {/* Skip to Content — WCAG 2.1 AA */}
-      <SkipToContent />
-
-      {/* Main Content - adjusts when AI panel is open */}
       <div
-        className="h-full flex flex-col"
-        style={{
-          marginRight: isAIOpen ? '380px' : '0',
-          transition: 'margin-right 0.2s ease',
-        }}
+        className={`h-full flex flex-col ${responsiveClass}`}
+        style={{ fontFamily: 'var(--font-2026)', background: 'var(--surface-1)' }}
       >
-        {/* Modern Header with Nav */}
-        <Header2026
-          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-          onOpenVersionHistory={() => setShowVersionHistory(true)}
-        />
+        {/* Skip to Content — WCAG 2.1 AA */}
+        <SkipToContent />
 
-        {/* File Tabs (Browser-style) */}
-        <FileTabs />
+        {/* Main Content - adjusts when AI panel is open */}
+        <div
+          className="h-full flex flex-col"
+          style={{
+            marginRight: isAIOpen ? '380px' : '0',
+            transition: 'margin-right 0.2s ease',
+          }}
+        >
+          {/* Modern Header with Nav */}
+          <Header2026
+            onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+            onOpenVersionHistory={() => setShowVersionHistory(true)}
+          />
 
-        {/* Compact Toolbar */}
-        <Toolbar2026 />
+          {/* File Tabs (Browser-style) */}
+          <FileTabs />
 
-        {/* Formula Bar */}
-        <FormulaBar2026 sheetId={activeSheetId} />
+          {/* Compact Toolbar */}
+          <Toolbar2026 />
 
-        {/* Realtime cursor broadcaster */}
-        <RealtimeCursorBroadcaster sheetId={activeSheetId} />
+          {/* Formula Bar */}
+          <FormulaBar2026 sheetId={activeSheetId} />
 
-        {/* Grid with Chart, Shape, Picture, and Mobile Overlay */}
-        <div id="main-grid" className="flex-1 overflow-hidden relative" tabIndex={-1} role="region" aria-label="Spreadsheet grid">
-          <Grid workbookId={workbookId} sheetId={activeSheetId} />
+          {/* Realtime cursor broadcaster */}
+          <RealtimeCursorBroadcaster sheetId={activeSheetId} />
+
+          {/* Grid with Chart, Shape, Picture, and Mobile Overlay */}
+          <div
+            id="main-grid"
+            className="flex-1 overflow-hidden relative"
+            tabIndex={-1}
+            role="region"
+            aria-label="Spreadsheet grid"
+          >
+            <Grid workbookId={workbookId} sheetId={activeSheetId} />
+            <Suspense fallback={null}>
+              <MobileGridOverlay />
+            </Suspense>
+            <Suspense fallback={null}>
+              <ChartOverlay sheetId={activeSheetId} />
+              <ShapeCanvas sheetId={activeSheetId} />
+              <PictureCanvas sheetId={activeSheetId} />
+            </Suspense>
+          </div>
+
+          {/* Sheet Tabs */}
+          <SheetTabs2026 />
+
+          {/* Mobile Sheet Tabs (shown on mobile only) */}
           <Suspense fallback={null}>
-            <MobileGridOverlay />
+            <MobileSheetTabs />
           </Suspense>
+
+          {/* Status Bar (Green theme - Enhanced) */}
+          <StatusBar2026Enhanced />
+
+          {/* Mobile Toolbar (bottom tab bar, shown on mobile only) */}
           <Suspense fallback={null}>
-            <ChartOverlay sheetId={activeSheetId} />
-            <ShapeCanvas sheetId={activeSheetId} />
-            <PictureCanvas sheetId={activeSheetId} />
+            <MobileToolbar />
           </Suspense>
         </div>
 
-        {/* Sheet Tabs */}
-        <SheetTabs2026 />
-
-        {/* Mobile Sheet Tabs (shown on mobile only) */}
+        {/* AI Copilot Dock */}
         <Suspense fallback={null}>
-          <MobileSheetTabs />
+          <AICopilotDock />
         </Suspense>
 
-        {/* Status Bar (Green theme - Enhanced) */}
-        <StatusBar2026Enhanced />
-
-        {/* Mobile Toolbar (bottom tab bar, shown on mobile only) */}
-        <Suspense fallback={null}>
-          <MobileToolbar />
-        </Suspense>
-      </div>
-
-      {/* AI Copilot Dock */}
-      <Suspense fallback={null}>
-        <AICopilotDock />
-      </Suspense>
-
-      {/* Command Palette (⌘K) */}
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-      />
-
-      {/* Find/Replace Dialog (lazy loaded) */}
-      <Suspense fallback={null}>
-        <FindReplaceDialog />
-      </Suspense>
-
-      {/* Crash Recovery Banner */}
-      <Suspense fallback={null}>
-        <CrashRecoveryBanner />
-      </Suspense>
-
-      {/* Onboarding Tour (lazy) */}
-      <Suspense fallback={null}>
-        <OnboardingTour />
-      </Suspense>
-
-      {/* Toast Notifications */}
-      {/* Version History Panel */}
-      <VersionHistoryPanel
-        workbookId={workbookId!}
-        isOpen={showVersionHistory}
-        onClose={() => setShowVersionHistory(false)}
-        onPreview={(snapshot) => {
-          setDiffSnapshot(snapshot);
-          setShowDiff(true);
-        }}
-        onRestore={(snapshot) => {
-          // Save current state first
-          const { createSnapshot } = useVersionStore.getState();
-          createSnapshot(workbookId!, getCurrentSnapshotData(), 'local-user', 'Local User', 'Before restore');
-
-          // Apply snapshot data
-          const state = useWorkbookStore.getState();
-          for (const [sheetId, sheetData] of Object.entries(snapshot.data.sheets)) {
-            if (state.sheets[sheetId]) {
-              for (const [key, cellData] of Object.entries(sheetData.cells as Record<string, Record<string, unknown>>)) {
-                const [r, c] = key.split(',').map(Number);
-                state.updateCell(sheetId, r, c, cellData as Parameters<typeof state.updateCell>[3]);
-              }
-            }
-          }
-          setShowVersionHistory(false);
-          setShowDiff(false);
-        }}
-      />
-
-      {/* Diff View (side panel next to version history) */}
-      {showDiff && diffSnapshot && showVersionHistory && (
-        <VersionDiffView
-          oldData={diffSnapshot.data}
-          newData={getCurrentSnapshotData()}
-          oldLabel={`v${diffSnapshot.version}`}
-          newLabel="Current"
-          onClose={() => { setShowDiff(false); setDiffSnapshot(null); }}
+        {/* Command Palette (⌘K) */}
+        <CommandPalette
+          isOpen={isCommandPaletteOpen}
+          onClose={() => setIsCommandPaletteOpen(false)}
         />
-      )}
 
-      {/* Preview Banner (top bar when previewing a version) */}
-      {previewSnapshot && (
-        <PreviewBanner
-          snapshot={previewSnapshot}
-          onCancel={() => {
-            // Restore original data
-            if (previewOriginalData) {
-              const state = useWorkbookStore.getState();
-              for (const [sheetId, sheetData] of Object.entries(previewOriginalData.sheets)) {
-                if (state.sheets[sheetId]) {
-                  for (const [key, cellData] of Object.entries(sheetData.cells as Record<string, Record<string, unknown>>)) {
-                    const [r, c] = key.split(',').map(Number);
-                    state.updateCell(sheetId, r, c, cellData as Parameters<typeof state.updateCell>[3]);
-                  }
+        {/* Find/Replace Dialog (lazy loaded) */}
+        <Suspense fallback={null}>
+          <FindReplaceDialog />
+        </Suspense>
+
+        {/* Crash Recovery Banner */}
+        <Suspense fallback={null}>
+          <CrashRecoveryBanner />
+        </Suspense>
+
+        {/* Onboarding Tour (lazy) */}
+        <Suspense fallback={null}>
+          <OnboardingTour />
+        </Suspense>
+
+        {/* Toast Notifications */}
+        {/* Version History Panel */}
+        <VersionHistoryPanel
+          workbookId={workbookId!}
+          isOpen={showVersionHistory}
+          onClose={() => setShowVersionHistory(false)}
+          onPreview={(snapshot) => {
+            setDiffSnapshot(snapshot);
+            setShowDiff(true);
+          }}
+          onRestore={(snapshot) => {
+            // Save current state first
+            const { createSnapshot } = useVersionStore.getState();
+            createSnapshot(
+              workbookId!,
+              getCurrentSnapshotData(),
+              'local-user',
+              'Local User',
+              'Before restore'
+            );
+
+            // Apply snapshot data
+            const state = useWorkbookStore.getState();
+            for (const [sheetId, sheetData] of Object.entries(snapshot.data.sheets)) {
+              if (state.sheets[sheetId]) {
+                for (const [key, cellData] of Object.entries(
+                  sheetData.cells as Record<string, Record<string, unknown>>
+                )) {
+                  const [r, c] = key.split(',').map(Number);
+                  state.updateCell(
+                    sheetId,
+                    r,
+                    c,
+                    cellData as Parameters<typeof state.updateCell>[3]
+                  );
                 }
               }
             }
-            setPreviewSnapshot(null);
-            setPreviewOriginalData(null);
-          }}
-          onRestore={() => {
-            setPreviewSnapshot(null);
-            setPreviewOriginalData(null);
+            setShowVersionHistory(false);
+            setShowDiff(false);
           }}
         />
-      )}
 
-      <ToastContainer />
+        {/* Diff View (side panel next to version history) */}
+        {showDiff && diffSnapshot && showVersionHistory && (
+          <VersionDiffView
+            oldData={diffSnapshot.data}
+            newData={getCurrentSnapshotData()}
+            oldLabel={`v${diffSnapshot.version}`}
+            newLabel="Current"
+            onClose={() => {
+              setShowDiff(false);
+              setDiffSnapshot(null);
+            }}
+          />
+        )}
 
-      {/* Floating toolbars & dialogs (lazy) */}
-      <Suspense fallback={null}>
-        <ShapeToolbar sheetId={activeSheetId} />
-        <PictureToolbar sheetId={activeSheetId} />
-        <PrintPreviewDialog
-          sheetId={activeSheetId}
-          isOpen={showPrintPreview}
-          onClose={() => setShowPrintPreview(false)}
-        />
-        <ProactiveAINotifications />
-      </Suspense>
-    </div>
+        {/* Preview Banner (top bar when previewing a version) */}
+        {previewSnapshot && (
+          <PreviewBanner
+            snapshot={previewSnapshot}
+            onCancel={() => {
+              // Restore original data
+              if (previewOriginalData) {
+                const state = useWorkbookStore.getState();
+                for (const [sheetId, sheetData] of Object.entries(previewOriginalData.sheets)) {
+                  if (state.sheets[sheetId]) {
+                    for (const [key, cellData] of Object.entries(
+                      sheetData.cells as Record<string, Record<string, unknown>>
+                    )) {
+                      const [r, c] = key.split(',').map(Number);
+                      state.updateCell(
+                        sheetId,
+                        r,
+                        c,
+                        cellData as Parameters<typeof state.updateCell>[3]
+                      );
+                    }
+                  }
+                }
+              }
+              setPreviewSnapshot(null);
+              setPreviewOriginalData(null);
+            }}
+            onRestore={() => {
+              setPreviewSnapshot(null);
+              setPreviewOriginalData(null);
+            }}
+          />
+        )}
+
+        <ToastContainer />
+
+        {/* Floating toolbars & dialogs (lazy) */}
+        <Suspense fallback={null}>
+          <ShapeToolbar sheetId={activeSheetId} />
+          <PictureToolbar sheetId={activeSheetId} />
+          <PrintPreviewDialog
+            sheetId={activeSheetId}
+            isOpen={showPrintPreview}
+            onClose={() => setShowPrintPreview(false)}
+          />
+          <ProactiveAINotifications />
+        </Suspense>
+      </div>
     </RealtimeProvider>
   );
 }

@@ -10,13 +10,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Sparkles,
-  AlertTriangle,
-  Lightbulb,
-  ArrowRight,
-  X,
-} from 'lucide-react';
+import { Sparkles, AlertTriangle, Lightbulb, ArrowRight, X } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useAIStore } from '../../stores/aiStore';
 
@@ -54,7 +48,8 @@ const ERROR_PATTERNS: Array<{
     pattern: /^#REF!/,
     errorType: '#REF!',
     message: 'Reference error - cell or range was deleted',
-    fixPrompt: 'This formula has a #REF! error because a referenced cell was deleted. Suggest how to fix it.',
+    fixPrompt:
+      'This formula has a #REF! error because a referenced cell was deleted. Suggest how to fix it.',
   },
   {
     pattern: /^#VALUE!/,
@@ -66,7 +61,8 @@ const ERROR_PATTERNS: Array<{
     pattern: /^#NAME\?/,
     errorType: '#NAME?',
     message: 'Unknown function or name',
-    fixPrompt: 'This formula has a #NAME? error - likely a typo in function name. Suggest the correct function.',
+    fixPrompt:
+      'This formula has a #NAME? error - likely a typo in function name. Suggest the correct function.',
   },
   {
     pattern: /^#DIV\/0!/,
@@ -152,7 +148,7 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
       const cellValue = cell?.value;
 
       if (typeof cellValue === 'string' && cellValue.startsWith('#')) {
-        const errorMatch = ERROR_PATTERNS.find(p => p.pattern.test(cellValue));
+        const errorMatch = ERROR_PATTERNS.find((p) => p.pattern.test(cellValue));
         if (errorMatch) {
           newSuggestions.push({
             id: `error-${errorMatch.errorType}`,
@@ -167,7 +163,7 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
 
     // Check for formula completion hints
     if (formula.startsWith('=')) {
-      const completionMatch = COMPLETION_PATTERNS.find(p => p.pattern.test(formula));
+      const completionMatch = COMPLETION_PATTERNS.find((p) => p.pattern.test(formula));
       if (completionMatch) {
         newSuggestions.push({
           id: `completion-${formula}`,
@@ -188,7 +184,11 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
       }
 
       // Check for potential optimizations
-      if (formula.includes('VLOOKUP') && !formula.includes('IFERROR') && !formula.includes('IFNA')) {
+      if (
+        formula.includes('VLOOKUP') &&
+        !formula.includes('IFERROR') &&
+        !formula.includes('IFNA')
+      ) {
         newSuggestions.push({
           id: 'vlookup-error-handling',
           type: 'optimization',
@@ -212,34 +212,34 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
     }
 
     // Filter dismissed suggestions
-    setSuggestions(newSuggestions.filter(s => !dismissed.has(s.id)));
+    setSuggestions(newSuggestions.filter((s) => !dismissed.has(s.id)));
   }, [formula, activeSheetId, sheets, cellRow, cellCol, dismissed]);
 
   // Handle suggestion action
-  const handleAction = useCallback((suggestion: InlineSuggestion) => {
-    if (suggestion.prompt) {
-      openPanel();
-      setCurrentInput(suggestion.prompt);
-    }
-    if (suggestion.autoFix) {
-      suggestion.autoFix();
-    }
-  }, [openPanel, setCurrentInput]);
+  const handleAction = useCallback(
+    (suggestion: InlineSuggestion) => {
+      if (suggestion.prompt) {
+        openPanel();
+        setCurrentInput(suggestion.prompt);
+      }
+      if (suggestion.autoFix) {
+        suggestion.autoFix();
+      }
+    },
+    [openPanel, setCurrentInput]
+  );
 
   // Dismiss suggestion
   const handleDismiss = useCallback((id: string) => {
-    setDismissed(prev => new Set([...prev, id]));
+    setDismissed((prev) => new Set([...prev, id]));
   }, []);
 
   if (suggestions.length === 0) return null;
 
   return (
     <div className="inline-ai-suggestions">
-      {suggestions.map(suggestion => (
-        <div
-          key={suggestion.id}
-          className={`inline-suggestion ${suggestion.type}`}
-        >
+      {suggestions.map((suggestion) => (
+        <div key={suggestion.id} className={`inline-suggestion ${suggestion.type}`}>
           <div className="inline-suggestion-icon">
             {suggestion.type === 'error_fix' && <AlertTriangle size={12} />}
             {suggestion.type === 'formula_completion' && <Lightbulb size={12} />}
@@ -248,7 +248,8 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
           </div>
           <span className="inline-suggestion-message">{suggestion.message}</span>
           {suggestion.action && (
-            <button type="button"
+            <button
+              type="button"
               className="inline-suggestion-action"
               onClick={() => handleAction(suggestion)}
             >
@@ -256,7 +257,8 @@ export const InlineAISuggestions: React.FC<InlineAISuggestionsProps> = ({
               <ArrowRight size={10} />
             </button>
           )}
-          <button type="button"
+          <button
+            type="button"
             className="inline-suggestion-dismiss"
             onClick={() => handleDismiss(suggestion.id)}
           >
@@ -299,7 +301,13 @@ export const FormulaBarAIHint: React.FC<{ formula: string }> = ({ formula }) => 
     <div className="formula-bar-ai-hint">
       <Sparkles size={12} />
       <span>{hint}</span>
-      <button type="button" onClick={() => { openPanel(); setCurrentInput('Help me with this formula: ' + formula); }}>
+      <button
+        type="button"
+        onClick={() => {
+          openPanel();
+          setCurrentInput('Help me with this formula: ' + formula);
+        }}
+      >
         Ask AI
       </button>
     </div>

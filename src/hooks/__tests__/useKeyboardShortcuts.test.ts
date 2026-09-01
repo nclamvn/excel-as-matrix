@@ -422,7 +422,7 @@ describe('useKeyboardShortcuts', () => {
     });
 
     it('includes common shortcuts', () => {
-      const descriptions = KEYBOARD_SHORTCUTS.map(s => s.description);
+      const descriptions = KEYBOARD_SHORTCUTS.map((s) => s.description);
 
       expect(descriptions).toContain('Copy');
       expect(descriptions).toContain('Paste');

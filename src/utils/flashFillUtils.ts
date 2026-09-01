@@ -248,11 +248,7 @@ function generateValueFromPattern(
   }
 }
 
-function generateExtractValue(
-  source: string,
-  allSources: string[],
-  examples: string[]
-): string {
+function generateExtractValue(source: string, allSources: string[], examples: string[]): string {
   // Find the first valid source-example pair to learn from
   for (let i = 0; i < Math.min(allSources.length, examples.length); i++) {
     const srcExample = allSources[i];
@@ -291,11 +287,7 @@ function generateExtractValue(
   return source.split(/\s+/)[0] || source;
 }
 
-function generateFormatValue(
-  source: string,
-  allSources: string[],
-  examples: string[]
-): string {
+function generateFormatValue(source: string, allSources: string[], examples: string[]): string {
   // Find the first valid source-example pair to learn the format
   for (let i = 0; i < Math.min(allSources.length, examples.length); i++) {
     const srcExample = allSources[i];
@@ -362,10 +354,7 @@ function toTitleCase(str: string): string {
 /**
  * Auto-detect and apply flash fill in one step
  */
-export function autoFlashFill(
-  sourceValues: string[],
-  exampleValues: string[]
-): FlashFillResult {
+export function autoFlashFill(sourceValues: string[], exampleValues: string[]): FlashFillResult {
   const pattern = detectFlashFillPattern(sourceValues, exampleValues);
 
   if (!pattern) {

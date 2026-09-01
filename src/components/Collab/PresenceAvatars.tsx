@@ -47,7 +47,11 @@ export const PresenceAvatars: React.FC<PresenceAvatarsProps> = ({
   if (allUsers.length === 0) return null;
 
   return (
-    <div className={`presence-avatars ${className}`} data-testid="presence-avatars" style={{ display: 'flex', alignItems: 'center' }}>
+    <div
+      className={`presence-avatars ${className}`}
+      data-testid="presence-avatars"
+      style={{ display: 'flex', alignItems: 'center' }}
+    >
       <div style={{ display: 'flex', marginRight: 8 }}>
         {visibleUsers.map((user, index) => (
           <div
@@ -93,9 +97,7 @@ export const PresenceAvatars: React.FC<PresenceAvatarsProps> = ({
       </div>
 
       {showNames && (
-        <div style={{ fontSize: sizeConfig.font, color: '#6b7280' }}>
-          {activeCount} active
-        </div>
+        <div style={{ fontSize: sizeConfig.font, color: '#6b7280' }}>{activeCount} active</div>
       )}
     </div>
   );

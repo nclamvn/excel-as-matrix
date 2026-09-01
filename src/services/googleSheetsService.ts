@@ -28,9 +28,7 @@ export function isGoogleSheetsUrl(url: string): boolean {
  *
  * Requirements: Sheet must be shared as "Anyone with the link can view".
  */
-export async function fetchGoogleSheetAsFile(
-  spreadsheetId: string
-): Promise<File> {
+export async function fetchGoogleSheetAsFile(spreadsheetId: string): Promise<File> {
   // Try backend proxy first (avoids CORS), fall back to direct fetch
   const proxyUrl = `/api/google-sheets-proxy?spreadsheetId=${encodeURIComponent(spreadsheetId)}`;
 
@@ -46,9 +44,7 @@ export async function fetchGoogleSheetAsFile(
       throw new Error('Sheet not found. Please check the URL.');
     }
     const errorData = await response.json().catch(() => null);
-    throw new Error(
-      errorData?.error || `Failed to fetch Google Sheet (${response.status})`
-    );
+    throw new Error(errorData?.error || `Failed to fetch Google Sheet (${response.status})`);
   }
 
   const blob = await response.blob();

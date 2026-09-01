@@ -15,16 +15,15 @@ const isValidConfig =
   !supabaseUrl.includes('your-project') &&
   !supabaseAnonKey.includes('your-anon-key');
 
-export const supabase: SupabaseClient | null =
-  isValidConfig
-    ? createClient(supabaseUrl, supabaseAnonKey, {
-        realtime: {
-          params: {
-            eventsPerSecond: 10,
-          },
+export const supabase: SupabaseClient | null = isValidConfig
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      realtime: {
+        params: {
+          eventsPerSecond: 10,
         },
-      })
-    : null;
+      },
+    })
+  : null;
 
 /**
  * Get Supabase client, returning null if not configured.

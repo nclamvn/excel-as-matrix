@@ -34,12 +34,12 @@ export interface CrossWorkbookAction {
 }
 
 export type CrossWorkbookActionType =
-  | 'copy_range'      // Copy cells from source to target
-  | 'link_cells'      // Create live link between cells
-  | 'merge_sheets'    // Merge sheets from source into target
-  | 'sync_range'      // Keep a range synchronized
-  | 'aggregate'       // Aggregate data from multiple workbooks
-  | 'lookup';         // Cross-workbook VLOOKUP
+  | 'copy_range' // Copy cells from source to target
+  | 'link_cells' // Create live link between cells
+  | 'merge_sheets' // Merge sheets from source into target
+  | 'sync_range' // Keep a range synchronized
+  | 'aggregate' // Aggregate data from multiple workbooks
+  | 'lookup'; // Cross-workbook VLOOKUP
 
 export interface CrossWorkbookActionConfig {
   sourceSheet?: string;
@@ -71,7 +71,10 @@ export interface CrossWorkbookResult {
 
 export class CrossWorkbookManager {
   private registry = new Map<string, WorkbookRef>();
-  private links = new Map<string, { source: string; target: string; sourceRange: string; targetRange: string }>();
+  private links = new Map<
+    string,
+    { source: string; target: string; sourceRange: string; targetRange: string }
+  >();
 
   /**
    * Register a workbook for cross-workbook operations
@@ -132,11 +135,23 @@ export class CrossWorkbookManager {
 
     if (!sourceWb) {
       errors.push(`Source workbook not found: ${action.sourceWorkbook}`);
-      return { success: false, action: action.type, cellsAffected: 0, errors, duration: Date.now() - startTime };
+      return {
+        success: false,
+        action: action.type,
+        cellsAffected: 0,
+        errors,
+        duration: Date.now() - startTime,
+      };
     }
     if (!targetWb) {
       errors.push(`Target workbook not found: ${action.targetWorkbook}`);
-      return { success: false, action: action.type, cellsAffected: 0, errors, duration: Date.now() - startTime };
+      return {
+        success: false,
+        action: action.type,
+        cellsAffected: 0,
+        errors,
+        duration: Date.now() - startTime,
+      };
     }
 
     try {
@@ -237,9 +252,7 @@ export class CrossWorkbookManager {
     return this.executeCopyRange(source, target, config);
   }
 
-  private async executeAggregate(
-    _config: CrossWorkbookActionConfig
-  ): Promise<number> {
+  private async executeAggregate(_config: CrossWorkbookActionConfig): Promise<number> {
     // Aggregate data across all registered workbooks
     // e.g., SUM all A1 values from every workbook
     return this.registry.size;
@@ -261,7 +274,13 @@ export class CrossWorkbookManager {
   /**
    * Get all active links
    */
-  getLinks(): Array<{ id: string; source: string; target: string; sourceRange: string; targetRange: string }> {
+  getLinks(): Array<{
+    id: string;
+    source: string;
+    target: string;
+    sourceRange: string;
+    targetRange: string;
+  }> {
     return Array.from(this.links.entries()).map(([id, link]) => ({ id, ...link }));
   }
 

@@ -193,24 +193,15 @@ export const CalibrationChart: React.FC<CalibrationChartProps> = ({
       {/* Legend */}
       <div className="calibration-chart__legend">
         <div className="calibration-chart__legend-item">
-          <span
-            className="calibration-chart__legend-line"
-            style={{ backgroundColor: '#6b7280' }}
-          />
+          <span className="calibration-chart__legend-line" style={{ backgroundColor: '#6b7280' }} />
           <span>Perfect Calibration</span>
         </div>
         <div className="calibration-chart__legend-item">
-          <span
-            className="calibration-chart__legend-dot"
-            style={{ backgroundColor: '#22c55e' }}
-          />
+          <span className="calibration-chart__legend-dot" style={{ backgroundColor: '#22c55e' }} />
           <span>Well Calibrated</span>
         </div>
         <div className="calibration-chart__legend-item">
-          <span
-            className="calibration-chart__legend-dot"
-            style={{ backgroundColor: '#f97316' }}
-          />
+          <span className="calibration-chart__legend-dot" style={{ backgroundColor: '#f97316' }} />
           <span>Needs Adjustment</span>
         </div>
       </div>
@@ -303,9 +294,7 @@ export const MiniCalibration: React.FC<MiniCalibrationProps> = ({
       style={{ '--cal-color': color } as React.CSSProperties}
     >
       <span className="mini-calibration__icon">🎯</span>
-      <span className="mini-calibration__value">
-        {Math.round(calibration * 100)}%
-      </span>
+      <span className="mini-calibration__value">{Math.round(calibration * 100)}%</span>
       <span className="mini-calibration__trend">{trendIcon}</span>
     </div>
   );
@@ -342,11 +331,8 @@ export const CalibrationStatusBar: React.FC<CalibrationStatusBarProps> = ({
             key={i}
             className="calibration-status-bar__segment"
             style={{
-              backgroundColor: bucket.sampleCount === 0
-                ? '#e5e7eb'
-                : bucket.isCalibrated
-                  ? '#22c55e'
-                  : '#f97316',
+              backgroundColor:
+                bucket.sampleCount === 0 ? '#e5e7eb' : bucket.isCalibrated ? '#22c55e' : '#f97316',
             }}
             title={`${Math.round(bucket.range[0] * 100)}-${Math.round(bucket.range[1] * 100)}%: ${bucket.sampleCount} samples`}
           />

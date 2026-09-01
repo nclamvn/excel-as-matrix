@@ -15,10 +15,7 @@ interface CreatePivotDialogProps {
   onClose: () => void;
 }
 
-export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({ isOpen, onClose }) => {
   const { sheets, activeSheetId, getCellValue } = useWorkbookStore();
   const selectionRange = useSelectionStore((s) => s.selectionRange);
   const { createPivotTable } = usePivotStore();
@@ -58,9 +55,10 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
 
       for (let col = startCol; col <= endCol; col++) {
         const headerValue = getCellValue(sourceSheet, startRow, col);
-        const headerStr = headerValue !== null && headerValue !== undefined
-          ? String(headerValue)
-          : `Column ${String.fromCharCode(65 + col)}`;
+        const headerStr =
+          headerValue !== null && headerValue !== undefined
+            ? String(headerValue)
+            : `Column ${String.fromCharCode(65 + col)}`;
 
         // Detect data type from first data row
         const firstDataValue = getCellValue(sourceSheet, startRow + 1, col);
@@ -70,7 +68,11 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
           dataType = 'number';
         } else if (typeof firstDataValue === 'boolean') {
           dataType = 'boolean';
-        } else if (firstDataValue && typeof firstDataValue === 'string' && !isNaN(Date.parse(firstDataValue))) {
+        } else if (
+          firstDataValue &&
+          typeof firstDataValue === 'string' &&
+          !isNaN(Date.parse(firstDataValue))
+        ) {
           dataType = 'date';
         }
 
@@ -142,7 +144,7 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
 
   return (
     <div className="pivot-dialog-overlay" onClick={onClose}>
-      <div className="pivot-dialog" onClick={e => e.stopPropagation()}>
+      <div className="pivot-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="pivot-dialog-header">
           <div className="pivot-dialog-title">
             <Table2 size={20} />
@@ -166,7 +168,7 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
             <input
               type="text"
               value={pivotName}
-              onChange={e => setPivotName(e.target.value)}
+              onChange={(e) => setPivotName(e.target.value)}
               className="pivot-dialog-input"
               placeholder="Enter pivot table name"
             />
@@ -178,10 +180,10 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
               <label>Sheet:</label>
               <select
                 value={sourceSheet}
-                onChange={e => setSourceSheet(e.target.value)}
+                onChange={(e) => setSourceSheet(e.target.value)}
                 className="pivot-dialog-select"
               >
-                {Object.values(sheets).map(sheet => (
+                {Object.values(sheets).map((sheet) => (
                   <option key={sheet.id} value={sheet.id}>
                     {sheet.name}
                   </option>
@@ -193,7 +195,7 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
               <input
                 type="text"
                 value={sourceRange}
-                onChange={e => setSourceRange(e.target.value.toUpperCase())}
+                onChange={(e) => setSourceRange(e.target.value.toUpperCase())}
                 className="pivot-dialog-input"
                 placeholder="e.g., A1:H100"
               />
@@ -207,12 +209,10 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
                 Detected Fields ({detectedFields.length})
               </h3>
               <div className="pivot-detected-fields">
-                {detectedFields.map(field => (
+                {detectedFields.map((field) => (
                   <div key={field.id} className="pivot-detected-field">
                     <span className="field-name">{field.name}</span>
-                    <span className={`field-type type-${field.dataType}`}>
-                      {field.dataType}
-                    </span>
+                    <span className={`field-type type-${field.dataType}`}>{field.dataType}</span>
                   </div>
                 ))}
               </div>
@@ -247,10 +247,10 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
                 <label>Sheet:</label>
                 <select
                   value={targetSheet}
-                  onChange={e => setTargetSheet(e.target.value)}
+                  onChange={(e) => setTargetSheet(e.target.value)}
                   className="pivot-dialog-select"
                 >
-                  {Object.values(sheets).map(sheet => (
+                  {Object.values(sheets).map((sheet) => (
                     <option key={sheet.id} value={sheet.id}>
                       {sheet.name}
                     </option>
@@ -264,7 +264,7 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
               <input
                 type="text"
                 value={targetCell}
-                onChange={e => setTargetCell(e.target.value.toUpperCase())}
+                onChange={(e) => setTargetCell(e.target.value.toUpperCase())}
                 className="pivot-dialog-input"
                 placeholder="e.g., A1"
               />
@@ -276,7 +276,8 @@ export const CreatePivotDialog: React.FC<CreatePivotDialogProps> = ({
           <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="pivot-btn-primary"
             onClick={handleCreate}
             disabled={detectedFields.length === 0}

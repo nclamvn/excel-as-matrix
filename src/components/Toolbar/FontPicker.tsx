@@ -42,16 +42,11 @@ export const FontPicker: React.FC<FontPickerProps> = ({ value, onChange }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filteredFonts = FONTS.filter(f =>
-    f.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredFonts = FONTS.filter((f) => f.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="font-picker" ref={ref}>
-      <button type="button"
-        className="font-picker-trigger"
-        onClick={() => setOpen(!isOpen)}
-      >
+      <button type="button" className="font-picker-trigger" onClick={() => setOpen(!isOpen)}>
         <span style={{ fontFamily: value }}>{value}</span>
         <ChevronDown className="w-3 h-3" />
       </button>
@@ -67,8 +62,9 @@ export const FontPicker: React.FC<FontPickerProps> = ({ value, onChange }) => {
             autoFocus
           />
           <div className="font-list">
-            {filteredFonts.map(font => (
-              <button type="button"
+            {filteredFonts.map((font) => (
+              <button
+                type="button"
                 key={font}
                 className={`font-option ${font === value ? 'selected' : ''}`}
                 style={{ fontFamily: font }}

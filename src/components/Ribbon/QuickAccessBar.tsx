@@ -24,7 +24,8 @@ const QuickAccessButton: React.FC<QuickAccessButtonProps> = ({
 
   return (
     <div className="relative">
-      <button type="button"
+      <button
+        type="button"
         ref={buttonRef}
         className="quick-access-bar__btn"
         onClick={onClick}
@@ -35,11 +36,7 @@ const QuickAccessButton: React.FC<QuickAccessButtonProps> = ({
         <Icon />
       </button>
       {showTooltip && buttonRef.current && (
-        <PremiumTooltip
-          title={tooltip}
-          shortcut={shortcut}
-          anchorEl={buttonRef.current}
-        />
+        <PremiumTooltip title={tooltip} shortcut={shortcut} anchorEl={buttonRef.current} />
       )}
     </div>
   );
@@ -90,41 +87,15 @@ export const QuickAccessBar: React.FC = () => {
   return (
     <div className="quick-access-bar">
       <div className="quick-access-bar__actions">
-        <QuickAccessButton
-          icon={Save}
-          tooltip="Save"
-          shortcut="Ctrl+S"
-          onClick={handleSave}
-        />
-        <QuickAccessButton
-          icon={Undo2}
-          tooltip="Undo"
-          shortcut="Ctrl+Z"
-          onClick={handleUndo}
-        />
-        <QuickAccessButton
-          icon={Redo2}
-          tooltip="Redo"
-          shortcut="Ctrl+Y"
-          onClick={handleRedo}
-        />
+        <QuickAccessButton icon={Save} tooltip="Save" shortcut="Ctrl+S" onClick={handleSave} />
+        <QuickAccessButton icon={Undo2} tooltip="Undo" shortcut="Ctrl+Z" onClick={handleUndo} />
+        <QuickAccessButton icon={Redo2} tooltip="Redo" shortcut="Ctrl+Y" onClick={handleRedo} />
         <div className="quick-access-bar__divider" />
-        <QuickAccessButton
-          icon={Printer}
-          tooltip="Print"
-          shortcut="Ctrl+P"
-          onClick={handlePrint}
-        />
-        <QuickAccessButton
-          icon={Mail}
-          tooltip="Share via Email"
-          onClick={handleShare}
-        />
+        <QuickAccessButton icon={Printer} tooltip="Print" shortcut="Ctrl+P" onClick={handlePrint} />
+        <QuickAccessButton icon={Mail} tooltip="Share via Email" onClick={handleShare} />
       </div>
 
-      <span className="quick-access-bar__title">
-        {workbookName || 'Untitled Workbook'}
-      </span>
+      <span className="quick-access-bar__title">{workbookName || 'Untitled Workbook'}</span>
     </div>
   );
 };

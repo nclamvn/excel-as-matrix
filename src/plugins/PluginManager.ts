@@ -26,24 +26,24 @@ export interface PluginManifest {
 }
 
 export type PluginCategory =
-  | 'data'         // Data connectors, import/export
-  | 'analysis'     // Statistical, ML, visualization
-  | 'formatting'   // Themes, templates, styles
+  | 'data' // Data connectors, import/export
+  | 'analysis' // Statistical, ML, visualization
+  | 'formatting' // Themes, templates, styles
   | 'productivity' // Automation, shortcuts
-  | 'integration'  // External services (Slack, email)
-  | 'ai'           // AI-powered features
+  | 'integration' // External services (Slack, email)
+  | 'ai' // AI-powered features
   | 'other';
 
 export type PluginPermission =
-  | 'cells:read'      // Read cell values
-  | 'cells:write'     // Write cell values
-  | 'sheets:read'     // Read sheet metadata
-  | 'sheets:write'    // Create/delete sheets
-  | 'ui:toolbar'      // Add toolbar buttons
-  | 'ui:sidebar'      // Add sidebar panels
-  | 'ui:dialog'       // Show dialogs
-  | 'network:fetch'   // Make HTTP requests
-  | 'storage:local';  // Local storage access
+  | 'cells:read' // Read cell values
+  | 'cells:write' // Write cell values
+  | 'sheets:read' // Read sheet metadata
+  | 'sheets:write' // Create/delete sheets
+  | 'ui:toolbar' // Add toolbar buttons
+  | 'ui:sidebar' // Add sidebar panels
+  | 'ui:dialog' // Show dialogs
+  | 'network:fetch' // Make HTTP requests
+  | 'storage:local'; // Local storage access
 
 export interface PluginToolbarItem {
   id: string;

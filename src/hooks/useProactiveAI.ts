@@ -4,11 +4,7 @@
 
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useWorkbookStore } from '../stores/workbookStore';
-import {
-  proactiveEngine,
-  ProactiveSuggestion,
-  ScanResult,
-} from '../proactive';
+import { proactiveEngine, ProactiveSuggestion, ScanResult } from '../proactive';
 import type { SheetData, CellData, ColumnInfo } from '../proactive/types';
 
 // Constants for grid size estimation
@@ -39,9 +35,9 @@ export function useProactiveAI() {
   const [isScanning, setIsScanning] = useState(false);
 
   // Get workbook state and actions
-  const sheets = useWorkbookStore(state => state.sheets);
-  const activeSheetId = useWorkbookStore(state => state.activeSheetId);
-  const updateCell = useWorkbookStore(state => state.updateCell);
+  const sheets = useWorkbookStore((state) => state.sheets);
+  const activeSheetId = useWorkbookStore((state) => state.activeSheetId);
+  const updateCell = useWorkbookStore((state) => state.updateCell);
 
   // Get current sheet
   const currentSheet = useMemo(() => {
@@ -106,62 +102,75 @@ export function useProactiveAI() {
   /**
    * Handle cell update callback from Proactive Engine
    */
-  const handleCellUpdate = useCallback((cellRef: string, value: unknown) => {
-    if (!activeSheetId) return;
+  const handleCellUpdate = useCallback(
+    (cellRef: string, value: unknown) => {
+      if (!activeSheetId) return;
 
-    const { row, col } = parseRef(cellRef);
-    updateCell(activeSheetId, row, col, { value: value as string | number | boolean | null });
-  }, [activeSheetId, updateCell]);
+      const { row, col } = parseRef(cellRef);
+      updateCell(activeSheetId, row, col, { value: value as string | number | boolean | null });
+    },
+    [activeSheetId, updateCell]
+  );
 
   /**
    * Handle row delete callback from Proactive Engine
    */
-  const handleRowDelete = useCallback((rows: number[]) => {
-    if (!activeSheetId) return;
-    // Mark cells as empty for deleted rows
-    const sortedRows = [...rows].sort((a, b) => b - a);
-    for (const row of sortedRows) {
-      const deleteColCount = detectColCount(useWorkbookStore.getState().sheets[activeSheetId]?.cells);
-      for (let col = 0; col < deleteColCount; col++) {
-        updateCell(activeSheetId, row, col, { value: null });
+  const handleRowDelete = useCallback(
+    (rows: number[]) => {
+      if (!activeSheetId) return;
+      // Mark cells as empty for deleted rows
+      const sortedRows = [...rows].sort((a, b) => b - a);
+      for (const row of sortedRows) {
+        const deleteColCount = detectColCount(
+          useWorkbookStore.getState().sheets[activeSheetId]?.cells
+        );
+        for (let col = 0; col < deleteColCount; col++) {
+          updateCell(activeSheetId, row, col, { value: null });
+        }
       }
-    }
-  }, [activeSheetId, updateCell]);
+    },
+    [activeSheetId, updateCell]
+  );
 
   /**
    * Handle format apply callback from Proactive Engine
    */
-  const handleFormatApply = useCallback((cells: string[], format: unknown) => {
-    if (!activeSheetId || !cells.length) return;
+  const handleFormatApply = useCallback(
+    (cells: string[], format: unknown) => {
+      if (!activeSheetId || !cells.length) return;
 
-    // Parse cell references and find the range
-    const parsedCells = cells.map(cell => {
-      const match = cell.match(/^([A-Z]+)(\d+)$/i);
-      if (!match) return null;
+      // Parse cell references and find the range
+      const parsedCells = cells
+        .map((cell) => {
+          const match = cell.match(/^([A-Z]+)(\d+)$/i);
+          if (!match) return null;
 
-      let col = 0;
-      const colStr = match[1].toUpperCase();
-      for (let i = 0; i < colStr.length; i++) {
-        col = col * 26 + (colStr.charCodeAt(i) - 64);
-      }
-      return { row: parseInt(match[2]) - 1, col: col - 1 };
-    }).filter(Boolean) as { row: number; col: number }[];
+          let col = 0;
+          const colStr = match[1].toUpperCase();
+          for (let i = 0; i < colStr.length; i++) {
+            col = col * 26 + (colStr.charCodeAt(i) - 64);
+          }
+          return { row: parseInt(match[2]) - 1, col: col - 1 };
+        })
+        .filter(Boolean) as { row: number; col: number }[];
 
-    if (parsedCells.length === 0) return;
+      if (parsedCells.length === 0) return;
 
-    // Find bounding range
-    const minRow = Math.min(...parsedCells.map(c => c.row));
-    const maxRow = Math.max(...parsedCells.map(c => c.row));
-    const minCol = Math.min(...parsedCells.map(c => c.col));
-    const maxCol = Math.max(...parsedCells.map(c => c.col));
+      // Find bounding range
+      const minRow = Math.min(...parsedCells.map((c) => c.row));
+      const maxRow = Math.max(...parsedCells.map((c) => c.row));
+      const minCol = Math.min(...parsedCells.map((c) => c.col));
+      const maxCol = Math.max(...parsedCells.map((c) => c.col));
 
-    // Apply format to the range
-    const { applyFormatToRange } = useWorkbookStore.getState();
-    applyFormatToRange(
-      { start: { row: minRow, col: minCol }, end: { row: maxRow, col: maxCol } },
-      format as Record<string, unknown>
-    );
-  }, [activeSheetId]);
+      // Apply format to the range
+      const { applyFormatToRange } = useWorkbookStore.getState();
+      applyFormatToRange(
+        { start: { row: minRow, col: minCol }, end: { row: maxRow, col: maxCol } },
+        format as Record<string, unknown>
+      );
+    },
+    [activeSheetId]
+  );
 
   /**
    * Setup event listener for scan results
@@ -208,20 +217,30 @@ export function useProactiveAI() {
     return () => {
       proactiveEngine.stop();
     };
-  }, [currentSheet, activeSheetId, getSheetData, handleCellUpdate, handleRowDelete, handleFormatApply]);
+  }, [
+    currentSheet,
+    activeSheetId,
+    getSheetData,
+    handleCellUpdate,
+    handleRowDelete,
+    handleFormatApply,
+  ]);
 
   /**
    * Record user action for pattern detection
    */
-  const recordAction = useCallback((actionType: string, cellRef?: string, value?: unknown, formula?: string) => {
-    proactiveEngine.recordAction({
-      type: actionType,
-      timestamp: Date.now(),
-      cellRef,
-      value,
-      formula,
-    });
-  }, []);
+  const recordAction = useCallback(
+    (actionType: string, cellRef?: string, value?: unknown, formula?: string) => {
+      proactiveEngine.recordAction({
+        type: actionType,
+        timestamp: Date.now(),
+        cellRef,
+        value,
+        formula,
+      });
+    },
+    []
+  );
 
   /**
    * Execute a suggestion action

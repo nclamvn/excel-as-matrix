@@ -3,8 +3,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { Hono } from 'hono';
+import { serverConfig } from '../config/env.js';
+import { toProxyErrorStatus } from '../http/upstreamStatus.js';
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+const STRIPE_SECRET_KEY = serverConfig.stripeSecretKey;
 const STRIPE_API = 'https://api.stripe.com/v1';
 
 export const billingRouter = new Hono();
@@ -15,7 +17,7 @@ export const billingRouter = new Hono();
 
 billingRouter.post('/checkout', async (c) => {
   if (!STRIPE_SECRET_KEY) {
-    return c.json({ error: 'Stripe not configured. Set STRIPE_SECRET_KEY.' }, 500);
+    return c.json({ error: 'Billing service is not configured on this server' }, 503);
   }
 
   const { priceId, planId, billingCycle, successUrl, cancelUrl } = await c.req.json();
@@ -48,7 +50,10 @@ billingRouter.post('/checkout', async (c) => {
     if (!response.ok) {
       const error = await response.json();
       console.error('Stripe error:', error);
-      return c.json({ error: error.error?.message || 'Stripe error' }, response.status);
+      return c.json(
+        { error: error.error?.message || 'Stripe error' },
+        toProxyErrorStatus(response.status)
+      );
     }
 
     const session = await response.json();
@@ -65,7 +70,7 @@ billingRouter.post('/checkout', async (c) => {
 
 billingRouter.post('/portal', async (c) => {
   if (!STRIPE_SECRET_KEY) {
-    return c.json({ error: 'Stripe not configured' }, 500);
+    return c.json({ error: 'Billing service is not configured on this server' }, 503);
   }
 
   const { customerId, returnUrl } = await c.req.json();
@@ -90,7 +95,10 @@ billingRouter.post('/portal', async (c) => {
 
     if (!response.ok) {
       const error = await response.json();
-      return c.json({ error: error.error?.message || 'Stripe error' }, response.status);
+      return c.json(
+        { error: error.error?.message || 'Stripe error' },
+        toProxyErrorStatus(response.status)
+      );
     }
 
     const session = await response.json();
@@ -106,6 +114,10 @@ billingRouter.post('/portal', async (c) => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 billingRouter.post('/webhook', async (c) => {
+  if (!STRIPE_SECRET_KEY || !serverConfig.stripeWebhookSecret) {
+    return c.json({ error: 'Stripe webhook service is not configured on this server' }, 503);
+  }
+
   const body = await c.req.text();
   // In production: verify stripe-signature header with webhook secret
   // const sig = c.req.header('stripe-signature');

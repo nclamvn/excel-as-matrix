@@ -4,7 +4,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { nlFormulaEngine } from '../../nlformula';
-import type { FormulaExplanation as FormulaExplanationType, CellContext } from '../../nlformula/types';
+import type {
+  FormulaExplanation as FormulaExplanationType,
+  CellContext,
+} from '../../nlformula/types';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -95,7 +98,8 @@ export const FormulaExplanation: React.FC<FormulaExplanationProps> = ({
       <p className="formula-explanation__summary">{explanation.summary}</p>
 
       {/* Steps toggle */}
-      <button type="button"
+      <button
+        type="button"
         className="formula-explanation__toggle"
         onClick={() => setShowSteps(!showSteps)}
       >
@@ -110,13 +114,9 @@ export const FormulaExplanation: React.FC<FormulaExplanationProps> = ({
               <span className="formula-explanation__step-part">
                 <code>{step.part}</code>
               </span>
-              <span className="formula-explanation__step-text">
-                {step.explanation}
-              </span>
+              <span className="formula-explanation__step-text">{step.explanation}</span>
               {step.result !== undefined && (
-                <span className="formula-explanation__step-result">
-                  → {String(step.result)}
-                </span>
+                <span className="formula-explanation__step-result">→ {String(step.result)}</span>
               )}
             </li>
           ))}
@@ -130,9 +130,7 @@ export const FormulaExplanation: React.FC<FormulaExplanationProps> = ({
           <div className="formula-explanation__function-list">
             {explanation.functions.map((func) => (
               <div key={func.name} className="formula-explanation__function">
-                <span className="formula-explanation__function-name">
-                  {func.name}
-                </span>
+                <span className="formula-explanation__function-name">{func.name}</span>
                 <span className="formula-explanation__function-desc">
                   {language === 'vi' ? func.descriptionVi || func.description : func.description}
                 </span>
@@ -154,10 +152,7 @@ interface CompactExplanationProps {
   context?: CellContext;
 }
 
-export const CompactExplanation: React.FC<CompactExplanationProps> = ({
-  formula,
-  context,
-}) => {
+export const CompactExplanation: React.FC<CompactExplanationProps> = ({ formula, context }) => {
   const [summary, setSummary] = useState<string>('');
 
   useEffect(() => {

@@ -15,10 +15,7 @@ import type {
 
 interface ClarificationDialogProps {
   request: ClarificationRequest;
-  onRespond: (response: {
-    selectedOptionId?: string;
-    freeTextResponse?: string;
-  }) => void;
+  onRespond: (response: { selectedOptionId?: string; freeTextResponse?: string }) => void;
   onSkip?: () => void;
   className?: string;
 }
@@ -50,28 +47,21 @@ export const ClarificationDialog: React.FC<ClarificationDialogProps> = ({
     }
   };
 
-  const canSubmit =
-    (showFreeText && freeText.length > 0) || selectedOption !== null;
+  const canSubmit = (showFreeText && freeText.length > 0) || selectedOption !== null;
 
   return (
     <div className={`clarification-dialog ${className}`}>
       {/* Header */}
       <div className="clarification-dialog__header">
-        <span className="clarification-dialog__icon">
-          {getTypeIcon(request.type)}
-        </span>
-        <span className="clarification-dialog__type">
-          {formatType(request.type)}
-        </span>
+        <span className="clarification-dialog__icon">{getTypeIcon(request.type)}</span>
+        <span className="clarification-dialog__type">{formatType(request.type)}</span>
       </div>
 
       {/* Question */}
       <h3 className="clarification-dialog__question">{request.question}</h3>
 
       {/* Context */}
-      {request.context && (
-        <p className="clarification-dialog__context">{request.context}</p>
-      )}
+      {request.context && <p className="clarification-dialog__context">{request.context}</p>}
 
       {/* Options */}
       {request.options && request.options.length > 0 && (
@@ -87,7 +77,8 @@ export const ClarificationDialog: React.FC<ClarificationDialogProps> = ({
 
           {/* Other option */}
           {request.allowFreeText && (
-            <button type="button"
+            <button
+              type="button"
               className={`clarification-option ${
                 showFreeText ? 'clarification-option--selected' : ''
               }`}
@@ -97,9 +88,7 @@ export const ClarificationDialog: React.FC<ClarificationDialogProps> = ({
               }}
             >
               <span className="clarification-option__label">Other...</span>
-              <span className="clarification-option__description">
-                Type a custom response
-              </span>
+              <span className="clarification-option__description">Type a custom response</span>
             </button>
           )}
         </div>
@@ -122,14 +111,12 @@ export const ClarificationDialog: React.FC<ClarificationDialogProps> = ({
       {/* Actions */}
       <div className="clarification-dialog__actions">
         {onSkip && !request.required && (
-          <button type="button"
-            className="clarification-dialog__skip"
-            onClick={onSkip}
-          >
+          <button type="button" className="clarification-dialog__skip" onClick={onSkip}>
             Skip
           </button>
         )}
-        <button type="button"
+        <button
+          type="button"
           className="clarification-dialog__submit"
           onClick={handleSubmit}
           disabled={!canSubmit}
@@ -157,20 +144,15 @@ const ClarificationOptionButton: React.FC<ClarificationOptionButtonProps> = ({
   onSelect,
 }) => {
   return (
-    <button type="button"
-      className={`clarification-option ${
-        selected ? 'clarification-option--selected' : ''
-      }`}
+    <button
+      type="button"
+      className={`clarification-option ${selected ? 'clarification-option--selected' : ''}`}
       onClick={onSelect}
     >
-      <span className="clarification-option__radio">
-        {selected ? '●' : '○'}
-      </span>
+      <span className="clarification-option__radio">{selected ? '●' : '○'}</span>
       <span className="clarification-option__label">{option.label}</span>
       {option.description && (
-        <span className="clarification-option__description">
-          {option.description}
-        </span>
+        <span className="clarification-option__description">{option.description}</span>
       )}
     </button>
   );
@@ -198,7 +180,8 @@ export const InlineClarification: React.FC<InlineClarificationProps> = ({
       <span className="inline-clarification__question">{question}</span>
       <div className="inline-clarification__options">
         {options.map((option, index) => (
-          <button type="button"
+          <button
+            type="button"
             key={index}
             className="inline-clarification__option"
             onClick={() => onSelect(option)}
@@ -233,7 +216,8 @@ export const QuickSuggestions: React.FC<QuickSuggestionsProps> = ({
       <span className="quick-suggestions__label">Suggestions:</span>
       <div className="quick-suggestions__list">
         {suggestions.map((suggestion, index) => (
-          <button type="button"
+          <button
+            type="button"
             key={index}
             className="quick-suggestions__item"
             onClick={() => onSelect(suggestion)}

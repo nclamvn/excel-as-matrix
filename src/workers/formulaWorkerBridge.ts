@@ -44,10 +44,13 @@ export interface CalculateResult {
 }
 
 // Serializable cell map for worker transfer
-export type SerializedCellMap = Record<string, {
-  value: string | number | boolean | null;
-  formula: string | null;
-}>;
+export type SerializedCellMap = Record<
+  string,
+  {
+    value: string | number | boolean | null;
+    formula: string | null;
+  }
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bridge Class
@@ -55,10 +58,13 @@ export type SerializedCellMap = Record<string, {
 
 class FormulaWorkerBridge {
   private worker: Worker | null = null;
-  private pendingRequests = new Map<string, {
-    resolve: (value: unknown) => void;
-    reject: (reason: unknown) => void;
-  }>();
+  private pendingRequests = new Map<
+    string,
+    {
+      resolve: (value: unknown) => void;
+      reject: (reason: unknown) => void;
+    }
+  >();
   private requestId = 0;
 
   // Initialize worker
@@ -66,10 +72,7 @@ class FormulaWorkerBridge {
     if (this.worker) return;
 
     try {
-      this.worker = new Worker(
-        new URL('./calc.worker.ts', import.meta.url),
-        { type: 'module' }
-      );
+      this.worker = new Worker(new URL('./calc.worker.ts', import.meta.url), { type: 'module' });
 
       this.worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
         const { id, type, payload } = event.data;
@@ -146,10 +149,7 @@ class FormulaWorkerBridge {
   }
 
   // Serialize cell data for transfer to worker
-  static serializeCells(
-    sheetId: string,
-    cells: Record<string, CellData>
-  ): SerializedCellMap {
+  static serializeCells(sheetId: string, cells: Record<string, CellData>): SerializedCellMap {
     const result: SerializedCellMap = {};
     for (const [key, cell] of Object.entries(cells)) {
       result[`${sheetId}:${key}`] = {

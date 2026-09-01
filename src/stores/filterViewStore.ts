@@ -19,7 +19,13 @@ interface FilterViewState {
 }
 
 interface FilterViewActions {
-  createView: (workbookId: string, sheetId: string, name: string, userId: string, userName: string) => string;
+  createView: (
+    workbookId: string,
+    sheetId: string,
+    name: string,
+    userId: string,
+    userName: string
+  ) => string;
   updateView: (workbookId: string, viewId: string, updates: Partial<FilterView>) => void;
   deleteView: (workbookId: string, viewId: string) => void;
   duplicateView: (workbookId: string, viewId: string, newName: string) => string | null;
@@ -163,7 +169,11 @@ export const useFilterViewStore = create<FilterViewState & FilterViewActions>()(
               ...state.views,
               [workbookId]: list.map((v) =>
                 v.id === viewId
-                  ? { ...v, filters: v.filters.filter((f) => f.column !== column), updatedAt: Date.now() }
+                  ? {
+                      ...v,
+                      filters: v.filters.filter((f) => f.column !== column),
+                      updatedAt: Date.now(),
+                    }
                   : v
               ),
             },

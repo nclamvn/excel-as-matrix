@@ -26,7 +26,7 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog orientation-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog orientation-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Text Orientation</h3>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -37,16 +37,13 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
         <div className="dialog-content">
           <div className="orientation-preview-section">
             <div className="angle-dial">
-              <div
-                className="dial-indicator"
-                style={{ transform: `rotate(${-angle}deg)` }}
-              />
+              <div className="dial-indicator" style={{ transform: `rotate(${-angle}deg)` }} />
               <div className="dial-text" style={{ transform: `rotate(${-angle}deg)` }}>
                 Text
               </div>
               {/* Degree markers */}
               <div className="degree-markers">
-                {presets.map(deg => (
+                {presets.map((deg) => (
                   <div
                     key={deg}
                     className={`degree-marker ${angle === deg ? 'active' : ''}`}
@@ -84,8 +81,9 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
           </div>
 
           <div className="preset-buttons">
-            {presets.map(deg => (
-              <button type="button"
+            {presets.map((deg) => (
+              <button
+                type="button"
                 key={deg}
                 className={`preset-btn ${angle === deg ? 'active' : ''}`}
                 onClick={() => setAngle(deg)}
@@ -97,7 +95,9 @@ export const TextOrientationDialog: React.FC<TextOrientationDialogProps> = ({
         </div>
 
         <div className="dialog-footer">
-          <button type="button" onClick={onClose}>Cancel</button>
+          <button type="button" onClick={onClose}>
+            Cancel
+          </button>
           <button type="button" className="primary" onClick={() => onApply(angle)}>
             OK
           </button>

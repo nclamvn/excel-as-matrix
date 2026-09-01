@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Plus, Copy, Trash2, Edit3, Eye, EyeOff,
-  Palette, ArrowLeft, ArrowRight, Lock
+  Plus,
+  Copy,
+  Trash2,
+  Edit3,
+  Eye,
+  EyeOff,
+  Palette,
+  ArrowLeft,
+  ArrowRight,
+  Lock,
 } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useUIStore } from '../../stores/uiStore';
@@ -15,12 +23,7 @@ interface SheetContextMenuProps {
   onClose: () => void;
 }
 
-export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
-  x,
-  y,
-  sheetId,
-  onClose,
-}) => {
+export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({ x, y, sheetId, onClose }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState('');
@@ -28,8 +31,15 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
   const [showProtectDialog, setShowProtectDialog] = useState(false);
 
   const {
-    addSheet, deleteSheet, renameSheet, duplicateSheet,
-    moveSheet, setTabColor, hideSheet, sheets, sheetOrder
+    addSheet,
+    deleteSheet,
+    renameSheet,
+    duplicateSheet,
+    moveSheet,
+    setTabColor,
+    hideSheet,
+    sheets,
+    sheetOrder,
   } = useWorkbookStore();
   const { showToast } = useUIStore();
 
@@ -160,8 +170,12 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
             }}
           />
           <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
-            <button type="button" onClick={submitRename} style={{ flex: 1, padding: '4px 8px' }}>OK</button>
-            <button type="button" onClick={onClose} style={{ flex: 1, padding: '4px 8px' }}>Cancel</button>
+            <button type="button" onClick={submitRename} style={{ flex: 1, padding: '4px 8px' }}>
+              OK
+            </button>
+            <button type="button" onClick={onClose} style={{ flex: 1, padding: '4px 8px' }}>
+              Cancel
+            </button>
           </div>
         </div>
       </div>
@@ -170,16 +184,13 @@ export const SheetContextMenu: React.FC<SheetContextMenuProps> = ({
 
   return (
     <>
-      <div
-        ref={ref}
-        className="sheet-context-menu"
-        style={{ left: x, top: y }}
-      >
+      <div ref={ref} className="sheet-context-menu" style={{ left: x, top: y }}>
         {menuItems.map((item) =>
           item.divider ? (
             <div key={item.id} className="menu-divider" />
           ) : (
-            <button type="button"
+            <button
+              type="button"
               key={item.id}
               className="menu-item"
               onClick={() => {

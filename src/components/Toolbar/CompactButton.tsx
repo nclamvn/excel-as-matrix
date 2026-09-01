@@ -40,7 +40,8 @@ export const CompactButton: React.FC<CompactButtonProps> = ({
 
   return (
     <div className="relative inline-flex">
-      <button type="button"
+      <button
+        type="button"
         ref={buttonRef}
         className={`compact-btn ${sizeClass} ${variantClass} ${dropdownClass} ${className}`}
         onClick={onClick}
@@ -102,7 +103,8 @@ export const CompactSplitButton: React.FC<CompactSplitButtonProps> = ({
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
-      <button type="button"
+      <button
+        type="button"
         className={`compact-btn compact-split-btn__main ${sizeClass} ${variantClass}`}
         onClick={onMainClick}
         disabled={disabled}
@@ -110,7 +112,8 @@ export const CompactSplitButton: React.FC<CompactSplitButtonProps> = ({
         {Icon && <Icon />}
         {label && <span className="compact-btn__label">{label}</span>}
       </button>
-      <button type="button"
+      <button
+        type="button"
         className="compact-split-btn__dropdown"
         onClick={onDropdownClick}
         disabled={disabled}
@@ -119,11 +122,7 @@ export const CompactSplitButton: React.FC<CompactSplitButtonProps> = ({
       </button>
 
       {showTooltip && tooltip && buttonRef.current && (
-        <PremiumTooltip
-          title={tooltip}
-          shortcut={shortcut}
-          anchorEl={buttonRef.current}
-        />
+        <PremiumTooltip title={tooltip} shortcut={shortcut} anchorEl={buttonRef.current} />
       )}
     </div>
   );

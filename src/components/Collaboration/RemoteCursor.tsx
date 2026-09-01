@@ -3,7 +3,10 @@
 // =============================================================================
 
 import React, { useEffect, useState } from 'react';
-import type { RemoteCursor as RemoteCursorType, CollaborationUser } from '../../collaboration/types';
+import type {
+  RemoteCursor as RemoteCursorType,
+  CollaborationUser,
+} from '../../collaboration/types';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -68,26 +71,22 @@ export const RemoteCursor: React.FC<RemoteCursorProps> = ({
   return (
     <div
       className={`remote-cursor ${isFading ? 'remote-cursor--fading' : ''} ${cursor.isTyping ? 'remote-cursor--typing' : ''}`}
-      style={{
-        left: position.x,
-        top: position.y,
-        width: cellWidth,
-        height: cellHeight,
-        '--cursor-color': user.color,
-      } as React.CSSProperties}
+      style={
+        {
+          left: position.x,
+          top: position.y,
+          width: cellWidth,
+          height: cellHeight,
+          '--cursor-color': user.color,
+        } as React.CSSProperties
+      }
     >
       {/* Cursor border */}
-      <div
-        className="remote-cursor__border"
-        style={{ borderColor: user.color }}
-      />
+      <div className="remote-cursor__border" style={{ borderColor: user.color }} />
 
       {/* User label */}
       {showLabel && (
-        <div
-          className="remote-cursor__label"
-          style={{ backgroundColor: user.color }}
-        >
+        <div className="remote-cursor__label" style={{ backgroundColor: user.color }}>
           <span className="remote-cursor__name">{user.name}</span>
           {cursor.isTyping && (
             <span className="remote-cursor__typing">
@@ -100,10 +99,7 @@ export const RemoteCursor: React.FC<RemoteCursorProps> = ({
       )}
 
       {/* Caret indicator */}
-      <div
-        className="remote-cursor__caret"
-        style={{ backgroundColor: user.color }}
-      />
+      <div className="remote-cursor__caret" style={{ backgroundColor: user.color }} />
     </div>
   );
 };
@@ -147,16 +143,9 @@ interface CursorLabelProps {
   isTyping?: boolean;
 }
 
-export const CursorLabel: React.FC<CursorLabelProps> = ({
-  user,
-  position,
-  isTyping = false,
-}) => {
+export const CursorLabel: React.FC<CursorLabelProps> = ({ user, position, isTyping = false }) => {
   return (
-    <div
-      className="cursor-label"
-      style={{ backgroundColor: user.color }}
-    >
+    <div className="cursor-label" style={{ backgroundColor: user.color }}>
       <span className="cursor-label__name">{user.name}</span>
       <span className="cursor-label__position">{position}</span>
       {isTyping && <span className="cursor-label__typing">typing...</span>}

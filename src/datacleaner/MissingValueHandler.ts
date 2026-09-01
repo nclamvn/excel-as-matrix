@@ -60,11 +60,7 @@ export class MissingValueHandler {
   /**
    * Suggest fill strategy based on column type and data
    */
-  private suggestStrategy(
-    _data: CleanerSheetData,
-    col: number,
-    columnType: string
-  ): FillStrategy {
+  private suggestStrategy(_data: CleanerSheetData, col: number, columnType: string): FillStrategy {
     // Check if column has a custom strategy
     if (this.config.strategies[col]) {
       return this.config.strategies[col];
@@ -122,9 +118,7 @@ export class MissingValueHandler {
    * Calculate mean of numeric values
    */
   private calculateMean(values: unknown[]): number | null {
-    const numbers = values
-      .map(v => parseFloat(String(v)))
-      .filter(n => !isNaN(n));
+    const numbers = values.map((v) => parseFloat(String(v))).filter((n) => !isNaN(n));
 
     if (numbers.length === 0) return null;
 
@@ -137,8 +131,8 @@ export class MissingValueHandler {
    */
   private calculateMedian(values: unknown[]): number | null {
     const numbers = values
-      .map(v => parseFloat(String(v)))
-      .filter(n => !isNaN(n))
+      .map((v) => parseFloat(String(v)))
+      .filter((n) => !isNaN(n))
       .sort((a, b) => a - b);
 
     if (numbers.length === 0) return null;
@@ -251,11 +245,7 @@ export class MissingValueHandler {
   /**
    * Forward fill: use previous non-empty value
    */
-  private forwardFill(
-    data: CleanerSheetData,
-    col: number,
-    missingRows: number[]
-  ): unknown[] {
+  private forwardFill(data: CleanerSheetData, col: number, missingRows: number[]): unknown[] {
     const values: unknown[] = [];
     let lastValue: unknown = null;
 
@@ -277,11 +267,7 @@ export class MissingValueHandler {
   /**
    * Backward fill: use next non-empty value
    */
-  private backwardFill(
-    data: CleanerSheetData,
-    col: number,
-    missingRows: number[]
-  ): unknown[] {
+  private backwardFill(data: CleanerSheetData, col: number, missingRows: number[]): unknown[] {
     const values: unknown[] = [];
 
     for (const row of missingRows) {
@@ -304,11 +290,7 @@ export class MissingValueHandler {
   /**
    * Linear interpolation for numeric values
    */
-  private interpolate(
-    data: CleanerSheetData,
-    col: number,
-    missingRows: number[]
-  ): unknown[] {
+  private interpolate(data: CleanerSheetData, col: number, missingRows: number[]): unknown[] {
     const values: unknown[] = [];
 
     for (const row of missingRows) {

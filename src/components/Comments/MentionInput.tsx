@@ -81,8 +81,7 @@ export const MentionInput: React.FC<MentionInputProps> = ({
       const textAfterCursor = value.slice(cursorPosition);
       const atIndex = textBeforeCursor.lastIndexOf('@');
 
-      const newValue =
-        textBeforeCursor.slice(0, atIndex) + `@${user.name} ` + textAfterCursor;
+      const newValue = textBeforeCursor.slice(0, atIndex) + `@${user.name} ` + textAfterCursor;
       const mentions = parseMentions(newValue);
       onChange(newValue, mentions);
       setShowSuggestions(false);
@@ -143,11 +142,7 @@ export const MentionInput: React.FC<MentionInputProps> = ({
               onMouseEnter={() => setSuggestionIndex(index)}
             >
               <div className="suggestion-avatar">
-                {user.avatar ? (
-                  <img src={user.avatar} alt="" />
-                ) : (
-                  user.name.charAt(0).toUpperCase()
-                )}
+                {user.avatar ? <img src={user.avatar} alt="" /> : user.name.charAt(0).toUpperCase()}
               </div>
               <div className="suggestion-info">
                 <span className="suggestion-name">{user.name}</span>

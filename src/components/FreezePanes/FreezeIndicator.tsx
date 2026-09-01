@@ -49,8 +49,7 @@ export const FreezeIndicator: React.FC<FreezeIndicatorProps> = ({
             top: headerHeight + frozenHeight,
             width: '100%',
             height: 2,
-            background:
-              'linear-gradient(to right, #6B7280 0%, #6B7280 50%, transparent 50%)',
+            background: 'linear-gradient(to right, #6B7280 0%, #6B7280 50%, transparent 50%)',
             backgroundSize: '8px 2px',
           }}
         />
@@ -64,8 +63,7 @@ export const FreezeIndicator: React.FC<FreezeIndicatorProps> = ({
             top: 0,
             width: 2,
             height: '100%',
-            background:
-              'linear-gradient(to bottom, #6B7280 0%, #6B7280 50%, transparent 50%)',
+            background: 'linear-gradient(to bottom, #6B7280 0%, #6B7280 50%, transparent 50%)',
             backgroundSize: '2px 8px',
           }}
         />

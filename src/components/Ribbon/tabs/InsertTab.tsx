@@ -3,8 +3,17 @@ import { RibbonGroup } from '../RibbonGroup';
 import { RibbonButton } from '../RibbonButton';
 import { RibbonDropdown } from '../RibbonDropdown';
 import {
-  Table, Image, Shapes, BarChart3, LineChart, PieChart,
-  Sparkles, Link, MessageSquare, Type, Sigma
+  Table,
+  Image,
+  Shapes,
+  BarChart3,
+  LineChart,
+  PieChart,
+  Sparkles,
+  Link,
+  MessageSquare,
+  Type,
+  Sigma,
 } from 'lucide-react';
 
 export const InsertTab: React.FC = () => {

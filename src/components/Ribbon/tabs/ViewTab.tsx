@@ -3,8 +3,16 @@ import { RibbonGroup } from '../RibbonGroup';
 import { RibbonButton } from '../RibbonButton';
 import { RibbonDropdown } from '../RibbonDropdown';
 import {
-  LayoutGrid, Columns, Eye, Maximize, ZoomIn, ZoomOut,
-  Snowflake, SplitSquareHorizontal, PanelLeft, FileText
+  LayoutGrid,
+  Columns,
+  Eye,
+  Maximize,
+  ZoomIn,
+  ZoomOut,
+  Snowflake,
+  SplitSquareHorizontal,
+  PanelLeft,
+  FileText,
 } from 'lucide-react';
 
 export const ViewTab: React.FC = () => {

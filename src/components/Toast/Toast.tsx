@@ -31,10 +31,7 @@ export const ToastContainer: React.FC = () => {
         >
           {getIcon(toast.type)}
           <span className="toast-message">{toast.message}</span>
-          <button type="button"
-            className="toast-dismiss"
-            onClick={() => dismissToast(toast.id)}
-          >
+          <button type="button" className="toast-dismiss" onClick={() => dismissToast(toast.id)}>
             <X size={14} />
           </button>
         </div>

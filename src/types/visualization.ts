@@ -777,7 +777,7 @@ export interface ChartTemplate {
   description: string;
   category: ChartTemplateCategory;
   chartType: ChartType;
-  thumbnail: string;  // Icon or preview image reference
+  thumbnail: string; // Icon or preview image reference
   colorScheme: string[];
   style: ChartStyle;
   legendConfig: LegendConfig;

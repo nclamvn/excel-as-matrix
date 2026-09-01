@@ -21,7 +21,7 @@ export const Ribbon: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [isCollapsed, setCollapsed] = useState(false);
 
-  const ActiveComponent = TABS.find(t => t.id === activeTab)?.component || HomeTab;
+  const ActiveComponent = TABS.find((t) => t.id === activeTab)?.component || HomeTab;
 
   return (
     <div className="ribbon">
@@ -33,7 +33,7 @@ export const Ribbon: React.FC = () => {
         </button>
 
         <div className="ribbon-tabs">
-          {TABS.map(tab => (
+          {TABS.map((tab) => (
             <RibbonTab
               key={tab.id}
               id={tab.id}
@@ -44,7 +44,8 @@ export const Ribbon: React.FC = () => {
           ))}
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           className="collapse-button"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? 'Expand Ribbon' : 'Collapse Ribbon'}

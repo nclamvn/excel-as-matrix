@@ -5,7 +5,9 @@ import { SheetContextMenu } from '../SheetTabs/SheetContextMenu';
 
 export const SheetTabs2026: React.FC = () => {
   const { sheets, activeSheetId, setActiveSheet, addSheet } = useWorkbookStore();
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sheetId: string } | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sheetId: string } | null>(
+    null
+  );
 
   const sheetList = Object.values(sheets);
 
@@ -37,7 +39,8 @@ export const SheetTabs2026: React.FC = () => {
 
       <div className="sheet-tabs-2026__list">
         {sheetList.map((sheet) => (
-          <button type="button"
+          <button
+            type="button"
             key={sheet.id}
             className={`sheet-tab-2026 ${sheet.id === activeSheetId ? 'sheet-tab-2026--active' : ''}`}
             onClick={() => setActiveSheet(sheet.id)}
@@ -48,7 +51,8 @@ export const SheetTabs2026: React.FC = () => {
         ))}
       </div>
 
-      <button type="button"
+      <button
+        type="button"
         className="sheet-tabs-2026__add"
         onClick={handleAddSheet}
         title="Add sheet"

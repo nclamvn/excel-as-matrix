@@ -20,7 +20,9 @@ export const arrayFunctions: FunctionDef[] = [
       const includeFlat = flattenValues([include]).map((v) => toBoolean(v));
 
       // Handle 2D array
-      const rows = Array.isArray(array[0]) ? (array as FormulaValue[][]) : [[...array] as FormulaValue[]];
+      const rows = Array.isArray(array[0])
+        ? (array as FormulaValue[][])
+        : [[...array] as FormulaValue[]];
 
       if (includeFlat.length !== rows.length) {
         return new FormulaError('#VALUE!', 'Array and include must have same dimensions');
@@ -361,7 +363,7 @@ export const arrayFunctions: FunctionDef[] = [
       if (is2D) {
         rows = scanByCol ? transposeArray(array as FormulaValue[][]) : (array as FormulaValue[][]);
       } else {
-        rows = [(array as unknown as FormulaValue[])];
+        rows = [array as unknown as FormulaValue[]];
       }
 
       const result: FormulaValue[][] = [];
@@ -403,7 +405,7 @@ export const arrayFunctions: FunctionDef[] = [
       if (is2D) {
         rows = scanByCol ? transposeArray(array as FormulaValue[][]) : (array as FormulaValue[][]);
       } else {
-        rows = [(array as unknown as FormulaValue[])];
+        rows = [array as unknown as FormulaValue[]];
       }
 
       const result: FormulaValue[] = [];
@@ -522,7 +524,7 @@ export const arrayFunctions: FunctionDef[] = [
       if (is2D) {
         rows = array as FormulaValue[][];
       } else {
-        rows = [(array as unknown as FormulaValue[])];
+        rows = [array as unknown as FormulaValue[]];
       }
 
       const numRows = rowCount as number;
@@ -578,7 +580,7 @@ export const arrayFunctions: FunctionDef[] = [
       if (is2D) {
         rows = array as FormulaValue[][];
       } else {
-        rows = [(array as unknown as FormulaValue[])];
+        rows = [array as unknown as FormulaValue[]];
       }
 
       const numRows = rowCount as number;
@@ -636,7 +638,7 @@ export const arrayFunctions: FunctionDef[] = [
       const is2D = Array.isArray(array[0]);
       const sourceRows: FormulaValue[][] = is2D
         ? (array as FormulaValue[][])
-        : [(array as unknown as FormulaValue[])];
+        : [array as unknown as FormulaValue[]];
 
       const numRows = Math.floor(rows as number);
       const numCols = cols !== undefined ? Math.floor(cols as number) : sourceRows[0].length;
@@ -776,7 +778,7 @@ export const arrayFunctions: FunctionDef[] = [
           return [[arg]];
         }
         if (!Array.isArray((arg as FormulaValue[][])[0])) {
-          return [(arg as unknown as FormulaValue[])];
+          return [arg as unknown as FormulaValue[]];
         }
         return arg as FormulaValue[][];
       });
@@ -831,7 +833,7 @@ function compareForSort(a: FormulaValue, b: FormulaValue, ascending: boolean): n
 
   // Handle booleans
   if (typeof a === 'boolean' && typeof b === 'boolean') {
-    return ascending ? (a === b ? 0 : a ? 1 : -1) : (a === b ? 0 : a ? -1 : 1);
+    return ascending ? (a === b ? 0 : a ? 1 : -1) : a === b ? 0 : a ? -1 : 1;
   }
 
   // Handle numbers

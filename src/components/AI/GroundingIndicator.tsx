@@ -119,9 +119,7 @@ export const GroundingIndicator: React.FC<GroundingIndicatorProps> = ({
     return (
       <div className="grounding-indicator compact">
         {StatusIcon}
-        <span className="confidence-value">
-          {Math.round(report.overallConfidence * 100)}%
-        </span>
+        <span className="confidence-value">{Math.round(report.overallConfidence * 100)}%</span>
         <span className="claim-counts">
           {stats.direct > 0 && <span className="count direct">📍{stats.direct}</span>}
           {stats.computed > 0 && <span className="count computed">🔢{stats.computed}</span>}
@@ -244,7 +242,8 @@ export const GroundingMarker: React.FC<GroundingMarkerProps> = ({
       className={`grounding-marker ${type} ${confidenceClass}`}
       title={`Source: ${ref}${value !== undefined ? `\nValue: ${value}` : ''}\nConfidence: ${Math.round(confidence * 100)}%`}
     >
-      [{icon}{ref}]
+      [{icon}
+      {ref}]
     </span>
   );
 };

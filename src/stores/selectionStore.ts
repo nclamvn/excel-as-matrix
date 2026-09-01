@@ -93,7 +93,7 @@ export const useSelectionStore = create<SelectionState>()((set, get) => ({
     const start = selectionRange?.start ?? selectedCell;
     const end = selectionRange?.end ?? selectedCell;
 
-    let newEnd = { ...end };
+    const newEnd = { ...end };
 
     switch (direction) {
       case 'up':

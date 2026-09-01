@@ -81,9 +81,10 @@ function generateValue(
     case 'number':
       return Math.round(random.nextFloat(-10000, 10000) * 100) / 100;
 
-    case 'string':
+    case 'string': {
       const words = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
       return `${random.choice(words)}_${row}_${col}`;
+    }
 
     case 'date': {
       const year = random.nextInt(2020, 2025);

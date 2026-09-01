@@ -13,131 +13,133 @@ export interface VirtualHeadersProps {
   selectedCol?: number;
 }
 
-export const VirtualHeaders = memo<VirtualHeadersProps>(({
-  virtualRows,
-  virtualCols,
-  scrollTop,
-  scrollLeft,
-  headerWidth,
-  headerHeight,
-  selectedRow,
-  selectedCol,
-}) => {
-  // Render column headers
-  const columnHeaders = useMemo(() => {
-    return virtualCols.map((virtualCol) => {
-      const isSelected = selectedCol === virtualCol.index;
-      return (
-        <div
-          key={`col-header-${virtualCol.index}`}
-          className={`
+export const VirtualHeaders = memo<VirtualHeadersProps>(
+  ({
+    virtualRows,
+    virtualCols,
+    scrollTop,
+    scrollLeft,
+    headerWidth,
+    headerHeight,
+    selectedRow,
+    selectedCol,
+  }) => {
+    // Render column headers
+    const columnHeaders = useMemo(() => {
+      return virtualCols.map((virtualCol) => {
+        const isSelected = selectedCol === virtualCol.index;
+        return (
+          <div
+            key={`col-header-${virtualCol.index}`}
+            className={`
             absolute flex items-center justify-center text-xs font-medium
             border-r border-b border-gray-300 bg-gray-100
             ${isSelected ? 'bg-blue-100 text-blue-700' : 'text-gray-600'}
           `}
-          style={{
-            left: virtualCol.start,
-            top: 0,
-            width: virtualCol.size,
-            height: headerHeight,
-          }}
-        >
-          {getColumnLabel(virtualCol.index)}
-        </div>
-      );
-    });
-  }, [virtualCols, headerHeight, selectedCol]);
+            style={{
+              left: virtualCol.start,
+              top: 0,
+              width: virtualCol.size,
+              height: headerHeight,
+            }}
+          >
+            {getColumnLabel(virtualCol.index)}
+          </div>
+        );
+      });
+    }, [virtualCols, headerHeight, selectedCol]);
 
-  // Render row headers
-  const rowHeaders = useMemo(() => {
-    return virtualRows.map((virtualRow) => {
-      const isSelected = selectedRow === virtualRow.index;
-      return (
-        <div
-          key={`row-header-${virtualRow.index}`}
-          className={`
+    // Render row headers
+    const rowHeaders = useMemo(() => {
+      return virtualRows.map((virtualRow) => {
+        const isSelected = selectedRow === virtualRow.index;
+        return (
+          <div
+            key={`row-header-${virtualRow.index}`}
+            className={`
             absolute flex items-center justify-center text-xs font-medium
             border-r border-b border-gray-300 bg-gray-100
             ${isSelected ? 'bg-blue-100 text-blue-700' : 'text-gray-600'}
           `}
+            style={{
+              left: 0,
+              top: virtualRow.start,
+              width: headerWidth,
+              height: virtualRow.size,
+            }}
+          >
+            {virtualRow.index + 1}
+          </div>
+        );
+      });
+    }, [virtualRows, headerWidth, selectedRow]);
+
+    // Total sizes for positioning
+    const lastCol = virtualCols[virtualCols.length - 1];
+    const lastRow = virtualRows[virtualRows.length - 1];
+    const totalColWidth = lastCol ? lastCol.start + lastCol.size : 0;
+    const totalRowHeight = lastRow ? lastRow.start + lastRow.size : 0;
+
+    return (
+      <>
+        {/* Corner cell (top-left) */}
+        <div
+          className="absolute bg-gray-200 border-r border-b border-gray-300 z-30"
           style={{
             left: 0,
-            top: virtualRow.start,
+            top: 0,
             width: headerWidth,
-            height: virtualRow.size,
-          }}
-        >
-          {virtualRow.index + 1}
-        </div>
-      );
-    });
-  }, [virtualRows, headerWidth, selectedRow]);
-
-  // Total sizes for positioning
-  const lastCol = virtualCols[virtualCols.length - 1];
-  const lastRow = virtualRows[virtualRows.length - 1];
-  const totalColWidth = lastCol ? lastCol.start + lastCol.size : 0;
-  const totalRowHeight = lastRow ? lastRow.start + lastRow.size : 0;
-
-  return (
-    <>
-      {/* Corner cell (top-left) */}
-      <div
-        className="absolute bg-gray-200 border-r border-b border-gray-300 z-30"
-        style={{
-          left: 0,
-          top: 0,
-          width: headerWidth,
-          height: headerHeight,
-        }}
-      />
-
-      {/* Column headers (fixed at top) */}
-      <div
-        className="absolute overflow-hidden z-20"
-        style={{
-          left: headerWidth,
-          top: 0,
-          right: 0,
-          height: headerHeight,
-        }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            width: totalColWidth,
             height: headerHeight,
-            transform: `translateX(-${scrollLeft}px)`,
           }}
-        >
-          {columnHeaders}
-        </div>
-      </div>
+        />
 
-      {/* Row headers (fixed at left) */}
-      <div
-        className="absolute overflow-hidden z-20"
-        style={{
-          left: 0,
-          top: headerHeight,
-          width: headerWidth,
-          bottom: 0,
-        }}
-      >
+        {/* Column headers (fixed at top) */}
         <div
+          className="absolute overflow-hidden z-20"
           style={{
-            position: 'relative',
-            width: headerWidth,
-            height: totalRowHeight,
-            transform: `translateY(-${scrollTop}px)`,
+            left: headerWidth,
+            top: 0,
+            right: 0,
+            height: headerHeight,
           }}
         >
-          {rowHeaders}
+          <div
+            style={{
+              position: 'relative',
+              width: totalColWidth,
+              height: headerHeight,
+              transform: `translateX(-${scrollLeft}px)`,
+            }}
+          >
+            {columnHeaders}
+          </div>
         </div>
-      </div>
-    </>
-  );
-});
+
+        {/* Row headers (fixed at left) */}
+        <div
+          className="absolute overflow-hidden z-20"
+          style={{
+            left: 0,
+            top: headerHeight,
+            width: headerWidth,
+            bottom: 0,
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              width: headerWidth,
+              height: totalRowHeight,
+              transform: `translateY(-${scrollTop}px)`,
+            }}
+          >
+            {rowHeaders}
+          </div>
+        </div>
+      </>
+    );
+  }
+);
 
 VirtualHeaders.displayName = 'VirtualHeaders';
 

@@ -79,12 +79,12 @@ export interface WorkflowStep {
 }
 
 export type StepType =
-  | 'action'      // Single action
-  | 'condition'   // If/else branch
-  | 'loop'        // Repeat
-  | 'parallel'    // Run in parallel
-  | 'wait'        // Wait/delay
-  | 'subworkflow';// Call another workflow
+  | 'action' // Single action
+  | 'condition' // If/else branch
+  | 'loop' // Repeat
+  | 'parallel' // Run in parallel
+  | 'wait' // Wait/delay
+  | 'subworkflow'; // Call another workflow
 
 // ═══════════════════════════════════════════════════════════════
 // ACTIONS
@@ -212,12 +212,12 @@ export interface MacroTrigger {
 }
 
 export type TriggerType =
-  | 'manual'      // Button click
-  | 'schedule'    // Cron schedule
+  | 'manual' // Button click
+  | 'schedule' // Cron schedule
   | 'data_change' // Cell/range change
-  | 'file_open'   // File opened
-  | 'webhook'     // External webhook
-  | 'email';      // Email received
+  | 'file_open' // File opened
+  | 'webhook' // External webhook
+  | 'email'; // Email received
 
 export interface TriggerConfig {
   // For schedule
@@ -246,10 +246,10 @@ export interface ScheduleConfig {
   intervalMinutes?: number;
 
   // For daily
-  timeOfDay?: string;  // "09:00"
+  timeOfDay?: string; // "09:00"
 
   // For weekly
-  daysOfWeek?: number[];  // 0=Sun, 1=Mon, etc.
+  daysOfWeek?: number[]; // 0=Sun, 1=Mon, etc.
 
   // For monthly
   dayOfMonth?: number;
@@ -269,7 +269,7 @@ export interface StepCondition {
   type: ConditionType;
 
   // For value comparison
-  leftOperand?: string;   // Variable or cell reference
+  leftOperand?: string; // Variable or cell reference
   operator?: ComparisonOperator;
   rightOperand?: unknown;
 
@@ -310,7 +310,7 @@ export interface LoopConfig {
   maxIterations?: number;
 
   // For for_each
-  collection?: string;  // Variable name
+  collection?: string; // Variable name
   itemVariable?: string;
   indexVariable?: string;
 }
@@ -434,13 +434,13 @@ export interface RecordingSession {
 
 export interface MacroSettings {
   // Execution
-  timeout: number;            // ms
+  timeout: number; // ms
   maxRetries: number;
-  retryDelay: number;         // ms
+  retryDelay: number; // ms
 
   // Logging
   logLevel: 'none' | 'errors' | 'all';
-  keepLogs: number;           // days
+  keepLogs: number; // days
 
   // Notifications
   notifyOnComplete: boolean;
@@ -452,7 +452,7 @@ export interface MacroSettings {
 }
 
 export const DEFAULT_MACRO_SETTINGS: MacroSettings = {
-  timeout: 300000,            // 5 minutes
+  timeout: 300000, // 5 minutes
   maxRetries: 3,
   retryDelay: 5000,
   logLevel: 'errors',

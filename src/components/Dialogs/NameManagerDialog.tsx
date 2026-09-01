@@ -40,11 +40,9 @@ const TYPE_ICONS: Record<NameType, React.ReactNode> = {
   constant: <Hash size={14} />,
 };
 
-export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
-  isOpen,
-  onClose,
-}) => {
-  const { getAllNames, createName, updateName, deleteName, isValidName, isNameAvailable } = useNameManagerStore();
+export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({ isOpen, onClose }) => {
+  const { getAllNames, createName, updateName, deleteName, isValidName, isNameAvailable } =
+    useNameManagerStore();
   const { sheets } = useWorkbookStore();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,16 +67,17 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
 
     // Filter by type
     if (filterType !== 'all') {
-      result = result.filter(n => n.type === filterType);
+      result = result.filter((n) => n.type === filterType);
     }
 
     // Filter by search
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
-      result = result.filter(n =>
-        n.name.toLowerCase().includes(lower) ||
-        n.refersTo.toLowerCase().includes(lower) ||
-        (n.comment?.toLowerCase().includes(lower))
+      result = result.filter(
+        (n) =>
+          n.name.toLowerCase().includes(lower) ||
+          n.refersTo.toLowerCase().includes(lower) ||
+          n.comment?.toLowerCase().includes(lower)
       );
     }
 
@@ -120,11 +119,22 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
     }
 
     // Parse parameters for LAMBDA
-    const parameters = newType === 'lambda' && newParameters
-      ? newParameters.split(',').map(p => p.trim()).filter(p => p)
-      : undefined;
+    const parameters =
+      newType === 'lambda' && newParameters
+        ? newParameters
+            .split(',')
+            .map((p) => p.trim())
+            .filter((p) => p)
+        : undefined;
 
-    const result = createName(newName, newType, newRefersTo, newScope, newComment || undefined, parameters);
+    const result = createName(
+      newName,
+      newType,
+      newRefersTo,
+      newScope,
+      newComment || undefined,
+      parameters
+    );
 
     if (result) {
       resetForm();
@@ -148,14 +158,21 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
       return;
     }
 
-    if (newName.toUpperCase() !== editingItem.name && !isNameAvailable(newName, newScope, editingItem.id)) {
+    if (
+      newName.toUpperCase() !== editingItem.name &&
+      !isNameAvailable(newName, newScope, editingItem.id)
+    ) {
       setFormError('Name already exists in this scope');
       return;
     }
 
-    const parameters = newType === 'lambda' && newParameters
-      ? newParameters.split(',').map(p => p.trim()).filter(p => p)
-      : undefined;
+    const parameters =
+      newType === 'lambda' && newParameters
+        ? newParameters
+            .split(',')
+            .map((p) => p.trim())
+            .filter((p) => p)
+        : undefined;
 
     updateName(editingItem.id, {
       name: newName,
@@ -189,7 +206,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
 
   const getScopeName = (scope: NameScope): string => {
     if (scope === 'workbook') return 'Workbook';
-    const sheet = Object.values(sheets).find(s => s.id === scope);
+    const sheet = Object.values(sheets).find((s) => s.id === scope);
     return sheet?.name || 'Unknown Sheet';
   };
 
@@ -197,7 +214,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog name-manager-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog name-manager-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>Name Manager</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -208,7 +225,8 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
         <div className="dialog-body">
           {/* Toolbar */}
           <div className="name-manager-toolbar">
-            <button type="button"
+            <button
+              type="button"
               className="dialog-btn-primary"
               onClick={() => {
                 resetForm();
@@ -226,12 +244,13 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                 type="text"
                 placeholder="Search names..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             <div className="filter-dropdown">
-              <button type="button"
+              <button
+                type="button"
                 className="filter-btn"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
               >
@@ -243,19 +262,49 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
               </button>
               {showFilterMenu && (
                 <div className="filter-menu">
-                  <button type="button" onClick={() => { setFilterType('all'); setShowFilterMenu(false); }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterType('all');
+                      setShowFilterMenu(false);
+                    }}
+                  >
                     All Types
                   </button>
-                  <button type="button" onClick={() => { setFilterType('range'); setShowFilterMenu(false); }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterType('range');
+                      setShowFilterMenu(false);
+                    }}
+                  >
                     {TYPE_ICONS.range} Named Ranges
                   </button>
-                  <button type="button" onClick={() => { setFilterType('formula'); setShowFilterMenu(false); }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterType('formula');
+                      setShowFilterMenu(false);
+                    }}
+                  >
                     {TYPE_ICONS.formula} Formulas
                   </button>
-                  <button type="button" onClick={() => { setFilterType('lambda'); setShowFilterMenu(false); }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterType('lambda');
+                      setShowFilterMenu(false);
+                    }}
+                  >
                     {TYPE_ICONS.lambda} LAMBDA Functions
                   </button>
-                  <button type="button" onClick={() => { setFilterType('constant'); setShowFilterMenu(false); }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterType('constant');
+                      setShowFilterMenu(false);
+                    }}
+                  >
                     {TYPE_ICONS.constant} Constants
                   </button>
                 </div>
@@ -286,7 +335,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredNames.map(item => (
+                  filteredNames.map((item) => (
                     <tr key={item.id}>
                       <td className="name-cell">
                         {TYPE_ICONS[item.type]}
@@ -301,14 +350,16 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                         {item.comment || '-'}
                       </td>
                       <td className="actions-cell">
-                        <button type="button"
+                        <button
+                          type="button"
                           className="action-btn"
                           onClick={() => handleEdit(item)}
                           title="Edit"
                         >
                           <Edit2 size={14} />
                         </button>
-                        <button type="button"
+                        <button
+                          type="button"
                           className="action-btn danger"
                           onClick={() => handleDelete(item.id)}
                           title="Delete"
@@ -338,33 +389,45 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
 
         {/* New/Edit Name Dialog */}
         {showNewDialog && (
-          <div className="name-edit-overlay" onClick={() => { setShowNewDialog(false); resetForm(); setEditingItem(null); }}>
-            <div className="name-edit-dialog" onClick={e => e.stopPropagation()}>
+          <div
+            className="name-edit-overlay"
+            onClick={() => {
+              setShowNewDialog(false);
+              resetForm();
+              setEditingItem(null);
+            }}
+          >
+            <div className="name-edit-dialog" onClick={(e) => e.stopPropagation()}>
               <div className="name-edit-header">
                 <h3>{editingItem ? 'Edit Name' : 'New Name'}</h3>
-                <button type="button" onClick={() => { setShowNewDialog(false); resetForm(); setEditingItem(null); }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowNewDialog(false);
+                    resetForm();
+                    setEditingItem(null);
+                  }}
+                >
                   <X size={16} />
                 </button>
               </div>
 
               <div className="name-edit-body">
-                {formError && (
-                  <div className="form-error">{formError}</div>
-                )}
+                {formError && <div className="form-error">{formError}</div>}
 
                 <div className="form-field">
                   <label>Name:</label>
                   <input
                     type="text"
                     value={newName}
-                    onChange={e => setNewName(e.target.value)}
+                    onChange={(e) => setNewName(e.target.value)}
                     placeholder="e.g., TaxRate, MySum"
                   />
                 </div>
 
                 <div className="form-field">
                   <label>Type:</label>
-                  <select value={newType} onChange={e => setNewType(e.target.value as NameType)}>
+                  <select value={newType} onChange={(e) => setNewType(e.target.value as NameType)}>
                     <option value="range">Named Range</option>
                     <option value="formula">Formula</option>
                     <option value="lambda">LAMBDA Function</option>
@@ -374,10 +437,12 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
 
                 <div className="form-field">
                   <label>Scope:</label>
-                  <select value={newScope} onChange={e => setNewScope(e.target.value)}>
+                  <select value={newScope} onChange={(e) => setNewScope(e.target.value)}>
                     <option value="workbook">Workbook</option>
-                    {Object.values(sheets).map(sheet => (
-                      <option key={sheet.id} value={sheet.id}>{sheet.name}</option>
+                    {Object.values(sheets).map((sheet) => (
+                      <option key={sheet.id} value={sheet.id}>
+                        {sheet.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -388,7 +453,7 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                     <input
                       type="text"
                       value={newParameters}
-                      onChange={e => setNewParameters(e.target.value)}
+                      onChange={(e) => setNewParameters(e.target.value)}
                       placeholder="e.g., x, y, z"
                     />
                     <small>Comma-separated parameter names</small>
@@ -400,12 +465,15 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                   <input
                     type="text"
                     value={newRefersTo}
-                    onChange={e => setNewRefersTo(e.target.value)}
+                    onChange={(e) => setNewRefersTo(e.target.value)}
                     placeholder={
-                      newType === 'range' ? 'e.g., Sheet1!$A$1:$B$10' :
-                      newType === 'lambda' ? 'e.g., x + y * 2' :
-                      newType === 'constant' ? 'e.g., 0.0825' :
-                      'e.g., =SUM(A:A)'
+                      newType === 'range'
+                        ? 'e.g., Sheet1!$A$1:$B$10'
+                        : newType === 'lambda'
+                          ? 'e.g., x + y * 2'
+                          : newType === 'constant'
+                            ? 'e.g., 0.0825'
+                            : 'e.g., =SUM(A:A)'
                     }
                   />
                 </div>
@@ -415,20 +483,26 @@ export const NameManagerDialog: React.FC<NameManagerDialogProps> = ({
                   <input
                     type="text"
                     value={newComment}
-                    onChange={e => setNewComment(e.target.value)}
+                    onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Description of this name"
                   />
                 </div>
               </div>
 
               <div className="name-edit-footer">
-                <button type="button"
+                <button
+                  type="button"
                   className="dialog-btn-secondary"
-                  onClick={() => { setShowNewDialog(false); resetForm(); setEditingItem(null); }}
+                  onClick={() => {
+                    setShowNewDialog(false);
+                    resetForm();
+                    setEditingItem(null);
+                  }}
                 >
                   Cancel
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="dialog-btn-primary"
                   onClick={editingItem ? handleUpdate : handleCreate}
                 >

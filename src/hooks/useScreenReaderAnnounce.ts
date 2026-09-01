@@ -75,20 +75,31 @@ export function useScreenReaderAnnounce() {
     }
   }, []);
 
-  const announceCell = useCallback((col: number, row: number, value: string, formula?: string | null) => {
-    const colLetter = String.fromCharCode(65 + col);
-    const cellRef = `${colLetter}${row + 1}`;
-    const content = formula ? `${cellRef}, formula ${formula}, value ${value}` : `${cellRef}, ${value || 'empty'}`;
-    announce(content);
-  }, [announce]);
+  const announceCell = useCallback(
+    (col: number, row: number, value: string, formula?: string | null) => {
+      const colLetter = String.fromCharCode(65 + col);
+      const cellRef = `${colLetter}${row + 1}`;
+      const content = formula
+        ? `${cellRef}, formula ${formula}, value ${value}`
+        : `${cellRef}, ${value || 'empty'}`;
+      announce(content);
+    },
+    [announce]
+  );
 
-  const announceAction = useCallback((action: string) => {
-    announce(action, { politeness: 'assertive', clearAfter: 3000 });
-  }, [announce]);
+  const announceAction = useCallback(
+    (action: string) => {
+      announce(action, { politeness: 'assertive', clearAfter: 3000 });
+    },
+    [announce]
+  );
 
-  const announceError = useCallback((error: string) => {
-    announce(`Error: ${error}`, { politeness: 'assertive', clearAfter: 5000 });
-  }, [announce]);
+  const announceError = useCallback(
+    (error: string) => {
+      announce(`Error: ${error}`, { politeness: 'assertive', clearAfter: 5000 });
+    },
+    [announce]
+  );
 
   return { announce, announceCell, announceAction, announceError };
 }
@@ -109,7 +120,12 @@ const srOnlyStyle: Partial<CSSStyleDeclaration> = {
 /**
  * Utility: Generate ARIA label for a cell
  */
-export function getCellAriaLabel(col: number, row: number, value: string, formula?: string | null): string {
+export function getCellAriaLabel(
+  col: number,
+  row: number,
+  value: string,
+  formula?: string | null
+): string {
   const colLetter = String.fromCharCode(65 + col);
   const cellRef = `${colLetter}${row + 1}`;
   if (formula) {
@@ -122,8 +138,10 @@ export function getCellAriaLabel(col: number, row: number, value: string, formul
  * Utility: Generate ARIA label for a range
  */
 export function getRangeAriaLabel(
-  startCol: number, startRow: number,
-  endCol: number, endRow: number
+  startCol: number,
+  startRow: number,
+  endCol: number,
+  endRow: number
 ): string {
   const sc = String.fromCharCode(65 + startCol);
   const ec = String.fromCharCode(65 + endCol);

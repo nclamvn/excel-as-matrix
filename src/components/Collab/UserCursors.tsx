@@ -6,7 +6,10 @@ interface UserCursorsProps {
   sheetId: string;
   visibleRows: { start: number; end: number };
   visibleCols: { start: number; end: number };
-  getCellPosition: (row: number, col: number) => { x: number; y: number; width: number; height: number } | null;
+  getCellPosition: (
+    row: number,
+    col: number
+  ) => { x: number; y: number; width: number; height: number } | null;
 }
 
 export const UserCursors: React.FC<UserCursorsProps> = ({
@@ -18,7 +21,10 @@ export const UserCursors: React.FC<UserCursorsProps> = ({
   const cursors = useRemoteCursors({ sheetId, visibleRows, visibleCols });
 
   return (
-    <div className="user-cursors" style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
+    <div
+      className="user-cursors"
+      style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+    >
       {cursors.map((cursor) => {
         const position = getCellPosition(cursor.row, cursor.col);
         if (!position) return null;
@@ -151,10 +157,7 @@ const CursorIndicator: React.FC<CursorIndicatorProps> = ({
         }}
         viewBox="0 0 16 16"
       >
-        <path
-          d="M0 0 L16 12 L8 12 L4 16 Z"
-          fill={color}
-        />
+        <path d="M0 0 L16 12 L8 12 L4 16 Z" fill={color} />
       </svg>
     </div>
   );

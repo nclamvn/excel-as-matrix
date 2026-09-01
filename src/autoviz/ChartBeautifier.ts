@@ -2,13 +2,7 @@
 // CHART BEAUTIFIER — Apply professional styling to charts
 // =============================================================================
 
-import type {
-  ChartConfig,
-  ChartType,
-  ChartStyle,
-  ColorScheme,
-  FontConfig,
-} from './types';
+import type { ChartConfig, ChartType, ChartStyle, ColorScheme, FontConfig } from './types';
 import { COLOR_SCHEMES, adjustBrightness } from './ColorSchemes';
 
 /**
@@ -421,12 +415,7 @@ export class ChartBeautifier {
   /**
    * Create custom font configuration
    */
-  createFontConfig(
-    family: string,
-    size: number,
-    weight: string,
-    color: string
-  ): FontConfig {
+  createFontConfig(family: string, size: number, weight: string, color: string): FontConfig {
     return { family, size, weight, color };
   }
 

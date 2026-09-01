@@ -1,0 +1,15 @@
+note: accept
+sources:
+  product_claims.csv:
+    mtime: '2026-09-01T22:43:12'
+    sha256: d243751addcc14d5
+    size: 1726
+  qa_baseline.csv:
+    mtime: '2026-09-01T22:47:52'
+    sha256: 9245f7ce5fc1ea2d
+    size: 6894
+  repository_inventory.csv:
+    mtime: '2026-08-27T11:56:06'
+    sha256: 7affc6f23585410b
+    size: 1476
+updated: '2026-09-01T22:48:01'

@@ -11,7 +11,8 @@ interface TextToColumnsDialogProps {
 type DelimiterType = 'tab' | 'semicolon' | 'comma' | 'space' | 'custom';
 
 export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClose }) => {
-  const { activeSheetId, sheets, selectionRange, selectedCell, batchUpdateCells } = useWorkbookStore();
+  const { activeSheetId, sheets, selectionRange, selectedCell, batchUpdateCells } =
+    useWorkbookStore();
   const { showToast } = useUIStore();
 
   const sheet = activeSheetId ? sheets[activeSheetId] : null;
@@ -60,7 +61,11 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
     const preview: Array<{ row: number; original: string; split: string[] }> = [];
     const maxPreview = 5;
 
-    for (let row = range.start.row; row <= Math.min(range.end.row, range.start.row + maxPreview - 1); row++) {
+    for (
+      let row = range.start.row;
+      row <= Math.min(range.end.row, range.start.row + maxPreview - 1);
+      row++
+    ) {
       const cellKey = getCellKey(row, range.start.col);
       const cell = sheet.cells[cellKey];
       const value = String(cell?.value ?? '');
@@ -95,7 +100,11 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
       return;
     }
 
-    const updates: Array<{ row: number; col: number; data: { value: string; displayValue: string; formula: null } }> = [];
+    const updates: Array<{
+      row: number;
+      col: number;
+      data: { value: string; displayValue: string; formula: null };
+    }> = [];
 
     for (let row = range.start.row; row <= range.end.row; row++) {
       const cellKey = getCellKey(row, range.start.col);
@@ -193,7 +202,9 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
               </div>
 
               <div className="delimiter-section">
-                <label className="field-label">Choose the delimiter that separates your data:</label>
+                <label className="field-label">
+                  Choose the delimiter that separates your data:
+                </label>
 
                 <div className="delimiter-options">
                   <label className="radio-label">
@@ -276,9 +287,7 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
               </div>
 
               <div className="preview-section">
-                <label className="field-label">
-                  Preview (first {previewData.length} rows):
-                </label>
+                <label className="field-label">Preview (first {previewData.length} rows):</label>
 
                 <div className="preview-table-wrapper">
                   <table className="preview-table">
@@ -307,13 +316,12 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
 
                 <div className="preview-info">
                   <p>
-                    This will split data into <strong>{maxColumns}</strong> columns starting from column{' '}
-                    <strong>{colToLetter(range.start.col)}</strong>.
+                    This will split data into <strong>{maxColumns}</strong> columns starting from
+                    column <strong>{colToLetter(range.start.col)}</strong>.
                   </p>
                   <p className="warning-text">
-                    Note: Existing data in columns{' '}
-                    {colToLetter(range.start.col + 1)} to {colToLetter(range.start.col + maxColumns - 1)}{' '}
-                    will be overwritten.
+                    Note: Existing data in columns {colToLetter(range.start.col + 1)} to{' '}
+                    {colToLetter(range.start.col + maxColumns - 1)} will be overwritten.
                   </p>
                 </div>
               </div>
@@ -327,7 +335,8 @@ export const TextToColumnsDialog: React.FC<TextToColumnsDialogProps> = ({ onClos
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancel
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className="btn btn-primary"
                 onClick={() => setStep(2)}
                 disabled={delimiterType === 'custom' && !customDelimiter}

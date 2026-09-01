@@ -144,10 +144,7 @@ export interface AIStatsResponse {
 // ===== API Client =====
 
 class ApiClient {
-  private async request<T>(
-    endpoint: string,
-    options?: RequestInit
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       headers: {
@@ -187,17 +184,13 @@ class ApiClient {
   }
 
   async getSheet(workbookId: string, sheetId: string): Promise<SheetResponse> {
-    return this.request<SheetResponse>(
-      `/workbooks/${workbookId}/sheets/${sheetId}`
-    );
+    return this.request<SheetResponse>(`/workbooks/${workbookId}/sheets/${sheetId}`);
   }
 
   // ===== Cells =====
 
   async getCells(workbookId: string, sheetId: string): Promise<CellResponse[]> {
-    return this.request<CellResponse[]>(
-      `/workbooks/${workbookId}/sheets/${sheetId}/cells`
-    );
+    return this.request<CellResponse[]>(`/workbooks/${workbookId}/sheets/${sheetId}/cells`);
   }
 
   async getCell(
@@ -360,7 +353,10 @@ class ApiClient {
     });
   }
 
-  async mergeSandbox(sandboxId: string, userId: string): Promise<{ success: boolean; commands_executed: number }> {
+  async mergeSandbox(
+    sandboxId: string,
+    userId: string
+  ): Promise<{ success: boolean; commands_executed: number }> {
     return this.request<{ success: boolean; commands_executed: number }>(
       `/ai/sandboxes/${sandboxId}/merge`,
       {

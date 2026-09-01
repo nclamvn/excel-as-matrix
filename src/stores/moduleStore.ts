@@ -82,7 +82,9 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
       const { [moduleId]: _, ...modules } = state.modules;
       const modulesBySheet = { ...state.modulesBySheet };
       if (modulesBySheet[module.sheetId]) {
-        modulesBySheet[module.sheetId] = modulesBySheet[module.sheetId].filter(id => id !== moduleId);
+        modulesBySheet[module.sheetId] = modulesBySheet[module.sheetId].filter(
+          (id) => id !== moduleId
+        );
       }
       const { [module.name]: __, ...modulesByName } = state.modulesByName;
 
@@ -110,7 +112,7 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
       const module = state.modules[moduleId];
       if (!module) return state;
 
-      const exports = module.exports.map(exp =>
+      const exports = module.exports.map((exp) =>
         exp.name === exportName ? { ...exp, ...updates } : exp
       );
 
@@ -131,7 +133,7 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
 
       const updated = {
         ...module,
-        exports: module.exports.filter(exp => exp.name !== exportName),
+        exports: module.exports.filter((exp) => exp.name !== exportName),
         updatedAt: new Date().toISOString(),
       };
 
@@ -161,7 +163,7 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
 
       const updated = {
         ...module,
-        imports: module.imports.filter(imp => imp.name !== importName),
+        imports: module.imports.filter((imp) => imp.name !== importName),
         updatedAt: new Date().toISOString(),
       };
 
@@ -180,16 +182,17 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
 
   getModulesBySheet: (sheetId) => {
     const moduleIds = get().modulesBySheet[sheetId] || [];
-    return moduleIds.map(id => get().modules[id]).filter(Boolean);
+    return moduleIds.map((id) => get().modules[id]).filter(Boolean);
   },
 
   getModuleAtCell: (sheetId, row, col) => {
     const modules = get().getModulesBySheet(sheetId);
-    return modules.find(module =>
-      row >= module.startRow &&
-      row <= module.endRow &&
-      col >= module.startCol &&
-      col <= module.endCol
+    return modules.find(
+      (module) =>
+        row >= module.startRow &&
+        row <= module.endRow &&
+        col >= module.startCol &&
+        col <= module.endCol
     );
   },
 
@@ -201,7 +204,7 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
     const module = get().getModuleByName(moduleName);
     if (!module) return undefined;
 
-    const export_ = module.exports.find(e => e.name === exportName && e.isPublic);
+    const export_ = module.exports.find((e) => e.name === exportName && e.isPublic);
     if (!export_) return undefined;
 
     return { module, cellRef: export_.cellRef };
@@ -209,12 +212,12 @@ export const useModuleStore = create<ModuleState>()((set, get) => ({
 
   getExport: (moduleId, exportName) => {
     const module = get().modules[moduleId];
-    return module?.exports.find(e => e.name === exportName);
+    return module?.exports.find((e) => e.name === exportName);
   },
 
   getPublicExports: (moduleId) => {
     const module = get().modules[moduleId];
-    return module?.exports.filter(e => e.isPublic) || [];
+    return module?.exports.filter((e) => e.isPublic) || [];
   },
 
   reset: () => {

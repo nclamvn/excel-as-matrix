@@ -125,8 +125,15 @@ interface WorkbookState {
   toggleFilter: () => void;
 
   // === FIND & REPLACE ===
-  findAll: (query: string, options?: { matchCase?: boolean; wholeCell?: boolean }) => { row: number; col: number }[];
-  replaceAll: (query: string, replacement: string, options?: { matchCase?: boolean; wholeCell?: boolean }) => number;
+  findAll: (
+    query: string,
+    options?: { matchCase?: boolean; wholeCell?: boolean }
+  ) => { row: number; col: number }[];
+  replaceAll: (
+    query: string,
+    replacement: string,
+    options?: { matchCase?: boolean; wholeCell?: boolean }
+  ) => number;
 
   // === FILL ACTIONS ===
   fillDown: () => void;
@@ -157,7 +164,10 @@ interface WorkbookState {
   addComment: (row: number, col: number, text: string) => void;
   editComment: (row: number, col: number, text: string) => void;
   deleteComment: (row: number, col: number) => void;
-  getComment: (row: number, col: number) => { text: string; author: string; createdAt: string } | null;
+  getComment: (
+    row: number,
+    col: number
+  ) => { text: string; author: string; createdAt: string } | null;
 
   // === GETTERS ===
   getCellValue: (sheetId: string, row: number, col: number) => CellValue;
@@ -337,7 +347,12 @@ export const useWorkbookStore = create<WorkbookState>()(
           // First, clear old spill cells from this origin
           for (const [ck, cd] of Object.entries(sheet.cells)) {
             if (cd.spillOrigin === originKey) {
-              spillCells[ck] = { value: null, formula: null, displayValue: '', spillOrigin: undefined };
+              spillCells[ck] = {
+                value: null,
+                formula: null,
+                displayValue: '',
+                spillOrigin: undefined,
+              };
             }
           }
 
@@ -382,7 +397,7 @@ export const useWorkbookStore = create<WorkbookState>()(
           newCell = {
             ...newCell,
             formula,
-            value: result.error ? result.displayValue : resultValue as CellValue,
+            value: result.error ? result.displayValue : (resultValue as CellValue),
             displayValue: result.displayValue,
           };
         }
@@ -425,7 +440,11 @@ export const useWorkbookStore = create<WorkbookState>()(
         for (const update of updates) {
           const key = getCellKey(update.row, update.col);
           const existing = newCells[key] || { value: null, formula: null, displayValue: '' };
-          newCells[key] = { ...existing, ...update.data, displayValue: update.data.displayValue ?? existing.displayValue };
+          newCells[key] = {
+            ...existing,
+            ...update.data,
+            displayValue: update.data.displayValue ?? existing.displayValue,
+          };
         }
 
         return {
@@ -472,14 +491,18 @@ export const useWorkbookStore = create<WorkbookState>()(
       // Auto-save: persist locally + trigger sync
       const workbookId = state.workbookId;
       if (workbookId) {
-        syncManager.saveLocally(
-          workbookId,
-          sheetId,
-          row,
-          col,
-          value as string | number | boolean | null,
-          isFormula ? (value as string) : null
-        ).catch(() => { /* swallow — offline queue handles retries */ });
+        syncManager
+          .saveLocally(
+            workbookId,
+            sheetId,
+            row,
+            col,
+            value as string | number | boolean | null,
+            isFormula ? (value as string) : null
+          )
+          .catch(() => {
+            /* swallow — offline queue handles retries */
+          });
       }
     },
 
@@ -606,7 +629,7 @@ export const useWorkbookStore = create<WorkbookState>()(
       set((state) => {
         if (state.sheetOrder.length <= 1) return {}; // Keep at least one sheet
 
-        const newSheetOrder = state.sheetOrder.filter(id => id !== sheetId);
+        const newSheetOrder = state.sheetOrder.filter((id) => id !== sheetId);
         const { [sheetId]: _, ...newSheets } = state.sheets;
 
         let newActiveSheetId = state.activeSheetId;
@@ -668,7 +691,10 @@ export const useWorkbookStore = create<WorkbookState>()(
         if (newIndex < 0 || newIndex >= state.sheetOrder.length) return {};
 
         const newSheetOrder = [...state.sheetOrder];
-        [newSheetOrder[index], newSheetOrder[newIndex]] = [newSheetOrder[newIndex], newSheetOrder[index]];
+        [newSheetOrder[index], newSheetOrder[newIndex]] = [
+          newSheetOrder[newIndex],
+          newSheetOrder[index],
+        ];
 
         return { sheetOrder: newSheetOrder };
       });
@@ -701,7 +727,7 @@ export const useWorkbookStore = create<WorkbookState>()(
 
       state.pushHistory();
 
-      const insertAt = index ?? (selectedCell?.row ?? 0);
+      const insertAt = index ?? selectedCell?.row ?? 0;
       const newCells: Record<string, CellData> = {};
 
       Object.entries(sheet.cells).forEach(([key, cell]) => {
@@ -734,7 +760,7 @@ export const useWorkbookStore = create<WorkbookState>()(
 
       state.pushHistory();
 
-      const deleteAt = index ?? (selectedCell?.row ?? 0);
+      const deleteAt = index ?? selectedCell?.row ?? 0;
       const newCells: Record<string, CellData> = {};
 
       Object.entries(sheet.cells).forEach(([key, cell]) => {
@@ -767,7 +793,7 @@ export const useWorkbookStore = create<WorkbookState>()(
 
       state.pushHistory();
 
-      const insertAt = index ?? (selectedCell?.col ?? 0);
+      const insertAt = index ?? selectedCell?.col ?? 0;
       const newCells: Record<string, CellData> = {};
 
       Object.entries(sheet.cells).forEach(([key, cell]) => {
@@ -800,7 +826,7 @@ export const useWorkbookStore = create<WorkbookState>()(
 
       state.pushHistory();
 
-      const deleteAt = index ?? (selectedCell?.col ?? 0);
+      const deleteAt = index ?? selectedCell?.col ?? 0;
       const newCells: Record<string, CellData> = {};
 
       Object.entries(sheet.cells).forEach(([key, cell]) => {
@@ -883,9 +909,15 @@ export const useWorkbookStore = create<WorkbookState>()(
 
         let newCell: CellData;
         switch (mode) {
-          case 'values':
-            newCell = { ...existing, value: cell.value, formula: null, displayValue: String(cell.value ?? '') };
+          case 'values': {
+            newCell = {
+              ...existing,
+              value: cell.value,
+              formula: null,
+              displayValue: String(cell.value ?? ''),
+            };
             break;
+          }
           case 'formulas':
             newCell = { ...existing, formula: cell.formula };
             break;
@@ -990,11 +1022,15 @@ export const useWorkbookStore = create<WorkbookState>()(
 
         let newCell: CellData;
         switch (mode) {
-          case 'values':
+          case 'values': {
             let newValue = cell.value;
 
             // Apply operation if target has a numeric value
-            if (operation !== 'none' && typeof existing.value === 'number' && typeof cell.value === 'number') {
+            if (
+              operation !== 'none' &&
+              typeof existing.value === 'number' &&
+              typeof cell.value === 'number'
+            ) {
               switch (operation) {
                 case 'add':
                   newValue = existing.value + cell.value;
@@ -1011,11 +1047,22 @@ export const useWorkbookStore = create<WorkbookState>()(
               }
             }
 
-            newCell = { ...existing, value: newValue, formula: null, displayValue: String(newValue ?? '') };
+            newCell = {
+              ...existing,
+              value: newValue,
+              formula: null,
+              displayValue: String(newValue ?? ''),
+            };
             break;
+          }
 
           case 'formulas':
-            newCell = { ...existing, formula: cell.formula, value: cell.value, displayValue: cell.displayValue || String(cell.value ?? '') };
+            newCell = {
+              ...existing,
+              formula: cell.formula,
+              value: cell.value,
+              displayValue: cell.displayValue || String(cell.value ?? ''),
+            };
             break;
 
           case 'formatting':
@@ -1238,7 +1285,9 @@ export const useWorkbookStore = create<WorkbookState>()(
             newCells[targetKey] = {
               ...sourceCell,
               // Adjust formula references if it's a formula
-              formula: sourceCell.formula ? adjustFormulaRow(sourceCell.formula, row - start.row) : null,
+              formula: sourceCell.formula
+                ? adjustFormulaRow(sourceCell.formula, row - start.row)
+                : null,
             };
           }
         }
@@ -1275,7 +1324,9 @@ export const useWorkbookStore = create<WorkbookState>()(
             newCells[targetKey] = {
               ...sourceCell,
               // Adjust formula references if it's a formula
-              formula: sourceCell.formula ? adjustFormulaCol(sourceCell.formula, col - start.col) : null,
+              formula: sourceCell.formula
+                ? adjustFormulaCol(sourceCell.formula, col - start.col)
+                : null,
             };
           }
         }
@@ -1312,7 +1363,9 @@ export const useWorkbookStore = create<WorkbookState>()(
             newCells[targetKey] = {
               ...sourceCell,
               // Adjust formula references if it's a formula
-              formula: sourceCell.formula ? adjustFormulaRow(sourceCell.formula, row - end.row) : null,
+              formula: sourceCell.formula
+                ? adjustFormulaRow(sourceCell.formula, row - end.row)
+                : null,
             };
           }
         }
@@ -1349,7 +1402,9 @@ export const useWorkbookStore = create<WorkbookState>()(
             newCells[targetKey] = {
               ...sourceCell,
               // Adjust formula references if it's a formula
-              formula: sourceCell.formula ? adjustFormulaCol(sourceCell.formula, col - end.col) : null,
+              formula: sourceCell.formula
+                ? adjustFormulaCol(sourceCell.formula, col - end.col)
+                : null,
             };
           }
         }
@@ -1396,7 +1451,11 @@ export const useWorkbookStore = create<WorkbookState>()(
           // Apply fill values
           for (let i = 0; i < count; i++) {
             const targetKey = getCellKey(start.row + 1 + i, col);
-            const existing = newCells[targetKey] || { value: null, formula: null, displayValue: '' };
+            const existing = newCells[targetKey] || {
+              value: null,
+              formula: null,
+              displayValue: '',
+            };
             newCells[targetKey] = {
               ...existing,
               value: fillValues[i],
@@ -1427,7 +1486,11 @@ export const useWorkbookStore = create<WorkbookState>()(
           // Apply fill values
           for (let i = 0; i < count; i++) {
             const targetKey = getCellKey(row, start.col + 1 + i);
-            const existing = newCells[targetKey] || { value: null, formula: null, displayValue: '' };
+            const existing = newCells[targetKey] || {
+              value: null,
+              formula: null,
+              displayValue: '',
+            };
             newCells[targetKey] = {
               ...existing,
               value: fillValues[i],
@@ -1487,7 +1550,11 @@ export const useWorkbookStore = create<WorkbookState>()(
         hiddenRows.delete(index);
       } else if (selectionRange) {
         // Unhide all rows in/around selection
-        for (let row = Math.max(0, selectionRange.start.row - 1); row <= selectionRange.end.row + 1; row++) {
+        for (
+          let row = Math.max(0, selectionRange.start.row - 1);
+          row <= selectionRange.end.row + 1;
+          row++
+        ) {
           hiddenRows.delete(row);
         }
       } else if (selectedCell) {
@@ -1542,7 +1609,11 @@ export const useWorkbookStore = create<WorkbookState>()(
         hiddenColumns.delete(index);
       } else if (selectionRange) {
         // Unhide all columns in/around selection
-        for (let col = Math.max(0, selectionRange.start.col - 1); col <= selectionRange.end.col + 1; col++) {
+        for (
+          let col = Math.max(0, selectionRange.start.col - 1);
+          col <= selectionRange.end.col + 1;
+          col++
+        ) {
           hiddenColumns.delete(col);
         }
       } else if (selectedCell) {
@@ -1574,7 +1645,8 @@ export const useWorkbookStore = create<WorkbookState>()(
           // If hiding active sheet, switch to another
           activeSheetId:
             state.activeSheetId === sheetId
-              ? state.sheetOrder.find((id) => id !== sheetId && !state.sheets[id]?.hidden) || state.activeSheetId
+              ? state.sheetOrder.find((id) => id !== sheetId && !state.sheets[id]?.hidden) ||
+                state.activeSheetId
               : state.activeSheetId,
         };
       });
@@ -1969,7 +2041,7 @@ export const useWorkbookStore = create<WorkbookState>()(
         }
         updates[sheetId][key] = {
           ...cell,
-          value: result.error ? result.displayValue : result.value as CellValue,
+          value: result.error ? result.displayValue : (result.value as CellValue),
           displayValue: result.displayValue,
         };
       }

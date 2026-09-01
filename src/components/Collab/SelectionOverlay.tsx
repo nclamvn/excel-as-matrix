@@ -23,7 +23,10 @@ export const SelectionOverlay: React.FC<SelectionOverlayProps> = ({
   const overlays = useSelectionOverlays({ sheetId, visibleRows, visibleCols });
 
   return (
-    <div className="selection-overlays" style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
+    <div
+      className="selection-overlays"
+      style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+    >
       {overlays.map((overlay) => {
         const bounds = getSelectionBounds(
           overlay.startRow,
@@ -116,10 +119,7 @@ interface CellEditingIndicatorProps {
   userName: string;
 }
 
-export const CellEditingIndicator: React.FC<CellEditingIndicatorProps> = ({
-  color,
-  userName,
-}) => {
+export const CellEditingIndicator: React.FC<CellEditingIndicatorProps> = ({ color, userName }) => {
   return (
     <div
       style={{

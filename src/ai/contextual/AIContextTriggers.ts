@@ -165,12 +165,12 @@ export function analyzeSelectionContext(
 function isDateString(value: string): boolean {
   // Common date patterns
   const datePatterns = [
-    /^\d{4}-\d{2}-\d{2}$/,  // YYYY-MM-DD
+    /^\d{4}-\d{2}-\d{2}$/, // YYYY-MM-DD
     /^\d{2}\/\d{2}\/\d{4}$/, // MM/DD/YYYY
-    /^\d{2}-\d{2}-\d{4}$/,  // DD-MM-YYYY
+    /^\d{2}-\d{2}-\d{4}$/, // DD-MM-YYYY
     /^\w+ \d{1,2}, \d{4}$/, // Month DD, YYYY
   ];
-  return datePatterns.some(p => p.test(value));
+  return datePatterns.some((p) => p.test(value));
 }
 
 // Generate suggestions based on context
@@ -426,7 +426,7 @@ export const QUICK_AI_ACTIONS = [
 export function getApplicableQuickActions(context: ContextAnalysis | null) {
   if (!context) return QUICK_AI_ACTIONS.slice(0, 3); // Default actions
 
-  return QUICK_AI_ACTIONS.filter(action => {
+  return QUICK_AI_ACTIONS.filter((action) => {
     if (action.requiresFormula && !context.hasFormulas) return false;
     if (action.requiresError && !context.hasErrors) return false;
     if (action.requiresData && !context.hasData) return false;

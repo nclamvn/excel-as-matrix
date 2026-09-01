@@ -70,13 +70,8 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
   onAddRule,
 }) => {
   const { activeSheetId, sheets } = useWorkbookStore();
-  const {
-    getAllRules,
-    deleteRule,
-    toggleRule,
-    movePriority,
-    clearAllRules,
-  } = useConditionalFormattingStore();
+  const { getAllRules, deleteRule, toggleRule, movePriority, clearAllRules } =
+    useConditionalFormattingStore();
 
   const [selectedRuleId, setSelectedRuleId] = useState<string | undefined>(undefined);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -92,9 +87,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
     if (!filterRange) return allRules;
 
     // Filter by range if specified
-    return allRules.filter(rule =>
-      rule.range.toLowerCase().includes(filterRange.toLowerCase())
-    );
+    return allRules.filter((rule) => rule.range.toLowerCase().includes(filterRange.toLowerCase()));
   }, [getAllRules, sheetId, filterRange]);
 
   // Get rule description
@@ -124,9 +117,10 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
       case 'colorScale':
         return `${rule.colorScale?.type === '3-color' ? '3' : '2'}-Color Scale`;
 
-      case 'iconSet':
-        const iconDef = ICON_SET_DEFINITIONS.find(i => i.id === rule.iconSet?.iconStyle);
+      case 'iconSet': {
+        const iconDef = ICON_SET_DEFINITIONS.find((i) => i.id === rule.iconSet?.iconStyle);
         return `Icon Set: ${iconDef?.name || rule.iconSet?.iconStyle}`;
+      }
 
       case 'formula':
         return `Formula: ${rule.formula}`;
@@ -159,18 +153,20 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
         <div
           className="rule-preview-databar"
           style={{
-            background: rule.dataBar.fillType === 'gradient'
-              ? `linear-gradient(90deg, ${rule.dataBar.positiveColor} 0%, ${rule.dataBar.positiveColor}33 100%)`
-              : rule.dataBar.positiveColor,
+            background:
+              rule.dataBar.fillType === 'gradient'
+                ? `linear-gradient(90deg, ${rule.dataBar.positiveColor} 0%, ${rule.dataBar.positiveColor}33 100%)`
+                : rule.dataBar.positiveColor,
           }}
         />
       );
     }
 
     if (rule.colorScale) {
-      const colors = rule.colorScale.type === '3-color'
-        ? `${rule.colorScale.minColor}, ${rule.colorScale.midColor}, ${rule.colorScale.maxColor}`
-        : `${rule.colorScale.minColor}, ${rule.colorScale.maxColor}`;
+      const colors =
+        rule.colorScale.type === '3-color'
+          ? `${rule.colorScale.minColor}, ${rule.colorScale.midColor}, ${rule.colorScale.maxColor}`
+          : `${rule.colorScale.minColor}, ${rule.colorScale.maxColor}`;
       return (
         <div
           className="rule-preview-colorscale"
@@ -182,12 +178,8 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
     }
 
     if (rule.iconSet) {
-      const iconDef = ICON_SET_DEFINITIONS.find(i => i.id === rule.iconSet?.iconStyle);
-      return (
-        <div className="rule-preview-iconset">
-          {iconDef?.icons.slice(0, 3).join(' ')}
-        </div>
-      );
+      const iconDef = ICON_SET_DEFINITIONS.find((i) => i.id === rule.iconSet?.iconStyle);
+      return <div className="rule-preview-iconset">{iconDef?.icons.slice(0, 3).join(' ')}</div>;
     }
 
     return <div className="rule-preview-empty" />;
@@ -210,10 +202,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div
-        className="dialog manage-rules-dialog"
-        onClick={e => e.stopPropagation()}
-      >
+      <div className="dialog manage-rules-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>Conditional Formatting Rules Manager</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -230,15 +219,12 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 type="text"
                 placeholder="Filter by range..."
                 value={filterRange}
-                onChange={e => setFilterRange(e.target.value)}
+                onChange={(e) => setFilterRange(e.target.value)}
                 className="filter-input"
               />
             </div>
             <div className="toolbar-right">
-              <button type="button"
-                className="toolbar-btn primary"
-                onClick={onAddRule}
-              >
+              <button type="button" className="toolbar-btn primary" onClick={onAddRule}>
                 <Plus size={14} />
                 New Rule
               </button>
@@ -283,9 +269,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                           <span className="rule-description">{getRuleDescription(rule)}</span>
                         </div>
                       </td>
-                      <td className="format-cell">
-                        {renderRulePreview(rule)}
-                      </td>
+                      <td className="format-cell">{renderRulePreview(rule)}</td>
                       <td className="range-cell">
                         <code>{rule.range}</code>
                       </td>
@@ -303,7 +287,8 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
           {rules.length > 0 && (
             <div className="rules-actions">
               <div className="action-group">
-                <button type="button"
+                <button
+                  type="button"
                   className="action-btn"
                   disabled={!selectedRuleId}
                   onClick={() => selectedRuleId && movePriority(selectedRuleId, 'up', sheetId)}
@@ -311,7 +296,8 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 >
                   <ChevronUp size={16} />
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="action-btn"
                   disabled={!selectedRuleId}
                   onClick={() => selectedRuleId && movePriority(selectedRuleId, 'down', sheetId)}
@@ -321,25 +307,29 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 </button>
               </div>
               <div className="action-group">
-                <button type="button"
+                <button
+                  type="button"
                   className="action-btn"
                   disabled={!selectedRuleId}
                   onClick={() => selectedRuleId && toggleRule(selectedRuleId, sheetId)}
                   title="Enable/Disable"
                 >
-                  {rules.find(r => r.id === selectedRuleId)?.enabled !== false
-                    ? <EyeOff size={16} />
-                    : <Eye size={16} />
-                  }
+                  {rules.find((r) => r.id === selectedRuleId)?.enabled !== false ? (
+                    <EyeOff size={16} />
+                  ) : (
+                    <Eye size={16} />
+                  )}
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="action-btn edit"
                   disabled={!selectedRuleId}
                   title="Edit Rule"
                 >
                   <Pencil size={16} />
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="action-btn danger"
                   disabled={!selectedRuleId}
                   onClick={() => setShowDeleteConfirm(true)}
@@ -349,10 +339,7 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
                 </button>
               </div>
               <div className="action-group">
-                <button type="button"
-                  className="action-btn danger-text"
-                  onClick={handleClearAll}
-                >
+                <button type="button" className="action-btn danger-text" onClick={handleClearAll}>
                   Clear All
                 </button>
               </div>
@@ -372,16 +359,14 @@ export const ManageRulesDialog: React.FC<ManageRulesDialogProps> = ({
             <div className="confirm-dialog">
               <p>Delete the selected rule?</p>
               <div className="confirm-actions">
-                <button type="button"
+                <button
+                  type="button"
                   className="confirm-btn cancel"
                   onClick={() => setShowDeleteConfirm(false)}
                 >
                   Cancel
                 </button>
-                <button type="button"
-                  className="confirm-btn delete"
-                  onClick={handleDeleteSelected}
-                >
+                <button type="button" className="confirm-btn delete" onClick={handleDeleteSelected}>
                   Delete
                 </button>
               </div>

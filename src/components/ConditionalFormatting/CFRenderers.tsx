@@ -68,9 +68,10 @@ export const DataBarRenderer: React.FC<DataBarRendererProps> = ({
     top: '10%',
     width: `${percentage}%`,
     height: '80%',
-    background: config.fillType === 'gradient'
-      ? `linear-gradient(90deg, ${barColor} 0%, ${barColor}66 100%)`
-      : barColor,
+    background:
+      config.fillType === 'gradient'
+        ? `linear-gradient(90deg, ${barColor} 0%, ${barColor}66 100%)`
+        : barColor,
     borderRadius: '2px',
     transition: 'width 0.2s ease',
   };
@@ -93,9 +94,7 @@ export const DataBarRenderer: React.FC<DataBarRendererProps> = ({
         )}
         <div style={barStyle} />
       </div>
-      {config.showValue && (
-        <span className="cf-databar-value">{value}</span>
-      )}
+      {config.showValue && <span className="cf-databar-value">{value}</span>}
     </div>
   );
 };
@@ -141,12 +140,7 @@ export const ColorScaleRenderer: React.FC<ColorScaleRendererProps> = ({
     }
   };
 
-  return (
-    <div
-      className="cf-colorscale-cell"
-      style={{ backgroundColor: getInterpolatedColor() }}
-    />
-  );
+  return <div className="cf-colorscale-cell" style={{ backgroundColor: getInterpolatedColor() }} />;
 };
 
 // Color interpolation helper
@@ -187,12 +181,10 @@ export const IconSetRenderer: React.FC<IconSetRendererProps> = ({
   minValue,
   maxValue,
 }) => {
-  const iconDef = ICON_SET_DEFINITIONS.find(d => d.id === config.iconStyle);
+  const iconDef = ICON_SET_DEFINITIONS.find((d) => d.id === config.iconStyle);
   if (!iconDef) return null;
 
-  const icons = config.reverseOrder
-    ? [...iconDef.icons].reverse()
-    : iconDef.icons;
+  const icons = config.reverseOrder ? [...iconDef.icons].reverse() : iconDef.icons;
 
   // Calculate which icon to show based on thresholds
   const getIconIndex = (): number => {
@@ -219,9 +211,10 @@ export const IconSetRenderer: React.FC<IconSetRendererProps> = ({
           thresholdValue = Number(threshold.value);
       }
 
-      const passes = threshold.operator === '>='
-        ? normalizedPercent >= thresholdValue
-        : normalizedPercent > thresholdValue;
+      const passes =
+        threshold.operator === '>='
+          ? normalizedPercent >= thresholdValue
+          : normalizedPercent > thresholdValue;
 
       if (passes) {
         return i;
@@ -247,16 +240,10 @@ export const IconSetRenderer: React.FC<IconSetRendererProps> = ({
 
   return (
     <div className="cf-iconset-container">
-      <span
-        className="cf-icon"
-        style={{ color: getIconColor() }}
-        title={`Value: ${value}`}
-      >
+      <span className="cf-icon" style={{ color: getIconColor() }} title={`Value: ${value}`}>
         {icon}
       </span>
-      {config.showValue && (
-        <span className="cf-iconset-value">{value}</span>
-      )}
+      {config.showValue && <span className="cf-iconset-value">{value}</span>}
     </div>
   );
 };
@@ -290,12 +277,7 @@ export const CFCellRenderer: React.FC<CFCellRendererProps> = ({
 
   if (dataBar) {
     return (
-      <DataBarRenderer
-        value={numValue}
-        config={dataBar}
-        minValue={rangeMin}
-        maxValue={rangeMax}
-      />
+      <DataBarRenderer value={numValue} config={dataBar} minValue={rangeMin} maxValue={rangeMax} />
     );
   }
 
@@ -313,12 +295,7 @@ export const CFCellRenderer: React.FC<CFCellRendererProps> = ({
 
   if (iconSet) {
     return (
-      <IconSetRenderer
-        value={numValue}
-        config={iconSet}
-        minValue={rangeMin}
-        maxValue={rangeMax}
-      />
+      <IconSetRenderer value={numValue} config={iconSet} minValue={rangeMin} maxValue={rangeMax} />
     );
   }
 

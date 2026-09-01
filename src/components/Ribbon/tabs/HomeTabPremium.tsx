@@ -2,23 +2,32 @@ import React from 'react';
 import { RibbonGroupPremium } from '../RibbonGroupPremium';
 import { CompactButton, CompactSplitButton } from '../../Toolbar/CompactButton';
 import {
-  Clipboard, Scissors, Copy, ClipboardPaste,
-  Bold, Italic, Underline,
-  AlignLeft, AlignCenter, AlignRight,
-  Percent, DollarSign,
-  Plus, Trash2, Settings,
-  Search, SortAsc,
-  PaintBucket, Type, Palette
+  Clipboard,
+  Scissors,
+  Copy,
+  ClipboardPaste,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Percent,
+  DollarSign,
+  Plus,
+  Trash2,
+  Settings,
+  Search,
+  SortAsc,
+  PaintBucket,
+  Type,
+  Palette,
 } from 'lucide-react';
 import { useFormatStore } from '../../../stores/formatStore';
 
 export const HomeTabPremium: React.FC = () => {
-  const {
-    bold, toggleBold,
-    italic, toggleItalic,
-    underline, toggleUnderline,
-    align, setAlign,
-  } = useFormatStore();
+  const { bold, toggleBold, italic, toggleItalic, underline, toggleUnderline, align, setAlign } =
+    useFormatStore();
 
   return (
     <>
@@ -32,20 +41,9 @@ export const HomeTabPremium: React.FC = () => {
           onMainClick={() => navigator.clipboard.readText()}
         />
         <div className="btn-group btn-group--vertical">
-          <CompactButton
-            icon={Scissors}
-            tooltip="Cut"
-            shortcut="Ctrl+X"
-          />
-          <CompactButton
-            icon={Copy}
-            tooltip="Copy"
-            shortcut="Ctrl+C"
-          />
-          <CompactButton
-            icon={Clipboard}
-            tooltip="Format Painter"
-          />
+          <CompactButton icon={Scissors} tooltip="Cut" shortcut="Ctrl+X" />
+          <CompactButton icon={Copy} tooltip="Copy" shortcut="Ctrl+C" />
+          <CompactButton icon={Clipboard} tooltip="Format Painter" />
         </div>
       </RibbonGroupPremium>
 
@@ -59,11 +57,7 @@ export const HomeTabPremium: React.FC = () => {
               <option>Times New Roman</option>
               <option>IBM Plex Sans</option>
             </select>
-            <input
-              type="text"
-              className="premium-input font-size-premium"
-              defaultValue="11"
-            />
+            <input type="text" className="premium-input font-size-premium" defaultValue="11" />
           </div>
           <div className="btn-group">
             <CompactButton
@@ -143,18 +137,9 @@ export const HomeTabPremium: React.FC = () => {
             <option>Text</option>
           </select>
           <div className="btn-group">
-            <CompactButton
-              icon={DollarSign}
-              tooltip="Accounting Number Format"
-              hasDropdown
-            />
-            <CompactButton
-              icon={Percent}
-              tooltip="Percent Style"
-            />
-            <CompactButton
-              tooltip="Comma Style"
-            >
+            <CompactButton icon={DollarSign} tooltip="Accounting Number Format" hasDropdown />
+            <CompactButton icon={Percent} tooltip="Percent Style" />
+            <CompactButton tooltip="Comma Style">
               <span style={{ fontSize: '11px', fontWeight: 500 }}>,</span>
             </CompactButton>
           </div>
@@ -170,36 +155,14 @@ export const HomeTabPremium: React.FC = () => {
           hasDropdown
           tooltip="Conditional Formatting"
         />
-        <CompactButton
-          label="Format as Table"
-          size="lg"
-          hasDropdown
-          tooltip="Format as Table"
-        />
-        <CompactButton
-          label="Cell Styles"
-          size="lg"
-          hasDropdown
-          tooltip="Cell Styles"
-        />
+        <CompactButton label="Format as Table" size="lg" hasDropdown tooltip="Format as Table" />
+        <CompactButton label="Cell Styles" size="lg" hasDropdown tooltip="Cell Styles" />
       </RibbonGroupPremium>
 
       {/* Cells Group */}
       <RibbonGroupPremium label="Cells">
-        <CompactButton
-          icon={Plus}
-          label="Insert"
-          size="lg"
-          hasDropdown
-          tooltip="Insert Cells"
-        />
-        <CompactButton
-          icon={Trash2}
-          label="Delete"
-          size="lg"
-          hasDropdown
-          tooltip="Delete Cells"
-        />
+        <CompactButton icon={Plus} label="Insert" size="lg" hasDropdown tooltip="Insert Cells" />
+        <CompactButton icon={Trash2} label="Delete" size="lg" hasDropdown tooltip="Delete Cells" />
         <CompactButton
           icon={Settings}
           label="Format"
@@ -212,12 +175,7 @@ export const HomeTabPremium: React.FC = () => {
       {/* Editing Group */}
       <RibbonGroupPremium label="Editing">
         <div className="btn-group btn-group--vertical">
-          <CompactButton
-            icon={SortAsc}
-            label="Sort & Filter"
-            hasDropdown
-            tooltip="Sort & Filter"
-          />
+          <CompactButton icon={SortAsc} label="Sort & Filter" hasDropdown tooltip="Sort & Filter" />
           <CompactButton
             icon={Search}
             label="Find & Select"

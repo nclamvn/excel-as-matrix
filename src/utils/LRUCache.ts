@@ -201,11 +201,7 @@ export function memoizeWithLRU<Args extends unknown[], Result>(
     keyFn?: (...args: Args) => string;
   } = {}
 ): (...args: Args) => Result {
-  const {
-    maxSize = 1000,
-    ttlMs = null,
-    keyFn = (...args: Args) => JSON.stringify(args),
-  } = options;
+  const { maxSize = 1000, ttlMs = null, keyFn = (...args: Args) => JSON.stringify(args) } = options;
 
   const cache = new LRUCache<string, Result>(maxSize, ttlMs);
 

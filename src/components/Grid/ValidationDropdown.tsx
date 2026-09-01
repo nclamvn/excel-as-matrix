@@ -91,9 +91,7 @@ export const ValidationDropdown: React.FC<ValidationDropdownProps> = ({
             fontSize: 13,
             cursor: 'pointer',
             color: isDark ? '#e5e5e5' : '#171717',
-            background: i === highlightIndex
-              ? (isDark ? '#404040' : '#f0f0f0')
-              : 'transparent',
+            background: i === highlightIndex ? (isDark ? '#404040' : '#f0f0f0') : 'transparent',
           }}
           onMouseEnter={() => setHighlightIndex(i)}
         >

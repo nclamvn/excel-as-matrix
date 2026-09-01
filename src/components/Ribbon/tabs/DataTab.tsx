@@ -3,8 +3,15 @@ import { RibbonGroup } from '../RibbonGroup';
 import { RibbonButton } from '../RibbonButton';
 import { RibbonDropdown } from '../RibbonDropdown';
 import {
-  Database, RefreshCw, Table, ArrowDownAZ, Filter,
-  SplitSquareHorizontal, CheckSquare, Sparkles, GitCompare
+  Database,
+  RefreshCw,
+  Table,
+  ArrowDownAZ,
+  Filter,
+  SplitSquareHorizontal,
+  CheckSquare,
+  Sparkles,
+  GitCompare,
 } from 'lucide-react';
 
 export const DataTab: React.FC = () => {

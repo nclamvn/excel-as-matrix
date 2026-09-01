@@ -2,7 +2,12 @@
 // UI for managing data connections
 
 import React, { useState, useEffect } from 'react';
-import { useConnectionStore, ConnectionType, ConnectionStatus, ConnectionConfig } from '../../stores/connectionStore';
+import {
+  useConnectionStore,
+  ConnectionType,
+  ConnectionStatus,
+  ConnectionConfig,
+} from '../../stores/connectionStore';
 import * as connectionApi from '../../api/connectionApi';
 import { loggers } from '@/utils/logger';
 
@@ -141,7 +146,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="text-lg font-semibold">Data Connections</h2>
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 text-xl"
           >
@@ -151,7 +157,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
 
         {/* Tabs */}
         <div className="flex border-b">
-          <button type="button"
+          <button
+            type="button"
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === 'connections'
                 ? 'border-b-2 border-blue-500 text-blue-600'
@@ -161,7 +168,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
           >
             Connections ({connections.length})
           </button>
-          <button type="button"
+          <button
+            type="button"
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === 'queries'
                 ? 'border-b-2 border-blue-500 text-blue-600'
@@ -171,7 +179,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
           >
             Queries ({queries.length})
           </button>
-          <button type="button"
+          <button
+            type="button"
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === 'schedule'
                 ? 'border-b-2 border-blue-500 text-blue-600'
@@ -187,7 +196,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
         {error && (
           <div className="px-4 py-2 bg-red-50 text-red-600 text-sm">
             {error}
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setError(null)}
               className="ml-2 text-red-400 hover:text-red-600"
             >
@@ -203,7 +213,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
           ) : activeTab === 'connections' ? (
             <div className="space-y-3">
               {/* New connection button */}
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setShowNewConnection(true)}
                 className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-500"
               >
@@ -230,14 +241,13 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                         <div className="font-medium">{conn.name}</div>
                         <div className="text-xs text-gray-500">
                           {conn.connectionType} &bull;{' '}
-                          <span className={getStatusColor(conn.status)}>
-                            {conn.status}
-                          </span>
+                          <span className={getStatusColor(conn.status)}>{conn.status}</span>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleTestConnection(conn.id);
@@ -247,7 +257,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                         Test
                       </button>
                       {conn.status === 'connected' ? (
-                        <button type="button"
+                        <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDisconnect(conn.id);
@@ -257,7 +268,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                           Disconnect
                         </button>
                       ) : (
-                        <button type="button"
+                        <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleConnect(conn.id);
@@ -267,7 +279,8 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                           Connect
                         </button>
                       )}
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteConnection(conn.id);
@@ -279,9 +292,7 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
                     </div>
                   </div>
                   {conn.lastError && (
-                    <div className="mt-2 text-xs text-red-500">
-                      Error: {conn.lastError}
-                    </div>
+                    <div className="mt-2 text-xs text-red-500">Error: {conn.lastError}</div>
                   )}
                 </div>
               ))}
@@ -301,13 +312,15 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({ isOpen, on
 
         {/* Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
-          <button type="button"
+          <button
+            type="button"
             onClick={loadData}
             className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
           >
             Refresh
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="px-4 py-1.5 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
           >
@@ -352,18 +365,20 @@ const QueryList: React.FC = () => {
               <div>
                 <div className="font-medium">{query.name}</div>
                 <div className="text-xs text-gray-500">
-                  Connection: {connection?.name || 'Unknown'} &bull; Target:{' '}
-                  {query.targetSheet}!{query.targetRange}
+                  Connection: {connection?.name || 'Unknown'} &bull; Target: {query.targetSheet}!
+                  {query.targetRange}
                 </div>
               </div>
               <div className="flex gap-2">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => handleExecute(query.id)}
                   className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
                 >
                   Execute
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => handleDelete(query.id)}
                   className="px-3 py-1 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50"
                 >
@@ -435,8 +450,8 @@ const ScheduleList: React.FC = () => {
               <div>
                 <div className="font-medium">{query?.name || 'Unknown Query'}</div>
                 <div className="text-xs text-gray-500">
-                  {formatSchedule(job.schedule)} &bull; Runs: {job.runCount} &bull;
-                  Errors: {job.errorCount}
+                  {formatSchedule(job.schedule)} &bull; Runs: {job.runCount} &bull; Errors:{' '}
+                  {job.errorCount}
                 </div>
                 {job.nextRun && (
                   <div className="text-xs text-blue-500">
@@ -453,7 +468,8 @@ const ScheduleList: React.FC = () => {
                   />
                   Enabled
                 </label>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => handleTrigger(job.id)}
                   className="px-3 py-1 text-xs bg-amber-500 text-white rounded hover:bg-amber-600"
                 >
@@ -574,9 +590,7 @@ const NewConnectionDialog: React.FC<NewConnectionDialogProps> = ({ onClose, onCr
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          {error && (
-            <div className="p-2 bg-red-50 text-red-600 text-sm rounded">{error}</div>
-          )}
+          {error && <div className="p-2 bg-red-50 text-red-600 text-sm rounded">{error}</div>}
 
           <div>
             <label className="block text-sm font-medium mb-1">Connection Name</label>

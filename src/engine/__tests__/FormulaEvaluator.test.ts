@@ -438,7 +438,10 @@ describe('FormulaEvaluator', () => {
     it('should evaluate 2D array', () => {
       const ast = parseFormula('={1,2;3,4}');
       const result = evaluator.evaluate(ast, mockContext);
-      expect(result).toEqual([[1, 2], [3, 4]]);
+      expect(result).toEqual([
+        [1, 2],
+        [3, 4],
+      ]);
     });
 
     it('should evaluate array with expressions', () => {

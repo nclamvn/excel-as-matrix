@@ -2,17 +2,8 @@
 // HISTORY PANEL — Action History
 // ═══════════════════════════════════════════════════════════════════════════
 
-import React from 'react';
-import {
-  History,
-  Check,
-  X,
-  RotateCcw,
-  FileEdit,
-  Trash2,
-  Zap,
-  Clock,
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { History, Check, X, RotateCcw, FileEdit, Trash2, Zap, Clock } from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
 import type { AIActionHistory } from '../../ai/types';
 
@@ -22,9 +13,11 @@ import type { AIActionHistory } from '../../ai/types';
 
 interface HistoryItemProps {
   item: AIActionHistory;
+  onRollback: () => void;
+  disabled: boolean;
 }
 
-const HistoryItem: React.FC<HistoryItemProps> = ({ item }) => {
+const HistoryItem: React.FC<HistoryItemProps> = ({ item, onRollback, disabled }) => {
   const getOutcomeIcon = () => {
     switch (item.outcome) {
       case 'success':
@@ -68,18 +61,19 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item }) => {
             {item.outcome}
           </span>
         </div>
-        <div className="ai-history-item-description">
-          {item.action.description}
-        </div>
+        <div className="ai-history-item-description">{item.action.description}</div>
         <div className="ai-history-item-meta">
-          <span className="ai-history-item-cells">
-            {item.action.affectedCells} cells
-          </span>
+          <span className="ai-history-item-cells">{item.action.affectedCells} cells</span>
           <span className="ai-history-item-time">
             <Clock size={12} />
             {formatTime(item.timestamp)}
           </span>
         </div>
+        {item.outcome === 'success' && (
+          <button type="button" className="ai-action-btn" onClick={onRollback} disabled={disabled}>
+            <RotateCcw size={12} /> Rollback
+          </button>
+        )}
       </div>
     </div>
   );
@@ -91,6 +85,21 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item }) => {
 
 export const HistoryPanel: React.FC = () => {
   const actionHistory = useAIStore((state) => state.actionHistory);
+  const rollbackAction = useAIStore((state) => state.rollbackAction);
+  const error = useAIStore((state) => state.error);
+  const clearError = useAIStore((state) => state.clearError);
+  const [processingHistoryId, setProcessingHistoryId] = useState<string | null>(null);
+
+  const handleRollback = async (historyId: string) => {
+    if (processingHistoryId) return;
+    setProcessingHistoryId(historyId);
+    clearError();
+    try {
+      await rollbackAction(historyId);
+    } finally {
+      setProcessingHistoryId(null);
+    }
+  };
 
   // Sort by most recent first
   const sortedHistory = [...actionHistory].sort(
@@ -105,18 +114,30 @@ export const HistoryPanel: React.FC = () => {
         <span className="ai-history-count">{actionHistory.length}</span>
       </div>
 
+      {error && (
+        <div className="ai-chat-error" role="alert">
+          <span>{error}</span>
+          <button type="button" onClick={clearError}>
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {actionHistory.length === 0 ? (
         <div className="ai-history-empty">
           <History size={48} className="ai-history-empty-icon" />
           <h4>No history yet</h4>
-          <p>
-            Actions you approve or reject will be recorded here for reference.
-          </p>
+          <p>Actions you approve or reject will be recorded here for reference.</p>
         </div>
       ) : (
         <div className="ai-history-list">
           {sortedHistory.map((item) => (
-            <HistoryItem key={item.id} item={item} />
+            <HistoryItem
+              key={item.id}
+              item={item}
+              onRollback={() => void handleRollback(item.id)}
+              disabled={processingHistoryId !== null}
+            />
           ))}
         </div>
       )}

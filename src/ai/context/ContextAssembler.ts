@@ -90,16 +90,10 @@ export class ContextAssembler {
     );
 
     // Step 6: Assemble schema context
-    const schemaContext = await this.assembleSchemaContext(
-      budgets.schemaContext,
-      truncatedItems
-    );
+    const schemaContext = await this.assembleSchemaContext(budgets.schemaContext, truncatedItems);
 
     // Step 7: Assemble event context (recent changes)
-    const eventContext = await this.assembleEventContext(
-      budgets.recentEvents,
-      truncatedItems
-    );
+    const eventContext = await this.assembleEventContext(budgets.recentEvents, truncatedItems);
 
     // Calculate totals
     const totalTokens =
@@ -146,7 +140,10 @@ export class ContextAssembler {
   private async assembleDirectData(
     intent: ParsedIntent,
     selectedCell: { row: number; col: number } | null,
-    selectionRange: { start: { row: number; col: number }; end: { row: number; col: number } } | null,
+    selectionRange: {
+      start: { row: number; col: number };
+      end: { row: number; col: number };
+    } | null,
     tokenBudget: number,
     truncatedItems: TruncationRecord[]
   ): Promise<AssembledContext['directData']> {
@@ -286,9 +283,7 @@ export class ContextAssembler {
           value: depCell?.value ?? null,
           formula: depCell?.formula ?? null,
           format: depCell?.format ? JSON.stringify(depCell.format) : null,
-          dependencies: depCell?.formula
-            ? this.extractDependencies(depCell.formula)
-            : [],
+          dependencies: depCell?.formula ? this.extractDependencies(depCell.formula) : [],
           dependents: [],
         };
 
@@ -312,9 +307,7 @@ export class ContextAssembler {
 
         if (cell.formula) {
           const deps = this.extractDependencies(cell.formula);
-          const hasDirectDep = deps.some((d) =>
-            directCells.has(d.toUpperCase())
-          );
+          const hasDirectDep = deps.some((d) => directCells.has(d.toUpperCase()));
 
           if (hasDirectDep) {
             const [row, col] = key.split(':').map(Number);
@@ -409,7 +402,10 @@ export class ContextAssembler {
         tables.push({
           name: `${sheet.name}${isActive ? ' (active)' : ''}`,
           range: `A1:${colToLetter(maxCol)}${maxRow + 1}`,
-          columns: columns.length > 0 ? columns : Array.from({ length: maxCol + 1 }, (_, i) => colToLetter(i)),
+          columns:
+            columns.length > 0
+              ? columns
+              : Array.from({ length: maxCol + 1 }, (_, i) => colToLetter(i)),
           rowCount: maxRow + 1,
           hasHeaders: columns.length > 0,
         });
@@ -421,7 +417,9 @@ export class ContextAssembler {
         if (!cell.formula) continue;
 
         // Match Sheet1!A1 or 'Sheet Name'!A1 patterns
-        const crossSheetRefs = cell.formula.match(/(?:'[^']+'|[A-Za-z0-9_]+)![A-Z]+\d+(?::[A-Z]+\d+)?/gi);
+        const crossSheetRefs = cell.formula.match(
+          /(?:'[^']+'|[A-Za-z0-9_]+)![A-Z]+\d+(?::[A-Z]+\d+)?/gi
+        );
         if (crossSheetRefs) {
           for (const ref of crossSheetRefs) {
             const refTokens = this.tokenEstimator.estimateString(ref);
@@ -472,10 +470,7 @@ export class ContextAssembler {
     return `${this.getCellRef(range.start.row, range.start.col)}:${this.getCellRef(range.end.row, range.end.col)}`;
   }
 
-  private getSurroundingRange(
-    cell: { row: number; col: number },
-    padding: number
-  ): string {
+  private getSurroundingRange(cell: { row: number; col: number }, padding: number): string {
     const startRow = Math.max(0, cell.row - padding);
     const startCol = Math.max(0, cell.col - padding);
     const endRow = cell.row + padding;

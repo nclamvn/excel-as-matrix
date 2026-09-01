@@ -2,12 +2,7 @@
 // GROUNDING MANAGER — Manage grounded claims and evidence (Blueprint §5.4)
 // ═══════════════════════════════════════════════════════════════════════════
 
-import type {
-  GroundedClaim,
-  Evidence,
-  GroundingReport,
-  VerificationResult,
-} from '../types';
+import type { GroundedClaim, Evidence, GroundingReport, VerificationResult } from '../types';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { getCellKey, parseCellRef } from '../../types/cell';
 
@@ -106,12 +101,7 @@ export class GroundingManager {
   /**
    * Add evidence to support claims
    */
-  addEvidence(
-    type: Evidence['type'],
-    source: string,
-    content: string,
-    quote?: string
-  ): Evidence {
+  addEvidence(type: Evidence['type'], source: string, content: string, quote?: string): Evidence {
     const evidence: Evidence = {
       id: crypto.randomUUID(),
       type,
@@ -223,8 +213,7 @@ export class GroundingManager {
 
     // Calculate overall confidence
     const totalConfidence = claims.reduce((sum, c) => sum + c.confidence, 0);
-    const overallConfidence =
-      claims.length > 0 ? totalConfidence / claims.length : 0;
+    const overallConfidence = claims.length > 0 ? totalConfidence / claims.length : 0;
 
     // Determine verification status
     const verifiedCount = claims.filter((c) => c.verified).length;

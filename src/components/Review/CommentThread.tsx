@@ -66,10 +66,7 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
       onClick={() => setActiveComment(comment.id)}
     >
       <div className="comment-header">
-        <div
-          className="author-avatar"
-          style={{ backgroundColor: author?.color || '#888' }}
-        >
+        <div className="author-avatar" style={{ backgroundColor: author?.color || '#888' }}>
           {author?.name?.[0]?.toUpperCase() || '?'}
         </div>
         <div className="comment-meta">
@@ -79,18 +76,46 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
         </div>
         <div className="comment-actions">
           {comment.resolved ? (
-            <button type="button" onClick={(e) => { e.stopPropagation(); reopenComment(comment.id, sheetId); }} title="Reopen">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                reopenComment(comment.id, sheetId);
+              }}
+              title="Reopen"
+            >
               <RotateCcw size={14} />
             </button>
           ) : (
-            <button type="button" onClick={(e) => { e.stopPropagation(); resolveComment(comment.id, sheetId); }} title="Resolve">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                resolveComment(comment.id, sheetId);
+              }}
+              title="Resolve"
+            >
               <Check size={14} />
             </button>
           )}
-          <button type="button" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} title="Edit">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
+            title="Edit"
+          >
             <Pencil size={14} />
           </button>
-          <button type="button" onClick={(e) => { e.stopPropagation(); deleteComment(comment.id, sheetId); }} title="Delete">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteComment(comment.id, sheetId);
+            }}
+            title="Delete"
+          >
             <Trash2 size={14} />
           </button>
         </div>
@@ -105,8 +130,25 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
             onClick={(e) => e.stopPropagation()}
           />
           <div className="editor-actions">
-            <button type="button" onClick={(e) => { e.stopPropagation(); setIsEditing(false); }}>Cancel</button>
-            <button type="button" onClick={(e) => { e.stopPropagation(); handleSave(); }} className="primary">Save</button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(false);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSave();
+              }}
+              className="primary"
+            >
+              Save
+            </button>
           </div>
         </div>
       ) : (
@@ -116,7 +158,7 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
       {/* Replies */}
       {comment.replies.length > 0 && (
         <div className="comment-replies">
-          {comment.replies.map(reply => {
+          {comment.replies.map((reply) => {
             const replyAuthor = getAuthor(reply.authorId);
             return (
               <div key={reply.id} className="reply-item">
@@ -129,9 +171,13 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
                   </div>
                   <span className="author-name">{replyAuthor?.name}</span>
                   <span className="reply-time">{formatTime(reply.createdAt)}</span>
-                  <button type="button"
+                  <button
+                    type="button"
                     className="delete-reply"
-                    onClick={(e) => { e.stopPropagation(); deleteReply(comment.id, reply.id, sheetId); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteReply(comment.id, reply.id, sheetId);
+                    }}
                   >
                     <X size={12} />
                   </button>
@@ -156,19 +202,47 @@ export const CommentThread: React.FC<CommentThreadProps> = ({ comment, sheetId }
                 onClick={(e) => e.stopPropagation()}
               />
               <div className="editor-actions">
-                <button type="button" onClick={(e) => { e.stopPropagation(); setIsReplying(false); }}>Cancel</button>
-                <button type="button" onClick={(e) => { e.stopPropagation(); handleReply(); }} className="primary">Reply</button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsReplying(false);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReply();
+                  }}
+                  className="primary"
+                >
+                  Reply
+                </button>
               </div>
             </div>
           ) : (
-            <button type="button" className="reply-btn" onClick={(e) => { e.stopPropagation(); setIsReplying(true); }}>
+            <button
+              type="button"
+              className="reply-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsReplying(true);
+              }}
+            >
               Reply...
             </button>
           )}
         </div>
       )}
 
-      {comment.resolved && <div className="resolved-badge"><Check size={12} /> Resolved</div>}
+      {comment.resolved && (
+        <div className="resolved-badge">
+          <Check size={12} /> Resolved
+        </div>
+      )}
     </div>
   );
 };

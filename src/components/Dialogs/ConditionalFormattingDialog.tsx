@@ -28,7 +28,7 @@ const PRESET_COLORS = [
 ];
 
 export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogProps> = ({
-  onClose
+  onClose,
 }) => {
   const [ruleType, setRuleType] = useState<RuleType>('greaterThan');
   const [value1, setValue1] = useState('');
@@ -72,7 +72,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 420 }}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()} style={{ width: 420 }}>
         <div className="dialog-header">
           <h2>Conditional Formatting</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -86,7 +86,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
             <label>Format cells if:</label>
             <select
               value={ruleType}
-              onChange={e => setRuleType(e.target.value as RuleType)}
+              onChange={(e) => setRuleType(e.target.value as RuleType)}
               className="dialog-input"
             >
               <optgroup label="Cell Value">
@@ -114,7 +114,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
               <input
                 type={ruleType === 'textContains' ? 'text' : 'number'}
                 value={value1}
-                onChange={e => setValue1(e.target.value)}
+                onChange={(e) => setValue1(e.target.value)}
                 placeholder={ruleType === 'textContains' ? 'Enter text' : 'Enter value'}
                 className="dialog-input"
               />
@@ -127,7 +127,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
               <input
                 type="number"
                 value={value2}
-                onChange={e => setValue2(e.target.value)}
+                onChange={(e) => setValue2(e.target.value)}
                 placeholder="Enter second value"
                 className="dialog-input"
               />
@@ -153,7 +153,8 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
             <label>Quick Formats:</label>
             <div className="cf-presets">
               {PRESET_COLORS.map((preset, i) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={i}
                   className={`cf-preset-btn ${!useCustomColors && selectedPreset === i ? 'selected' : ''}`}
                   style={{ backgroundColor: preset.bg, color: preset.text }}
@@ -175,7 +176,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
               <input
                 type="checkbox"
                 checked={useCustomColors}
-                onChange={e => setUseCustomColors(e.target.checked)}
+                onChange={(e) => setUseCustomColors(e.target.checked)}
               />
               Use custom colors
             </label>
@@ -188,7 +189,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
                   <input
                     type="color"
                     value={customBg}
-                    onChange={e => setCustomBg(e.target.value)}
+                    onChange={(e) => setCustomBg(e.target.value)}
                   />
                 </label>
                 <label>
@@ -197,7 +198,7 @@ export const ConditionalFormattingDialog: React.FC<ConditionalFormattingDialogPr
                   <input
                     type="color"
                     value={customText}
-                    onChange={e => setCustomText(e.target.value)}
+                    onChange={(e) => setCustomText(e.target.value)}
                   />
                 </label>
               </div>

@@ -36,38 +36,27 @@ export const SourceAttribution: React.FC<SourceAttributionProps> = ({
 
   return (
     <div className={`source-attribution ${className}`}>
-      <button type="button"
+      <button
+        type="button"
         className="source-attribution__trigger"
         onClick={() => setExpanded(!expanded)}
       >
-        <span className="source-attribution__icon">
-          {info.groundedInData ? '🔗' : '💡'}
-        </span>
+        <span className="source-attribution__icon">{info.groundedInData ? '🔗' : '💡'}</span>
         <span className="source-attribution__count">
           {info.citationCount} source{info.citationCount !== 1 ? 's' : ''}
         </span>
         {info.groundedInData && (
-          <span className="source-attribution__grounded">
-            Grounded in data
-          </span>
+          <span className="source-attribution__grounded">Grounded in data</span>
         )}
-        <span className="source-attribution__arrow">
-          {expanded ? '▲' : '▼'}
-        </span>
+        <span className="source-attribution__arrow">{expanded ? '▲' : '▼'}</span>
       </button>
 
       {expanded && (
         <div className="source-attribution__panel">
           {info.primarySource && (
             <div className="source-attribution__primary">
-              <span className="source-attribution__primary-label">
-                Primary Source
-              </span>
-              <SourceItem
-                source={info.primarySource}
-                onClick={onSourceClick}
-                isPrimary
-              />
+              <span className="source-attribution__primary-label">Primary Source</span>
+              <SourceItem source={info.primarySource} onClick={onSourceClick} isPrimary />
             </div>
           )}
 
@@ -75,11 +64,7 @@ export const SourceAttribution: React.FC<SourceAttributionProps> = ({
             {info.sources
               .filter((s) => s.id !== info.primarySource?.id)
               .map((source) => (
-                <SourceItem
-                  key={source.id}
-                  source={source}
-                  onClick={onSourceClick}
-                />
+                <SourceItem key={source.id} source={source} onClick={onSourceClick} />
               ))}
           </div>
         </div>
@@ -98,26 +83,20 @@ interface SourceItemProps {
   isPrimary?: boolean;
 }
 
-const SourceItem: React.FC<SourceItemProps> = ({
-  source,
-  onClick,
-  isPrimary = false,
-}) => {
+const SourceItem: React.FC<SourceItemProps> = ({ source, onClick, isPrimary = false }) => {
   const typeInfo = getSourceTypeInfo(source.type);
   const confidenceColor = getConfidenceColor(source.confidence);
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`source-item ${isPrimary ? 'source-item--primary' : ''}`}
       onClick={() => onClick?.(source)}
     >
       <div className="source-item__header">
         <span className="source-item__icon">{typeInfo.icon}</span>
         <span className="source-item__type">{typeInfo.label}</span>
-        <span
-          className="source-item__confidence"
-          style={{ color: confidenceColor }}
-        >
+        <span className="source-item__confidence" style={{ color: confidenceColor }}>
           {Math.round(source.confidence * 100)}%
         </span>
       </div>
@@ -153,7 +132,8 @@ export const SourceCitation: React.FC<SourceCitationProps> = ({
   const typeInfo = getSourceTypeInfo(source.type);
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`source-citation ${className}`}
       onClick={onClick}
       title={source.relevance}
@@ -192,13 +172,8 @@ export const SourcesSummary: React.FC<SourcesSummaryProps> = ({
   const byType = groupSourcesByType(info.sources);
 
   return (
-    <button type="button"
-      className={`sources-summary ${className}`}
-      onClick={onClick}
-    >
-      <span className="sources-summary__icon">
-        {info.groundedInData ? '🔗' : '💡'}
-      </span>
+    <button type="button" className={`sources-summary ${className}`} onClick={onClick}>
+      <span className="sources-summary__icon">{info.groundedInData ? '🔗' : '💡'}</span>
       <span className="sources-summary__text">
         {info.groundedInData ? 'Grounded in:' : 'Based on:'}
       </span>
@@ -208,9 +183,7 @@ export const SourcesSummary: React.FC<SourcesSummaryProps> = ({
           return (
             <span key={type} className="sources-summary__type">
               <span className="sources-summary__type-icon">{typeInfo.icon}</span>
-              <span className="sources-summary__type-count">
-                {sources.length}
-              </span>
+              <span className="sources-summary__type-count">{sources.length}</span>
             </span>
           );
         })}
@@ -239,7 +212,8 @@ export const CellSource: React.FC<CellSourceProps> = ({
   className = '',
 }) => {
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`cell-source ${className}`}
       onClick={onClick}
       title={`Cell ${cellRef}: ${value || 'empty'}`}
@@ -283,17 +257,11 @@ export const SourceTypeList: React.FC<SourceTypeListProps> = ({
             <div className="source-type-list__header">
               <span className="source-type-list__icon">{typeInfo.icon}</span>
               <span className="source-type-list__label">{typeInfo.label}</span>
-              <span className="source-type-list__count">
-                {typeSources.length}
-              </span>
+              <span className="source-type-list__count">{typeSources.length}</span>
             </div>
             <div className="source-type-list__items">
               {typeSources.map((source) => (
-                <SourceItem
-                  key={source.id}
-                  source={source}
-                  onClick={onSourceClick}
-                />
+                <SourceItem key={source.id} source={source} onClick={onSourceClick} />
               ))}
             </div>
           </div>

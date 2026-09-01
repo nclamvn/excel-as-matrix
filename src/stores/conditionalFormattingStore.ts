@@ -49,7 +49,8 @@ const isCellInRange = (row: number, col: number, range: string): boolean => {
   if (!match) return false;
 
   const [, startCol, startRow, endCol, endRow] = match;
-  const colToNum = (c: string) => c.split('').reduce((acc, char) => acc * 26 + char.charCodeAt(0) - 64, 0) - 1;
+  const colToNum = (c: string) =>
+    c.split('').reduce((acc, char) => acc * 26 + char.charCodeAt(0) - 64, 0) - 1;
 
   const startC = colToNum(startCol);
   const endC = colToNum(endCol);
@@ -64,7 +65,8 @@ const rangesOverlap = (range1: string, range2: string): boolean => {
   const parse = (r: string) => {
     const m = r.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/);
     if (!m) return null;
-    const colToNum = (c: string) => c.split('').reduce((acc, char) => acc * 26 + char.charCodeAt(0) - 64, 0) - 1;
+    const colToNum = (c: string) =>
+      c.split('').reduce((acc, char) => acc * 26 + char.charCodeAt(0) - 64, 0) - 1;
     return {
       startCol: colToNum(m[1]),
       startRow: parseInt(m[2]) - 1,
@@ -77,8 +79,12 @@ const rangesOverlap = (range1: string, range2: string): boolean => {
   const r2 = parse(range2);
   if (!r1 || !r2) return false;
 
-  return !(r1.endCol < r2.startCol || r1.startCol > r2.endCol ||
-           r1.endRow < r2.startRow || r1.startRow > r2.endRow);
+  return !(
+    r1.endCol < r2.startCol ||
+    r1.startCol > r2.endCol ||
+    r1.endRow < r2.startRow ||
+    r1.startRow > r2.endRow
+  );
 };
 
 export const useConditionalFormattingStore = create<CFStore>()(
@@ -116,7 +122,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
         set((state) => ({
           rules: {
             ...state.rules,
-            [id]: (state.rules[id] || []).map(rule =>
+            [id]: (state.rules[id] || []).map((rule) =>
               rule.id === ruleId ? { ...rule, ...updates } : rule
             ),
           },
@@ -129,7 +135,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
         set((state) => ({
           rules: {
             ...state.rules,
-            [id]: (state.rules[id] || []).filter(rule => rule.id !== ruleId),
+            [id]: (state.rules[id] || []).filter((rule) => rule.id !== ruleId),
           },
         }));
       },
@@ -140,7 +146,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
         set((state) => ({
           rules: {
             ...state.rules,
-            [id]: (state.rules[id] || []).filter(rule => !rangesOverlap(rule.range, range)),
+            [id]: (state.rules[id] || []).filter((rule) => !rangesOverlap(rule.range, range)),
           },
         }));
       },
@@ -160,7 +166,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
       movePriority: (ruleId, direction, sheetId) => {
         const id = sheetId || get().activeSheetId;
         const rules = [...(get().rules[id] || [])].sort((a, b) => a.priority - b.priority);
-        const index = rules.findIndex(r => r.id === ruleId);
+        const index = rules.findIndex((r) => r.id === ruleId);
 
         if (index === -1) return;
         if (direction === 'up' && index === 0) return;
@@ -184,7 +190,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
         set((state) => ({
           rules: {
             ...state.rules,
-            [id]: (state.rules[id] || []).map(rule =>
+            [id]: (state.rules[id] || []).map((rule) =>
               rule.id === ruleId ? { ...rule, priority: newPriority } : rule
             ),
           },
@@ -197,7 +203,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
         set((state) => ({
           rules: {
             ...state.rules,
-            [id]: (state.rules[id] || []).map(rule =>
+            [id]: (state.rules[id] || []).map((rule) =>
               rule.id === ruleId ? { ...rule, enabled: !rule.enabled } : rule
             ),
           },
@@ -208,14 +214,14 @@ export const useConditionalFormattingStore = create<CFStore>()(
       getRulesForRange: (range, sheetId) => {
         const id = sheetId || get().activeSheetId;
         return (get().rules[id] || [])
-          .filter(rule => rangesOverlap(rule.range, range))
+          .filter((rule) => rangesOverlap(rule.range, range))
           .sort((a, b) => a.priority - b.priority);
       },
 
       getRulesForCell: (row, col, sheetId) => {
         const id = sheetId || get().activeSheetId;
         return (get().rules[id] || [])
-          .filter(rule => rule.enabled && isCellInRange(row, col, rule.range))
+          .filter((rule) => rule.enabled && isCellInRange(row, col, rule.range))
           .sort((a, b) => a.priority - b.priority);
       },
 
@@ -226,7 +232,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
 
       getRuleById: (ruleId, sheetId) => {
         const id = sheetId || get().activeSheetId;
-        return (get().rules[id] || []).find(rule => rule.id === ruleId);
+        return (get().rules[id] || []).find((rule) => rule.id === ruleId);
       },
 
       // ========== Sheet Management ==========
@@ -236,7 +242,7 @@ export const useConditionalFormattingStore = create<CFStore>()(
 
       copyRulesToSheet: (fromSheetId, toSheetId) => {
         const fromRules = get().rules[fromSheetId] || [];
-        const copiedRules = fromRules.map(rule => ({
+        const copiedRules = fromRules.map((rule) => ({
           ...rule,
           id: generateId(),
         }));

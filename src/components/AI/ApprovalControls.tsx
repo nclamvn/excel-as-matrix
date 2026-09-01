@@ -152,7 +152,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
             {isConfirmingRollback ? (
               <div className="approval-confirm">
                 <span className="approval-confirm-text">Undo all changes?</span>
-                <button type="button"
+                <button
+                  type="button"
                   className="approval-btn approval-btn--confirm"
                   onClick={handleRollback}
                   disabled={isLoading}
@@ -160,7 +161,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
                   <RotateCcw size={14} />
                   Yes, Rollback
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="approval-btn approval-btn--cancel"
                   onClick={cancelConfirmation}
                   disabled={isLoading}
@@ -169,7 +171,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
                 </button>
               </div>
             ) : (
-              <button type="button"
+              <button
+                type="button"
                 className="approval-btn approval-btn--rollback"
                 onClick={handleRollback}
                 disabled={isLoading}
@@ -188,7 +191,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
   if (compact) {
     return (
       <div className="approval-controls approval-controls--compact">
-        <button type="button"
+        <button
+          type="button"
           className="approval-btn approval-btn--approve-compact"
           onClick={handleApprove}
           disabled={isLoading}
@@ -196,7 +200,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
         >
           <Check size={16} />
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="approval-btn approval-btn--reject-compact"
           onClick={handleReject}
           disabled={isLoading}
@@ -225,10 +230,9 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
       <div className="approval-actions">
         {isConfirmingReject ? (
           <div className="approval-confirm">
-            <span className="approval-confirm-text">
-              Are you sure you want to reject?
-            </span>
-            <button type="button"
+            <span className="approval-confirm-text">Are you sure you want to reject?</span>
+            <button
+              type="button"
               className="approval-btn approval-btn--confirm-reject"
               onClick={handleReject}
               disabled={isLoading}
@@ -236,7 +240,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
               <X size={14} />
               Yes, Reject
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="approval-btn approval-btn--cancel"
               onClick={cancelConfirmation}
               disabled={isLoading}
@@ -246,7 +251,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
           </div>
         ) : (
           <>
-            <button type="button"
+            <button
+              type="button"
               className="approval-btn approval-btn--approve"
               onClick={handleApprove}
               disabled={isLoading}
@@ -254,7 +260,8 @@ export const ApprovalControls: React.FC<ApprovalControlsProps> = ({
               <Check size={14} />
               {isLoading ? 'Applying...' : 'Approve & Apply'}
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="approval-btn approval-btn--reject"
               onClick={handleReject}
               disabled={isLoading}

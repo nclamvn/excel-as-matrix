@@ -116,7 +116,10 @@ export class FormulaEvaluator {
 
     // Check argument count
     if (node.args.length < fnDef.minArgs) {
-      return new FormulaError('#VALUE!', `${node.name} requires at least ${fnDef.minArgs} arguments`);
+      return new FormulaError(
+        '#VALUE!',
+        `${node.name} requires at least ${fnDef.minArgs} arguments`
+      );
     }
 
     if (node.args.length > fnDef.maxArgs) {
@@ -152,7 +155,11 @@ export class FormulaEvaluator {
         const arg = node.args[0];
         if (arg.type === 'CellRef') {
           const ref = (arg as CellRefNode).ref;
-          this.dependencies.push({ sheetId: ref.sheetName || context.sheetId, row: ref.row, col: ref.col });
+          this.dependencies.push({
+            sheetId: ref.sheetName || context.sheetId,
+            row: ref.row,
+            col: ref.col,
+          });
           return ref.row + 1; // 1-indexed
         }
         if (arg.type === 'RangeRef') {
@@ -169,7 +176,11 @@ export class FormulaEvaluator {
         const arg = node.args[0];
         if (arg.type === 'CellRef') {
           const ref = (arg as CellRefNode).ref;
-          this.dependencies.push({ sheetId: ref.sheetName || context.sheetId, row: ref.row, col: ref.col });
+          this.dependencies.push({
+            sheetId: ref.sheetName || context.sheetId,
+            row: ref.row,
+            col: ref.col,
+          });
           return ref.col + 1; // 1-indexed
         }
         if (arg.type === 'RangeRef') {
@@ -236,11 +247,20 @@ export class FormulaEvaluator {
 
         let result = '';
         switch (abs) {
-          case 1: result = `$${colLetter}$${row}`; break; // Absolute
-          case 2: result = `${colLetter}$${row}`; break;   // Row absolute
-          case 3: result = `$${colLetter}${row}`; break;   // Column absolute
-          case 4: result = `${colLetter}${row}`; break;    // Relative
-          default: result = `$${colLetter}$${row}`;
+          case 1:
+            result = `$${colLetter}$${row}`;
+            break; // Absolute
+          case 2:
+            result = `${colLetter}$${row}`;
+            break; // Row absolute
+          case 3:
+            result = `$${colLetter}${row}`;
+            break; // Column absolute
+          case 4:
+            result = `${colLetter}${row}`;
+            break; // Relative
+          default:
+            result = `$${colLetter}$${row}`;
         }
 
         return sheet + result;
@@ -256,7 +276,11 @@ export class FormulaEvaluator {
         // Parse the reference string
         try {
           const ref = parseCellRef(refText);
-          this.dependencies.push({ sheetId: ref.sheetName || context.sheetId, row: ref.row, col: ref.col });
+          this.dependencies.push({
+            sheetId: ref.sheetName || context.sheetId,
+            row: ref.row,
+            col: ref.col,
+          });
           return context.getCellValue(ref);
         } catch {
           return new FormulaError('#REF!', 'Invalid reference');
@@ -309,7 +333,12 @@ export class FormulaEvaluator {
 
         // Return single cell or range
         if (h === 1 && w === 1) {
-          return context.getCellValue({ row: newRow, col: newCol, colAbsolute: false, rowAbsolute: false });
+          return context.getCellValue({
+            row: newRow,
+            col: newCol,
+            colAbsolute: false,
+            rowAbsolute: false,
+          });
         }
 
         return context.getRangeValues(
@@ -455,9 +484,7 @@ export class FormulaEvaluator {
   }
 
   private evalArray(node: ArrayNode, context: EvalContext): FormulaValue[][] {
-    return node.elements.map((row) =>
-      row.map((element) => this.evalNode(element, context))
-    );
+    return node.elements.map((row) => row.map((element) => this.evalNode(element, context)));
   }
 
   private compareValues(a: FormulaValue, b: FormulaValue): number {

@@ -3,7 +3,7 @@
 // ============================================================
 
 export interface PageMargins {
-  top: number;      // inches
+  top: number; // inches
   bottom: number;
   left: number;
   right: number;
@@ -13,7 +13,7 @@ export interface PageMargins {
 
 export interface PageSize {
   name: string;
-  width: number;    // inches
+  width: number; // inches
   height: number;
   label: string;
 }
@@ -22,13 +22,13 @@ export type PageOrientation = 'portrait' | 'landscape';
 
 export interface PrintArea {
   sheetId: string;
-  range: string;    // e.g., "A1:H50"
+  range: string; // e.g., "A1:H50"
 }
 
 export interface PrintTitles {
   sheetId: string;
-  repeatRows?: string;  // e.g., "1:2" (rows 1-2)
-  repeatCols?: string;  // e.g., "A:B" (columns A-B)
+  repeatRows?: string; // e.g., "1:2" (rows 1-2)
+  repeatCols?: string; // e.g., "A:B" (columns A-B)
 }
 
 export interface PageBreak {
@@ -73,15 +73,15 @@ export interface PageLayoutSettings {
 export const MARGIN_PRESETS: { name: string; margins: PageMargins }[] = [
   {
     name: 'Normal',
-    margins: { top: 0.75, bottom: 0.75, left: 0.7, right: 0.7, header: 0.3, footer: 0.3 }
+    margins: { top: 0.75, bottom: 0.75, left: 0.7, right: 0.7, header: 0.3, footer: 0.3 },
   },
   {
     name: 'Wide',
-    margins: { top: 1, bottom: 1, left: 1, right: 1, header: 0.5, footer: 0.5 }
+    margins: { top: 1, bottom: 1, left: 1, right: 1, header: 0.5, footer: 0.5 },
   },
   {
     name: 'Narrow',
-    margins: { top: 0.75, bottom: 0.75, left: 0.25, right: 0.25, header: 0.3, footer: 0.3 }
+    margins: { top: 0.75, bottom: 0.75, left: 0.25, right: 0.25, header: 0.3, footer: 0.3 },
   },
 ];
 

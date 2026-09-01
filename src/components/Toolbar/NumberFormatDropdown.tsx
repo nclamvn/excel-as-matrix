@@ -30,22 +30,20 @@ export const NumberFormatDropdown: React.FC<NumberFormatDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const selectedOption = options.find(o => o.id === value);
+  const selectedOption = options.find((o) => o.id === value);
 
   return (
     <div className="number-format-dropdown" ref={ref}>
-      <button type="button"
-        className="number-format-trigger"
-        onClick={() => setOpen(!isOpen)}
-      >
+      <button type="button" className="number-format-trigger" onClick={() => setOpen(!isOpen)}>
         <span>{selectedOption?.label || 'General'}</span>
         <ChevronDown className="w-3 h-3" />
       </button>
 
       {isOpen && (
         <div className="number-format-menu">
-          {options.map(option => (
-            <button type="button"
+          {options.map((option) => (
+            <button
+              type="button"
               key={option.id}
               className={`number-format-option ${value === option.id ? 'selected' : ''}`}
               onClick={() => {

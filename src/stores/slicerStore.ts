@@ -114,7 +114,7 @@ export const useSlicerStore = create<SlicerStore>()(
           style: { ...DEFAULT_SLICER_STYLE },
         };
 
-        set(state => ({
+        set((state) => ({
           slicers: { ...state.slicers, [id]: slicer },
           selectedSlicerId: id,
         }));
@@ -123,7 +123,7 @@ export const useSlicerStore = create<SlicerStore>()(
       },
 
       updateSlicer: (id, updates) => {
-        set(state => {
+        set((state) => {
           const existing = state.slicers[id];
           if (!existing) return state;
           return {
@@ -133,7 +133,7 @@ export const useSlicerStore = create<SlicerStore>()(
       },
 
       deleteSlicer: (id) => {
-        set(state => {
+        set((state) => {
           const { [id]: _, ...rest } = state.slicers;
           return {
             slicers: rest,
@@ -145,12 +145,12 @@ export const useSlicerStore = create<SlicerStore>()(
       getSlicer: (id) => get().slicers[id] || null,
 
       getSlicersForPivot: (pivotId) => {
-        return Object.values(get().slicers).filter(s => s.pivotId === pivotId);
+        return Object.values(get().slicers).filter((s) => s.pivotId === pivotId);
       },
 
       // Slicer selection
       toggleSlicerValue: (slicerId, value) => {
-        set(state => {
+        set((state) => {
           const slicer = state.slicers[slicerId];
           if (!slicer) return state;
 
@@ -158,7 +158,7 @@ export const useSlicerStore = create<SlicerStore>()(
           if (slicer.multiSelect) {
             // Toggle value in/out of selection
             if (slicer.selectedValues.includes(value)) {
-              newValues = slicer.selectedValues.filter(v => v !== value);
+              newValues = slicer.selectedValues.filter((v) => v !== value);
             } else {
               newValues = [...slicer.selectedValues, value];
             }
@@ -208,9 +208,10 @@ export const useSlicerStore = create<SlicerStore>()(
         const slicer = get().slicers[slicerId];
         if (slicer) {
           // If switching to single select and multiple values are selected, keep only the first
-          const selectedValues = !multiSelect && slicer.selectedValues.length > 1
-            ? [slicer.selectedValues[0]]
-            : slicer.selectedValues;
+          const selectedValues =
+            !multiSelect && slicer.selectedValues.length > 1
+              ? [slicer.selectedValues[0]]
+              : slicer.selectedValues;
           get().updateSlicer(slicerId, { multiSelect, selectedValues });
         }
       },
@@ -237,7 +238,7 @@ export const useSlicerStore = create<SlicerStore>()(
           style: { ...DEFAULT_TIMELINE_STYLE },
         };
 
-        set(state => ({
+        set((state) => ({
           timelines: { ...state.timelines, [id]: timeline },
           selectedTimelineId: id,
         }));
@@ -246,7 +247,7 @@ export const useSlicerStore = create<SlicerStore>()(
       },
 
       updateTimeline: (id, updates) => {
-        set(state => {
+        set((state) => {
           const existing = state.timelines[id];
           if (!existing) return state;
           return {
@@ -256,7 +257,7 @@ export const useSlicerStore = create<SlicerStore>()(
       },
 
       deleteTimeline: (id) => {
-        set(state => {
+        set((state) => {
           const { [id]: _, ...rest } = state.timelines;
           return {
             timelines: rest,
@@ -268,7 +269,7 @@ export const useSlicerStore = create<SlicerStore>()(
       getTimeline: (id) => get().timelines[id] || null,
 
       getTimelinesForPivot: (pivotId) => {
-        return Object.values(get().timelines).filter(t => t.pivotId === pivotId);
+        return Object.values(get().timelines).filter((t) => t.pivotId === pivotId);
       },
 
       // Timeline selection
@@ -313,7 +314,7 @@ export const useSlicerStore = create<SlicerStore>()(
 
       // Cleanup
       deleteSlicersForPivot: (pivotId) => {
-        set(state => {
+        set((state) => {
           const newSlicers = Object.fromEntries(
             Object.entries(state.slicers).filter(([_, s]) => s.pivotId !== pivotId)
           );
@@ -322,7 +323,7 @@ export const useSlicerStore = create<SlicerStore>()(
       },
 
       deleteTimelinesForPivot: (pivotId) => {
-        set(state => {
+        set((state) => {
           const newTimelines = Object.fromEntries(
             Object.entries(state.timelines).filter(([_, t]) => t.pivotId !== pivotId)
           );

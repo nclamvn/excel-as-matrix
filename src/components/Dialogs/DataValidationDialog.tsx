@@ -5,14 +5,7 @@ import { useUIStore } from '../../stores/uiStore';
 import { useValidationStore } from '../../stores/validationStore';
 import { ValidationType as ValidationTypeType, ComparisonOperator } from '../../types/cell';
 
-type ValidationType =
-  | 'any'
-  | 'wholeNumber'
-  | 'decimal'
-  | 'list'
-  | 'date'
-  | 'textLength'
-  | 'custom';
+type ValidationType = 'any' | 'wholeNumber' | 'decimal' | 'list' | 'date' | 'textLength' | 'custom';
 
 type ValidationOperator =
   | 'between'
@@ -79,7 +72,9 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
           type: 'wholeNumber',
           operator: storeOperator,
           value1: parseFloat(value1) || 0,
-          value2: ['between', 'notBetween'].includes(operator) ? parseFloat(value2) || 0 : undefined,
+          value2: ['between', 'notBetween'].includes(operator)
+            ? parseFloat(value2) || 0
+            : undefined,
         };
         break;
       case 'decimal':
@@ -87,13 +82,21 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
           type: 'decimal',
           operator: storeOperator,
           value1: parseFloat(value1) || 0,
-          value2: ['between', 'notBetween'].includes(operator) ? parseFloat(value2) || 0 : undefined,
+          value2: ['between', 'notBetween'].includes(operator)
+            ? parseFloat(value2) || 0
+            : undefined,
         };
         break;
       case 'list':
         valType = {
           type: 'list',
-          source: { type: 'values', values: listValues.split(',').map(s => s.trim()).filter(Boolean) },
+          source: {
+            type: 'values',
+            values: listValues
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean),
+          },
           dropdown: showDropdown,
         };
         break;
@@ -126,17 +129,21 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
       id: ruleId,
       validationType: valType,
       allowBlank,
-      inputMessage: showInputMessage ? {
-        title: inputTitle,
-        message: inputMessage,
-        show: true,
-      } : undefined,
-      errorAlert: showError ? {
-        style: errorStyle,
-        title: errorTitle,
-        message: errorMessage,
-        show: true,
-      } : undefined,
+      inputMessage: showInputMessage
+        ? {
+            title: inputTitle,
+            message: inputMessage,
+            show: true,
+          }
+        : undefined,
+      errorAlert: showError
+        ? {
+            style: errorStyle,
+            title: errorTitle,
+            message: errorMessage,
+            show: true,
+          }
+        : undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -170,7 +177,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 450 }}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()} style={{ width: 450 }}>
         <div className="dialog-header">
           <h2>Data Validation</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -190,7 +197,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
               <label>Allow:</label>
               <select
                 value={validationType}
-                onChange={e => setValidationType(e.target.value as ValidationType)}
+                onChange={(e) => setValidationType(e.target.value as ValidationType)}
                 className="dialog-input"
               >
                 <option value="any">Any value</option>
@@ -208,7 +215,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                 <label>Data:</label>
                 <select
                   value={operator}
-                  onChange={e => setOperator(e.target.value as ValidationOperator)}
+                  onChange={(e) => setOperator(e.target.value as ValidationOperator)}
                   className="dialog-input"
                 >
                   <option value="between">between</option>
@@ -230,7 +237,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <input
                     type={validationType === 'date' ? 'date' : 'number'}
                     value={value1}
-                    onChange={e => setValue1(e.target.value)}
+                    onChange={(e) => setValue1(e.target.value)}
                     className="dialog-input"
                   />
                 </div>
@@ -241,7 +248,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                     <input
                       type={validationType === 'date' ? 'date' : 'number'}
                       value={value2}
-                      onChange={e => setValue2(e.target.value)}
+                      onChange={(e) => setValue2(e.target.value)}
                       className="dialog-input"
                     />
                   </div>
@@ -255,7 +262,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <label>Source (comma-separated):</label>
                   <textarea
                     value={listValues}
-                    onChange={e => setListValues(e.target.value)}
+                    onChange={(e) => setListValues(e.target.value)}
                     placeholder="Option1, Option2, Option3"
                     className="dialog-input"
                     rows={3}
@@ -266,7 +273,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <input
                     type="checkbox"
                     checked={showDropdown}
-                    onChange={e => setShowDropdown(e.target.checked)}
+                    onChange={(e) => setShowDropdown(e.target.checked)}
                   />
                   Show dropdown in cell
                 </label>
@@ -279,7 +286,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                 <input
                   type="text"
                   value={value1}
-                  onChange={e => setValue1(e.target.value)}
+                  onChange={(e) => setValue1(e.target.value)}
                   placeholder="=A1>0"
                   className="dialog-input"
                 />
@@ -290,7 +297,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
               <input
                 type="checkbox"
                 checked={allowBlank}
-                onChange={e => setAllowBlank(e.target.checked)}
+                onChange={(e) => setAllowBlank(e.target.checked)}
               />
               Ignore blank cells
             </label>
@@ -307,7 +314,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
               <input
                 type="checkbox"
                 checked={showInputMessage}
-                onChange={e => setShowInputMessage(e.target.checked)}
+                onChange={(e) => setShowInputMessage(e.target.checked)}
               />
               Show input message when cell is selected
             </label>
@@ -319,7 +326,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <input
                     type="text"
                     value={inputTitle}
-                    onChange={e => setInputTitle(e.target.value)}
+                    onChange={(e) => setInputTitle(e.target.value)}
                     className="dialog-input"
                     placeholder="Enter a title"
                   />
@@ -329,7 +336,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <label>Message:</label>
                   <textarea
                     value={inputMessage}
-                    onChange={e => setInputMessage(e.target.value)}
+                    onChange={(e) => setInputMessage(e.target.value)}
                     className="dialog-input"
                     rows={2}
                     placeholder="Enter a helpful message"
@@ -350,7 +357,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
               <input
                 type="checkbox"
                 checked={showError}
-                onChange={e => setShowError(e.target.checked)}
+                onChange={(e) => setShowError(e.target.checked)}
               />
               Show error alert after invalid data is entered
             </label>
@@ -361,7 +368,9 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <label>Style:</label>
                   <select
                     value={errorStyle}
-                    onChange={e => setErrorStyle(e.target.value as 'stop' | 'warning' | 'information')}
+                    onChange={(e) =>
+                      setErrorStyle(e.target.value as 'stop' | 'warning' | 'information')
+                    }
                     className="dialog-input"
                   >
                     <option value="stop">Stop</option>
@@ -375,7 +384,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <input
                     type="text"
                     value={errorTitle}
-                    onChange={e => setErrorTitle(e.target.value)}
+                    onChange={(e) => setErrorTitle(e.target.value)}
                     className="dialog-input"
                   />
                 </div>
@@ -384,7 +393,7 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
                   <label>Message:</label>
                   <textarea
                     value={errorMessage}
-                    onChange={e => setErrorMessage(e.target.value)}
+                    onChange={(e) => setErrorMessage(e.target.value)}
                     className="dialog-input"
                     rows={2}
                   />
@@ -395,7 +404,12 @@ export const DataValidationDialog: React.FC<DataValidationDialogProps> = ({ onCl
         </div>
 
         <div className="dialog-footer">
-          <button type="button" className="dialog-btn-danger" onClick={handleClear} style={{ marginRight: 'auto' }}>
+          <button
+            type="button"
+            className="dialog-btn-danger"
+            onClick={handleClear}
+            style={{ marginRight: 'auto' }}
+          >
             Clear All
           </button>
           <button type="button" className="dialog-btn-secondary" onClick={onClose}>

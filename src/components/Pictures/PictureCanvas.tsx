@@ -36,9 +36,7 @@ export const PictureCanvas: React.FC<PictureCanvasProps> = ({ sheetId }) => {
   } = usePicturesStore();
 
   const pictures = getPicturesForSheet(sheetId);
-  const selectedPicture = selection.pictureId
-    ? getPictureById(sheetId, selection.pictureId)
-    : null;
+  const selectedPicture = selection.pictureId ? getPictureById(sheetId, selection.pictureId) : null;
 
   // Handle canvas click (deselect)
   const handleCanvasClick = (e: React.MouseEvent) => {
@@ -82,59 +80,62 @@ export const PictureCanvas: React.FC<PictureCanvasProps> = ({ sheetId }) => {
   };
 
   // Handle mouse move
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!selection.pictureId) return;
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!selection.pictureId) return;
 
-    // Dragging
-    if (selection.isDragging && dragStart.current) {
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-      movePicture(
-        sheetId,
-        selection.pictureId,
-        dragStart.current.picX + dx,
-        dragStart.current.picY + dy
-      );
-    }
-
-    // Resizing
-    if (selection.isResizing && resizeStart.current && selection.resizeHandle) {
-      const dx = e.clientX - resizeStart.current.x;
-      const dy = e.clientY - resizeStart.current.y;
-
-      let newWidth = resizeStart.current.width;
-      let newHeight = resizeStart.current.height;
-      let newX = resizeStart.current.picX;
-      let newY = resizeStart.current.picY;
-
-      const handle = selection.resizeHandle;
-      const shiftKey = e.shiftKey; // Hold Shift for aspect ratio
-
-      // Calculate new dimensions based on handle
-      if (handle.includes('e')) {
-        newWidth = resizeStart.current.width + dx;
-      }
-      if (handle.includes('w')) {
-        newWidth = resizeStart.current.width - dx;
-        newX = resizeStart.current.picX + dx;
-      }
-      if (handle.includes('s')) {
-        newHeight = resizeStart.current.height + dy;
-      }
-      if (handle.includes('n')) {
-        newHeight = resizeStart.current.height - dy;
-        newY = resizeStart.current.picY + dy;
+      // Dragging
+      if (selection.isDragging && dragStart.current) {
+        const dx = e.clientX - dragStart.current.x;
+        const dy = e.clientY - dragStart.current.y;
+        movePicture(
+          sheetId,
+          selection.pictureId,
+          dragStart.current.picX + dx,
+          dragStart.current.picY + dy
+        );
       }
 
-      // Apply minimum size
-      if (newWidth >= 20 && newHeight >= 20) {
-        resizePicture(sheetId, selection.pictureId, newWidth, newHeight, shiftKey);
-        if (handle.includes('w') || handle.includes('n')) {
-          movePicture(sheetId, selection.pictureId, newX, newY);
+      // Resizing
+      if (selection.isResizing && resizeStart.current && selection.resizeHandle) {
+        const dx = e.clientX - resizeStart.current.x;
+        const dy = e.clientY - resizeStart.current.y;
+
+        let newWidth = resizeStart.current.width;
+        let newHeight = resizeStart.current.height;
+        let newX = resizeStart.current.picX;
+        let newY = resizeStart.current.picY;
+
+        const handle = selection.resizeHandle;
+        const shiftKey = e.shiftKey; // Hold Shift for aspect ratio
+
+        // Calculate new dimensions based on handle
+        if (handle.includes('e')) {
+          newWidth = resizeStart.current.width + dx;
+        }
+        if (handle.includes('w')) {
+          newWidth = resizeStart.current.width - dx;
+          newX = resizeStart.current.picX + dx;
+        }
+        if (handle.includes('s')) {
+          newHeight = resizeStart.current.height + dy;
+        }
+        if (handle.includes('n')) {
+          newHeight = resizeStart.current.height - dy;
+          newY = resizeStart.current.picY + dy;
+        }
+
+        // Apply minimum size
+        if (newWidth >= 20 && newHeight >= 20) {
+          resizePicture(sheetId, selection.pictureId, newWidth, newHeight, shiftKey);
+          if (handle.includes('w') || handle.includes('n')) {
+            movePicture(sheetId, selection.pictureId, newX, newY);
+          }
         }
       }
-    }
-  }, [selection, sheetId, movePicture, resizePicture]);
+    },
+    [selection, sheetId, movePicture, resizePicture]
+  );
 
   // Handle mouse up
   const handleMouseUp = useCallback(() => {
@@ -184,12 +185,8 @@ export const PictureCanvas: React.FC<PictureCanvasProps> = ({ sheetId }) => {
   if (pictures.length === 0) return null;
 
   return (
-    <div
-      ref={canvasRef}
-      className="picture-canvas"
-      onClick={handleCanvasClick}
-    >
-      {pictures.map(picture => (
+    <div ref={canvasRef} className="picture-canvas" onClick={handleCanvasClick}>
+      {pictures.map((picture) => (
         <div
           key={picture.id}
           className={`picture-wrapper ${selection.pictureId === picture.id ? 'selected' : ''}`}
@@ -225,7 +222,7 @@ export const PictureCanvas: React.FC<PictureCanvasProps> = ({ sheetId }) => {
           {/* Selection handles */}
           {selection.pictureId === picture.id && !picture.locked && (
             <div className="picture-handles">
-              {(['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'] as ResizeHandle[]).map(handle => (
+              {(['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'] as ResizeHandle[]).map((handle) => (
                 <div
                   key={handle}
                   className={`resize-handle handle-${handle}`}

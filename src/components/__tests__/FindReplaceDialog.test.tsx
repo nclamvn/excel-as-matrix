@@ -186,7 +186,11 @@ describe('FindReplaceDialog', () => {
     it('should display match count when matches exist', () => {
       mockStore = createMockFindStore({
         searchText: 'test',
-        matches: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+        matches: [
+          { row: 0, col: 0 },
+          { row: 1, col: 0 },
+          { row: 2, col: 0 },
+        ],
         currentMatchIndex: 0,
       });
       render(<FindReplaceDialog />);
@@ -197,7 +201,10 @@ describe('FindReplaceDialog', () => {
     it('should update match count display when navigating', () => {
       mockStore = createMockFindStore({
         searchText: 'test',
-        matches: [{ row: 0, col: 0 }, { row: 1, col: 0 }],
+        matches: [
+          { row: 0, col: 0 },
+          { row: 1, col: 0 },
+        ],
         currentMatchIndex: 1,
       });
       render(<FindReplaceDialog />);
@@ -371,9 +378,7 @@ describe('FindReplaceDialog', () => {
 
       // Find the button with the settings icon
       const buttons = screen.getAllByRole('button');
-      const optionsButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M10.325"]')
-      );
+      const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
       if (optionsButton) {
         await user.click(optionsButton);
@@ -387,9 +392,7 @@ describe('FindReplaceDialog', () => {
 
       // Open options
       const buttons = screen.getAllByRole('button');
-      const optionsButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M10.325"]')
-      );
+      const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
       if (optionsButton) {
         await user.click(optionsButton);
@@ -403,9 +406,7 @@ describe('FindReplaceDialog', () => {
 
       // Open options
       const buttons = screen.getAllByRole('button');
-      const optionsButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M10.325"]')
-      );
+      const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
       if (optionsButton) {
         await user.click(optionsButton);
@@ -423,9 +424,7 @@ describe('FindReplaceDialog', () => {
 
       // Open options
       const buttons = screen.getAllByRole('button');
-      const optionsButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M10.325"]')
-      );
+      const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
       if (optionsButton) {
         await user.click(optionsButton);
@@ -443,9 +442,7 @@ describe('FindReplaceDialog', () => {
 
       // Open options
       const buttons = screen.getAllByRole('button');
-      const optionsButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M10.325"]')
-      );
+      const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
       if (optionsButton) {
         await user.click(optionsButton);
@@ -463,9 +460,7 @@ describe('FindReplaceDialog', () => {
 
       // Open options
       const buttons = screen.getAllByRole('button');
-      const optionsButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M10.325"]')
-      );
+      const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
       if (optionsButton) {
         await user.click(optionsButton);
@@ -520,9 +515,7 @@ describe('FindReplaceDialog', () => {
 
       // Find close button (the X button in header)
       const buttons = screen.getAllByRole('button');
-      const closeButton = buttons.find((btn) =>
-        btn.querySelector('svg path[d*="M6 18L18 6"]')
-      );
+      const closeButton = buttons.find((btn) => btn.querySelector('svg path[d*="M6 18L18 6"]'));
 
       if (closeButton) {
         await user.click(closeButton);
@@ -552,9 +545,7 @@ describe('FindReplaceDialog Options State', () => {
 
     // Open options
     const buttons = screen.getAllByRole('button');
-    const optionsButton = buttons.find((btn) =>
-      btn.querySelector('svg path[d*="M10.325"]')
-    );
+    const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
     if (optionsButton) {
       await user.click(optionsButton);
@@ -577,9 +568,7 @@ describe('FindReplaceDialog Options State', () => {
 
     // Open options
     const buttons = screen.getAllByRole('button');
-    const optionsButton = buttons.find((btn) =>
-      btn.querySelector('svg path[d*="M10.325"]')
-    );
+    const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
     if (optionsButton) {
       await user.click(optionsButton);
@@ -603,9 +592,7 @@ describe('FindReplaceDialog Options State', () => {
 
     // Open options
     const buttons = screen.getAllByRole('button');
-    const optionsButton = buttons.find((btn) =>
-      btn.querySelector('svg path[d*="M10.325"]')
-    );
+    const optionsButton = buttons.find((btn) => btn.querySelector('svg path[d*="M10.325"]'));
 
     if (optionsButton) {
       await user.click(optionsButton);

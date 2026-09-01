@@ -152,20 +152,26 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
   }, [context]);
 
   // Handle quick action click
-  const handleQuickAction = useCallback((prompt: string) => {
-    openPanel();
-    setCurrentInput(prompt);
-    // Optionally auto-send
-    // sendMessage(prompt);
-    setIsExpanded(false);
-  }, [openPanel, setCurrentInput]);
+  const handleQuickAction = useCallback(
+    (prompt: string) => {
+      openPanel();
+      setCurrentInput(prompt);
+      // Optionally auto-send
+      // sendMessage(prompt);
+      setIsExpanded(false);
+    },
+    [openPanel, setCurrentInput]
+  );
 
   // Handle suggestion click
-  const handleSuggestion = useCallback((suggestion: AISuggestion) => {
-    openPanel();
-    setCurrentInput(suggestion.prompt);
-    setIsExpanded(false);
-  }, [openPanel, setCurrentInput]);
+  const handleSuggestion = useCallback(
+    (suggestion: AISuggestion) => {
+      openPanel();
+      setCurrentInput(suggestion.prompt);
+      setIsExpanded(false);
+    },
+    [openPanel, setCurrentInput]
+  );
 
   // Handle main button click
   const handleMainClick = useCallback(() => {
@@ -204,8 +210,9 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
       }}
     >
       {/* Main FAB Button */}
-      <button type="button"
-        className={`fab-main ${isExpanded ? 'expanded' : ''} ${suggestions.some(s => s.priority === 'high') ? 'has-priority' : ''}`}
+      <button
+        type="button"
+        className={`fab-main ${isExpanded ? 'expanded' : ''} ${suggestions.some((s) => s.priority === 'high') ? 'has-priority' : ''}`}
         onClick={handleMainClick}
         title="AI Assistant"
       >
@@ -231,10 +238,11 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
           {suggestions.length > 0 && (
             <div className="fab-section">
               <div className="fab-section-title">Based on your selection</div>
-              {suggestions.slice(0, 3).map(suggestion => {
+              {suggestions.slice(0, 3).map((suggestion) => {
                 const Icon = ICON_MAP[suggestion.icon] || Sparkles;
                 return (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={suggestion.id}
                     className={`fab-suggestion ${suggestion.priority}`}
                     onClick={() => handleSuggestion(suggestion)}
@@ -257,10 +265,11 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
           <div className="fab-section">
             <div className="fab-section-title">Quick Actions</div>
             <div className="fab-quick-actions">
-              {quickActions.map(action => {
+              {quickActions.map((action) => {
                 const Icon = ICON_MAP[action.icon] || Sparkles;
                 return (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={action.id}
                     className="fab-quick-action"
                     onClick={() => handleQuickAction(action.prompt)}
@@ -275,7 +284,14 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
           </div>
 
           {/* Open full AI panel */}
-          <button type="button" className="fab-open-panel" onClick={() => { openPanel(); setIsExpanded(false); }}>
+          <button
+            type="button"
+            className="fab-open-panel"
+            onClick={() => {
+              openPanel();
+              setIsExpanded(false);
+            }}
+          >
             <Sparkles size={14} />
             Open AI Copilot
             <span className="fab-shortcut">⌘J</span>

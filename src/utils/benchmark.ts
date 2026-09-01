@@ -75,7 +75,7 @@ export async function runBenchmark(
 function getMemoryUsage(): number | undefined {
   if (typeof performance !== 'undefined' && 'memory' in performance) {
     const memory = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory;
-    return Math.round(memory.usedJSHeapSize / 1024 / 1024 * 100) / 100;
+    return Math.round((memory.usedJSHeapSize / 1024 / 1024) * 100) / 100;
   }
   return undefined;
 }
@@ -143,34 +143,56 @@ export async function benchmarkFormulaEngine(): Promise<BenchmarkSuite> {
 
   // Test 1: Simple arithmetic
   results.push(
-    await runBenchmark('Simple Arithmetic (=1+2*3)', () => {
-      formulaEngine.calculate('=1+2*3', 'sheet1', 0, 0, createMockDataProvider(0, 0));
-    }, 10000)
+    await runBenchmark(
+      'Simple Arithmetic (=1+2*3)',
+      () => {
+        formulaEngine.calculate('=1+2*3', 'sheet1', 0, 0, createMockDataProvider(0, 0));
+      },
+      10000
+    )
   );
 
   // Test 2: SUM function
   const sumProvider = createMockDataProvider(100, 5);
   results.push(
-    await runBenchmark('SUM 100 cells', () => {
-      formulaEngine.clearCache();
-      formulaEngine.calculate('=SUM(A1:A100)', 'sheet1', 0, 5, sumProvider);
-    }, 1000)
+    await runBenchmark(
+      'SUM 100 cells',
+      () => {
+        formulaEngine.clearCache();
+        formulaEngine.calculate('=SUM(A1:A100)', 'sheet1', 0, 5, sumProvider);
+      },
+      1000
+    )
   );
 
   // Test 3: VLOOKUP
   const vlookupProvider = createMockDataProvider(1000, 5);
   results.push(
-    await runBenchmark('VLOOKUP in 1000 rows', () => {
-      formulaEngine.clearCache();
-      formulaEngine.calculate('=VLOOKUP(500,A1:D1000,2,FALSE)', 'sheet1', 0, 5, vlookupProvider);
-    }, 100)
+    await runBenchmark(
+      'VLOOKUP in 1000 rows',
+      () => {
+        formulaEngine.clearCache();
+        formulaEngine.calculate('=VLOOKUP(500,A1:D1000,2,FALSE)', 'sheet1', 0, 5, vlookupProvider);
+      },
+      100
+    )
   );
 
   // Test 4: Nested IF
   results.push(
-    await runBenchmark('Nested IF (3 levels)', () => {
-      formulaEngine.calculate('=IF(1>2,"A",IF(2>3,"B",IF(3>4,"C","D")))', 'sheet1', 0, 0, createMockDataProvider(0, 0));
-    }, 5000)
+    await runBenchmark(
+      'Nested IF (3 levels)',
+      () => {
+        formulaEngine.calculate(
+          '=IF(1>2,"A",IF(2>3,"B",IF(3>4,"C","D")))',
+          'sheet1',
+          0,
+          0,
+          createMockDataProvider(0, 0)
+        );
+      },
+      5000
+    )
   );
 
   // Test 5: Cache hit rate
@@ -181,9 +203,13 @@ export async function benchmarkFormulaEngine(): Promise<BenchmarkSuite> {
     formulaEngine.calculate(`=SUM(A${i + 1}:C${i + 1})`, 'sheet1', i, 5, cacheProvider);
   }
   results.push(
-    await runBenchmark('Cache hit (pre-calculated)', () => {
-      formulaEngine.getCachedResult('sheet1', 50, 5);
-    }, 100000)
+    await runBenchmark(
+      'Cache hit (pre-calculated)',
+      () => {
+        formulaEngine.getCachedResult('sheet1', 50, 5);
+      },
+      100000
+    )
   );
 
   // Get cache stats
@@ -289,7 +315,8 @@ export async function runFullBenchmarkSuite(): Promise<{
 
 // Export for use in browser console
 if (typeof window !== 'undefined') {
-  (window as unknown as { runBenchmark: typeof runFullBenchmarkSuite }).runBenchmark = runFullBenchmarkSuite;
+  (window as unknown as { runBenchmark: typeof runFullBenchmarkSuite }).runBenchmark =
+    runFullBenchmarkSuite;
 }
 
 export default runFullBenchmarkSuite;

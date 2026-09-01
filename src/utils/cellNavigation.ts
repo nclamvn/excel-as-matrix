@@ -34,9 +34,7 @@ export function navigateToCell(location: CellLocation): void {
     setSelectedCell({ row, col });
 
     // 3. Scroll to cell via CustomEvent (CanvasGrid picks this up)
-    window.dispatchEvent(
-      new CustomEvent('scrollToCell', { detail: { row, col } })
-    );
+    window.dispatchEvent(new CustomEvent('scrollToCell', { detail: { row, col } }));
 
     // 4. Flash highlight after scroll settles
     setTimeout(() => highlightCell(row, col), 100);
@@ -48,9 +46,7 @@ export function navigateToCell(location: CellLocation): void {
 }
 
 function highlightCell(row: number, col: number): void {
-  const cellElement = document.querySelector(
-    `[data-row="${row}"][data-col="${col}"]`
-  );
+  const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
 
   if (cellElement) {
     cellElement.classList.add('cell-highlight-flash');

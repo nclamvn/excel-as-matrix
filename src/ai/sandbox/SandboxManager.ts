@@ -256,10 +256,7 @@ export class SandboxManager {
     }
 
     // Auto-approve if pending and can auto-apply
-    if (
-      sandbox.status === 'pending' &&
-      sandbox.riskAssessment?.canAutoApply
-    ) {
+    if (sandbox.status === 'pending' && sandbox.riskAssessment?.canAutoApply) {
       this.approve(sandboxId);
     }
 
@@ -363,9 +360,7 @@ export class SandboxManager {
    * Get the active sandbox
    */
   getActiveSandbox(): Sandbox | undefined {
-    return this.activeSandboxId
-      ? this.sandboxes.get(this.activeSandboxId)
-      : undefined;
+    return this.activeSandboxId ? this.sandboxes.get(this.activeSandboxId) : undefined;
   }
 
   /**
@@ -466,10 +461,13 @@ export class SandboxManager {
 
   private startCleanupTimer(): void {
     // Run cleanup every 5 minutes
-    setInterval(() => {
-      this.cleanupExpiredSandboxes();
-      this.mergeEngine.cleanupExpiredRollbacks();
-    }, 5 * 60 * 1000);
+    setInterval(
+      () => {
+        this.cleanupExpiredSandboxes();
+        this.mergeEngine.cleanupExpiredRollbacks();
+      },
+      5 * 60 * 1000
+    );
   }
 
   private cleanupExpiredSandboxes(): void {

@@ -43,10 +43,7 @@ export class InconsistencyFixer {
   /**
    * Detect inconsistencies in a single column
    */
-  private detectColumnInconsistencies(
-    data: CleanerSheetData,
-    col: number
-  ): InconsistencyGroup[] {
+  private detectColumnInconsistencies(data: CleanerSheetData, col: number): InconsistencyGroup[] {
     const groups: InconsistencyGroup[] = [];
     const valueInfo = new Map<string, { original: string; rows: number[] }>();
 
@@ -112,7 +109,11 @@ export class InconsistencyFixer {
           const mapped1 = this.config.customMappings[info1.original];
           const mapped2 = this.config.customMappings[info2.original];
 
-          if (mapped1 === info2.original || mapped2 === info1.original || similarity >= this.config.similarityThreshold) {
+          if (
+            mapped1 === info2.original ||
+            mapped2 === info1.original ||
+            similarity >= this.config.similarityThreshold
+          ) {
             variants.push({
               value: info2.original,
               count: info2.rows.length,
@@ -173,9 +174,7 @@ export class InconsistencyFixer {
     }
 
     // Remove common variations
-    normalized = normalized
-      .replace(/[.,\-_]/g, '')
-      .replace(/\s+/g, '');
+    normalized = normalized.replace(/[.,\-_]/g, '').replace(/\s+/g, '');
 
     return normalized;
   }
@@ -198,7 +197,9 @@ export class InconsistencyFixer {
     const m = str1.length;
     const n = str2.length;
 
-    const dp: number[][] = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    const dp: number[][] = Array(m + 1)
+      .fill(null)
+      .map(() => Array(n + 1).fill(0));
 
     for (let i = 0; i <= m; i++) dp[i][0] = i;
     for (let j = 0; j <= n; j++) dp[0][j] = j;

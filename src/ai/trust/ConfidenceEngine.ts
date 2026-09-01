@@ -100,10 +100,7 @@ export class ConfidenceEngine {
   // Factor Assessment Methods
   // ---------------------------------------------------------------------------
 
-  private assessDataQuality(context: {
-    cellCount: number;
-    hasConflicts: boolean;
-  }): number {
+  private assessDataQuality(context: { cellCount: number; hasConflicts: boolean }): number {
     let score = 0.8; // Base score
 
     // Reduce for conflicts
@@ -218,10 +215,7 @@ export class ConfidenceEngine {
     return 'very_low';
   }
 
-  private generateExplanation(
-    breakdown: ConfidenceBreakdown,
-    level: ConfidenceLevel
-  ): string {
+  private generateExplanation(breakdown: ConfidenceBreakdown, level: ConfidenceLevel): string {
     const factors: string[] = [];
 
     // Identify strengths

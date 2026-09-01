@@ -2,12 +2,7 @@
 // SUGGESTION RANKER — Prioritize and rank suggestions
 // =============================================================================
 
-import type {
-  ProactiveSuggestion,
-  SuggestionType,
-  SuggestionPriority,
-  ScanConfig,
-} from './types';
+import type { ProactiveSuggestion, SuggestionType, SuggestionPriority, ScanConfig } from './types';
 
 /**
  * Ranks and prioritizes suggestions
@@ -40,7 +35,7 @@ export class SuggestionRanker {
    */
   rank(suggestions: ProactiveSuggestion[]): ProactiveSuggestion[] {
     // Calculate scores
-    const scored = suggestions.map(s => ({
+    const scored = suggestions.map((s) => ({
       suggestion: s,
       score: this.calculateScore(s),
     }));
@@ -68,12 +63,15 @@ export class SuggestionRanker {
     score *= this.typeWeights[suggestion.type];
 
     // Confidence bonus
-    score *= (0.5 + suggestion.confidence * 0.5);
+    score *= 0.5 + suggestion.confidence * 0.5;
 
     // Impact bonus
     const impactMultiplier =
-      suggestion.impact.severity === 'high' ? 1.5 :
-      suggestion.impact.severity === 'medium' ? 1.2 : 1.0;
+      suggestion.impact.severity === 'high'
+        ? 1.5
+        : suggestion.impact.severity === 'medium'
+          ? 1.2
+          : 1.0;
     score *= impactMultiplier;
 
     // Affected cells bonus (log scale to prevent domination)
@@ -133,12 +131,13 @@ export class SuggestionRanker {
    * Check if suggestion has auto-fix action
    */
   private hasAutoFix(suggestion: ProactiveSuggestion): boolean {
-    return suggestion.actions.some(a =>
-      a.action === 'apply_fix' ||
-      a.action === 'remove_duplicates' ||
-      a.action === 'fill_missing' ||
-      a.action === 'fix_format' ||
-      a.action === 'optimize_formula'
+    return suggestion.actions.some(
+      (a) =>
+        a.action === 'apply_fix' ||
+        a.action === 'remove_duplicates' ||
+        a.action === 'fill_missing' ||
+        a.action === 'fix_format' ||
+        a.action === 'optimize_formula'
     );
   }
 
@@ -178,11 +177,8 @@ export class SuggestionRanker {
   /**
    * Filter suggestions by type
    */
-  filterByType(
-    suggestions: ProactiveSuggestion[],
-    types: SuggestionType[]
-  ): ProactiveSuggestion[] {
-    return suggestions.filter(s => types.includes(s.type));
+  filterByType(suggestions: ProactiveSuggestion[], types: SuggestionType[]): ProactiveSuggestion[] {
+    return suggestions.filter((s) => types.includes(s.type));
   }
 
   /**
@@ -195,7 +191,7 @@ export class SuggestionRanker {
     const priorityOrder: SuggestionPriority[] = ['low', 'medium', 'high', 'critical'];
     const minIndex = priorityOrder.indexOf(minPriority);
 
-    return suggestions.filter(s => {
+    return suggestions.filter((s) => {
       const index = priorityOrder.indexOf(s.priority);
       return index >= minIndex;
     });
@@ -228,7 +224,7 @@ export class SuggestionRanker {
       total: suggestions.length,
       byType,
       byPriority,
-      hasAutoFix: suggestions.filter(s => this.hasAutoFix(s)).length,
+      hasAutoFix: suggestions.filter((s) => this.hasAutoFix(s)).length,
       highPriority: byPriority.critical + byPriority.high,
     };
   }

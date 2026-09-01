@@ -21,16 +21,17 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
   pivot,
   mode,
 }) => {
-  const { createSlicer, createTimeline, getSlicersForPivot, getTimelinesForPivot } = useSlicerStore();
+  const { createSlicer, createTimeline, getSlicersForPivot, getTimelinesForPivot } =
+    useSlicerStore();
 
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
 
   // Get available fields based on mode
   const availableFields = useMemo(() => {
-    const existingSlicerFields = getSlicersForPivot(pivot.id).map(s => s.fieldId);
-    const existingTimelineFields = getTimelinesForPivot(pivot.id).map(t => t.fieldId);
+    const existingSlicerFields = getSlicersForPivot(pivot.id).map((s) => s.fieldId);
+    const existingTimelineFields = getTimelinesForPivot(pivot.id).map((t) => t.fieldId);
 
-    return pivot.fields.filter(field => {
+    return pivot.fields.filter((field) => {
       if (mode === 'slicer') {
         // Slicers can be on any field not already having a slicer
         return !existingSlicerFields.includes(field.id);
@@ -42,9 +43,9 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
   }, [pivot, mode, getSlicersForPivot, getTimelinesForPivot]);
 
   const toggleField = (fieldId: string) => {
-    setSelectedFields(prev => {
+    setSelectedFields((prev) => {
       if (prev.includes(fieldId)) {
-        return prev.filter(id => id !== fieldId);
+        return prev.filter((id) => id !== fieldId);
       } else {
         return [...prev, fieldId];
       }
@@ -52,10 +53,10 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
   };
 
   const handleInsert = () => {
-    let offsetY = 50;
+    const offsetY = 50;
 
     selectedFields.forEach((fieldId, index) => {
-      const field = pivot.fields.find(f => f.id === fieldId);
+      const field = pivot.fields.find((f) => f.id === fieldId);
       if (!field) return;
 
       const position = { x: 50, y: offsetY + index * (mode === 'slicer' ? 220 : 120) };
@@ -75,10 +76,7 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
 
   return (
     <div className="pivot-dialog-overlay" onClick={onClose}>
-      <div
-        className="pivot-dialog insert-slicer-dialog"
-        onClick={e => e.stopPropagation()}
-      >
+      <div className="pivot-dialog insert-slicer-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="pivot-dialog-header">
           <div className="pivot-dialog-title">
             {mode === 'slicer' ? <Filter size={20} /> : <Calendar size={20} />}
@@ -106,7 +104,7 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
               </div>
             ) : (
               <div className="field-list">
-                {availableFields.map(field => (
+                {availableFields.map((field) => (
                   <label
                     key={field.id}
                     className={`field-item ${selectedFields.includes(field.id) ? 'selected' : ''}`}
@@ -131,7 +129,8 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
 
           {selectedFields.length > 0 && (
             <div className="selection-summary">
-              <strong>{selectedFields.length}</strong> {mode === 'slicer' ? 'slicer(s)' : 'timeline(s)'} will be created
+              <strong>{selectedFields.length}</strong>{' '}
+              {mode === 'slicer' ? 'slicer(s)' : 'timeline(s)'} will be created
             </div>
           )}
         </div>
@@ -140,7 +139,8 @@ export const InsertSlicerDialog: React.FC<InsertSlicerDialogProps> = ({
           <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="pivot-btn-primary"
             onClick={handleInsert}
             disabled={selectedFields.length === 0}

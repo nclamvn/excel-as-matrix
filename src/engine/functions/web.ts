@@ -163,7 +163,8 @@ export const webFunctions: FunctionDef[] = [
     fn: (args: FormulaValue[]): FormulaValue => {
       const text = toString(args[0]);
       const colDelimiter = args[1] !== null && args[1] !== undefined ? toString(args[1]) : null;
-      const rowDelimiter = args.length > 2 && args[2] !== null && args[2] !== undefined ? toString(args[2]) : null;
+      const rowDelimiter =
+        args.length > 2 && args[2] !== null && args[2] !== undefined ? toString(args[2]) : null;
 
       // ignore_empty: FALSE by default
       const ignoreEmpty = args.length > 3 ? args[3] === true : false;
@@ -183,7 +184,7 @@ export const webFunctions: FunctionDef[] = [
       }
 
       if (ignoreEmpty) {
-        rows = rows.filter(r => r !== '');
+        rows = rows.filter((r) => r !== '');
       }
 
       const result: FormulaValue[][] = [];
@@ -197,11 +198,11 @@ export const webFunctions: FunctionDef[] = [
           cols = [row];
         }
         if (ignoreEmpty) {
-          cols = cols.filter(c => c !== '');
+          cols = cols.filter((c) => c !== '');
         }
         if (cols.length > maxCols) maxCols = cols.length;
         // Convert string values to numbers where possible
-        const rowValues: FormulaValue[] = cols.map(c => {
+        const rowValues: FormulaValue[] = cols.map((c) => {
           const num = parseFloat(c);
           if (!isNaN(num) && c.trim() === String(num)) return num;
           return c;
@@ -270,20 +271,22 @@ export const webFunctions: FunctionDef[] = [
 
       if ((format as number) === 1) {
         // Strict format - enclosed in braces, rows separated by semicolons, cols by commas
-        const rowStrs = arr.map(row => {
+        const rowStrs = arr.map((row) => {
           if (!Array.isArray(row)) return toString(row);
-          return (row as FormulaValue[]).map(cell => {
-            if (typeof cell === 'string') return `"${cell}"`;
-            if (cell instanceof FormulaError) return cell.type;
-            return toString(cell);
-          }).join(',');
+          return (row as FormulaValue[])
+            .map((cell) => {
+              if (typeof cell === 'string') return `"${cell}"`;
+              if (cell instanceof FormulaError) return cell.type;
+              return toString(cell);
+            })
+            .join(',');
         });
         return `{${rowStrs.join(';')}}`;
       }
 
       // Concise format - comma-separated values
       const flat = flattenValues([value]);
-      return flat.map(v => toString(v)).join(', ');
+      return flat.map((v) => toString(v)).join(', ');
     },
   },
 
@@ -447,11 +450,11 @@ export const webFunctions: FunctionDef[] = [
       }
 
       if (removeEmpty) {
-        parts = parts.filter(p => p !== '');
+        parts = parts.filter((p) => p !== '');
       }
 
       // Return as a horizontal array (single row)
-      return [parts.map(p => p as FormulaValue)];
+      return [parts.map((p) => p as FormulaValue)];
     },
   },
 
@@ -463,7 +466,7 @@ export const webFunctions: FunctionDef[] = [
     fn: (args: FormulaValue[]): FormulaValue => {
       const delimiter = toString(args[0]);
       const flat = flattenValues([args[1]]);
-      return flat.map(v => toString(v)).join(delimiter);
+      return flat.map((v) => toString(v)).join(delimiter);
     },
   },
 

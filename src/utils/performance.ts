@@ -106,15 +106,11 @@ export class PerformanceMonitor {
    * Create a measurement decorator for class methods
    */
   measureMethod(name: string) {
-    const monitor = this;
-    return function (
-      _target: unknown,
-      _propertyKey: string,
-      descriptor: PropertyDescriptor
-    ) {
+    const measure = this.measure.bind(this);
+    return function (_target: unknown, _propertyKey: string, descriptor: PropertyDescriptor) {
       const originalMethod = descriptor.value;
       descriptor.value = async function (...args: unknown[]) {
-        return monitor.measure(name, () => originalMethod.apply(this, args));
+        return measure(name, () => originalMethod.apply(this, args));
       };
       return descriptor;
     };
@@ -347,10 +343,12 @@ interface MemoryInfo {
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export function usePerformanceMonitor(options: {
-  trackMemory?: boolean;
-  memoryInterval?: number;
-} = {}) {
+export function usePerformanceMonitor(
+  options: {
+    trackMemory?: boolean;
+    memoryInterval?: number;
+  } = {}
+) {
   const { trackMemory = true, memoryInterval = 5000 } = options;
   const monitorRef = useRef<PerformanceMonitor | null>(null);
   const [summary, setSummary] = useState<PerformanceSummary | null>(null);
@@ -388,7 +386,7 @@ export function usePerformanceMonitor(options: {
     return monitorRef.current?.endTimer(name);
   }, []);
 
-  const measure = useCallback(async <T,>(name: string, fn: () => T | Promise<T>) => {
+  const measure = useCallback(async <T>(name: string, fn: () => T | Promise<T>) => {
     if (!monitorRef.current) return fn();
     return monitorRef.current.measure(name, fn);
   }, []);
@@ -444,12 +442,9 @@ export function useRenderPerformance(componentName: string) {
 
     return {
       totalRenders: renderCount.current,
-      avgRenderTime: recent.length > 0
-        ? recent.reduce((sum, m) => sum + m.value, 0) / recent.length
-        : 0,
-      maxRenderTime: recent.length > 0
-        ? Math.max(...recent.map((m) => m.value))
-        : 0,
+      avgRenderTime:
+        recent.length > 0 ? recent.reduce((sum, m) => sum + m.value, 0) / recent.length : 0,
+      maxRenderTime: recent.length > 0 ? Math.max(...recent.map((m) => m.value)) : 0,
     };
   }, [componentName]);
 

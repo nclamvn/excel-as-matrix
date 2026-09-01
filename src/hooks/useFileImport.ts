@@ -44,10 +44,7 @@ interface ImportOptions {
 
 interface UseFileImportReturn {
   importFile: (file: File) => Promise<void>;
-  importFromPreview: (
-    data: ImportedWorkbook | CsvData,
-    options: ImportOptions
-  ) => Promise<void>;
+  importFromPreview: (data: ImportedWorkbook | CsvData, options: ImportOptions) => Promise<void>;
   isImporting: boolean;
   error: string | null;
   progress: number;
@@ -75,7 +72,7 @@ const processInBatches = async <T>(
     }
 
     // Yield to browser every batch to keep UI responsive
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
 };
 
@@ -153,14 +150,14 @@ export function useFileImport(): UseFileImportReturn {
 
         // Import cells in batches for performance
         const BATCH_SIZE = 500;
-        const cellUpdates = sheet.cells.map(cell => ({
+        const cellUpdates = sheet.cells.map((cell) => ({
           row: cell.row + options.skipRows,
           col: cell.col,
           data: {
             value: parseCellValue(cell.value),
             formula: cell.formula || undefined,
             displayValue: parseCellValue(cell.value),
-          }
+          },
         }));
 
         // Process in batches to avoid blocking UI
@@ -172,7 +169,7 @@ export function useFileImport(): UseFileImportReturn {
           },
           (percent) => {
             const sheetProgress = (processedCells / totalCells) * 100;
-            setProgress(Math.round(sheetProgress + (percent * sheet.cells.length / totalCells)));
+            setProgress(Math.round(sheetProgress + (percent * sheet.cells.length) / totalCells));
           }
         );
 
@@ -202,7 +199,11 @@ export function useFileImport(): UseFileImportReturn {
       let startRow = options.hasHeader ? 0 : 0;
 
       // Build all cell updates
-      const cellUpdates: Array<{ row: number; col: number; data: { value: string; displayValue: string } }> = [];
+      const cellUpdates: Array<{
+        row: number;
+        col: number;
+        data: { value: string; displayValue: string };
+      }> = [];
 
       // Import header if present
       if (options.hasHeader && csvData.headers) {
@@ -213,7 +214,7 @@ export function useFileImport(): UseFileImportReturn {
             data: {
               value: csvData.headers[col],
               displayValue: csvData.headers[col],
-            }
+            },
           });
         }
         startRow = 1;
@@ -232,7 +233,7 @@ export function useFileImport(): UseFileImportReturn {
             data: {
               value,
               displayValue: value,
-            }
+            },
           });
         }
       }
@@ -242,7 +243,7 @@ export function useFileImport(): UseFileImportReturn {
       for (let i = 0; i < cellUpdates.length; i += BATCH_SIZE) {
         setProgress(Math.round((i / cellUpdates.length) * 90));
         // Yield to browser
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
 
       // Apply all updates in one batch
@@ -298,10 +299,7 @@ export function useFileImport(): UseFileImportReturn {
   );
 
   const importFromPreview = useCallback(
-    async (
-      data: ImportedWorkbook | CsvData,
-      options: ImportOptions
-    ) => {
+    async (data: ImportedWorkbook | CsvData, options: ImportOptions) => {
       setIsImporting(true);
       setError(null);
       setProgress(0);

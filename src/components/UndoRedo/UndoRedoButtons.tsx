@@ -12,17 +12,24 @@ export const UndoRedoButtons: React.FC = () => {
   return (
     <div className="flex items-center gap-1 relative">
       <div className="flex">
-        <button type="button"
+        <button
+          type="button"
           onClick={undo}
           disabled={!canUndo()}
           className="p-2 hover:bg-gray-100 rounded-l disabled:opacity-50 disabled:cursor-not-allowed"
           title={`Undo${past.length > 0 ? `: ${past[past.length - 1].description}` : ''} (Ctrl+Z)`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+            />
           </svg>
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setShowHistory(!showHistory)}
           disabled={!canUndo()}
           className="p-1 hover:bg-gray-100 rounded-r border-l disabled:opacity-50"
@@ -33,14 +40,20 @@ export const UndoRedoButtons: React.FC = () => {
         </button>
       </div>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={redo}
         disabled={!canRedo()}
         className="p-2 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         title={`Redo${future.length > 0 ? `: ${future[0].description}` : ''} (Ctrl+Y)`}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"
+          />
         </svg>
       </button>
 
@@ -64,11 +77,7 @@ interface HistoryDropdownProps {
   onClose: () => void;
 }
 
-const HistoryDropdown: React.FC<HistoryDropdownProps> = ({
-  actions,
-  onSelect,
-  onClose,
-}) => {
+const HistoryDropdown: React.FC<HistoryDropdownProps> = ({ actions, onSelect, onClose }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,15 +108,14 @@ const HistoryDropdown: React.FC<HistoryDropdownProps> = ({
         .slice()
         .reverse()
         .map((action) => (
-          <button type="button"
+          <button
+            type="button"
             key={action.id}
             onClick={() => onSelect(action.id)}
             className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100"
           >
             <span className="truncate">{action.description}</span>
-            <span className="text-xs text-gray-400 ml-2">
-              {formatTime(action.timestamp)}
-            </span>
+            <span className="text-xs text-gray-400 ml-2">{formatTime(action.timestamp)}</span>
           </button>
         ))}
     </div>

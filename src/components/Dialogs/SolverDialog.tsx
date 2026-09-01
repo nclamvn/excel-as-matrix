@@ -54,9 +54,7 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
   }, []);
 
   const updateConstraint = useCallback((id: string, field: keyof ConstraintRow, val: string) => {
-    setConstraints((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, [field]: val } : c))
-    );
+    setConstraints((prev) => prev.map((c) => (c.id === id ? { ...c, [field]: val } : c)));
   }, []);
 
   const handleSolve = useCallback(() => {
@@ -65,7 +63,10 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
     if (!sheet) return;
 
     const objRef = parseCellRef(objectiveCell);
-    if (!objRef) { setError('Invalid objective cell'); return; }
+    if (!objRef) {
+      setError('Invalid objective cell');
+      return;
+    }
 
     // Parse changing cells (e.g., "A1:A5" or "A1,B1,C1")
     const changingRefs: Array<{ row: number; col: number }> = [];
@@ -75,8 +76,7 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
         const [s, e] = trimmed.split(':').map(parseCellRef);
         if (s && e) {
           for (let r = s.row; r <= e.row; r++)
-            for (let c = s.col; c <= e.col; c++)
-              changingRefs.push({ row: r, col: c });
+            for (let c = s.col; c <= e.col; c++) changingRefs.push({ row: r, col: c });
         }
       } else {
         const ref = parseCellRef(trimmed);
@@ -84,10 +84,16 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
       }
     }
 
-    if (changingRefs.length === 0) { setError('No changing cells specified'); return; }
+    if (changingRefs.length === 0) {
+      setError('No changing cells specified');
+      return;
+    }
 
     const objFormula = sheet.cells[getCellKey(objRef.row, objRef.col)]?.formula;
-    if (!objFormula) { setError('Objective cell must contain a formula'); return; }
+    if (!objFormula) {
+      setError('Objective cell must contain a formula');
+      return;
+    }
 
     try {
       const initialValues = changingRefs.map((r) => {
@@ -119,10 +125,14 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
                 sheet.cells[getCellKey(cRef.row, cRef.col)]?.displayValue || '0'
               );
               switch (c.operator) {
-                case '<=': return cellVal <= cVal;
-                case '>=': return cellVal >= cVal;
-                case '=': return Math.abs(cellVal - cVal) < 0.001;
-                default: return true;
+                case '<=':
+                  return cellVal <= cVal;
+                case '>=':
+                  return cellVal >= cVal;
+                case '=':
+                  return Math.abs(cellVal - cVal) < 0.001;
+                default:
+                  return true;
               }
             };
           }),
@@ -132,7 +142,12 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
       if (solverResult.found) {
         // Apply final values
         solverResult.values.forEach((v, i) => {
-          setCellValue(activeSheetId, changingRefs[i].row, changingRefs[i].col, Math.round(v * 1e6) / 1e6);
+          setCellValue(
+            activeSheetId,
+            changingRefs[i].row,
+            changingRefs[i].col,
+            Math.round(v * 1e6) / 1e6
+          );
         });
         setResult({
           found: true,
@@ -148,7 +163,16 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Solver failed');
     }
-  }, [activeSheetId, sheets, objectiveCell, changingCells, goal, constraints, setCellValue, evaluateFormula]);
+  }, [
+    activeSheetId,
+    sheets,
+    objectiveCell,
+    changingCells,
+    goal,
+    constraints,
+    setCellValue,
+    evaluateFormula,
+  ]);
 
   if (!isOpen) return null;
 
@@ -160,7 +184,11 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
             <Calculator size={18} className="text-blue-600" />
             <h2 className="text-base font-semibold">Solver</h2>
           </div>
-          <button type="button" onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+          >
             <X size={16} />
           </button>
         </div>
@@ -168,9 +196,15 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
         <div className="px-4 py-3 flex-1 overflow-y-auto space-y-3">
           {/* Objective */}
           <div>
-            <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-1">Set Objective:</label>
-            <input value={objectiveCell} onChange={(e) => setObjectiveCell(e.target.value)} placeholder="e.g. D10"
-              className="w-full px-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700" />
+            <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-1">
+              Set Objective:
+            </label>
+            <input
+              value={objectiveCell}
+              onChange={(e) => setObjectiveCell(e.target.value)}
+              placeholder="e.g. D10"
+              className="w-full px-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700"
+            />
           </div>
 
           {/* Goal */}
@@ -179,46 +213,83 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
             <div className="flex gap-3">
               {(['maximize', 'minimize', 'value'] as const).map((g) => (
                 <label key={g} className="flex items-center gap-1.5 text-sm">
-                  <input type="radio" name="goal" checked={goal === g} onChange={() => setGoal(g)} className="text-green-600" />
+                  <input
+                    type="radio"
+                    name="goal"
+                    checked={goal === g}
+                    onChange={() => setGoal(g)}
+                    className="text-green-600"
+                  />
                   {g === 'value' ? 'Value of:' : g.charAt(0).toUpperCase() + g.slice(1)}
                 </label>
               ))}
               {goal === 'value' && (
-                <input value={targetValue} onChange={(e) => setTargetValue(e.target.value)} placeholder="0"
-                  className="w-20 px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700" />
+                <input
+                  value={targetValue}
+                  onChange={(e) => setTargetValue(e.target.value)}
+                  placeholder="0"
+                  className="w-20 px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700"
+                />
               )}
             </div>
           </div>
 
           {/* Changing cells */}
           <div>
-            <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-1">By Changing Variable Cells:</label>
-            <input value={changingCells} onChange={(e) => setChangingCells(e.target.value)} placeholder="e.g. A1:A5 or A1,B1,C1"
-              className="w-full px-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700" />
+            <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-1">
+              By Changing Variable Cells:
+            </label>
+            <input
+              value={changingCells}
+              onChange={(e) => setChangingCells(e.target.value)}
+              placeholder="e.g. A1:A5 or A1,B1,C1"
+              className="w-full px-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700"
+            />
           </div>
 
           {/* Constraints */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm text-neutral-600 dark:text-neutral-400">Subject to Constraints:</label>
-              <button type="button" onClick={addConstraint} className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200">
+              <label className="text-sm text-neutral-600 dark:text-neutral-400">
+                Subject to Constraints:
+              </label>
+              <button
+                type="button"
+                onClick={addConstraint}
+                className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200"
+              >
                 <Plus size={12} /> Add
               </button>
             </div>
             <div className="space-y-1.5 max-h-32 overflow-y-auto">
               {constraints.map((c) => (
                 <div key={c.id} className="flex items-center gap-1.5">
-                  <input value={c.cellRef} onChange={(e) => updateConstraint(c.id, 'cellRef', e.target.value)} placeholder="Cell"
-                    className="w-20 px-2 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700" />
-                  <select value={c.operator} onChange={(e) => updateConstraint(c.id, 'operator', e.target.value)}
-                    className="px-1 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700">
+                  <input
+                    value={c.cellRef}
+                    onChange={(e) => updateConstraint(c.id, 'cellRef', e.target.value)}
+                    placeholder="Cell"
+                    className="w-20 px-2 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700"
+                  />
+                  <select
+                    value={c.operator}
+                    onChange={(e) => updateConstraint(c.id, 'operator', e.target.value)}
+                    className="px-1 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700"
+                  >
                     <option value="<=">{'<='}</option>
                     <option value=">=">{'>='}</option>
                     <option value="=">=</option>
                   </select>
-                  <input value={c.value} onChange={(e) => updateConstraint(c.id, 'value', e.target.value)} placeholder="Value"
-                    className="w-20 px-2 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700" />
-                  <button type="button" onClick={() => removeConstraint(c.id)} className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded">
+                  <input
+                    value={c.value}
+                    onChange={(e) => updateConstraint(c.id, 'value', e.target.value)}
+                    placeholder="Value"
+                    className="w-20 px-2 py-1 text-xs border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeConstraint(c.id)}
+                    className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                  >
                     <Trash2 size={12} className="text-red-500" />
                   </button>
                 </div>
@@ -228,17 +299,27 @@ export const SolverDialog: React.FC<SolverDialogProps> = ({ isOpen, onClose }) =
 
           {error && <div className="text-sm text-red-500">{error}</div>}
           {result && (
-            <div className={`p-2 rounded text-sm ${result.found ? 'bg-green-50 dark:bg-green-900/20 text-green-700' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700'}`}>
+            <div
+              className={`p-2 rounded text-sm ${result.found ? 'bg-green-50 dark:bg-green-900/20 text-green-700' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700'}`}
+            >
               {result.message}
             </div>
           )}
         </div>
 
         <div className="flex justify-end gap-2 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700">
-          <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded hover:bg-neutral-50 dark:hover:bg-neutral-700"
+          >
             Close
           </button>
-          <button type="button" onClick={handleSolve} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+          <button
+            type="button"
+            onClick={handleSolve}
+            className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
             Solve
           </button>
         </div>

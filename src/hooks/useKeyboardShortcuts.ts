@@ -49,11 +49,7 @@ export const useKeyboardShortcuts = (options: UseKeyboardShortcutsOptions = {}) 
 
       // Skip if in an input/textarea
       const target = e.target as HTMLElement;
-      if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         // Allow Escape to close dialogs
         if (e.key !== 'Escape') {
           return;

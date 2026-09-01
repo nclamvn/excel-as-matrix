@@ -107,9 +107,7 @@ export class ShortcutManager {
 
     const target = event.target as HTMLElement;
     const isInput =
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.isContentEditable;
+      target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
 
     const keys = this.buildKeyString(event);
     const bindings = this.bindings.get(keys);

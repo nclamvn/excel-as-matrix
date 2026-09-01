@@ -33,16 +33,18 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({ workbookId, onSync }) =>
   return (
     <div className="flex items-center gap-4 text-sm">
       {/* Sync Button */}
-      <button type="button"
+      <button
+        type="button"
         onClick={onSync}
         disabled={isSyncing || !isOnline}
         className={`
           flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all
-          ${isSyncing
-            ? 'bg-blue-100 text-blue-700 cursor-not-allowed'
-            : isOnline
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+          ${
+            isSyncing
+              ? 'bg-blue-100 text-blue-700 cursor-not-allowed'
+              : isOnline
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
           }
         `}
       >
@@ -93,11 +95,7 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({ workbookId, onSync }) =>
       )}
 
       {/* Last Synced */}
-      {!isSyncing && (
-        <span className="text-gray-400">
-          Last synced: {formatTime(lastSyncedAt)}
-        </span>
-      )}
+      {!isSyncing && <span className="text-gray-400">Last synced: {formatTime(lastSyncedAt)}</span>}
 
       {/* Error */}
       {lastError && (
@@ -128,16 +126,18 @@ export const SyncButton: React.FC<{ workbookId: string; onSync: () => void }> = 
   const pendingChanges = status?.pendingChanges || 0;
 
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={onSync}
       disabled={isSyncing || !isOnline}
       className={`
         relative p-2 rounded-lg transition-all
-        ${isSyncing
-          ? 'bg-blue-100 text-blue-700'
-          : isOnline
-            ? 'hover:bg-gray-100 text-gray-600'
-            : 'text-gray-300 cursor-not-allowed'
+        ${
+          isSyncing
+            ? 'bg-blue-100 text-blue-700'
+            : isOnline
+              ? 'hover:bg-gray-100 text-gray-600'
+              : 'text-gray-300 cursor-not-allowed'
         }
       `}
       title={isSyncing ? 'Syncing...' : isOnline ? 'Sync now' : 'Offline'}

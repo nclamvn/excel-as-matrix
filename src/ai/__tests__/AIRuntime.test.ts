@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 vi.mock('../../services/claudeAPI', () => ({
   ClaudeAPIClient: class MockClaudeAPIClient {
     apiKey: string | null = null;
-    setApiKey = vi.fn().mockImplementation(function(this: { apiKey: string | null }, key: string) {
+    setApiKey = vi.fn().mockImplementation(function (this: { apiKey: string | null }, key: string) {
       this.apiKey = key;
     });
     hasApiKey = vi.fn().mockReturnValue(true);
@@ -12,14 +12,14 @@ vi.mock('../../services/claudeAPI', () => ({
     sendMessage = vi.fn().mockResolvedValue({
       message: 'Hello! How can I help?',
       tokensUsed: 150,
-      toolCalls: []
+      toolCalls: [],
     });
     streamMessage = vi.fn().mockImplementation(async function* () {
       yield { type: 'text', content: 'Streaming ' };
       yield { type: 'text', content: 'response' };
     });
   },
-  AI_SYSTEM_PROMPT: 'You are a helpful assistant.'
+  AI_SYSTEM_PROMPT: 'You are a helpful assistant.',
 }));
 
 // Mock AI tools
@@ -30,7 +30,7 @@ vi.mock('../tools', () => ({
   ],
   AIToolExecutor: class MockAIToolExecutor {
     execute = vi.fn().mockResolvedValue({ success: true, data: 'executed' });
-  }
+  },
 }));
 
 // Mock workbook store
@@ -46,17 +46,23 @@ vi.mock('../../stores/workbookStore', () => ({
             '0-0': { value: 'Name', displayValue: 'Name' },
             '0-1': { value: 'Amount', displayValue: 'Amount' },
             '1-0': { value: 'Item 1', displayValue: 'Item 1' },
-            '1-1': { value: 100, displayValue: '100' }
-          }
-        }
+            '1-1': { value: 100, displayValue: '100' },
+          },
+        },
       },
       getCell: vi.fn().mockReturnValue({ value: 'Test', displayValue: 'Test' }),
       getCellRange: vi.fn().mockReturnValue([
-        [{ value: 'A', displayValue: 'A' }, { value: 'B', displayValue: 'B' }],
-        [{ value: 1, displayValue: '1' }, { value: 2, displayValue: '2' }]
-      ])
-    })
-  }
+        [
+          { value: 'A', displayValue: 'A' },
+          { value: 'B', displayValue: 'B' },
+        ],
+        [
+          { value: 1, displayValue: '1' },
+          { value: 2, displayValue: '2' },
+        ],
+      ]),
+    }),
+  },
 }));
 
 // Mock selection store
@@ -64,9 +70,9 @@ vi.mock('../../stores/selectionStore', () => ({
   useSelectionStore: {
     getState: vi.fn().mockReturnValue({
       selectedCell: { row: 0, col: 0 },
-      selectionRange: { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } }
-    })
-  }
+      selectionRange: { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } },
+    }),
+  },
 }));
 
 // Mock context assembler
@@ -74,12 +80,23 @@ vi.mock('../context/ContextAssembler', () => ({
   ContextAssembler: class MockContextAssembler {
     assembleContext = vi.fn().mockResolvedValue({
       directData: { ranges: [], totalCells: 0, tokensUsed: 0 },
-      dependencyContext: { upstreamCells: [], downstreamCells: [], formulaChain: [], tokensUsed: 0 },
+      dependencyContext: {
+        upstreamCells: [],
+        downstreamCells: [],
+        formulaChain: [],
+        tokensUsed: 0,
+      },
       schemaContext: { tables: [], namedRanges: [], semanticTypes: [], tokensUsed: 0 },
       eventContext: { recentChanges: [], tokensUsed: 0 },
-      metadata: { totalTokens: 0, budgetRemaining: 50000, truncatedItems: [], warnings: [], assemblyTime: 1 }
+      metadata: {
+        totalTokens: 0,
+        budgetRemaining: 50000,
+        truncatedItems: [],
+        warnings: [],
+        assemblyTime: 1,
+      },
     });
-  }
+  },
 }));
 
 // Mock grounding manager
@@ -91,7 +108,7 @@ vi.mock('../grounding/GroundingManager', () => ({
       statement: 'test',
       source: { type: 'cell', ref: 'A1', valueAtRead: 'Test', readTimestamp: new Date() },
       confidence: 1.0,
-      verified: false
+      verified: false,
     });
     createComputedClaim = vi.fn().mockReturnValue({
       id: 'claim-2',
@@ -99,7 +116,7 @@ vi.mock('../grounding/GroundingManager', () => ({
       statement: 'test',
       source: { type: 'formula_eval', ref: 'A1:A10', valueAtRead: 100, readTimestamp: new Date() },
       confidence: 1.0,
-      verified: false
+      verified: false,
     });
     createInferredClaim = vi.fn().mockReturnValue({
       id: 'claim-3',
@@ -107,7 +124,7 @@ vi.mock('../grounding/GroundingManager', () => ({
       statement: 'test',
       source: { type: 'cell', ref: 'A1', valueAtRead: null, readTimestamp: new Date() },
       confidence: 0.8,
-      verified: false
+      verified: false,
     });
     verifyClaim = vi.fn().mockResolvedValue({ valid: true });
     verifyAllClaims = vi.fn().mockResolvedValue([{ valid: true }]);
@@ -115,11 +132,11 @@ vi.mock('../grounding/GroundingManager', () => ({
       totalClaims: 1,
       verified: 1,
       unverified: 0,
-      byType: { direct_read: 1 }
+      byType: { direct_read: 1 },
     });
     getClaims = vi.fn().mockReturnValue([]);
     clear = vi.fn();
-  }
+  },
 }));
 
 // Mock source tracker
@@ -131,7 +148,7 @@ vi.mock('../grounding/SourceTracker', () => ({
     getChangedSources = vi.fn().mockReturnValue([]);
     getStats = vi.fn().mockReturnValue({ cellReads: 0, rangeReads: 0, formulaEvals: 0 });
     clear = vi.fn();
-  }
+  },
 }));
 
 import { AIRuntime, getAIRuntime, resetAIRuntime } from '../AIRuntime';
@@ -161,7 +178,7 @@ describe('AIRuntime', () => {
       const customConfig: Partial<AIConfig> = {
         model: 'claude-3-opus-20240229',
         maxTokens: 2048,
-        temperature: 0.5
+        temperature: 0.5,
       };
       const customRuntime = new AIRuntime(customConfig);
       const config = customRuntime.getConfig();
@@ -194,7 +211,7 @@ describe('AIRuntime', () => {
         runtime.updateConfig({
           model: 'claude-3-haiku-20240307',
           maxTokens: 1024,
-          temperature: 0.3
+          temperature: 0.3,
         });
         const config = runtime.getConfig();
         expect(config.model).toBe('claude-3-haiku-20240307');
@@ -309,7 +326,7 @@ describe('AIRuntime', () => {
         runtime.setApiKey('sk-ant-test');
         await runtime.sendMessage('Hello');
         const conversation = runtime.getConversation();
-        const userMessages = conversation?.messages.filter(m => m.role === 'user');
+        const userMessages = conversation?.messages.filter((m) => m.role === 'user');
         expect(userMessages?.length).toBeGreaterThan(0);
       });
 
@@ -317,7 +334,7 @@ describe('AIRuntime', () => {
         runtime.setApiKey('sk-ant-test');
         await runtime.sendMessage('Hello');
         const conversation = runtime.getConversation();
-        const assistantMessages = conversation?.messages.filter(m => m.role === 'assistant');
+        const assistantMessages = conversation?.messages.filter((m) => m.role === 'assistant');
         expect(assistantMessages?.length).toBeGreaterThan(0);
       });
 
@@ -486,41 +503,34 @@ describe('AIRuntime', () => {
       });
 
       it('accepts sheet name parameter', () => {
-        const claim = runtime.createDirectReadClaim('Cell A1 contains Test', 'A1', 'Test', 'Sheet1');
+        const claim = runtime.createDirectReadClaim(
+          'Cell A1 contains Test',
+          'A1',
+          'Test',
+          'Sheet1'
+        );
         expect(claim).toBeDefined();
       });
     });
 
     describe('createComputedClaim', () => {
       it('creates computed claim', () => {
-        const claim = runtime.createComputedClaim(
-          'Sum is 100',
-          '=SUM(A1:A10)',
-          100,
-          ['A1:A10']
-        );
+        const claim = runtime.createComputedClaim('Sum is 100', '=SUM(A1:A10)', 100, ['A1:A10']);
         expect(claim).toBeDefined();
         expect(claim.groundingType).toBe('computed');
       });
 
       it('includes source cells', () => {
-        const claim = runtime.createComputedClaim(
-          'Result is 15',
-          '=A1+B1',
-          15,
-          ['A1', 'B1']
-        );
+        const claim = runtime.createComputedClaim('Result is 15', '=A1+B1', 15, ['A1', 'B1']);
         expect(claim).toBeDefined();
       });
     });
 
     describe('createInferredClaim', () => {
       it('creates inferred claim', () => {
-        const claim = runtime.createInferredClaim(
-          'Trend is increasing',
-          'Based on data pattern',
-          ['A1:A10 shows growth']
-        );
+        const claim = runtime.createInferredClaim('Trend is increasing', 'Based on data pattern', [
+          'A1:A10 shows growth',
+        ]);
         expect(claim).toBeDefined();
         expect(claim.groundingType).toBe('inferred');
       });

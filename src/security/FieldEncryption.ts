@@ -145,7 +145,11 @@ export class FieldEncryption {
 
     // If salt differs, re-derive key
     const salt = new Uint8Array(base64ToArrayBuffer(encrypted.salt));
-    if (this.cachedSalt && arrayBufferToBase64(salt.buffer as ArrayBuffer) !== arrayBufferToBase64(this.cachedSalt.buffer as ArrayBuffer)) {
+    if (
+      this.cachedSalt &&
+      arrayBufferToBase64(salt.buffer as ArrayBuffer) !==
+        arrayBufferToBase64(this.cachedSalt.buffer as ArrayBuffer)
+    ) {
       throw new Error('Salt mismatch — data was encrypted with a different passphrase');
     }
 

@@ -50,104 +50,121 @@ export const AriaGrid: React.FC<AriaGridProps> = ({ sheetId, visibleRows, visibl
   }, []);
 
   // Track focused cell for keyboard nav within ARIA grid
-  const handleCellFocus = useCallback((row: number, col: number) => {
-    setSelectedCell({ row, col });
-    const key = getCellKey(row, col);
-    const cellData = sheet?.cells[key];
-    announceCell(col, row, cellData?.displayValue || '', cellData?.formula);
-  }, [setSelectedCell, sheet?.cells, announceCell]);
+  const handleCellFocus = useCallback(
+    (row: number, col: number) => {
+      setSelectedCell({ row, col });
+      const key = getCellKey(row, col);
+      const cellData = sheet?.cells[key];
+      announceCell(col, row, cellData?.displayValue || '', cellData?.formula);
+    },
+    [setSelectedCell, sheet?.cells, announceCell]
+  );
 
-  const handleCellKeyDown = useCallback((e: React.KeyboardEvent, row: number, col: number) => {
-    let nextRow = row;
-    let nextCol = col;
-    let handled = true;
+  const handleCellKeyDown = useCallback(
+    (e: React.KeyboardEvent, row: number, col: number) => {
+      let nextRow = row;
+      let nextCol = col;
+      let handled = true;
 
-    switch (e.key) {
-      case 'ArrowUp':
-        nextRow = Math.max(0, row - 1);
-        break;
-      case 'ArrowDown':
-        nextRow = row + 1;
-        break;
-      case 'ArrowLeft':
-        nextCol = Math.max(0, col - 1);
-        break;
-      case 'ArrowRight':
-        nextCol = col + 1;
-        break;
-      case 'Tab':
-        if (e.shiftKey) {
-          nextCol = col > 0 ? col - 1 : col;
-        } else {
+      switch (e.key) {
+        case 'ArrowUp':
+          nextRow = Math.max(0, row - 1);
+          break;
+        case 'ArrowDown':
+          nextRow = row + 1;
+          break;
+        case 'ArrowLeft':
+          nextCol = Math.max(0, col - 1);
+          break;
+        case 'ArrowRight':
           nextCol = col + 1;
-        }
-        break;
-      case 'Enter':
-      case 'F2':
-        e.preventDefault();
-        setSelectedCell({ row, col });
-        setIsEditing(true);
-        announceAction('Editing cell');
-        return;
-      case 'Escape':
-        setIsEditing(false);
-        announceAction('Stopped editing');
-        return;
-      case 'Home':
-        if (e.ctrlKey) {
-          nextRow = 0;
-          nextCol = 0;
-        } else {
-          nextCol = 0;
-        }
-        break;
-      case 'End':
-        if (e.ctrlKey) {
-          // Jump to last used cell in sheet
-          if (sheet) {
-            let maxR = 0, maxC = 0;
-            for (const key of Object.keys(sheet.cells)) {
-              const [r, c] = key.split(':').map(Number);
-              maxR = Math.max(maxR, r);
-              maxC = Math.max(maxC, c);
-            }
-            nextRow = maxR;
-            nextCol = maxC;
+          break;
+        case 'Tab':
+          if (e.shiftKey) {
+            nextCol = col > 0 ? col - 1 : col;
+          } else {
+            nextCol = col + 1;
           }
-        } else {
-          nextCol = visibleCols.end;
-        }
-        break;
-      case ' ':
-        // Space with Shift = extend selection range
-        if (e.shiftKey) {
+          break;
+        case 'Enter':
+        case 'F2':
           e.preventDefault();
-          setSelectionRange({
-            start: selectedCell || { row: 0, col: 0 },
-            end: { row, col },
-          });
-          announceAction(`Selection extended to ${getColLetter(col)}${row + 1}`);
+          setSelectedCell({ row, col });
+          setIsEditing(true);
+          announceAction('Editing cell');
           return;
-        }
-        handled = false;
-        break;
-      default:
-        handled = false;
-    }
-
-    if (handled) {
-      e.preventDefault();
-
-      // Shift+Arrow = extend selection
-      if (e.shiftKey && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        const start = selectionRange?.start || selectedCell || { row: 0, col: 0 };
-        setSelectionRange({ start, end: { row: nextRow, col: nextCol } });
+        case 'Escape':
+          setIsEditing(false);
+          announceAction('Stopped editing');
+          return;
+        case 'Home':
+          if (e.ctrlKey) {
+            nextRow = 0;
+            nextCol = 0;
+          } else {
+            nextCol = 0;
+          }
+          break;
+        case 'End':
+          if (e.ctrlKey) {
+            // Jump to last used cell in sheet
+            if (sheet) {
+              let maxR = 0,
+                maxC = 0;
+              for (const key of Object.keys(sheet.cells)) {
+                const [r, c] = key.split(':').map(Number);
+                maxR = Math.max(maxR, r);
+                maxC = Math.max(maxC, c);
+              }
+              nextRow = maxR;
+              nextCol = maxC;
+            }
+          } else {
+            nextCol = visibleCols.end;
+          }
+          break;
+        case ' ':
+          // Space with Shift = extend selection range
+          if (e.shiftKey) {
+            e.preventDefault();
+            setSelectionRange({
+              start: selectedCell || { row: 0, col: 0 },
+              end: { row, col },
+            });
+            announceAction(`Selection extended to ${getColLetter(col)}${row + 1}`);
+            return;
+          }
+          handled = false;
+          break;
+        default:
+          handled = false;
       }
 
-      setSelectedCell({ row: nextRow, col: nextCol });
-      focusCellElement(nextRow, nextCol);
-    }
-  }, [setSelectedCell, setIsEditing, focusCellElement, sheet, visibleCols.end, selectedCell, selectionRange, setSelectionRange, announceAction]);
+      if (handled) {
+        e.preventDefault();
+
+        // Shift+Arrow = extend selection
+        if (e.shiftKey && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+          const start = selectionRange?.start || selectedCell || { row: 0, col: 0 };
+          setSelectionRange({ start, end: { row: nextRow, col: nextCol } });
+        }
+
+        setSelectedCell({ row: nextRow, col: nextCol });
+        focusCellElement(nextRow, nextCol);
+      }
+    },
+    [
+      setSelectedCell,
+      setIsEditing,
+      focusCellElement,
+      sheet,
+      visibleCols.end,
+      selectedCell,
+      selectionRange,
+      setSelectionRange,
+      announceAction,
+    ]
+  );
 
   // Build visible rows
   const rows = useMemo(() => {

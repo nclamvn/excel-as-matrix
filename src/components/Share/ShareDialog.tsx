@@ -15,9 +15,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
   const [email, setEmail] = useState('');
   const [permission, setPermission] = useState<Permission>('view');
   const [linkCopied, setLinkCopied] = useState(false);
-  const [invites, setInvites] = useState<
-    { email: string; permission: Permission }[]
-  >([]);
+  const [invites, setInvites] = useState<{ email: string; permission: Permission }[]>([]);
 
   const shareLink = `https://excelai.app/share/${Math.random().toString(36).substring(2, 10)}`;
 
@@ -82,7 +80,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
                 <div key={invite.email} className="invite-item">
                   <span className="invite-email">{invite.email}</span>
                   <span className="invite-permission">{invite.permission}</span>
-                  <button type="button"
+                  <button
+                    type="button"
                     className="remove-invite"
                     onClick={() => handleRemoveInvite(invite.email)}
                   >
@@ -101,7 +100,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
                 <Link2 size={14} />
                 <span>{shareLink}</span>
               </div>
-              <button type="button"
+              <button
+                type="button"
                 className={`copy-link-btn ${linkCopied ? 'copied' : ''}`}
                 onClick={handleCopyLink}
               >
@@ -121,7 +121,9 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({ onClose }) => {
             <div className="link-permissions">
               <Globe size={14} />
               <span>Anyone with the link can view</span>
-              <button type="button" className="change-permission">Change</button>
+              <button type="button" className="change-permission">
+                Change
+              </button>
             </div>
           </div>
         </div>

@@ -41,10 +41,44 @@ export interface FillSeriesConfig {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const SHORT_DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const FULL_DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const FULL_DAY_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
 
-const SHORT_MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const FULL_MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const SHORT_MONTH_NAMES = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+const FULL_MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4'];
 
@@ -91,14 +125,18 @@ function detectDayNamePattern(values: string[]): DetectedPattern | null {
   if (values.length === 0) return null;
 
   // Check short form
-  const shortIndices = values.map((v) => SHORT_DAY_NAMES.findIndex((d) => d.toLowerCase() === v.toLowerCase()));
+  const shortIndices = values.map((v) =>
+    SHORT_DAY_NAMES.findIndex((d) => d.toLowerCase() === v.toLowerCase())
+  );
   if (shortIndices.every((i) => i !== -1)) {
     const step = values.length >= 2 ? calculateCyclicStep(shortIndices, 7) : 1;
     return { type: 'dayName', isShortForm: true, startIndex: shortIndices[0], step };
   }
 
   // Check full form
-  const fullIndices = values.map((v) => FULL_DAY_NAMES.findIndex((d) => d.toLowerCase() === v.toLowerCase()));
+  const fullIndices = values.map((v) =>
+    FULL_DAY_NAMES.findIndex((d) => d.toLowerCase() === v.toLowerCase())
+  );
   if (fullIndices.every((i) => i !== -1)) {
     const step = values.length >= 2 ? calculateCyclicStep(fullIndices, 7) : 1;
     return { type: 'dayName', isShortForm: false, startIndex: fullIndices[0], step };
@@ -114,14 +152,18 @@ function detectMonthNamePattern(values: string[]): DetectedPattern | null {
   if (values.length === 0) return null;
 
   // Check short form
-  const shortIndices = values.map((v) => SHORT_MONTH_NAMES.findIndex((m) => m.toLowerCase() === v.toLowerCase()));
+  const shortIndices = values.map((v) =>
+    SHORT_MONTH_NAMES.findIndex((m) => m.toLowerCase() === v.toLowerCase())
+  );
   if (shortIndices.every((i) => i !== -1)) {
     const step = values.length >= 2 ? calculateCyclicStep(shortIndices, 12) : 1;
     return { type: 'monthName', isShortForm: true, startIndex: shortIndices[0], step };
   }
 
   // Check full form
-  const fullIndices = values.map((v) => FULL_MONTH_NAMES.findIndex((m) => m.toLowerCase() === v.toLowerCase()));
+  const fullIndices = values.map((v) =>
+    FULL_MONTH_NAMES.findIndex((m) => m.toLowerCase() === v.toLowerCase())
+  );
   if (fullIndices.every((i) => i !== -1)) {
     const step = values.length >= 2 ? calculateCyclicStep(fullIndices, 12) : 1;
     return { type: 'monthName', isShortForm: false, startIndex: fullIndices[0], step };
@@ -167,7 +209,7 @@ function detectTextWithNumberPattern(values: string[]): DetectedPattern | null {
 
   // Check if all values match and have consistent prefix/suffix
   if (patterns.every((p) => p !== null)) {
-    const validPatterns = patterns as NonNullable<typeof patterns[0]>[];
+    const validPatterns = patterns as NonNullable<(typeof patterns)[0]>[];
     const firstPrefix = validPatterns[0].prefix;
     const firstSuffix = validPatterns[0].suffix;
     const firstPadding = validPatterns[0].padding;
@@ -244,7 +286,9 @@ function detectDatePattern(values: string[]): DetectedPattern | null {
     // Calculate day difference
     const dayDiffs: number[] = [];
     for (let i = 1; i < validDates.length; i++) {
-      dayDiffs.push(Math.round((validDates[i].getTime() - validDates[i - 1].getTime()) / (1000 * 60 * 60 * 24)));
+      dayDiffs.push(
+        Math.round((validDates[i].getTime() - validDates[i - 1].getTime()) / (1000 * 60 * 60 * 24))
+      );
     }
 
     // Check if all differences are the same
@@ -277,7 +321,12 @@ export function generateSeriesValues(
       return generateGrowthSeries(sourceValues, count, config?.step ?? pattern.step ?? 2);
 
     case 'date':
-      return generateDateSeries(sourceValues, count, config?.step ?? pattern.step ?? 1, config?.dateUnit ?? pattern.dateUnit ?? 'day');
+      return generateDateSeries(
+        sourceValues,
+        count,
+        config?.step ?? pattern.step ?? 1,
+        config?.dateUnit ?? pattern.dateUnit ?? 'day'
+      );
 
     case 'dayName':
       return generateDayNameSeries(pattern, count);
@@ -300,7 +349,11 @@ export function generateSeriesValues(
 /**
  * Generate linear series (1, 2, 3... or 10, 20, 30...)
  */
-export function generateLinearSeries(sourceValues: CellValue[], count: number, step: number = 1): CellValue[] {
+export function generateLinearSeries(
+  sourceValues: CellValue[],
+  count: number,
+  step: number = 1
+): CellValue[] {
   const result: CellValue[] = [];
   const lastValue = parseFloat(String(sourceValues[sourceValues.length - 1]));
 
@@ -318,7 +371,11 @@ export function generateLinearSeries(sourceValues: CellValue[], count: number, s
 /**
  * Generate growth series (1, 2, 4, 8... exponential)
  */
-export function generateGrowthSeries(sourceValues: CellValue[], count: number, ratio: number = 2): CellValue[] {
+export function generateGrowthSeries(
+  sourceValues: CellValue[],
+  count: number,
+  ratio: number = 2
+): CellValue[] {
   const result: CellValue[] = [];
   const lastValue = parseFloat(String(sourceValues[sourceValues.length - 1]));
 
@@ -357,10 +414,10 @@ export function generateDateSeries(
       case 'day':
         newDate.setDate(newDate.getDate() + step * i);
         break;
-      case 'weekday':
+      case 'weekday': {
         // Skip weekends
         let daysToAdd = step * i;
-        let currentDate = new Date(lastDate);
+        const currentDate = new Date(lastDate);
         while (daysToAdd > 0) {
           currentDate.setDate(currentDate.getDate() + 1);
           if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
@@ -369,6 +426,7 @@ export function generateDateSeries(
         }
         result.push(currentDate.toISOString().split('T')[0]);
         continue;
+      }
       case 'month':
         newDate.setMonth(newDate.getMonth() + step * i);
         break;

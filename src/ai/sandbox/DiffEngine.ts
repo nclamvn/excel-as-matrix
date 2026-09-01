@@ -2,13 +2,7 @@
 // DIFF ENGINE — Calculate differences between states (Blueprint §2.2.3)
 // =============================================================================
 
-import type {
-  CellState,
-  CellChange,
-  SandboxDiff,
-  DiffSummary,
-  ChangeType,
-} from './types';
+import type { CellState, CellChange, SandboxDiff, DiffSummary, ChangeType } from './types';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { getCellKey, colToLetter, parseCellRef } from '../../types/cell';
 
@@ -20,10 +14,7 @@ export class DiffEngine {
   /**
    * Calculate diff between current state and proposed changes
    */
-  calculateDiff(
-    sandboxId: string,
-    proposedChanges: Map<string, CellState>
-  ): SandboxDiff {
+  calculateDiff(sandboxId: string, proposedChanges: Map<string, CellState>): SandboxDiff {
     const changes: CellChange[] = [];
     const sheetsAffected = new Set<string>();
     let formulaChanges = 0;
@@ -143,10 +134,7 @@ export class DiffEngine {
   /**
    * Determine the type of change
    */
-  private determineChangeType(
-    before: CellState | null,
-    after: CellState | null
-  ): ChangeType {
+  private determineChangeType(before: CellState | null, after: CellState | null): ChangeType {
     const beforeEmpty = !before || (before.value === null && !before.formula);
     const afterEmpty = !after || (after.value === null && !after.formula);
 
@@ -162,10 +150,7 @@ export class DiffEngine {
   /**
    * Check if there's a formula change
    */
-  private hasFormulaChange(
-    before: CellState | null,
-    after: CellState | null
-  ): boolean {
+  private hasFormulaChange(before: CellState | null, after: CellState | null): boolean {
     const beforeFormula = before?.formula || null;
     const afterFormula = after?.formula || null;
 
@@ -251,7 +236,8 @@ export class DiffEngine {
     lines.push('| Cell | Before | After | Type |');
     lines.push('|------|--------|-------|------|');
 
-    for (const change of diff.changes.slice(0, 50)) { // Limit to 50 rows
+    for (const change of diff.changes.slice(0, 50)) {
+      // Limit to 50 rows
       const before = this.formatCellValue(change.before);
       const after = this.formatCellValue(change.after);
       const typeIcon = this.getChangeTypeIcon(change.changeType);
@@ -273,9 +259,7 @@ export class DiffEngine {
     if (!state) return '(empty)';
 
     if (state.formula) {
-      return state.formula.length > 20
-        ? state.formula.substring(0, 17) + '...'
-        : state.formula;
+      return state.formula.length > 20 ? state.formula.substring(0, 17) + '...' : state.formula;
     }
 
     if (state.value === null || state.value === undefined) {

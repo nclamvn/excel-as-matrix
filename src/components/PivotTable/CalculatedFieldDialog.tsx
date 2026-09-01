@@ -46,7 +46,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
     const fields = [...pivot.fields];
 
     // Include other calculated fields (except the one being edited)
-    pivot.calculatedFields.forEach(cf => {
+    pivot.calculatedFields.forEach((cf) => {
       if (!editingField || cf.id !== editingField.id) {
         fields.push({
           id: cf.id,
@@ -75,7 +75,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
 
     // Extract field references
     const fieldRefs = formulaStr.match(/\[([^\]]+)\]/g) || [];
-    const fieldNames = availableFields.map(f => f.name.toLowerCase());
+    const fieldNames = availableFields.map((f) => f.name.toLowerCase());
 
     for (const ref of fieldRefs) {
       const refName = ref.slice(1, -1).toLowerCase();
@@ -89,7 +89,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
     const withoutRefs = formulaStr.replace(/\[([^\]]+)\]/g, '1');
     try {
       // Very basic check - try to evaluate with dummy values
-      // eslint-disable-next-line no-new-func
+
       new Function(`return ${withoutRefs}`);
     } catch {
       return { valid: false, error: 'Invalid formula syntax' };
@@ -102,7 +102,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
 
   // Insert field reference into formula
   const insertFieldReference = (field: PivotField) => {
-    setFormula(prev => prev + `[${field.name}]`);
+    setFormula((prev) => prev + `[${field.name}]`);
   };
 
   const handleSave = () => {
@@ -116,8 +116,9 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
 
     // Check for duplicate name
     const existingField = pivot.calculatedFields.find(
-      cf => cf.name.toLowerCase() === name.trim().toLowerCase() &&
-           (!editingField || cf.id !== editingField.id)
+      (cf) =>
+        cf.name.toLowerCase() === name.trim().toLowerCase() &&
+        (!editingField || cf.id !== editingField.id)
     );
     if (existingField) {
       setError('A calculated field with this name already exists');
@@ -160,7 +161,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
 
   return (
     <div className="pivot-dialog-overlay" onClick={onClose}>
-      <div className="pivot-dialog calculated-field-dialog" onClick={e => e.stopPropagation()}>
+      <div className="pivot-dialog calculated-field-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="pivot-dialog-header">
           <div className="pivot-dialog-title">
             <Calculator size={20} />
@@ -184,7 +185,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
             <input
               type="text"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               className="pivot-dialog-input"
               placeholder="e.g., Profit Margin"
             />
@@ -193,7 +194,8 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
           <div className="pivot-dialog-section">
             <div className="section-header-with-help">
               <h3>Formula</h3>
-              <button type="button"
+              <button
+                type="button"
                 className="help-btn"
                 onClick={() => setShowHelp(!showHelp)}
                 title="Show formula help"
@@ -204,13 +206,25 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
 
             {showHelp && (
               <div className="formula-help">
-                <p><strong>Syntax:</strong> Use [FieldName] to reference fields</p>
-                <p><strong>Operators:</strong> +, -, *, /, (, )</p>
-                <p><strong>Examples:</strong></p>
+                <p>
+                  <strong>Syntax:</strong> Use [FieldName] to reference fields
+                </p>
+                <p>
+                  <strong>Operators:</strong> +, -, *, /, (, )
+                </p>
+                <p>
+                  <strong>Examples:</strong>
+                </p>
                 <ul>
-                  <li><code>[Sales] - [Cost]</code> - Profit</li>
-                  <li><code>[Sales] / [Quantity]</code> - Unit Price</li>
-                  <li><code>([Sales] - [Cost]) / [Sales] * 100</code> - Margin %</li>
+                  <li>
+                    <code>[Sales] - [Cost]</code> - Profit
+                  </li>
+                  <li>
+                    <code>[Sales] / [Quantity]</code> - Unit Price
+                  </li>
+                  <li>
+                    <code>([Sales] - [Cost]) / [Sales] * 100</code> - Margin %
+                  </li>
                 </ul>
               </div>
             )}
@@ -218,7 +232,7 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
             <div className="formula-input-container">
               <textarea
                 value={formula}
-                onChange={e => setFormula(e.target.value)}
+                onChange={(e) => setFormula(e.target.value)}
                 className={`pivot-dialog-textarea ${formulaValidation.valid ? 'valid' : formula ? 'invalid' : ''}`}
                 placeholder="e.g., [Sales] - [Cost]"
                 rows={3}
@@ -245,8 +259,9 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
             <h3>Available Fields</h3>
             <p className="section-hint">Click a field to insert it into the formula</p>
             <div className="available-fields-grid">
-              {availableFields.map(field => (
-                <button type="button"
+              {availableFields.map((field) => (
+                <button
+                  type="button"
                   key={field.id}
                   className="field-insert-btn"
                   onClick={() => insertFieldReference(field)}
@@ -273,7 +288,8 @@ export const CalculatedFieldDialog: React.FC<CalculatedFieldDialogProps> = ({
           <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="pivot-btn-primary"
             onClick={handleSave}
             disabled={!name.trim() || !formulaValidation.valid}

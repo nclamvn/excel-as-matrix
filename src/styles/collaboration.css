@@ -258,7 +258,9 @@
 .remote-cursor {
   position: absolute;
   pointer-events: none;
-  transition: left 0.1s, top 0.1s;
+  transition:
+    left 0.1s,
+    top 0.1s;
 }
 
 .remote-cursor--fading {
@@ -367,7 +369,11 @@
   border: 2px solid;
   border-radius: 2px;
   pointer-events: none;
-  transition: left 0.1s, top 0.1s, width 0.1s, height 0.1s;
+  transition:
+    left 0.1s,
+    top 0.1s,
+    width 0.1s,
+    height 0.1s;
 }
 
 .remote-selection__border {
@@ -1740,7 +1746,8 @@
    Animations
    ----------------------------------------------------------------------------- */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -1749,7 +1756,8 @@
 }
 
 @keyframes typingDot {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0.5;
   }
@@ -1760,7 +1768,8 @@
 }
 
 @keyframes caretBlink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

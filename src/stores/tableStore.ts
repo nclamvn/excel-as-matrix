@@ -24,7 +24,11 @@ interface TableState {
   getTablesBySheet: (sheetId: string) => Table[];
   getTableAtCell: (sheetId: string, row: number, col: number) => Table | undefined;
   isInTable: (sheetId: string, row: number, col: number) => boolean;
-  getColumnAtCell: (sheetId: string, row: number, col: number) => { table: Table; column: TableColumn } | undefined;
+  getColumnAtCell: (
+    sheetId: string,
+    row: number,
+    col: number
+  ) => { table: Table; column: TableColumn } | undefined;
 
   // Reset
   reset: () => void;
@@ -82,7 +86,7 @@ export const useTableStore = create<TableState>()((set, get) => ({
       const { [tableId]: _, ...tables } = state.tables;
       const tablesBySheet = { ...state.tablesBySheet };
       if (tablesBySheet[table.sheetId]) {
-        tablesBySheet[table.sheetId] = tablesBySheet[table.sheetId].filter(id => id !== tableId);
+        tablesBySheet[table.sheetId] = tablesBySheet[table.sheetId].filter((id) => id !== tableId);
       }
       const { [table.name]: __, ...tablesByName } = state.tablesByName;
 
@@ -110,7 +114,7 @@ export const useTableStore = create<TableState>()((set, get) => ({
       const table = state.tables[tableId];
       if (!table) return state;
 
-      const columns = table.columns.map(col =>
+      const columns = table.columns.map((col) =>
         col.id === columnId ? { ...col, ...updates } : col
       );
 
@@ -129,8 +133,10 @@ export const useTableStore = create<TableState>()((set, get) => ({
       const table = state.tables[tableId];
       if (!table) return state;
 
-      const columns = table.columns.filter(col => col.id !== columnId);
-      columns.forEach((col, idx) => { col.index = idx; });
+      const columns = table.columns.filter((col) => col.id !== columnId);
+      columns.forEach((col, idx) => {
+        col.index = idx;
+      });
 
       const updated = {
         ...table,
@@ -198,13 +204,18 @@ export const useTableStore = create<TableState>()((set, get) => ({
 
   getTablesBySheet: (sheetId) => {
     const tableIds = get().tablesBySheet[sheetId] || [];
-    return tableIds.map(id => get().tables[id]).filter(Boolean);
+    return tableIds.map((id) => get().tables[id]).filter(Boolean);
   },
 
   getTableAtCell: (sheetId, row, col) => {
     const tables = get().getTablesBySheet(sheetId);
-    return tables.find(table => {
-      const endRow = table.startRow + (table.hasHeaderRow ? 1 : 0) + table.rowCount + (table.hasTotalRow ? 1 : 0) - 1;
+    return tables.find((table) => {
+      const endRow =
+        table.startRow +
+        (table.hasHeaderRow ? 1 : 0) +
+        table.rowCount +
+        (table.hasTotalRow ? 1 : 0) -
+        1;
       const endCol = table.startCol + table.columns.length - 1;
       return row >= table.startRow && row <= endRow && col >= table.startCol && col <= endCol;
     });
@@ -219,7 +230,7 @@ export const useTableStore = create<TableState>()((set, get) => ({
     if (!table) return undefined;
 
     const colIndex = col - table.startCol;
-    const column = table.columns.find(c => c.index === colIndex);
+    const column = table.columns.find((c) => c.index === colIndex);
     if (!column) return undefined;
 
     return { table, column };

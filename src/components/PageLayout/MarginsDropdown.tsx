@@ -55,16 +55,13 @@ export const MarginsDropdown: React.FC<MarginsDropdownProps> = ({ sheetId }) => 
     setIsOpen(false);
   };
 
-  const currentPreset = MARGIN_OPTIONS.find(
-    opt => JSON.stringify(opt.margins) === JSON.stringify(settings.margins)
-  )?.name || 'Custom';
+  const currentPreset =
+    MARGIN_OPTIONS.find((opt) => JSON.stringify(opt.margins) === JSON.stringify(settings.margins))
+      ?.name || 'Custom';
 
   return (
     <div className="margins-dropdown" ref={dropdownRef}>
-      <button type="button"
-        className="toolbar-2026__btn"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <button type="button" className="toolbar-2026__btn" onClick={() => setIsOpen(!isOpen)}>
         <div className="margin-icon">
           <div className="margin-box">
             <div className="margin-inner" />
@@ -77,8 +74,9 @@ export const MarginsDropdown: React.FC<MarginsDropdownProps> = ({ sheetId }) => 
       {isOpen && (
         <div className="margins-menu">
           <div className="menu-title">Page Margins</div>
-          {MARGIN_OPTIONS.map(option => (
-            <button type="button"
+          {MARGIN_OPTIONS.map((option) => (
+            <button
+              type="button"
               key={option.id}
               className={`margin-item ${currentPreset === option.name ? 'active' : ''}`}
               onClick={() => handleSelectMargin(option.margins)}

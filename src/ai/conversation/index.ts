@@ -37,10 +37,7 @@ export {
 } from './types';
 
 // State Machine
-export {
-  ConversationStateMachine,
-  conversationStateMachine,
-} from './StateMachine';
+export { ConversationStateMachine, conversationStateMachine } from './StateMachine';
 
 // State Handlers
 export {

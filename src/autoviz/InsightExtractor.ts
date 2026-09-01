@@ -17,10 +17,7 @@ export class InsightExtractor {
   /**
    * Extract all insights from data
    */
-  extract(
-    data: DataRange,
-    characteristics: DataCharacteristics
-  ): ChartInsight[] {
+  extract(data: DataRange, characteristics: DataCharacteristics): ChartInsight[] {
     const insights: ChartInsight[] = [];
 
     // Extract insights for each numeric column
@@ -105,9 +102,7 @@ export class InsightExtractor {
   ): ChartInsight | null {
     if (values.length === 0) return null;
 
-    const max = values.reduce((prev, curr) =>
-      curr.value > prev.value ? curr : prev
-    );
+    const max = values.reduce((prev, curr) => (curr.value > prev.value ? curr : prev));
 
     const mean = values.reduce((sum, v) => sum + v.value, 0) / values.length;
     const percentAboveMean = ((max.value - mean) / mean) * 100;
@@ -147,9 +142,7 @@ export class InsightExtractor {
   ): ChartInsight | null {
     if (values.length === 0) return null;
 
-    const min = values.reduce((prev, curr) =>
-      curr.value < prev.value ? curr : prev
-    );
+    const min = values.reduce((prev, curr) => (curr.value < prev.value ? curr : prev));
 
     const mean = values.reduce((sum, v) => sum + v.value, 0) / values.length;
     const percentBelowMean = ((mean - min.value) / mean) * 100;
@@ -288,10 +281,7 @@ export class InsightExtractor {
   /**
    * Detect milestones (significant thresholds crossed)
    */
-  private detectMilestones(
-    data: DataRange,
-    characteristics: DataCharacteristics
-  ): ChartInsight[] {
+  private detectMilestones(data: DataRange, characteristics: DataCharacteristics): ChartInsight[] {
     const milestones: ChartInsight[] = [];
     const thresholds = [100, 500, 1000, 5000, 10000, 50000, 100000, 1000000];
 
@@ -338,9 +328,7 @@ export class InsightExtractor {
   /**
    * Extract correlation insights
    */
-  private extractCorrelationInsights(
-    characteristics: DataCharacteristics
-  ): ChartInsight[] {
+  private extractCorrelationInsights(characteristics: DataCharacteristics): ChartInsight[] {
     const insights: ChartInsight[] = [];
 
     const correlationPatterns = characteristics.patterns.filter(
@@ -376,9 +364,7 @@ export class InsightExtractor {
     if (!characteristics.hasTimeColumn || data.rowCount < 12) return null;
 
     // Simple seasonality detection: check if values repeat patterns
-    const numericCol = characteristics.columns.find(
-      (c) => c.dataType === 'number'
-    );
+    const numericCol = characteristics.columns.find((c) => c.dataType === 'number');
     if (!numericCol) return null;
 
     const values = this.getNumericColumnValues(data, numericCol.index);
@@ -418,10 +404,7 @@ export class InsightExtractor {
   /**
    * Calculate correlation between values and their lagged counterparts
    */
-  private calculatePeriodicCorrelation(
-    values: { value: number }[],
-    period: number
-  ): number {
+  private calculatePeriodicCorrelation(values: { value: number }[], period: number): number {
     if (values.length < period * 2) return 0;
 
     const pairs: { x: number; y: number }[] = [];
@@ -443,9 +426,7 @@ export class InsightExtractor {
     const sumY2 = pairs.reduce((s, p) => s + p.y * p.y, 0);
 
     const numerator = n * sumXY - sumX * sumY;
-    const denominator = Math.sqrt(
-      (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
-    );
+    const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
 
     if (denominator === 0) return 0;
     return numerator / denominator;
@@ -462,9 +443,7 @@ export class InsightExtractor {
    * Get annotations from insights
    */
   getAnnotations(insights: ChartInsight[]): Annotation[] {
-    return insights
-      .filter((i) => i.suggestedAnnotation)
-      .map((i) => i.suggestedAnnotation!);
+    return insights.filter((i) => i.suggestedAnnotation).map((i) => i.suggestedAnnotation!);
   }
 
   /**

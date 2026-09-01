@@ -154,7 +154,8 @@ export const AutoSumDropdown: React.FC = () => {
   return (
     <div className="autosum-dropdown" ref={dropdownRef}>
       <div className="autosum-btn-group">
-        <button type="button"
+        <button
+          type="button"
           className="autosum-main-btn"
           onClick={handleQuickSum}
           title="Sum (Alt+=)"
@@ -162,7 +163,8 @@ export const AutoSumDropdown: React.FC = () => {
           <span className="autosum-icon">Σ</span>
           <span className="autosum-label">AutoSum</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="autosum-arrow-btn"
           onClick={() => setIsOpen(!isOpen)}
           title="More functions"
@@ -174,7 +176,8 @@ export const AutoSumDropdown: React.FC = () => {
       {isOpen && (
         <div className="autosum-menu">
           {AUTO_SUM_FUNCTIONS.map((func) => (
-            <button type="button"
+            <button
+              type="button"
               key={func.formula}
               className="autosum-item"
               onClick={() => insertFormula(func.formula)}
@@ -184,15 +187,14 @@ export const AutoSumDropdown: React.FC = () => {
                 <span className="func-name">{func.name}</span>
                 <span className="func-desc">{func.description}</span>
               </div>
-              {func.shortcut && (
-                <span className="func-shortcut">{func.shortcut}</span>
-              )}
+              {func.shortcut && <span className="func-shortcut">{func.shortcut}</span>}
             </button>
           ))}
 
           <div className="menu-divider" />
 
-          <button type="button"
+          <button
+            type="button"
             className="autosum-item more-toggle"
             onClick={() => setShowMore(!showMore)}
           >
@@ -204,7 +206,8 @@ export const AutoSumDropdown: React.FC = () => {
             <>
               <div className="menu-divider" />
               {MORE_FUNCTIONS.map((func) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={func.formula}
                   className="autosum-item"
                   onClick={() => insertFormula(func.formula)}

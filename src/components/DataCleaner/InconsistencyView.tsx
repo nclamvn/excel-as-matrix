@@ -48,14 +48,15 @@ export const InconsistencyView: React.FC<InconsistencyViewProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredGroups = searchTerm
-    ? groups.filter(g =>
-        g.canonical.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        g.variants.some(v => v.value.toLowerCase().includes(searchTerm.toLowerCase()))
+    ? groups.filter(
+        (g) =>
+          g.canonical.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          g.variants.some((v) => v.value.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     : groups;
 
   const totalInconsistencies = groups.reduce(
-    (sum, g) => sum + g.variants.filter(v => !v.isCanonical).reduce((s, v) => s + v.count, 0),
+    (sum, g) => sum + g.variants.filter((v) => !v.isCanonical).reduce((s, v) => s + v.count, 0),
     0
   );
 
@@ -101,9 +102,7 @@ export const InconsistencyView: React.FC<InconsistencyViewProps> = ({
             key={group.id}
             group={group}
             isExpanded={expandedGroup === group.id}
-            onToggle={() => setExpandedGroup(
-              expandedGroup === group.id ? null : group.id
-            )}
+            onToggle={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)}
             onSetCanonical={onSetCanonical}
             onFix={onFixGroup}
           />
@@ -111,9 +110,7 @@ export const InconsistencyView: React.FC<InconsistencyViewProps> = ({
       </div>
 
       {filteredGroups.length === 0 && searchTerm && (
-        <div className="inconsistency-view__no-results">
-          No groups match "{searchTerm}"
-        </div>
+        <div className="inconsistency-view__no-results">No groups match "{searchTerm}"</div>
       )}
     </div>
   );
@@ -138,7 +135,7 @@ const InconsistencyGroupCard: React.FC<InconsistencyGroupCardProps> = ({
   onSetCanonical,
   onFix,
 }) => {
-  const variantsToFix = group.variants.filter(v => !v.isCanonical);
+  const variantsToFix = group.variants.filter((v) => !v.isCanonical);
 
   return (
     <div className={`inconsistency-group ${isExpanded ? 'inconsistency-group--expanded' : ''}`}>
@@ -155,13 +152,12 @@ const InconsistencyGroupCard: React.FC<InconsistencyGroupCardProps> = ({
           <span className="inconsistency-group__variants-count">
             {group.variants.length} variants
           </span>
-          <span className="inconsistency-group__affected">
-            {group.totalCount} cells
-          </span>
+          <span className="inconsistency-group__affected">{group.totalCount} cells</span>
         </div>
         <div className="inconsistency-group__actions">
           {onFix && variantsToFix.length > 0 && (
-            <button type="button"
+            <button
+              type="button"
               className="inconsistency-group__fix-btn"
               onClick={(e) => {
                 e.stopPropagation();
@@ -195,12 +191,11 @@ const InconsistencyGroupCard: React.FC<InconsistencyGroupCardProps> = ({
                     <span className="inconsistency-variant__canonical-badge">Canonical</span>
                   )}
                 </div>
-                <div className="inconsistency-variant__count">
-                  {variant.count} cells
-                </div>
+                <div className="inconsistency-variant__count">{variant.count} cells</div>
                 <div className="inconsistency-variant__actions">
                   {!variant.isCanonical && onSetCanonical && (
-                    <button type="button"
+                    <button
+                      type="button"
                       className="inconsistency-variant__set-canonical"
                       onClick={() => onSetCanonical(group.id, variant.value)}
                       title="Set as canonical value"
@@ -228,9 +223,7 @@ const InconsistencyGroupCard: React.FC<InconsistencyGroupCardProps> = ({
                 <span className="inconsistency-group__preview-from">{variant.value}</span>
                 <span className="inconsistency-group__preview-arrow">→</span>
                 <span className="inconsistency-group__preview-to">{group.canonical}</span>
-                <span className="inconsistency-group__preview-count">
-                  ({variant.count})
-                </span>
+                <span className="inconsistency-group__preview-count">({variant.count})</span>
               </div>
             ))}
           </div>
@@ -252,9 +245,7 @@ interface CommonInconsistenciesProps {
   }>;
 }
 
-export const CommonInconsistencies: React.FC<CommonInconsistenciesProps> = ({
-  examples,
-}) => (
+export const CommonInconsistencies: React.FC<CommonInconsistenciesProps> = ({ examples }) => (
   <div className="common-inconsistencies">
     <h4>Common Fixes</h4>
     <div className="common-inconsistencies__list">
@@ -296,7 +287,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>

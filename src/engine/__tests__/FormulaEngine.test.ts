@@ -266,12 +266,24 @@ describe('FormulaEngine', () => {
       });
 
       it('should evaluate numeric conditions', () => {
-        const result = engine.calculate('=IF(1>0,"positive","negative")', 'sheet1', 0, 0, mockDataProvider);
+        const result = engine.calculate(
+          '=IF(1>0,"positive","negative")',
+          'sheet1',
+          0,
+          0,
+          mockDataProvider
+        );
         expect(result.value).toBe('positive');
       });
 
       it('should handle nested IF', () => {
-        const result = engine.calculate('=IF(1>2,"A",IF(2>1,"B","C"))', 'sheet1', 0, 0, mockDataProvider);
+        const result = engine.calculate(
+          '=IF(1>2,"A",IF(2>1,"B","C"))',
+          'sheet1',
+          0,
+          0,
+          mockDataProvider
+        );
         expect(result.value).toBe('B');
       });
     });
@@ -302,7 +314,13 @@ describe('FormulaEngine', () => {
 
     describe('Text Functions', () => {
       it('should concatenate strings', () => {
-        const result = engine.calculate('=CONCATENATE("Hello"," ","World")', 'sheet1', 0, 0, mockDataProvider);
+        const result = engine.calculate(
+          '=CONCATENATE("Hello"," ","World")',
+          'sheet1',
+          0,
+          0,
+          mockDataProvider
+        );
         expect(result.value).toBe('Hello World');
       });
 
@@ -512,7 +530,10 @@ describe('FormulaEngine', () => {
 
     it('should parse 2D array', () => {
       const result = engine.calculate('={1,2;3,4}', 'sheet1', 0, 0, mockDataProvider);
-      expect(result.value).toEqual([[1, 2], [3, 4]]);
+      expect(result.value).toEqual([
+        [1, 2],
+        [3, 4],
+      ]);
     });
 
     it('should use arrays in functions', () => {
@@ -645,7 +666,13 @@ describe('FormulaEngine', () => {
     });
 
     it('should evaluate nested AND inside IF', () => {
-      const result = engine.calculate('=IF(AND(1>0,2>1),"yes","no")', 'sheet1', 0, 0, mockDataProvider);
+      const result = engine.calculate(
+        '=IF(AND(1>0,2>1),"yes","no")',
+        'sheet1',
+        0,
+        0,
+        mockDataProvider
+      );
       expect(result.value).toBe('yes');
     });
 
@@ -655,7 +682,13 @@ describe('FormulaEngine', () => {
     });
 
     it('should evaluate deeply nested functions', () => {
-      const result = engine.calculate('=IF(AND(OR(1>0,FALSE),NOT(FALSE)),"A","B")', 'sheet1', 0, 0, mockDataProvider);
+      const result = engine.calculate(
+        '=IF(AND(OR(1>0,FALSE),NOT(FALSE)),"A","B")',
+        'sheet1',
+        0,
+        0,
+        mockDataProvider
+      );
       expect(result.value).toBe('A');
     });
   });

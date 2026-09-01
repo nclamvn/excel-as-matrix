@@ -23,17 +23,20 @@ const {
             '2:0': { value: 'Item 2', displayValue: 'Item 2' },
             '2:1': { value: 200, displayValue: '200', formula: '=A2*2' },
             '3:0': { value: 'Total', displayValue: 'Total' },
-            '3:1': { value: 300, displayValue: '300', formula: '=SUM(B2:B3)' }
-          }
-        }
-      }
-    }
+            '3:1': { value: 300, displayValue: '300', formula: '=SUM(B2:B3)' },
+          },
+        },
+      },
+    },
   },
   mockSelectionState: {
     current: {
       selectedCell: { row: 0, col: 0 } as { row: number; col: number } | null,
-      selectionRange: { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } } as { start: { row: number; col: number }; end: { row: number; col: number } } | null
-    }
+      selectionRange: { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } } as {
+        start: { row: number; col: number };
+        end: { row: number; col: number };
+      } | null,
+    },
   },
   mockIntentParserParse: vi.fn().mockResolvedValue({
     intent: 'query',
@@ -42,35 +45,35 @@ const {
         type: 'cell',
         text: 'A1',
         resolved: true,
-        resolvedRef: 'A1'
-      }
+        resolvedRef: 'A1',
+      },
     ],
-    confidence: 0.9
+    confidence: 0.9,
   }),
   mockTokenEstimator: {
     estimateRange: vi.fn().mockReturnValue(100),
-    estimateSnapshot: vi.fn().mockReturnValue(50)
+    estimateSnapshot: vi.fn().mockReturnValue(50),
   },
   mockSerializer: {
     serializeRange: vi.fn().mockImplementation((ref: string) => ({
       ref,
       data: [['Test', 'Value']],
-      cellCount: 2
-    }))
-  }
+      cellCount: 2,
+    })),
+  },
 }));
 
 // Mock dependencies
 vi.mock('../../../stores/workbookStore', () => ({
   useWorkbookStore: {
-    getState: () => mockWorkbookState.current
-  }
+    getState: () => mockWorkbookState.current,
+  },
 }));
 
 vi.mock('../../../stores/selectionStore', () => ({
   useSelectionStore: {
-    getState: () => mockSelectionState.current
-  }
+    getState: () => mockSelectionState.current,
+  },
 }));
 
 // Mock types/cell utilities
@@ -102,20 +105,20 @@ vi.mock('../../../types/cell', () => ({
 vi.mock('../IntentParser', () => ({
   IntentParser: class MockIntentParser {
     parse = mockIntentParserParse;
-  }
+  },
 }));
 
 vi.mock('../TokenEstimator', () => ({
   TokenEstimator: class MockTokenEstimator {
     estimateRange = mockTokenEstimator.estimateRange;
     estimateSnapshot = mockTokenEstimator.estimateSnapshot;
-  }
+  },
 }));
 
 vi.mock('../ContextSerializer', () => ({
   ContextSerializer: class MockContextSerializer {
     serializeRange = mockSerializer.serializeRange;
-  }
+  },
 }));
 
 import { ContextAssembler, contextAssembler } from '../ContextAssembler';
@@ -130,7 +133,7 @@ describe('ContextAssembler', () => {
     // Reset state
     mockSelectionState.current = {
       selectedCell: { row: 0, col: 0 },
-      selectionRange: { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } }
+      selectionRange: { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } },
     };
     mockWorkbookState.current = {
       activeSheetId: 'sheet1',
@@ -146,10 +149,10 @@ describe('ContextAssembler', () => {
             '2:0': { value: 'Item 2', displayValue: 'Item 2' },
             '2:1': { value: 200, displayValue: '200', formula: '=A2*2' },
             '3:0': { value: 'Total', displayValue: 'Total' },
-            '3:1': { value: 300, displayValue: '300', formula: '=SUM(B2:B3)' }
-          }
-        }
-      }
+            '3:1': { value: 300, displayValue: '300', formula: '=SUM(B2:B3)' },
+          },
+        },
+      },
     };
     mockIntentParserParse.mockResolvedValue({
       intent: 'query',
@@ -158,10 +161,10 @@ describe('ContextAssembler', () => {
           type: 'cell',
           text: 'A1',
           resolved: true,
-          resolvedRef: 'A1'
-        }
+          resolvedRef: 'A1',
+        },
       ],
-      confidence: 0.9
+      confidence: 0.9,
     });
   });
 
@@ -179,7 +182,7 @@ describe('ContextAssembler', () => {
     it('creates instance with custom config', () => {
       const customConfig: Partial<ContextConfig> = {
         maxTokens: 100000,
-        truncationStrategy: 'hierarchical'
+        truncationStrategy: 'hierarchical',
       };
       const customAssembler = new ContextAssembler(customConfig);
       const config = customAssembler.getConfig();
@@ -256,8 +259,8 @@ describe('ContextAssembler', () => {
             upstreamDeps: 0.2,
             downstreamDeps: 0.1,
             schemaContext: 0.1,
-            recentEvents: 0.1
-          }
+            recentEvents: 0.1,
+          },
         });
         const config = assembler.getConfig();
         expect(config.priorityWeights.directReference).toBe(0.5);
@@ -397,7 +400,7 @@ describe('ContextAssembler', () => {
     it('handles missing selection', async () => {
       mockSelectionState.current = {
         selectedCell: null,
-        selectionRange: null
+        selectionRange: null,
       };
 
       const context = await assembler.assembleContext('Test');
@@ -409,9 +412,9 @@ describe('ContextAssembler', () => {
       mockWorkbookState.current = {
         activeSheetId: 'sheet1',
         sheets: {
-          sheet1: { id: 'sheet1', name: 'Sheet1', cells: {} }
-        }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          sheet1: { id: 'sheet1', name: 'Sheet1', cells: {} },
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
       const context = await assembler.assembleContext('Test');
@@ -422,8 +425,8 @@ describe('ContextAssembler', () => {
       // Use type assertion to bypass strict typing for edge case test
       mockWorkbookState.current = {
         activeSheetId: null,
-        sheets: {}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sheets: {},
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
       const context = await assembler.assembleContext('Test');
@@ -468,7 +471,7 @@ describe('ContextAssembler', () => {
       );
       const contexts = await Promise.all(promises);
       expect(contexts.length).toBe(5);
-      contexts.forEach(ctx => expect(ctx).toBeDefined());
+      contexts.forEach((ctx) => expect(ctx).toBeDefined());
     });
   });
 });

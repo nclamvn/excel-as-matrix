@@ -65,7 +65,7 @@
 
   /* Touch-friendly button sizing */
   button,
-  [role="button"],
+  [role='button'],
   .btn,
   .toolbar-btn {
     min-height: 44px;
@@ -144,7 +144,7 @@
   /* Dialog adjustments */
   .dialog,
   .modal-content,
-  [role="dialog"] {
+  [role='dialog'] {
     width: calc(100vw - 16px) !important;
     max-width: 100% !important;
     margin: 8px !important;
@@ -267,7 +267,7 @@
   /* Full-width modals */
   .dialog,
   .modal-content,
-  [role="dialog"] {
+  [role='dialog'] {
     width: 100vw !important;
     margin: 0 !important;
     border-radius: 16px 16px 0 0 !important;
@@ -317,12 +317,12 @@
 
   /* Mobile toolbar: more compact in landscape */
   .mobile-toolbar-root .mobile-toolbar-bar,
-  .mobile-toolbar-root [data-testid="mobile-toolbar-bar"] {
+  .mobile-toolbar-root [data-testid='mobile-toolbar-bar'] {
     height: 48px !important;
   }
 
   /* Slide-up panels: side layout in landscape */
-  .mobile-toolbar-root [data-testid^="mobile-panel-"] {
+  .mobile-toolbar-root [data-testid^='mobile-panel-'] {
     max-height: 40vh !important;
   }
 

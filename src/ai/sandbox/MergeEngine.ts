@@ -53,10 +53,7 @@ export class MergeEngine {
       }
 
       // Create rollback info
-      const rollbackInfo = this.createRollbackInfo(
-        sandbox.id,
-        originalStates
-      );
+      const rollbackInfo = this.createRollbackInfo(sandbox.id, originalStates);
       this.rollbackStorage.set(sandbox.id, rollbackInfo);
 
       // Update sandbox status
@@ -246,10 +243,7 @@ export class MergeEngine {
   /**
    * Create rollback info
    */
-  private createRollbackInfo(
-    sandboxId: string,
-    originalStates: CellState[]
-  ): RollbackInfo {
+  private createRollbackInfo(sandboxId: string, originalStates: CellState[]): RollbackInfo {
     const mergedAt = new Date();
     const expiresAt = new Date(mergedAt.getTime() + 24 * 60 * 60 * 1000); // 24 hours
 

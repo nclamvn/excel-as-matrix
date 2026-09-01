@@ -47,10 +47,25 @@ interface ConsentRecord {
 }
 
 const REQUEST_TYPES = [
-  { value: 'access', label: 'Data Access', icon: Eye, description: 'Request a copy of personal data' },
+  {
+    value: 'access',
+    label: 'Data Access',
+    icon: Eye,
+    description: 'Request a copy of personal data',
+  },
   { value: 'erasure', label: 'Data Erasure', icon: Trash2, description: 'Right to be forgotten' },
-  { value: 'portability', label: 'Data Portability', icon: Download, description: 'Export data in portable format' },
-  { value: 'rectification', label: 'Rectification', icon: FileText, description: 'Correct inaccurate data' },
+  {
+    value: 'portability',
+    label: 'Data Portability',
+    icon: Download,
+    description: 'Export data in portable format',
+  },
+  {
+    value: 'rectification',
+    label: 'Rectification',
+    icon: FileText,
+    description: 'Correct inaccurate data',
+  },
   { value: 'restriction', label: 'Restriction', icon: Shield, description: 'Restrict processing' },
   { value: 'objection', label: 'Objection', icon: XCircle, description: 'Object to processing' },
 ];
@@ -119,7 +134,11 @@ export const GDPRTools: React.FC = () => {
     }
   };
 
-  const handleProcessRequest = async (requestId: string, action: 'approve' | 'reject', notes?: string) => {
+  const handleProcessRequest = async (
+    requestId: string,
+    action: 'approve' | 'reject',
+    notes?: string
+  ) => {
     try {
       const response = await fetch(`/api/admin/gdpr/requests/${requestId}/${action}`, {
         method: 'POST',
@@ -155,7 +174,9 @@ export const GDPRTools: React.FC = () => {
     };
 
     return (
-      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}>
+      <span
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}
+      >
         {icons[status]}
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
@@ -185,7 +206,8 @@ export const GDPRTools: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">GDPR Compliance Tools</h1>
           <p className="text-gray-500 mt-1">Manage data subject requests and consent records</p>
         </div>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setShowNewRequestModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
@@ -196,7 +218,8 @@ export const GDPRTools: React.FC = () => {
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('requests')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeTab === 'requests'
@@ -206,7 +229,8 @@ export const GDPRTools: React.FC = () => {
         >
           Data Subject Requests
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('consents')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeTab === 'consents'
@@ -216,7 +240,8 @@ export const GDPRTools: React.FC = () => {
         >
           Consent Records
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('export')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeTab === 'export'
@@ -272,7 +297,8 @@ export const GDPRTools: React.FC = () => {
                 ))}
               </select>
 
-              <button type="button"
+              <button
+                type="button"
                 onClick={fetchRequests}
                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               >
@@ -323,7 +349,9 @@ export const GDPRTools: React.FC = () => {
                   requests.map((request) => (
                     <tr key={request.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
-                        <div className="font-mono text-sm text-gray-900">{request.id.slice(0, 8)}...</div>
+                        <div className="font-mono text-sm text-gray-900">
+                          {request.id.slice(0, 8)}...
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="text-sm font-medium text-gray-900">{request.userName}</div>
@@ -337,7 +365,8 @@ export const GDPRTools: React.FC = () => {
                         {formatDate(request.requestedAt)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <button type="button"
+                        <button
+                          type="button"
                           onClick={() => setSelectedRequest(request)}
                           className="p-1 hover:bg-gray-100 rounded"
                         >
@@ -550,7 +579,8 @@ const BulkExportPanel: React.FC = () => {
           </div>
         )}
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleExport}
           disabled={!email || exporting}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
@@ -570,7 +600,11 @@ interface RequestDetailsModalProps {
   onProcess: (id: string, action: 'approve' | 'reject', notes?: string) => void;
 }
 
-const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onClose, onProcess }) => {
+const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
+  request,
+  onClose,
+  onProcess,
+}) => {
   const [notes, setNotes] = useState('');
   const [processing, setProcessing] = useState(false);
 
@@ -646,14 +680,16 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
               </div>
 
               <div className="flex gap-3">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => handleAction('reject')}
                   disabled={processing}
                   className="flex-1 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50"
                 >
                   Reject
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => handleAction('approve')}
                   disabled={processing}
                   className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
@@ -665,7 +701,8 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
           )}
 
           {request.status !== 'pending' && (
-            <button type="button"
+            <button
+              type="button"
               onClick={onClose}
               className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
             >
@@ -761,7 +798,9 @@ const NewRequestModal: React.FC<NewRequestModalProps> = ({ onClose, onSuccess })
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Reason (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Reason (Optional)
+            </label>
             <textarea
               value={formData.reason}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}

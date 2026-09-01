@@ -211,8 +211,7 @@ describe('Stress Tests', () => {
         // Delete sheet (simulate by removing from state)
         if (i > 0) {
           const currentState = useWorkbookStore.getState();
-          const { [`sheet-${i - 1}`]: removed, ...remainingSheets } =
-            currentState.sheets;
+          const { [`sheet-${i - 1}`]: removed, ...remainingSheets } = currentState.sheets;
           useWorkbookStore.setState({ sheets: remainingSheets });
         }
       }
@@ -250,9 +249,7 @@ describe('Stress Tests', () => {
       // Verify no data corruption
       const state = useWorkbookStore.getState();
       expect(state.sheets['sheet-1']).toBeDefined();
-      expect(Object.keys(state.sheets['sheet-1'].cells).length).toBeGreaterThan(
-        0
-      );
+      expect(Object.keys(state.sheets['sheet-1'].cells).length).toBeGreaterThan(0);
     });
   });
 });
@@ -423,7 +420,10 @@ describe('Wide Column Performance', () => {
 describe('Export Fidelity — Wide Columns', () => {
   it('should export worksheet with data beyond column Z correctly', () => {
     // Create a sheet with data in columns AA, AB, etc.
-    const cells: Record<string, { value: string | number | boolean | null; formula: string | null; displayValue: string }> = {};
+    const cells: Record<
+      string,
+      { value: string | number | boolean | null; formula: string | null; displayValue: string }
+    > = {};
     // Put data at A1, Z1, AA1, AZ1, BA1
     cells['0:0'] = { value: 'A1', formula: null, displayValue: 'A1' };
     cells['0:25'] = { value: 'Z1', formula: null, displayValue: 'Z1' };
@@ -449,7 +449,8 @@ describe('Export Fidelity — Wide Columns', () => {
   });
 
   it('should not truncate data at column Z during export', () => {
-    const cells: Record<string, { value: number; formula: string | null; displayValue: string }> = {};
+    const cells: Record<string, { value: number; formula: string | null; displayValue: string }> =
+      {};
     // Fill 100 columns (A through CV)
     for (let col = 0; col < 100; col++) {
       cells[`0:${col}`] = { value: col, formula: null, displayValue: `${col}` };
@@ -469,36 +470,40 @@ describe('Export Fidelity — Wide Columns', () => {
 });
 
 describe('Large Grid Memory', () => {
-  it('should handle 50K rows × 100 cols (5M cells) batch update under 10s', { timeout: 15000 }, () => {
-    const store = useWorkbookStore.getState();
-    store.addSheet({ id: 'sheet-1', name: 'Sheet1', index: 0, cells: {} });
+  it(
+    'should handle 50K rows × 100 cols (5M cells) batch update under 10s',
+    { timeout: 15000 },
+    () => {
+      const store = useWorkbookStore.getState();
+      store.addSheet({ id: 'sheet-1', name: 'Sheet1', index: 0, cells: {} });
 
-    const updates: Array<{
-      row: number;
-      col: number;
-      data: { value: number; displayValue: string };
-    }> = [];
+      const updates: Array<{
+        row: number;
+        col: number;
+        data: { value: number; displayValue: string };
+      }> = [];
 
-    // 50,000 rows × 100 cols = 5,000,000 cells
-    for (let row = 0; row < 50000; row++) {
-      for (let col = 0; col < 100; col++) {
-        updates.push({
-          row,
-          col,
-          data: { value: row * 100 + col, displayValue: `${row * 100 + col}` },
-        });
+      // 50,000 rows × 100 cols = 5,000,000 cells
+      for (let row = 0; row < 50000; row++) {
+        for (let col = 0; col < 100; col++) {
+          updates.push({
+            row,
+            col,
+            data: { value: row * 100 + col, displayValue: `${row * 100 + col}` },
+          });
+        }
       }
+
+      const startTime = performance.now();
+      store.batchUpdateCells('sheet-1', updates);
+      const duration = performance.now() - startTime;
+
+      console.log(`5M cells (50K×100) batch update: ${duration.toFixed(2)}ms`);
+      expect(duration).toBeLessThan(10000);
+
+      // Verify edge data
+      const state = useWorkbookStore.getState();
+      expect(state.sheets['sheet-1'].cells['49999:99']?.value).toBe(4999999);
     }
-
-    const startTime = performance.now();
-    store.batchUpdateCells('sheet-1', updates);
-    const duration = performance.now() - startTime;
-
-    console.log(`5M cells (50K×100) batch update: ${duration.toFixed(2)}ms`);
-    expect(duration).toBeLessThan(10000);
-
-    // Verify edge data
-    const state = useWorkbookStore.getState();
-    expect(state.sheets['sheet-1'].cells['49999:99']?.value).toBe(4999999);
-  });
+  );
 });

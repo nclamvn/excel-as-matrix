@@ -1,11 +1,6 @@
 // Phase 4: Permission Store - RBAC & ACL
 import { create } from 'zustand';
-import {
-  WorkbookRole,
-  WorkbookPermission,
-  PermissionCheck,
-  CellAcl,
-} from '../types/auth';
+import { WorkbookRole, WorkbookPermission, PermissionCheck, CellAcl } from '../types/auth';
 import { getAuthHeaders } from './authStore';
 
 interface PermissionState {
@@ -31,11 +26,23 @@ interface PermissionState {
   ) => Promise<void>;
   fetchCellAcls: (workbookId: string) => Promise<void>;
   setCellAcl: (workbookId: string, acl: CellAcl) => Promise<void>;
-  removeCellAcl: (workbookId: string, sheetId: string, startRow: number, startCol: number) => Promise<void>;
+  removeCellAcl: (
+    workbookId: string,
+    sheetId: string,
+    startRow: number,
+    startCol: number
+  ) => Promise<void>;
 
   // Getters
   checkPermission: (workbookId: string, userId: string, teamIds: string[]) => PermissionCheck;
-  canEditCell: (workbookId: string, sheetId: string, row: number, col: number, userId: string, teamIds: string[]) => boolean;
+  canEditCell: (
+    workbookId: string,
+    sheetId: string,
+    row: number,
+    col: number,
+    userId: string,
+    teamIds: string[]
+  ) => boolean;
   getUserRole: (workbookId: string) => WorkbookRole | null;
   setUserRole: (workbookId: string, role: WorkbookRole) => void;
   setError: (error: string | null) => void;
@@ -223,7 +230,11 @@ export const usePermissionStore = create<PermissionState>()((set, get) => ({
         matches = true;
       } else if (perm.granteeType === 'User' && perm.granteeId === userId) {
         matches = true;
-      } else if (perm.granteeType === 'Team' && perm.granteeId && teamIds.includes(perm.granteeId)) {
+      } else if (
+        perm.granteeType === 'Team' &&
+        perm.granteeId &&
+        teamIds.includes(perm.granteeId)
+      ) {
         matches = true;
       }
 
@@ -237,7 +248,8 @@ export const usePermissionStore = create<PermissionState>()((set, get) => ({
     return {
       canView: !!highestRole,
       canEdit: highestRole === 'Owner' || highestRole === 'Editor',
-      canComment: highestRole === 'Owner' || highestRole === 'Editor' || highestRole === 'Commenter',
+      canComment:
+        highestRole === 'Owner' || highestRole === 'Editor' || highestRole === 'Commenter',
       canShare: highestRole === 'Owner',
       canDelete: highestRole === 'Owner',
       role: highestRole,

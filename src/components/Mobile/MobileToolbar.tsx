@@ -66,12 +66,9 @@ export const MobileToolbar: React.FC = () => {
 
   // ── Panel toggle ────────────────────────────────────────────────────────
 
-  const togglePanel = useCallback(
-    (panelId: PanelId) => {
-      setActivePanel((current) => (current === panelId ? null : panelId));
-    },
-    []
-  );
+  const togglePanel = useCallback((panelId: PanelId) => {
+    setActivePanel((current) => (current === panelId ? null : panelId));
+  }, []);
 
   const closePanel = useCallback(() => {
     setActivePanel(null);
@@ -93,8 +90,18 @@ export const MobileToolbar: React.FC = () => {
 
   const formatButtons: ToolButton[] = [
     { id: 'bold', label: 'Bold', icon: <Bold size={20} />, action: () => notifyAction('Bold') },
-    { id: 'italic', label: 'Italic', icon: <Italic size={20} />, action: () => notifyAction('Italic') },
-    { id: 'underline', label: 'Underline', icon: <Underline size={20} />, action: () => notifyAction('Underline') },
+    {
+      id: 'italic',
+      label: 'Italic',
+      icon: <Italic size={20} />,
+      action: () => notifyAction('Italic'),
+    },
+    {
+      id: 'underline',
+      label: 'Underline',
+      icon: <Underline size={20} />,
+      action: () => notifyAction('Underline'),
+    },
     {
       id: 'font-size-up',
       label: 'Font +',
@@ -107,7 +114,12 @@ export const MobileToolbar: React.FC = () => {
       icon: <MinusCircle size={20} />,
       action: () => notifyAction('Font Size -'),
     },
-    { id: 'text-color', label: 'Text Color', icon: <Palette size={20} />, action: () => notifyAction('Text Color') },
+    {
+      id: 'text-color',
+      label: 'Text Color',
+      icon: <Palette size={20} />,
+      action: () => notifyAction('Text Color'),
+    },
     {
       id: 'fill-color',
       label: 'Fill Color',
@@ -135,22 +147,57 @@ export const MobileToolbar: React.FC = () => {
   ];
 
   const insertButtons: ToolButton[] = [
-    { id: 'chart', label: 'Chart', icon: <BarChart3 size={20} />, action: () => notifyAction('Insert Chart') },
+    {
+      id: 'chart',
+      label: 'Chart',
+      icon: <BarChart3 size={20} />,
+      action: () => notifyAction('Insert Chart'),
+    },
     {
       id: 'function',
       label: 'Function',
       icon: <FunctionSquare size={20} />,
       action: () => notifyAction('Insert Function'),
     },
-    { id: 'image', label: 'Image', icon: <Image size={20} />, action: () => notifyAction('Insert Image') },
-    { id: 'link', label: 'Link', icon: <Link size={20} />, action: () => notifyAction('Insert Link') },
+    {
+      id: 'image',
+      label: 'Image',
+      icon: <Image size={20} />,
+      action: () => notifyAction('Insert Image'),
+    },
+    {
+      id: 'link',
+      label: 'Link',
+      icon: <Link size={20} />,
+      action: () => notifyAction('Insert Link'),
+    },
   ];
 
   const dataButtons: ToolButton[] = [
-    { id: 'sort-az', label: 'Sort A-Z', icon: <ArrowUpAZ size={20} />, action: () => notifyAction('Sort A-Z') },
-    { id: 'sort-za', label: 'Sort Z-A', icon: <ArrowDownZA size={20} />, action: () => notifyAction('Sort Z-A') },
-    { id: 'filter', label: 'Filter', icon: <Filter size={20} />, action: () => notifyAction('Filter') },
-    { id: 'validate', label: 'Validate', icon: <ShieldCheck size={20} />, action: () => notifyAction('Validate') },
+    {
+      id: 'sort-az',
+      label: 'Sort A-Z',
+      icon: <ArrowUpAZ size={20} />,
+      action: () => notifyAction('Sort A-Z'),
+    },
+    {
+      id: 'sort-za',
+      label: 'Sort Z-A',
+      icon: <ArrowDownZA size={20} />,
+      action: () => notifyAction('Sort Z-A'),
+    },
+    {
+      id: 'filter',
+      label: 'Filter',
+      icon: <Filter size={20} />,
+      action: () => notifyAction('Filter'),
+    },
+    {
+      id: 'validate',
+      label: 'Validate',
+      icon: <ShieldCheck size={20} />,
+      action: () => notifyAction('Validate'),
+    },
   ];
 
   const aiButtons: ToolButton[] = [
@@ -175,9 +222,24 @@ export const MobileToolbar: React.FC = () => {
   ];
 
   const moreButtons: ToolButton[] = [
-    { id: 'print', label: 'Print', icon: <Printer size={20} />, action: () => notifyAction('Print') },
-    { id: 'export', label: 'Export', icon: <Download size={20} />, action: () => notifyAction('Export') },
-    { id: 'settings', label: 'Settings', icon: <Settings size={20} />, action: () => notifyAction('Settings') },
+    {
+      id: 'print',
+      label: 'Print',
+      icon: <Printer size={20} />,
+      action: () => notifyAction('Print'),
+    },
+    {
+      id: 'export',
+      label: 'Export',
+      icon: <Download size={20} />,
+      action: () => notifyAction('Export'),
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: <Settings size={20} />,
+      action: () => notifyAction('Settings'),
+    },
     {
       id: 'zoom-in',
       label: `Zoom In (${zoom}%)`,
@@ -228,7 +290,10 @@ export const MobileToolbar: React.FC = () => {
   // ── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="mobile-toolbar-root fixed bottom-0 left-0 right-0 z-50" data-testid="mobile-toolbar">
+    <div
+      className="mobile-toolbar-root fixed bottom-0 left-0 right-0 z-50"
+      data-testid="mobile-toolbar"
+    >
       {/* Backdrop overlay when panel is open */}
       {activePanel && (
         <div
@@ -260,10 +325,13 @@ export const MobileToolbar: React.FC = () => {
               ${isDark ? 'border-neutral-700' : 'border-neutral-200'}
             `}
           >
-            <h3 className={`font-semibold text-sm ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
+            <h3
+              className={`font-semibold text-sm ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}
+            >
               {panelTitles[activePanel]}
             </h3>
-            <button type="button"
+            <button
+              type="button"
               onClick={closePanel}
               className={`
                 p-1 rounded-full
@@ -278,7 +346,8 @@ export const MobileToolbar: React.FC = () => {
           {/* Panel tools grid */}
           <div className="grid grid-cols-4 gap-1 p-3">
             {panelMap[activePanel].map((btn) => (
-              <button type="button"
+              <button
+                type="button"
                 key={btn.id}
                 onClick={btn.action}
                 className={`
@@ -287,9 +356,10 @@ export const MobileToolbar: React.FC = () => {
                   rounded-xl
                   transition-colors duration-150
                   active:scale-95
-                  ${isDark
-                    ? 'text-neutral-300 hover:bg-neutral-800 active:bg-neutral-700'
-                    : 'text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200'
+                  ${
+                    isDark
+                      ? 'text-neutral-300 hover:bg-neutral-800 active:bg-neutral-700'
+                      : 'text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200'
                   }
                 `}
                 style={{ minHeight: '56px', minWidth: '44px' }}
@@ -321,7 +391,8 @@ export const MobileToolbar: React.FC = () => {
         {tabs.map((tab) => {
           const isActive = activePanel === tab.id;
           return (
-            <button type="button"
+            <button
+              type="button"
               key={tab.id}
               onClick={() => togglePanel(tab.id)}
               className={`
@@ -329,11 +400,12 @@ export const MobileToolbar: React.FC = () => {
                 min-h-[44px] min-w-[44px] px-3 py-1
                 rounded-lg
                 transition-colors duration-150
-                ${isActive
-                  ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400'
-                  : isDark
-                    ? 'text-neutral-400 hover:text-neutral-200'
-                    : 'text-neutral-500 hover:text-neutral-700'
+                ${
+                  isActive
+                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400'
+                    : isDark
+                      ? 'text-neutral-400 hover:text-neutral-200'
+                      : 'text-neutral-500 hover:text-neutral-700'
                 }
               `}
               aria-label={tab.label}

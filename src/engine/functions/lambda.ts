@@ -29,17 +29,16 @@ export interface LambdaDefinition {
 
 // Check if value is a LAMBDA function
 export function isLambda(value: FormulaValue): value is LambdaFunction {
-  return value !== null &&
-         typeof value === 'object' &&
-         '__isLambda' in value &&
-         (value as LambdaFunction).__isLambda === true;
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    '__isLambda' in value &&
+    (value as LambdaFunction).__isLambda === true
+  );
 }
 
 // Create a LAMBDA function from parameters
-function createLambda(
-  parameters: string[],
-  bodyValue: FormulaValue
-): LambdaFunction {
+function createLambda(parameters: string[], bodyValue: FormulaValue): LambdaFunction {
   return {
     __isLambda: true,
     parameters,
@@ -47,8 +46,10 @@ function createLambda(
     evaluate: (args: FormulaValue[], evalContext: EvalContext) => {
       // Create a new context with parameter bindings
       if (args.length !== parameters.length) {
-        return new FormulaError('#VALUE!',
-          `LAMBDA expects ${parameters.length} arguments, got ${args.length}`);
+        return new FormulaError(
+          '#VALUE!',
+          `LAMBDA expects ${parameters.length} arguments, got ${args.length}`
+        );
       }
 
       // If body is a lambda, call it with the arguments
@@ -105,8 +106,10 @@ export const lambdaFunctions: FunctionDef[] = [
       // LET(name1, value1, name2, value2, ..., calculation)
       // Arguments must be in pairs (name, value) followed by a calculation
       if (args.length < 3 || args.length % 2 === 0) {
-        return new FormulaError('#VALUE!',
-          'LET requires an odd number of arguments (name-value pairs + calculation)');
+        return new FormulaError(
+          '#VALUE!',
+          'LET requires an odd number of arguments (name-value pairs + calculation)'
+        );
       }
 
       // Last argument is the calculation result
@@ -152,7 +155,7 @@ export const lambdaFunctions: FunctionDef[] = [
         if (Array.isArray(rowData)) {
           for (let j = 0; j < rowData.length; j++) {
             // Collect values from all arrays at this position
-            const values: FormulaValue[] = arrays.map(arr => {
+            const values: FormulaValue[] = arrays.map((arr) => {
               if (Array.isArray(arr) && Array.isArray(arr[i])) {
                 return arr[i][j];
               }
@@ -362,7 +365,7 @@ export const lambdaFunctions: FunctionDef[] = [
 
         if (isLambda(lambdaArg)) {
           // Pass column as a 2D array (single column transposed)
-          const colAs2D: FormulaValue[][] = column.map(v => [v]);
+          const colAs2D: FormulaValue[][] = column.map((v) => [v]);
           result.push(lambdaArg.evaluate([colAs2D], context));
         } else {
           result.push(column[0]);

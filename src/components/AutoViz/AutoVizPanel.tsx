@@ -35,7 +35,9 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('recommend');
   const [recommendations, setRecommendations] = useState<ChartRecommendation[]>([]);
-  const [selectedRecommendation, setSelectedRecommendation] = useState<ChartRecommendation | null>(null);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<ChartRecommendation | null>(
+    null
+  );
   const [currentConfig, setCurrentConfig] = useState<ChartConfig | null>(null);
   const [insights, setInsights] = useState<ChartInsight[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -190,7 +192,12 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
         {onClose && (
           <button type="button" className="auto-viz-close" onClick={onClose}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path
+                d="M15 5L5 15M5 5l10 10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
         )}
@@ -198,19 +205,22 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
 
       {/* Tabs */}
       <div className="auto-viz-tabs">
-        <button type="button"
+        <button
+          type="button"
           className={`auto-viz-tab ${activeTab === 'recommend' ? 'active' : ''}`}
           onClick={() => setActiveTab('recommend')}
         >
           {t.recommend}
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`auto-viz-tab ${activeTab === 'customize' ? 'active' : ''}`}
           onClick={() => setActiveTab('customize')}
         >
           {t.customize}
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`auto-viz-tab ${activeTab === 'nlquery' ? 'active' : ''}`}
           onClick={() => setActiveTab('nlquery')}
         >
@@ -224,8 +234,16 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
           <div className="auto-viz-empty">
             <div className="auto-viz-empty-icon">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                <path d="M3 9h18M9 21V9" stroke="currentColor" strokeWidth="2"/>
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path d="M3 9h18M9 21V9" stroke="currentColor" strokeWidth="2" />
               </svg>
             </div>
             <p>{t.noData}</p>
@@ -305,14 +323,16 @@ export const AutoVizPanel: React.FC<AutoVizPanelProps> = ({
 
       {/* Footer */}
       <div className="auto-viz-footer">
-        <button type="button"
+        <button
+          type="button"
           className="auto-viz-btn auto-viz-btn-secondary"
           onClick={handleAnalyze}
           disabled={!data || isAnalyzing}
         >
           {isAnalyzing ? t.analyzing : t.analyze}
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="auto-viz-btn auto-viz-btn-primary"
           onClick={handleCreate}
           disabled={!currentConfig}

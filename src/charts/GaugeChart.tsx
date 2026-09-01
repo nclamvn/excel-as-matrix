@@ -53,16 +53,16 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
     const valuePath = describeArc(cx, cy, radius - strokeWidth / 2, startAngle, valueAngle);
 
     // Target position
-    const targetAngle = target !== undefined
-      ? startAngle - ((target - min) / (max - min)) * Math.PI
-      : null;
+    const targetAngle =
+      target !== undefined ? startAngle - ((target - min) / (max - min)) * Math.PI : null;
 
-    const targetPos = targetAngle !== null
-      ? {
-          x: cx + (radius + 5) * Math.cos(targetAngle),
-          y: cy + (radius + 5) * Math.sin(targetAngle),
-        }
-      : null;
+    const targetPos =
+      targetAngle !== null
+        ? {
+            x: cx + (radius + 5) * Math.cos(targetAngle),
+            y: cy + (radius + 5) * Math.sin(targetAngle),
+          }
+        : null;
 
     // Tick marks
     const ticks = [0, 25, 50, 75, 100].map((pct) => {
@@ -101,11 +101,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
 
   return (
     <ChartWrapper config={config} className="gauge-chart">
-      <svg
-        width={chartWidth}
-        height={chartHeight}
-        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-      >
+      <svg width={chartWidth} height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
         {/* Background arc */}
         <path
           d={gaugeData.bgPath}
@@ -153,8 +149,14 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
         {showTarget && gaugeData.targetPos && gaugeData.targetAngle !== null && (
           <g className="target-marker">
             <line
-              x1={gaugeData.cx + (gaugeData.radius - gaugeData.strokeWidth - 5) * Math.cos(gaugeData.targetAngle)}
-              y1={gaugeData.cy + (gaugeData.radius - gaugeData.strokeWidth - 5) * Math.sin(gaugeData.targetAngle)}
+              x1={
+                gaugeData.cx +
+                (gaugeData.radius - gaugeData.strokeWidth - 5) * Math.cos(gaugeData.targetAngle)
+              }
+              y1={
+                gaugeData.cy +
+                (gaugeData.radius - gaugeData.strokeWidth - 5) * Math.sin(gaugeData.targetAngle)
+              }
               x2={gaugeData.cx + (gaugeData.radius + 5) * Math.cos(gaugeData.targetAngle)}
               y2={gaugeData.cy + (gaugeData.radius + 5) * Math.sin(gaugeData.targetAngle)}
               stroke={colorScheme.highlight || '#f59e0b'}

@@ -18,12 +18,22 @@ interface ProtectionStore {
   protectedRanges: ProtectedRange[];
 
   // Sheet Protection
-  protectSheet: (sheetId: string, password?: string, options?: Partial<SheetProtection['allowedActions']>) => void;
+  protectSheet: (
+    sheetId: string,
+    password?: string,
+    options?: Partial<SheetProtection['allowedActions']>
+  ) => void;
   unprotectSheet: (sheetId: string, password?: string) => boolean;
-  updateSheetProtection: (sheetId: string, options: Partial<SheetProtection['allowedActions']>) => void;
+  updateSheetProtection: (
+    sheetId: string,
+    options: Partial<SheetProtection['allowedActions']>
+  ) => void;
 
   // Workbook Protection
-  protectWorkbook: (password?: string, options?: { structure?: boolean; windows?: boolean }) => void;
+  protectWorkbook: (
+    password?: string,
+    options?: { structure?: boolean; windows?: boolean }
+  ) => void;
   unprotectWorkbook: (password?: string) => boolean;
 
   // Range Protection
@@ -32,7 +42,12 @@ interface ProtectionStore {
   updateProtectedRange: (rangeId: string, updates: Partial<ProtectedRange>) => void;
   addRangeEditor: (rangeId: string, userId: string) => void;
   removeRangeEditor: (rangeId: string, userId: string) => void;
-  checkCellRangeProtection: (sheetId: string, row: number, col: number, userId: string) => RangeProtectionCheck;
+  checkCellRangeProtection: (
+    sheetId: string,
+    row: number,
+    col: number,
+    userId: string
+  ) => RangeProtectionCheck;
   getProtectedRanges: (sheetId: string) => ProtectedRange[];
 
   // Checks
@@ -46,7 +61,7 @@ const simpleHash = (str: string): string => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return hash.toString(16);
@@ -198,17 +213,17 @@ export const useProtectionStore = create<ProtectionStore>()(
         const ranges = get().protectedRanges.filter((r) => r.sheetId === sheetId);
         for (const range of ranges) {
           if (
-            row >= range.startRow && row <= range.endRow &&
-            col >= range.startCol && col <= range.endCol
+            row >= range.startRow &&
+            row <= range.endRow &&
+            col >= range.startCol &&
+            col <= range.endCol
           ) {
             const canEdit = range.ownerId === userId || range.editors.includes(userId);
             return {
               isProtected: true,
               canEdit,
               range,
-              message: canEdit
-                ? undefined
-                : `Protected by "${range.name}" (${range.ownerName})`,
+              message: canEdit ? undefined : `Protected by "${range.name}" (${range.ownerName})`,
             };
           }
         }

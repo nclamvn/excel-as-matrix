@@ -163,7 +163,11 @@ export function importWorksheet(
   wsData: Record<string, XLSXWorksheetCell>,
   sheetName: string,
   sheetId: string
-): { sheet: Partial<Sheet>; conditionalFormats: XLSXConditionalFormat[]; namedRanges: XLSXNamedRange[] } {
+): {
+  sheet: Partial<Sheet>;
+  conditionalFormats: XLSXConditionalFormat[];
+  namedRanges: XLSXNamedRange[];
+} {
   const cells: Record<string, CellData> = {};
   const conditionalFormats: XLSXConditionalFormat[] = [];
   const namedRanges: XLSXNamedRange[] = [];
@@ -276,15 +280,17 @@ export function exportWorksheet(sheet: Sheet): Record<string, XLSXWorksheetCell>
 
 /** Common Excel number formats mapped to display formatters */
 export const NUMBER_FORMATS: Record<string, (v: number) => string> = {
-  'General': (v) => String(v),
+  General: (v) => String(v),
   '0': (v) => Math.round(v).toString(),
   '0.00': (v) => v.toFixed(2),
   '#,##0': (v) => Math.round(v).toLocaleString(),
-  '#,##0.00': (v) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+  '#,##0.00': (v) =>
+    v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
   '0%': (v) => `${Math.round(v * 100)}%`,
   '0.00%': (v) => `${(v * 100).toFixed(2)}%`,
   '$#,##0': (v) => `$${Math.round(v).toLocaleString()}`,
-  '$#,##0.00': (v) => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+  '$#,##0.00': (v) =>
+    `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
   'yyyy-mm-dd': (v) => {
     const d = new Date((v - 25569) * 86400 * 1000);
     return d.toISOString().split('T')[0];

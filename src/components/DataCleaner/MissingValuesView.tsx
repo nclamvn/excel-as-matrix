@@ -45,9 +45,9 @@ export const MissingValuesView: React.FC<MissingValuesViewProps> = ({
   const [expandedColumn, setExpandedColumn] = useState<string | null>(null);
 
   const totalMissing = columns.reduce((sum, c) => sum + c.missingCount, 0);
-  const allMissingRows = Array.from(
-    new Set(columns.flatMap(c => c.missingRows))
-  ).sort((a, b) => a - b);
+  const allMissingRows = Array.from(new Set(columns.flatMap((c) => c.missingRows))).sort(
+    (a, b) => a - b
+  );
 
   if (columns.length === 0) {
     return (
@@ -82,7 +82,8 @@ export const MissingValuesView: React.FC<MissingValuesViewProps> = ({
             <option value="constant">Fill with Constant</option>
           </select>
           {onFillAll && (
-            <button type="button"
+            <button
+              type="button"
               className="missing-values__fill-all"
               onClick={() => onFillAll(selectedStrategy)}
             >
@@ -99,9 +100,9 @@ export const MissingValuesView: React.FC<MissingValuesViewProps> = ({
             key={column.column}
             column={column}
             isExpanded={expandedColumn === column.column}
-            onToggle={() => setExpandedColumn(
-              expandedColumn === column.column ? null : column.column
-            )}
+            onToggle={() =>
+              setExpandedColumn(expandedColumn === column.column ? null : column.column)
+            }
             onFill={onFillColumn}
           />
         ))}
@@ -111,7 +112,8 @@ export const MissingValuesView: React.FC<MissingValuesViewProps> = ({
       {onDeleteRows && allMissingRows.length > 0 && (
         <div className="missing-values__delete-option">
           <span>Or delete {allMissingRows.length} rows with missing values</span>
-          <button type="button"
+          <button
+            type="button"
             className="missing-values__delete-btn"
             onClick={() => onDeleteRows(allMissingRows)}
           >
@@ -154,10 +156,7 @@ const MissingColumnCard: React.FC<MissingColumnCardProps> = ({
           </span>
         </div>
         <div className="missing-column__bar">
-          <div
-            className="missing-column__bar-fill"
-            style={{ width: `${column.percentage}%` }}
-          />
+          <div className="missing-column__bar-fill" style={{ width: `${column.percentage}%` }} />
         </div>
         <ChevronIcon expanded={isExpanded} />
       </div>
@@ -183,7 +182,8 @@ const MissingColumnCard: React.FC<MissingColumnCardProps> = ({
               <option value="delete_row">Delete Rows</option>
             </select>
             {onFill && (
-              <button type="button"
+              <button
+                type="button"
                 className="missing-column__fill-btn"
                 onClick={() => onFill(column.column, strategy)}
               >
@@ -197,13 +197,15 @@ const MissingColumnCard: React.FC<MissingColumnCardProps> = ({
             <div className="missing-column__preview">
               <span className="missing-column__preview-label">Preview:</span>
               <div className="missing-column__preview-items">
-                {Array.from(column.previewValues.entries()).slice(0, 5).map(([row, value]) => (
-                  <div key={row} className="missing-column__preview-item">
-                    <span className="missing-column__preview-row">Row {row + 1}</span>
-                    <span className="missing-column__preview-arrow">→</span>
-                    <span className="missing-column__preview-value">{String(value)}</span>
-                  </div>
-                ))}
+                {Array.from(column.previewValues.entries())
+                  .slice(0, 5)
+                  .map(([row, value]) => (
+                    <div key={row} className="missing-column__preview-item">
+                      <span className="missing-column__preview-row">Row {row + 1}</span>
+                      <span className="missing-column__preview-arrow">→</span>
+                      <span className="missing-column__preview-value">{String(value)}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           )}
@@ -213,7 +215,9 @@ const MissingColumnCard: React.FC<MissingColumnCardProps> = ({
             <span className="missing-column__rows-label">Missing in rows:</span>
             <div className="missing-column__rows-list">
               {column.missingRows.slice(0, 20).map((row) => (
-                <span key={row} className="missing-column__row-badge">{row + 1}</span>
+                <span key={row} className="missing-column__row-badge">
+                  {row + 1}
+                </span>
               ))}
               {column.missingRows.length > 20 && (
                 <span className="missing-column__row-more">
@@ -259,48 +263,49 @@ function getStrategyInfo(strategy: FillStrategy): {
   description: string;
   icon: React.ReactNode;
 } {
-  const infos: Record<FillStrategy, { name: string; description: string; icon: React.ReactNode }> = {
-    mean: {
-      name: 'Mean',
-      description: 'Fill with the average value of the column',
-      icon: <AvgIcon />,
-    },
-    median: {
-      name: 'Median',
-      description: 'Fill with the middle value when sorted',
-      icon: <MedianIcon />,
-    },
-    mode: {
-      name: 'Mode',
-      description: 'Fill with the most common value',
-      icon: <ModeIcon />,
-    },
-    forward_fill: {
-      name: 'Forward Fill',
-      description: 'Copy the previous non-empty value',
-      icon: <ForwardIcon />,
-    },
-    backward_fill: {
-      name: 'Backward Fill',
-      description: 'Copy the next non-empty value',
-      icon: <BackwardIcon />,
-    },
-    interpolate: {
-      name: 'Interpolate',
-      description: 'Calculate value based on neighbors',
-      icon: <InterpolateIcon />,
-    },
-    constant: {
-      name: 'Constant',
-      description: 'Fill with a specific value',
-      icon: <ConstantIcon />,
-    },
-    delete_row: {
-      name: 'Delete',
-      description: 'Remove rows with missing values',
-      icon: <TrashIcon />,
-    },
-  };
+  const infos: Record<FillStrategy, { name: string; description: string; icon: React.ReactNode }> =
+    {
+      mean: {
+        name: 'Mean',
+        description: 'Fill with the average value of the column',
+        icon: <AvgIcon />,
+      },
+      median: {
+        name: 'Median',
+        description: 'Fill with the middle value when sorted',
+        icon: <MedianIcon />,
+      },
+      mode: {
+        name: 'Mode',
+        description: 'Fill with the most common value',
+        icon: <ModeIcon />,
+      },
+      forward_fill: {
+        name: 'Forward Fill',
+        description: 'Copy the previous non-empty value',
+        icon: <ForwardIcon />,
+      },
+      backward_fill: {
+        name: 'Backward Fill',
+        description: 'Copy the next non-empty value',
+        icon: <BackwardIcon />,
+      },
+      interpolate: {
+        name: 'Interpolate',
+        description: 'Calculate value based on neighbors',
+        icon: <InterpolateIcon />,
+      },
+      constant: {
+        name: 'Constant',
+        description: 'Fill with a specific value',
+        icon: <ConstantIcon />,
+      },
+      delete_row: {
+        name: 'Delete',
+        description: 'Remove rows with missing values',
+        icon: <TrashIcon />,
+      },
+    };
 
   return infos[strategy];
 }
@@ -324,7 +329,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>
@@ -384,7 +392,9 @@ const InterpolateIcon = () => (
 const ConstantIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <rect x="4" y="4" width="16" height="16" rx="2" />
-    <text x="12" y="16" textAnchor="middle" fontSize="10" fill="currentColor">C</text>
+    <text x="12" y="16" textAnchor="middle" fontSize="10" fill="currentColor">
+      C
+    </text>
   </svg>
 );
 

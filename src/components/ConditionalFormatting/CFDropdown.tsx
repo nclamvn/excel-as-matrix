@@ -22,7 +22,7 @@ import {
   Plus,
   Trash2,
   Settings,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
 import './ConditionalFormatting.css';
 
@@ -71,7 +71,8 @@ export const CFDropdown: React.FC = () => {
 
   return (
     <div className="cf-dropdown" ref={dropdownRef}>
-      <button type="button"
+      <button
+        type="button"
         className="cf-dropdown-btn"
         onClick={() => setIsOpen(!isOpen)}
         title="Conditional Formatting"
@@ -90,33 +91,45 @@ export const CFDropdown: React.FC = () => {
       {isOpen && (
         <div className="cf-menu">
           {/* Highlight Cell Rules */}
-          <div
-            className="cf-menu-item has-submenu"
-            onMouseEnter={() => setSubMenu('highlight')}
-          >
-            <span className="menu-icon"><Circle size={16} fill="#ef4444" color="#ef4444" /></span>
+          <div className="cf-menu-item has-submenu" onMouseEnter={() => setSubMenu('highlight')}>
+            <span className="menu-icon">
+              <Circle size={16} fill="#ef4444" color="#ef4444" />
+            </span>
             <span className="menu-label">Highlight Cell Rules</span>
-            <span className="submenu-arrow"><ChevronRight size={12} /></span>
+            <span className="submenu-arrow">
+              <ChevronRight size={12} />
+            </span>
 
             {subMenu === 'highlight' && (
               <div className="cf-submenu">
-                <HighlightRules onSelect={() => { setIsOpen(false); setSubMenu(null); }} />
+                <HighlightRules
+                  onSelect={() => {
+                    setIsOpen(false);
+                    setSubMenu(null);
+                  }}
+                />
               </div>
             )}
           </div>
 
           {/* Top/Bottom Rules */}
-          <div
-            className="cf-menu-item has-submenu"
-            onMouseEnter={() => setSubMenu('topBottom')}
-          >
-            <span className="menu-icon"><BarChart3 size={16} color="#3b82f6" /></span>
+          <div className="cf-menu-item has-submenu" onMouseEnter={() => setSubMenu('topBottom')}>
+            <span className="menu-icon">
+              <BarChart3 size={16} color="#3b82f6" />
+            </span>
             <span className="menu-label">Top/Bottom Rules</span>
-            <span className="submenu-arrow"><ChevronRight size={12} /></span>
+            <span className="submenu-arrow">
+              <ChevronRight size={12} />
+            </span>
 
             {subMenu === 'topBottom' && (
               <div className="cf-submenu">
-                <TopBottomRules onSelect={() => { setIsOpen(false); setSubMenu(null); }} />
+                <TopBottomRules
+                  onSelect={() => {
+                    setIsOpen(false);
+                    setSubMenu(null);
+                  }}
+                />
               </div>
             )}
           </div>
@@ -124,49 +137,67 @@ export const CFDropdown: React.FC = () => {
           <div className="cf-menu-divider" />
 
           {/* Data Bars */}
-          <div
-            className="cf-menu-item has-submenu"
-            onMouseEnter={() => setSubMenu('dataBars')}
-          >
-            <span className="menu-icon"><BarChart2 size={16} color="#22c55e" /></span>
+          <div className="cf-menu-item has-submenu" onMouseEnter={() => setSubMenu('dataBars')}>
+            <span className="menu-icon">
+              <BarChart2 size={16} color="#22c55e" />
+            </span>
             <span className="menu-label">Data Bars</span>
-            <span className="submenu-arrow"><ChevronRight size={12} /></span>
+            <span className="submenu-arrow">
+              <ChevronRight size={12} />
+            </span>
 
             {subMenu === 'dataBars' && (
               <div className="cf-submenu wide">
-                <DataBarsPreview onSelect={() => { setIsOpen(false); setSubMenu(null); }} />
+                <DataBarsPreview
+                  onSelect={() => {
+                    setIsOpen(false);
+                    setSubMenu(null);
+                  }}
+                />
               </div>
             )}
           </div>
 
           {/* Color Scales */}
-          <div
-            className="cf-menu-item has-submenu"
-            onMouseEnter={() => setSubMenu('colorScales')}
-          >
-            <span className="menu-icon"><Palette size={16} color="#f59e0b" /></span>
+          <div className="cf-menu-item has-submenu" onMouseEnter={() => setSubMenu('colorScales')}>
+            <span className="menu-icon">
+              <Palette size={16} color="#f59e0b" />
+            </span>
             <span className="menu-label">Color Scales</span>
-            <span className="submenu-arrow"><ChevronRight size={12} /></span>
+            <span className="submenu-arrow">
+              <ChevronRight size={12} />
+            </span>
 
             {subMenu === 'colorScales' && (
               <div className="cf-submenu wide">
-                <ColorScalesPreview onSelect={() => { setIsOpen(false); setSubMenu(null); }} />
+                <ColorScalesPreview
+                  onSelect={() => {
+                    setIsOpen(false);
+                    setSubMenu(null);
+                  }}
+                />
               </div>
             )}
           </div>
 
           {/* Icon Sets */}
-          <div
-            className="cf-menu-item has-submenu"
-            onMouseEnter={() => setSubMenu('iconSets')}
-          >
-            <span className="menu-icon"><Shapes size={16} color="#8b5cf6" /></span>
+          <div className="cf-menu-item has-submenu" onMouseEnter={() => setSubMenu('iconSets')}>
+            <span className="menu-icon">
+              <Shapes size={16} color="#8b5cf6" />
+            </span>
             <span className="menu-label">Icon Sets</span>
-            <span className="submenu-arrow"><ChevronRight size={12} /></span>
+            <span className="submenu-arrow">
+              <ChevronRight size={12} />
+            </span>
 
             {subMenu === 'iconSets' && (
               <div className="cf-submenu wide">
-                <IconSetsPreview onSelect={() => { setIsOpen(false); setSubMenu(null); }} />
+                <IconSetsPreview
+                  onSelect={() => {
+                    setIsOpen(false);
+                    setSubMenu(null);
+                  }}
+                />
               </div>
             )}
           </div>
@@ -174,32 +205,41 @@ export const CFDropdown: React.FC = () => {
           <div className="cf-menu-divider" />
 
           {/* New Rule */}
-          <button type="button"
+          <button
+            type="button"
             className="cf-menu-item"
-            onClick={() => { setShowNewRuleDialog(true); setIsOpen(false); }}
+            onClick={() => {
+              setShowNewRuleDialog(true);
+              setIsOpen(false);
+            }}
           >
-            <span className="menu-icon"><Plus size={16} color="#22c55e" /></span>
+            <span className="menu-icon">
+              <Plus size={16} color="#22c55e" />
+            </span>
             <span className="menu-label">New Rule...</span>
           </button>
 
           {/* Clear Rules */}
-          <div
-            className="cf-menu-item has-submenu"
-            onMouseEnter={() => setSubMenu('clear')}
-          >
-            <span className="menu-icon"><Trash2 size={16} color="#6b7280" /></span>
+          <div className="cf-menu-item has-submenu" onMouseEnter={() => setSubMenu('clear')}>
+            <span className="menu-icon">
+              <Trash2 size={16} color="#6b7280" />
+            </span>
             <span className="menu-label">Clear Rules</span>
-            <span className="submenu-arrow"><ChevronRight size={12} /></span>
+            <span className="submenu-arrow">
+              <ChevronRight size={12} />
+            </span>
 
             {subMenu === 'clear' && (
               <div className="cf-submenu">
-                <button type="button"
+                <button
+                  type="button"
                   className="cf-submenu-item"
                   onClick={() => handleClearRules('selection')}
                 >
                   Clear Rules from Selected Cells
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="cf-submenu-item"
                   onClick={() => handleClearRules('sheet')}
                 >
@@ -210,11 +250,17 @@ export const CFDropdown: React.FC = () => {
           </div>
 
           {/* Manage Rules */}
-          <button type="button"
+          <button
+            type="button"
             className="cf-menu-item"
-            onClick={() => { setShowManageRules(true); setIsOpen(false); }}
+            onClick={() => {
+              setShowManageRules(true);
+              setIsOpen(false);
+            }}
           >
-            <span className="menu-icon"><Settings size={16} color="#6b7280" /></span>
+            <span className="menu-icon">
+              <Settings size={16} color="#6b7280" />
+            </span>
             <span className="menu-label">Manage Rules...</span>
           </button>
         </div>

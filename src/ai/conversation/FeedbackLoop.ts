@@ -2,12 +2,7 @@
 // FEEDBACK LOOP — Learn from user corrections (Blueprint §5.7)
 // =============================================================================
 
-import type {
-  UserFeedback,
-  FeedbackType,
-  FeedbackCategory,
-  ConversationContext,
-} from './types';
+import type { UserFeedback, FeedbackType, FeedbackCategory, ConversationContext } from './types';
 import { loggers } from '@/utils/logger';
 
 // -----------------------------------------------------------------------------
@@ -68,10 +63,7 @@ export class FeedbackLoop {
   /**
    * Record feedback with context
    */
-  recordFeedback(
-    feedback: UserFeedback,
-    context: ConversationContext
-  ): void {
+  recordFeedback(feedback: UserFeedback, context: ConversationContext): void {
     const record: FeedbackRecord = {
       feedback,
       context: {
@@ -119,9 +111,7 @@ export class FeedbackLoop {
         (r) => r.feedback.type === 'thumbs_down' || (r.feedback.rating && r.feedback.rating <= 2)
       ).length,
       corrections: this.records.filter((r) => r.feedback.type === 'correction').length,
-      averageRating: ratings.length > 0
-        ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-        : 0,
+      averageRating: ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0,
       commonIssues,
     };
   }
@@ -130,9 +120,7 @@ export class FeedbackLoop {
    * Get accuracy for a specific action type
    */
   getActionAccuracy(action: string): number {
-    const actionRecords = this.records.filter(
-      (r) => r.context.action === action
-    );
+    const actionRecords = this.records.filter((r) => r.context.action === action);
 
     if (actionRecords.length === 0) return 0.7; // Default
 
@@ -153,9 +141,7 @@ export class FeedbackLoop {
     return this.records
       .filter(
         (r) =>
-          r.context.action === action &&
-          r.feedback.type === 'correction' &&
-          r.feedback.correction
+          r.context.action === action && r.feedback.type === 'correction' && r.feedback.correction
       )
       .map((r) => r.feedback.correction!)
       .slice(-10);

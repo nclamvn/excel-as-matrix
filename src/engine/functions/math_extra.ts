@@ -235,8 +235,13 @@ export const mathExtraFunctions: FunctionDef[] = [
       }
 
       const romanValues: Record<string, number> = {
-        'I': 1, 'V': 5, 'X': 10, 'L': 50,
-        'C': 100, 'D': 500, 'M': 1000,
+        I: 1,
+        V: 5,
+        X: 10,
+        L: 50,
+        C: 100,
+        D: 500,
+        M: 1000,
       };
 
       let result = 0;
@@ -813,7 +818,8 @@ export const mathExtraFunctions: FunctionDef[] = [
       const numbers = getNumbers(args);
       if (numbers.length < 2) return new FormulaError('#DIV/0!');
       const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-      const variance = numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (numbers.length - 1);
+      const variance =
+        numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (numbers.length - 1);
       return Math.sqrt(variance);
     },
   },
@@ -827,7 +833,8 @@ export const mathExtraFunctions: FunctionDef[] = [
       const numbers = getNumbers(args);
       if (numbers.length === 0) return new FormulaError('#DIV/0!');
       const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-      const variance = numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numbers.length;
+      const variance =
+        numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numbers.length;
       return Math.sqrt(variance);
     },
   },
@@ -873,7 +880,10 @@ export const mathExtraFunctions: FunctionDef[] = [
       let maxCount = 0;
       let mode = numbers[0];
       for (const [num, count] of counts) {
-        if (count > maxCount) { maxCount = count; mode = num; }
+        if (count > maxCount) {
+          maxCount = count;
+          mode = num;
+        }
       }
       if (maxCount === 1) return new FormulaError('#N/A', 'No repeated values');
       return mode;
@@ -902,7 +912,7 @@ export const mathExtraFunctions: FunctionDef[] = [
         if (count === maxCount) modes.push(num);
       }
       modes.sort((a, b) => a - b);
-      return modes.map(m => [m as FormulaValue]) as FormulaValue[][];
+      return modes.map((m) => [m as FormulaValue]) as FormulaValue[][];
     },
   },
 
@@ -1157,7 +1167,8 @@ export const mathExtraFunctions: FunctionDef[] = [
       const num = toNumber(args[0]);
       if (isError(num)) return num;
       const n = num as number;
-      if (n <= -1 || n >= 1) return new FormulaError('#NUM!', 'Number must be between -1 and 1 exclusive');
+      if (n <= -1 || n >= 1)
+        return new FormulaError('#NUM!', 'Number must be between -1 and 1 exclusive');
       return Math.atanh(n);
     },
   },

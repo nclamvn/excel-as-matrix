@@ -15,19 +15,15 @@ interface CommentPanelProps {
 export const CommentPanel: React.FC<CommentPanelProps> = ({ sheetId }) => {
   const [searchText, setSearchText] = useState('');
 
-  const {
-    getCommentsForSheet,
-    toggleCommentsPanel,
-    filter,
-    setFilter,
-  } = useCommentsStore();
+  const { getCommentsForSheet, toggleCommentsPanel, filter, setFilter } = useCommentsStore();
 
   const comments = getCommentsForSheet(sheetId);
 
   const filteredComments = searchText
-    ? comments.filter(c =>
-        c.content.toLowerCase().includes(searchText.toLowerCase()) ||
-        c.replies.some(r => r.content.toLowerCase().includes(searchText.toLowerCase()))
+    ? comments.filter(
+        (c) =>
+          c.content.toLowerCase().includes(searchText.toLowerCase()) ||
+          c.replies.some((r) => r.content.toLowerCase().includes(searchText.toLowerCase()))
       )
     : comments;
 
@@ -69,12 +65,8 @@ export const CommentPanel: React.FC<CommentPanelProps> = ({ sheetId }) => {
             <span>Select a cell and click "New Comment"</span>
           </div>
         ) : (
-          filteredComments.map(comment => (
-            <CommentThread
-              key={comment.id}
-              comment={comment}
-              sheetId={sheetId}
-            />
+          filteredComments.map((comment) => (
+            <CommentThread key={comment.id} comment={comment} sheetId={sheetId} />
           ))
         )}
       </div>

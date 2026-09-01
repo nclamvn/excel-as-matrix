@@ -89,9 +89,11 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
             if (cell && cell.value !== null && cell.value !== '' && !cell.formula) {
               const value = cell.value;
               if (constantOptions.numbers && typeof value === 'number') matches = true;
-              if (constantOptions.text && typeof value === 'string' && isNaN(Number(value))) matches = true;
+              if (constantOptions.text && typeof value === 'string' && isNaN(Number(value)))
+                matches = true;
               if (constantOptions.logicals && typeof value === 'boolean') matches = true;
-              if (constantOptions.errors && typeof value === 'string' && value.startsWith('#')) matches = true;
+              if (constantOptions.errors && typeof value === 'string' && value.startsWith('#'))
+                matches = true;
             }
             break;
 
@@ -99,18 +101,25 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
             if (cell?.formula && cell.formula.startsWith('=')) {
               const value = cell.value;
               if (formulaOptions.numbers && typeof value === 'number') matches = true;
-              if (formulaOptions.text && typeof value === 'string' && !value.startsWith('#')) matches = true;
+              if (formulaOptions.text && typeof value === 'string' && !value.startsWith('#'))
+                matches = true;
               if (formulaOptions.logicals && typeof value === 'boolean') matches = true;
-              if (formulaOptions.errors && typeof value === 'string' && value.startsWith('#')) matches = true;
+              if (formulaOptions.errors && typeof value === 'string' && value.startsWith('#'))
+                matches = true;
               // If no specific option, match all formulas
-              if (!formulaOptions.numbers && !formulaOptions.text && !formulaOptions.logicals && !formulaOptions.errors) {
+              if (
+                !formulaOptions.numbers &&
+                !formulaOptions.text &&
+                !formulaOptions.logicals &&
+                !formulaOptions.errors
+              ) {
                 matches = true;
               }
             }
             break;
 
           case 'comments':
-            matches = !!(cell?.comment);
+            matches = !!cell?.comment;
             break;
 
           case 'conditionalFormats':
@@ -120,19 +129,22 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
 
           case 'dataValidation':
             // Check for data validation (would need to be added to CellData if needed)
-            matches = !!(cell && useValidationStore.getState().getRuleForCell(activeSheetId, row, col));
+            matches = !!(
+              cell && useValidationStore.getState().getRuleForCell(activeSheetId, row, col)
+            );
             break;
 
           case 'lastCell':
             // Find the last used cell
             break;
 
-          case 'visibleCellsOnly':
+          case 'visibleCellsOnly': {
             // All visible cells in selection
             const isRowHidden = sheet.hiddenRows?.has(row);
             const isColHidden = sheet.hiddenColumns?.has(col);
             matches = !isRowHidden && !isColHidden && cell !== undefined;
             break;
+          }
 
           default:
             break;
@@ -196,7 +208,11 @@ export const GoToSpecialDialog: React.FC<GoToSpecialDialogProps> = ({ onClose })
     { id: 'blanks', label: 'Blanks', description: 'Empty cells' },
     { id: 'lastCell', label: 'Last cell', description: 'Last used cell in sheet' },
     { id: 'visibleCellsOnly', label: 'Visible cells only', description: 'Only visible cells' },
-    { id: 'conditionalFormats', label: 'Conditional formats', description: 'Cells with conditional formatting' },
+    {
+      id: 'conditionalFormats',
+      label: 'Conditional formats',
+      description: 'Cells with conditional formatting',
+    },
     { id: 'dataValidation', label: 'Data validation', description: 'Cells with validation rules' },
   ];
 

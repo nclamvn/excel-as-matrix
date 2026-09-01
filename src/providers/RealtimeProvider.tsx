@@ -15,12 +15,7 @@ interface RealtimeContextType {
   isEnabled: boolean;
   broadcastCellChange: (payload: CellUpdatePayload) => void;
   broadcastCursor: (row: number, col: number) => void;
-  broadcastSelection: (
-    startRow: number,
-    startCol: number,
-    endRow: number,
-    endCol: number
-  ) => void;
+  broadcastSelection: (startRow: number, startCol: number, endRow: number, endCol: number) => void;
   broadcastSheetChange: (newSheetId: string) => void;
   broadcastEditStart: (row: number, col: number) => void;
   broadcastEditEnd: (row: number, col: number) => void;
@@ -101,9 +96,7 @@ export function RealtimeProvider({
     ]
   );
 
-  return (
-    <RealtimeContext.Provider value={value}>{children}</RealtimeContext.Provider>
-  );
+  return <RealtimeContext.Provider value={value}>{children}</RealtimeContext.Provider>;
 }
 
 /**

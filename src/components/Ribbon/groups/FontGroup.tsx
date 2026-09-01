@@ -5,21 +5,25 @@ import { FontPicker } from '../../Toolbar/FontPicker';
 import { FontSizePicker } from '../../Toolbar/FontSizePicker';
 import { ColorPicker } from '../../Toolbar/ColorPicker';
 import { BorderSelector } from '../../Toolbar/BorderSelector';
-import {
-  Bold, Italic, Underline,
-  ChevronUp, ChevronDown, PaintBucket, Type
-} from 'lucide-react';
+import { Bold, Italic, Underline, ChevronUp, ChevronDown, PaintBucket, Type } from 'lucide-react';
 import { useFormatStore } from '../../../stores/formatStore';
 
 export const FontGroup: React.FC = () => {
   const {
-    fontFamily, setFontFamily,
-    fontSize, setFontSize,
-    bold, toggleBold,
-    italic, toggleItalic,
-    underline, toggleUnderline,
-    textColor, setTextColor,
-    backgroundColor, setBackgroundColor,
+    fontFamily,
+    setFontFamily,
+    fontSize,
+    setFontSize,
+    bold,
+    toggleBold,
+    italic,
+    toggleItalic,
+    underline,
+    toggleUnderline,
+    textColor,
+    setTextColor,
+    backgroundColor,
+    setBackgroundColor,
   } = useFormatStore();
 
   return (
@@ -29,10 +33,20 @@ export const FontGroup: React.FC = () => {
         <div className="font-row">
           <FontPicker value={fontFamily} onChange={setFontFamily} />
           <FontSizePicker value={fontSize} onChange={setFontSize} />
-          <button type="button" className="size-button" onClick={() => setFontSize(fontSize + 1)} title="Increase Font Size">
+          <button
+            type="button"
+            className="size-button"
+            onClick={() => setFontSize(fontSize + 1)}
+            title="Increase Font Size"
+          >
             <ChevronUp className="w-3 h-3" />
           </button>
-          <button type="button" className="size-button" onClick={() => setFontSize(Math.max(1, fontSize - 1))} title="Decrease Font Size">
+          <button
+            type="button"
+            className="size-button"
+            onClick={() => setFontSize(Math.max(1, fontSize - 1))}
+            title="Decrease Font Size"
+          >
             <ChevronDown className="w-3 h-3" />
           </button>
         </div>
@@ -67,12 +81,7 @@ export const FontGroup: React.FC = () => {
             onChange={setBackgroundColor}
             title="Fill Color"
           />
-          <ColorPicker
-            icon={Type}
-            value={textColor}
-            onChange={setTextColor}
-            title="Font Color"
-          />
+          <ColorPicker icon={Type} value={textColor} onChange={setTextColor} title="Font Color" />
         </div>
       </div>
     </RibbonGroup>

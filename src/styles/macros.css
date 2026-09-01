@@ -6,16 +6,16 @@
    Variables
    ----------------------------------------------------------------------------- */
 :root {
-  --macro-primary: #3B82F6;
-  --macro-primary-hover: #2563EB;
-  --macro-success: #10B981;
-  --macro-warning: #F59E0B;
-  --macro-error: #EF4444;
-  --macro-bg: #FFFFFF;
-  --macro-bg-secondary: #F8FAFC;
-  --macro-border: #E2E8F0;
-  --macro-text: #1E293B;
-  --macro-text-secondary: #64748B;
+  --macro-primary: #3b82f6;
+  --macro-primary-hover: #2563eb;
+  --macro-success: #10b981;
+  --macro-warning: #f59e0b;
+  --macro-error: #ef4444;
+  --macro-bg: #ffffff;
+  --macro-bg-secondary: #f8fafc;
+  --macro-border: #e2e8f0;
+  --macro-text: #1e293b;
+  --macro-text-secondary: #64748b;
   --macro-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   --macro-radius: 8px;
   --macro-radius-sm: 4px;
@@ -95,8 +95,13 @@
 }
 
 @keyframes pulse-record {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
 }
 
 /* Stop Button */
@@ -116,7 +121,7 @@
 }
 
 .stop-btn:hover {
-  background: #DC2626;
+  background: #dc2626;
 }
 
 .close-btn {
@@ -146,8 +151,8 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-  border-bottom: 1px solid #FECACA;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-bottom: 1px solid #fecaca;
 }
 
 .recording-dot {
@@ -159,7 +164,8 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -400,7 +406,7 @@
 }
 
 .macro-card-actions button.delete-btn:hover {
-  background: #FEE2E2;
+  background: #fee2e2;
   color: var(--macro-error);
 }
 
@@ -430,12 +436,12 @@
 }
 
 .trigger-badge.schedule {
-  background: #DBEAFE;
-  color: #1D4ED8;
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .trigger-badge.data_change {
-  background: #D1FAE5;
+  background: #d1fae5;
   color: #047857;
 }
 
@@ -566,7 +572,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .examples {
@@ -622,13 +630,13 @@
 }
 
 .nl-result.success {
-  background: #D1FAE5;
-  border-color: #A7F3D0;
+  background: #d1fae5;
+  border-color: #a7f3d0;
 }
 
 .nl-result.error {
-  background: #FEE2E2;
-  border-color: #FECACA;
+  background: #fee2e2;
+  border-color: #fecaca;
 }
 
 .nl-result h4 {
@@ -722,17 +730,17 @@
 }
 
 .execution-status.completed {
-  background: #D1FAE5;
+  background: #d1fae5;
   color: var(--macro-success);
 }
 
 .execution-status.running {
-  background: #DBEAFE;
+  background: #dbeafe;
   color: var(--macro-primary);
 }
 
 .execution-status.failed {
-  background: #FEE2E2;
+  background: #fee2e2;
   color: var(--macro-error);
 }
 
@@ -934,15 +942,15 @@
   border-color: var(--macro-primary);
 }
 
-.config-row input[type="number"] {
+.config-row input[type='number'] {
   width: 70px;
 }
 
-.config-row input[type="time"] {
+.config-row input[type='time'] {
   width: 100px;
 }
 
-.config-row input[type="text"] {
+.config-row input[type='text'] {
   flex: 1;
 }
 
@@ -1262,7 +1270,7 @@
   cursor: pointer;
 }
 
-.enable-toggle input[type="checkbox"] {
+.enable-toggle input[type='checkbox'] {
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -1301,13 +1309,13 @@
 }
 
 .action-btn.add:hover {
-  background: #D1FAE5;
+  background: #d1fae5;
   border-color: var(--macro-success);
   color: var(--macro-success);
 }
 
 .action-btn.remove:hover {
-  background: #FEE2E2;
+  background: #fee2e2;
   border-color: var(--macro-error);
   color: var(--macro-error);
 }
@@ -1330,8 +1338,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .action-picker {
@@ -1546,11 +1558,11 @@
    ----------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root {
-    --macro-bg: #1E293B;
-    --macro-bg-secondary: #0F172A;
+    --macro-bg: #1e293b;
+    --macro-bg-secondary: #0f172a;
     --macro-border: #334155;
-    --macro-text: #F1F5F9;
-    --macro-text-secondary: #94A3B8;
+    --macro-text: #f1f5f9;
+    --macro-text-secondary: #94a3b8;
     --macro-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
@@ -1571,17 +1583,17 @@
   }
 
   .recording-indicator {
-    background: linear-gradient(135deg, #7F1D1D 0%, #991B1B 100%);
-    border-color: #B91C1C;
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    border-color: #b91c1c;
   }
 
   .nl-result.success {
-    background: #064E3B;
+    background: #064e3b;
     border-color: #047857;
   }
 
   .nl-result.error {
-    background: #7F1D1D;
-    border-color: #B91C1C;
+    background: #7f1d1d;
+    border-color: #b91c1c;
   }
 }

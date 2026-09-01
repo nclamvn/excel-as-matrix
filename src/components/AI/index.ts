@@ -18,9 +18,20 @@ export { SandboxPreview } from './SandboxPreview';
 export { ConfidenceMeter, ConfidenceBadge } from './ConfidenceMeter';
 export { ConfidenceTooltip, InlineConfidence, ConfidenceDetails } from './ConfidenceTooltip';
 export { UncertaintyBadge, UncertaintyIndicator, UncertaintyList } from './UncertaintyBadge';
-export { SourceAttribution, SourceCitation, SourcesSummary, CellSource, SourceTypeList } from './SourceAttribution';
+export {
+  SourceAttribution,
+  SourceCitation,
+  SourcesSummary,
+  CellSource,
+  SourceTypeList,
+} from './SourceAttribution';
 export { TrustDashboard } from './TrustDashboard';
-export { CalibrationChart, CalibrationBucketsTable, MiniCalibration, CalibrationStatusBar } from './CalibrationChart';
+export {
+  CalibrationChart,
+  CalibrationBucketsTable,
+  MiniCalibration,
+  CalibrationStatusBar,
+} from './CalibrationChart';
 
 // Conversation Components (Phase 5)
 export { ConversationFlow, StateBadge, StateTimeline, StateIndicator } from './ConversationFlow';
@@ -31,4 +42,9 @@ export { FeedbackPrompt, MiniFeedback, FeedbackCard } from './FeedbackPrompt';
 // Contextual AI Components (Phase 5 Enhancement)
 export { FloatingAIButton } from './FloatingAIButton';
 export { InlineAISuggestions, FormulaBarAIHint } from './InlineAISuggestions';
-export { ProactiveAINotifications, useAINotificationStore, useProactiveAITriggers, generateInsight } from './ProactiveAINotifications';
+export {
+  ProactiveAINotifications,
+  useAINotificationStore,
+  useProactiveAITriggers,
+  generateInsight,
+} from './ProactiveAINotifications';

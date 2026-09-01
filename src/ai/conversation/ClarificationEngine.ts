@@ -27,7 +27,7 @@ const QUESTION_TEMPLATES: Record<ClarificationType, QuestionTemplate> = {
   target_selection: {
     type: 'target_selection',
     question: 'Which cells should I apply this to?',
-    contextTemplate: 'You asked to {action} but didn\'t specify the target cells.',
+    contextTemplate: "You asked to {action} but didn't specify the target cells.",
     options: [
       { id: 'selected', label: 'Currently selected cells', value: 'selected' },
       { id: 'column', label: 'Entire column', value: 'column' },
@@ -42,7 +42,7 @@ const QUESTION_TEMPLATES: Record<ClarificationType, QuestionTemplate> = {
     question: 'Is this what you want me to do?',
     contextTemplate: 'I understood: {action}. Please confirm this is correct.',
     options: [
-      { id: 'yes', label: 'Yes, that\'s correct', value: true },
+      { id: 'yes', label: "Yes, that's correct", value: true },
       { id: 'no', label: 'No, let me clarify', value: false },
     ],
     allowFreeText: true,
@@ -135,10 +135,7 @@ export class ClarificationEngine {
   /**
    * Generate a single question for a specific type
    */
-  generateQuestion(
-    type: ClarificationType,
-    context: Record<string, string>
-  ): ClarificationRequest {
+  generateQuestion(type: ClarificationType, context: Record<string, string>): ClarificationRequest {
     return this.createQuestion(type, context);
   }
 
@@ -205,9 +202,7 @@ export class ClarificationEngine {
     let value: unknown;
 
     if (response.selectedOptionId && request.options) {
-      const option = request.options.find(
-        (o) => o.id === response.selectedOptionId
-      );
+      const option = request.options.find((o) => o.id === response.selectedOptionId);
       value = option?.value ?? response.freeTextResponse;
     } else {
       value = response.freeTextResponse;
@@ -240,10 +235,7 @@ export class ClarificationEngine {
   /**
    * Check if question was already asked
    */
-  wasQuestionAsked(
-    conversationId: string,
-    type: ClarificationType
-  ): boolean {
+  wasQuestionAsked(conversationId: string, type: ClarificationType): boolean {
     const history = this.history.get(conversationId) || [];
     return history.some((r) => r.type === type);
   }
@@ -251,10 +243,7 @@ export class ClarificationEngine {
   /**
    * Get response for a specific type
    */
-  getResponse(
-    conversationId: string,
-    type: ClarificationType
-  ): ClarificationResponse | undefined {
+  getResponse(conversationId: string, type: ClarificationType): ClarificationResponse | undefined {
     const history = this.history.get(conversationId) || [];
     return history.find((r) => r.type === type);
   }
@@ -270,9 +259,7 @@ export class ClarificationEngine {
    * Format action for display
    */
   private formatAction(action: string): string {
-    return action
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+    return action.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   /**
@@ -291,9 +278,7 @@ export class ClarificationEngine {
 
     // Option validation
     if (response.selectedOptionId && request.options) {
-      const validOption = request.options.some(
-        (o) => o.id === response.selectedOptionId
-      );
+      const validOption = request.options.some((o) => o.id === response.selectedOptionId);
       if (!validOption) {
         return { valid: false, error: 'Invalid option selected' };
       }

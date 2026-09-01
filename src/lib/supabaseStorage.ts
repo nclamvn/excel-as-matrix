@@ -93,11 +93,7 @@ class SupabaseStorage {
   }
 
   async getWorkbook(id: string): Promise<DBWorkbook | null> {
-    const { data, error } = await this.client
-      .from('workbooks')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await this.client.from('workbooks').select('*').eq('id', id).single();
 
     if (error && error.code !== 'PGRST116') throw error;
     return data;
@@ -114,7 +110,10 @@ class SupabaseStorage {
     return data;
   }
 
-  async updateWorkbook(id: string, updates: Partial<Pick<DBWorkbook, 'name' | 'settings'>>): Promise<DBWorkbook> {
+  async updateWorkbook(
+    id: string,
+    updates: Partial<Pick<DBWorkbook, 'name' | 'settings'>>
+  ): Promise<DBWorkbook> {
     const { data, error } = await this.client
       .from('workbooks')
       .update(updates)
@@ -127,10 +126,7 @@ class SupabaseStorage {
   }
 
   async deleteWorkbook(id: string): Promise<void> {
-    const { error } = await this.client
-      .from('workbooks')
-      .delete()
-      .eq('id', id);
+    const { error } = await this.client.from('workbooks').delete().eq('id', id);
 
     if (error) throw error;
   }
@@ -161,7 +157,12 @@ class SupabaseStorage {
     return data;
   }
 
-  async updateSheet(id: string, updates: Partial<Pick<DBSheet, 'name' | 'index' | 'tab_color' | 'hidden' | 'protected' | 'settings'>>): Promise<DBSheet> {
+  async updateSheet(
+    id: string,
+    updates: Partial<
+      Pick<DBSheet, 'name' | 'index' | 'tab_color' | 'hidden' | 'protected' | 'settings'>
+    >
+  ): Promise<DBSheet> {
     const { data, error } = await this.client
       .from('sheets')
       .update(updates)
@@ -174,10 +175,7 @@ class SupabaseStorage {
   }
 
   async deleteSheet(id: string): Promise<void> {
-    const { error } = await this.client
-      .from('sheets')
-      .delete()
-      .eq('id', id);
+    const { error } = await this.client.from('sheets').delete().eq('id', id);
 
     if (error) throw error;
   }
@@ -187,10 +185,7 @@ class SupabaseStorage {
   // ═══════════════════════════════════════════════════════════════════════════
 
   async getCells(sheetId: string): Promise<DBCell[]> {
-    const { data, error } = await this.client
-      .from('cells')
-      .select('*')
-      .eq('sheet_id', sheetId);
+    const { data, error } = await this.client.from('cells').select('*').eq('sheet_id', sheetId);
 
     if (error) throw error;
     return data ?? [];
@@ -308,7 +303,11 @@ class SupabaseStorage {
   // COLLABORATORS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  async addCollaborator(workbookId: string, userId: string, role: 'viewer' | 'editor' | 'admin' = 'editor'): Promise<void> {
+  async addCollaborator(
+    workbookId: string,
+    userId: string,
+    role: 'viewer' | 'editor' | 'admin' = 'editor'
+  ): Promise<void> {
     const { error } = await this.client
       .from('workbook_collaborators')
       .upsert({ workbook_id: workbookId, user_id: userId, role });

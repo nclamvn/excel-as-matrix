@@ -143,8 +143,8 @@ export function useFileExport(): UseFileExportReturn {
   const buildCsvData = useCallback(
     (selectedSheets: string[], includeHeader: boolean) => {
       // Export first selected sheet as CSV
-      const sheetEntry = Object.entries(sheets).find(
-        ([_, sheet]) => selectedSheets.includes(sheet.name)
+      const sheetEntry = Object.entries(sheets).find(([_, sheet]) =>
+        selectedSheets.includes(sheet.name)
       );
 
       if (!sheetEntry) {
@@ -263,9 +263,14 @@ export function useFileExport(): UseFileExportReturn {
             csv_data: csvData,
             filename: options.filename,
             options: {
-              delimiter: options.format === 'tsv' ? 'tab' as const :
-                options.delimiter === '\t' ? 'tab' as const :
-                options.delimiter === ';' ? 'semicolon' as const : 'comma' as const,
+              delimiter:
+                options.format === 'tsv'
+                  ? ('tab' as const)
+                  : options.delimiter === '\t'
+                    ? ('tab' as const)
+                    : options.delimiter === ';'
+                      ? ('semicolon' as const)
+                      : ('comma' as const),
               include_header: options.includeHeader,
               line_ending: 'crlf' as const,
               quote_style: 'necessary' as const,

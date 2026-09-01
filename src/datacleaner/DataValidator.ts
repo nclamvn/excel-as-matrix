@@ -35,7 +35,7 @@ export class DataValidator {
    * Remove a rule by ID
    */
   removeRule(ruleId: string): void {
-    this.rules = this.rules.filter(r => r.id !== ruleId);
+    this.rules = this.rules.filter((r) => r.id !== ruleId);
   }
 
   /**
@@ -64,9 +64,8 @@ export class DataValidator {
    */
   private validateRule(data: CleanerSheetData, rule: ValidationRule): ValidationResult {
     const violations: ValidationViolation[] = [];
-    const columns = rule.column === 'all'
-      ? Array.from({ length: data.colCount }, (_, i) => i)
-      : [rule.column];
+    const columns =
+      rule.column === 'all' ? Array.from({ length: data.colCount }, (_, i) => i) : [rule.column];
 
     for (const col of columns) {
       for (let row = 0; row < data.rowCount; row++) {
@@ -196,9 +195,7 @@ export class DataValidator {
     if (!params.allowedValues || params.allowedValues.length === 0) return true;
 
     const strValue = String(value).toLowerCase().trim();
-    return params.allowedValues.some(v =>
-      String(v).toLowerCase().trim() === strValue
-    );
+    return params.allowedValues.some((v) => String(v).toLowerCase().trim() === strValue);
   }
 
   /**
@@ -222,11 +219,9 @@ export class DataValidator {
       case 'url':
         return /^https?:\/\//.test(String(value));
       case 'phone':
-        return /^[\d\s\-\(\)\+]+$/.test(String(value));
+        return /^[\d\s()+-]+$/.test(String(value));
       case 'boolean':
-        return ['true', 'false', '1', '0', 'yes', 'no'].includes(
-          String(value).toLowerCase()
-        );
+        return ['true', 'false', '1', '0', 'yes', 'no'].includes(String(value).toLowerCase());
       default:
         return true;
     }
@@ -299,7 +294,7 @@ export class DataValidator {
     failed: number;
     totalViolations: number;
   } {
-    const passed = results.filter(r => r.passed).length;
+    const passed = results.filter((r) => r.passed).length;
     const totalViolations = results.reduce((sum, r) => sum + r.violations.length, 0);
 
     return {

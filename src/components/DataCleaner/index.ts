@@ -15,11 +15,7 @@ export { IssuesList } from './IssuesList';
 export { default as IssuesListDefault } from './IssuesList';
 
 // Progress indicators
-export {
-  CleaningProgress,
-  StepProgress,
-  CircularProgress,
-} from './CleaningProgress';
+export { CleaningProgress, StepProgress, CircularProgress } from './CleaningProgress';
 export { default as CleaningProgressDefault } from './CleaningProgress';
 
 // Duplicates

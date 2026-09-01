@@ -72,7 +72,8 @@ export const RibbonPremium: React.FC = () => {
       <div className="ribbon-header">
         <div className="ribbon-tabs">
           {tabs.map((tab) => (
-            <button type="button"
+            <button
+              type="button"
               key={tab.id}
               className={`ribbon-tab ${tab.isFile ? 'ribbon-tab--file' : ''} ${activeTab === tab.id ? 'ribbon-tab--active' : ''}`}
               onClick={() => handleTabClick(tab.id)}
@@ -88,7 +89,8 @@ export const RibbonPremium: React.FC = () => {
             <span>Share</span>
           </button>
 
-          <button type="button"
+          <button
+            type="button"
             className={`ribbon-collapse-btn ${isCollapsed ? 'ribbon-collapse-btn--collapsed' : ''}`}
             onClick={() => setIsCollapsed(!isCollapsed)}
             title={isCollapsed ? 'Expand Ribbon' : 'Collapse Ribbon'}

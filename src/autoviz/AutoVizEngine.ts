@@ -97,12 +97,9 @@ export class AutoVizEngine {
     // Regenerate if data provided
     if (data) {
       const characteristics = this.dataAnalyzer.analyze(data);
-      config = this.chartGenerator.generate(
-        recommendation.chartType,
-        data,
-        characteristics,
-        { title: options?.title }
-      );
+      config = this.chartGenerator.generate(recommendation.chartType, data, characteristics, {
+        title: options?.title,
+      });
     }
 
     // Apply beautification
@@ -112,9 +109,10 @@ export class AutoVizEngine {
 
     // Apply custom color scheme
     if (options?.colorScheme) {
-      const scheme = typeof options.colorScheme === 'string'
-        ? getColorScheme(options.colorScheme)
-        : options.colorScheme;
+      const scheme =
+        typeof options.colorScheme === 'string'
+          ? getColorScheme(options.colorScheme)
+          : options.colorScheme;
       config = this.chartBeautifier.beautify(config, { colorScheme: scheme });
     }
 
@@ -147,11 +145,7 @@ export class AutoVizEngine {
     const characteristics = this.dataAnalyzer.analyze(data);
 
     // Generate chart
-    let config = this.chartGenerator.generate(
-      parseResult.chartType,
-      data,
-      characteristics
-    );
+    let config = this.chartGenerator.generate(parseResult.chartType, data, characteristics);
 
     // Beautify
     config = this.chartBeautifier.autoBeautify(config);
@@ -163,10 +157,7 @@ export class AutoVizEngine {
   /**
    * Quick one-click visualization
    */
-  async quickVisualize(
-    data: DataRange,
-    options?: QuickVizOptions
-  ): Promise<ChartConfig> {
+  async quickVisualize(data: DataRange, options?: QuickVizOptions): Promise<ChartConfig> {
     // Analyze and get top recommendation
     const recommendations = await this.recommend(data);
 
@@ -266,11 +257,9 @@ export class AutoVizEngine {
       case 'average':
         return this.annotationEngine.addAverageLine(config);
       case 'target':
-        return this.annotationEngine.addTargetLine(
-          config,
-          options?.value || 100,
-          { label: options?.label }
-        );
+        return this.annotationEngine.addTargetLine(config, options?.value || 100, {
+          label: options?.label,
+        });
       case 'minmax':
         return this.annotationEngine.addMinMaxAnnotations(config);
       default:
@@ -300,10 +289,7 @@ export class AutoVizEngine {
   /**
    * Generate dashboard from data
    */
-  generateDashboard(
-    data: DataRange,
-    options?: DashboardOptions
-  ): Dashboard {
+  generateDashboard(data: DataRange, options?: DashboardOptions): Dashboard {
     const characteristics = this.dataAnalyzer.analyze(data);
     return this.dashboardGenerator.generate(data, characteristics, options);
   }

@@ -36,9 +36,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) =>
   const markAsRead = useNotificationStore((s) => s.markAsRead);
   const markAllAsRead = useNotificationStore((s) => s.markAllAsRead);
 
-  const userNotifications = notifications.filter(
-    (n) => n.mentionedUserId === userId
-  );
+  const userNotifications = notifications.filter((n) => n.mentionedUserId === userId);
 
   const handleNotificationClick = useCallback(
     (n: MentionNotification) => {
@@ -75,9 +73,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) =>
       >
         <Bell size={18} />
         {unreadCount > 0 && (
-          <span className="bell-badge">
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
+          <span className="bell-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
         )}
       </button>
 
@@ -107,16 +103,13 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) =>
                   onClick={() => handleNotificationClick(n)}
                 >
                   <div className="notification-item__text">
-                    <strong>{n.mentionedByName}</strong>{' '}
-                    mentioned you:{' '}
+                    <strong>{n.mentionedByName}</strong> mentioned you:{' '}
                     <span className="notification-item__preview">
                       &ldquo;{n.preview.slice(0, 80)}
                       {n.preview.length > 80 ? '...' : ''}&rdquo;
                     </span>
                   </div>
-                  <div className="notification-item__time">
-                    {formatTimeAgo(n.createdAt)}
-                  </div>
+                  <div className="notification-item__time">{formatTimeAgo(n.createdAt)}</div>
                 </div>
               ))
             )}

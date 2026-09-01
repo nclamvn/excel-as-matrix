@@ -773,18 +773,29 @@ function matchesCriteria(value: FormulaValue, criteria: FormulaValue): boolean {
 
       if (!isNaN(numCompare) && !isNaN(numValue)) {
         switch (op) {
-          case '>': return numValue > numCompare;
-          case '<': return numValue < numCompare;
-          case '>=': return numValue >= numCompare;
-          case '<=': return numValue <= numCompare;
-          case '<>': case '!=': return numValue !== numCompare;
-          case '=': return numValue === numCompare;
+          case '>':
+            return numValue > numCompare;
+          case '<':
+            return numValue < numCompare;
+          case '>=':
+            return numValue >= numCompare;
+          case '<=':
+            return numValue <= numCompare;
+          case '<>':
+          case '!=':
+            return numValue !== numCompare;
+          case '=':
+            return numValue === numCompare;
         }
       } else {
         // String comparison
         switch (op) {
-          case '<>': case '!=': return String(value) !== compareVal;
-          case '=': default: return String(value) === compareVal;
+          case '<>':
+          case '!=':
+            return String(value) !== compareVal;
+          case '=':
+          default:
+            return String(value) === compareVal;
         }
       }
     }

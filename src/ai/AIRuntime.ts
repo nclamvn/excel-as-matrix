@@ -4,6 +4,8 @@
 
 // Use crypto.randomUUID instead of uuid package
 const uuidv4 = () => crypto.randomUUID();
+const MAX_AI_WRITE_CELLS = 10_000;
+const MAX_AI_CELL_TEXT_LENGTH = 32_767;
 import type {
   AIMessage,
   AIToolCall,
@@ -14,12 +16,14 @@ import type {
   AIActionHistory,
   AssembledContext,
   GroundingReport,
+  AIAvailability,
 } from './types';
 import { DEFAULT_AI_CONFIG } from './types';
 import { ClaudeAPIClient, AI_SYSTEM_PROMPT } from '../services/claudeAPI';
 import { AI_TOOLS, AIToolExecutor } from './tools';
 import { useWorkbookStore } from '../stores/workbookStore';
 import { useSelectionStore } from '../stores/selectionStore';
+import { getCellKey, parseCellRef, toCellRef } from '../types/cell';
 
 // Context & Grounding imports
 import { ContextAssembler } from './context/ContextAssembler';
@@ -81,6 +85,14 @@ export class AIRuntime {
     return { ...this.config };
   }
 
+  getAvailability(): Promise<AIAvailability> {
+    return this.client.getAvailability();
+  }
+
+  refreshAvailability(): Promise<AIAvailability> {
+    return this.client.refreshAvailability();
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Conversation Management
   // ─────────────────────────────────────────────────────────────────────────
@@ -122,9 +134,7 @@ export class AIRuntime {
       name: sheet?.name || 'Sheet1',
       usedRange: this.calculateUsedRange(sheet),
       cellCount: sheet ? Object.keys(sheet.cells).length : 0,
-      formulaCount: sheet
-        ? Object.values(sheet.cells).filter((c) => c.formula).length
-        : 0,
+      formulaCount: sheet ? Object.values(sheet.cells).filter((c) => c.formula).length : 0,
     };
 
     // Build selection context from selectionStore
@@ -162,9 +172,7 @@ export class AIRuntime {
     };
   }
 
-  private calculateUsedRange(
-    sheet: { cells: Record<string, { value?: unknown }> } | null
-  ): string {
+  private calculateUsedRange(sheet: { cells: Record<string, { value?: unknown }> } | null): string {
     if (!sheet || Object.keys(sheet.cells).length === 0) {
       return 'A1';
     }
@@ -206,10 +214,7 @@ export class AIRuntime {
   // Message Handling
   // ─────────────────────────────────────────────────────────────────────────
 
-  async sendMessage(
-    content: string,
-    _onStream?: (chunk: string) => void
-  ): Promise<AIMessage> {
+  async sendMessage(content: string, _onStream?: (chunk: string) => void): Promise<AIMessage> {
     if (!this.conversation) {
       this.startConversation();
     }
@@ -257,7 +262,9 @@ export class AIRuntime {
       }
 
       // Complete reasoning trace
-      reasoningTracer.addStep('output', 'Generated response',
+      reasoningTracer.addStep(
+        'output',
+        'Generated response',
         `Response: ${response.message.slice(0, 100)}...`,
         { confidence: 0.9, output: `${response.tokensUsed} tokens` }
       );
@@ -426,15 +433,17 @@ When making claims about data, always cite your sources using these markers:
     const startTime = Date.now();
 
     if (!tool) {
-      aiUsageLogger.logToolExecution({
-        conversationId: this.conversation?.id || 'unknown',
-        toolName: toolCall.tool,
-        inputSummary: 'unknown tool',
-        outputSummary: 'failed',
-        durationMs: Date.now() - startTime,
-        status: 'error',
-        errorMessage: `Unknown tool: ${toolCall.tool}`,
-      }).catch(() => {});
+      aiUsageLogger
+        .logToolExecution({
+          conversationId: this.conversation?.id || 'unknown',
+          toolName: toolCall.tool,
+          inputSummary: 'unknown tool',
+          outputSummary: 'failed',
+          durationMs: Date.now() - startTime,
+          status: 'error',
+          errorMessage: `Unknown tool: ${toolCall.tool}`,
+        })
+        .catch(() => {});
 
       return {
         ...toolCall,
@@ -447,16 +456,24 @@ When making claims about data, always cite your sources using these markers:
     if (tool.requiresApproval && !this.shouldAutoApprove(toolCall, tool)) {
       // Create pending action
       const action = this.createPendingAction(toolCall);
+      try {
+        await aiUsageLogger.logToolExecution({
+          conversationId: this.conversation?.id || 'unknown',
+          workbookId: action.workbookId,
+          toolName: toolCall.tool,
+          inputSummary: `actionId=${action.id}; sheetId=${action.sheetId}; range=${action.preview.after.range}`,
+          outputSummary: `proposed ${action.affectedCells} cells; pending approval`,
+          durationMs: Date.now() - startTime,
+          status: 'pending',
+        });
+      } catch (error) {
+        return {
+          ...toolCall,
+          status: 'failed',
+          error: error instanceof Error ? error.message : 'Could not persist action audit',
+        };
+      }
       this.conversation?.pendingActions.push(action);
-
-      aiUsageLogger.logToolExecution({
-        conversationId: this.conversation?.id || 'unknown',
-        toolName: toolCall.tool,
-        inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
-        outputSummary: 'pending approval',
-        durationMs: Date.now() - startTime,
-        status: 'pending',
-      }).catch(() => {});
 
       return {
         ...toolCall,
@@ -468,14 +485,16 @@ When making claims about data, always cite your sources using these markers:
     try {
       const result = await this.executor.execute(toolCall);
 
-      aiUsageLogger.logToolExecution({
-        conversationId: this.conversation?.id || 'unknown',
-        toolName: toolCall.tool,
-        inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
-        outputSummary: 'success',
-        durationMs: Date.now() - startTime,
-        status: 'success',
-      }).catch(() => {});
+      aiUsageLogger
+        .logToolExecution({
+          conversationId: this.conversation?.id || 'unknown',
+          toolName: toolCall.tool,
+          inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
+          outputSummary: 'success',
+          durationMs: Date.now() - startTime,
+          status: 'success',
+        })
+        .catch(() => {});
 
       return {
         ...toolCall,
@@ -483,15 +502,17 @@ When making claims about data, always cite your sources using these markers:
         result,
       };
     } catch (error) {
-      aiUsageLogger.logToolExecution({
-        conversationId: this.conversation?.id || 'unknown',
-        toolName: toolCall.tool,
-        inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
-        outputSummary: 'failed',
-        durationMs: Date.now() - startTime,
-        status: 'error',
-        errorMessage: error instanceof Error ? error.message : 'Execution failed',
-      }).catch(() => {});
+      aiUsageLogger
+        .logToolExecution({
+          conversationId: this.conversation?.id || 'unknown',
+          toolName: toolCall.tool,
+          inputSummary: JSON.stringify(toolCall.arguments).slice(0, 200),
+          outputSummary: 'failed',
+          durationMs: Date.now() - startTime,
+          status: 'error',
+          errorMessage: error instanceof Error ? error.message : 'Execution failed',
+        })
+        .catch(() => {});
 
       return {
         ...toolCall,
@@ -501,10 +522,11 @@ When making claims about data, always cite your sources using these markers:
     }
   }
 
-  private shouldAutoApprove(
-    toolCall: AIToolCall,
-    tool: (typeof AI_TOOLS)[number]
-  ): boolean {
+  private shouldAutoApprove(toolCall: AIToolCall, tool: (typeof AI_TOOLS)[number]): boolean {
+    // Writes stay on the explicit preview/approval path until their transactional
+    // executor has the same audit and rollback guarantees as manual approval.
+    if (toolCall.tool === 'write_range') return false;
+
     // Autopilot mode: auto-approve low-risk actions
     if (this.config.autonomyMode === 'autopilot') {
       // Never auto-approve high-risk in any mode
@@ -512,15 +534,6 @@ When making claims about data, always cite your sources using these markers:
 
       // In autopilot, approve low-risk automatically
       if (tool.riskLevel === 'low') return true;
-
-      // Medium risk: check cell count
-      if (toolCall.tool === 'write_range') {
-        const values = toolCall.arguments.values as unknown[][];
-        if (values) {
-          const cellCount = values.reduce((acc, row) => acc + row.length, 0);
-          return cellCount <= this.config.autoApprove.maxCells;
-        }
-      }
 
       return true;
     }
@@ -532,17 +545,6 @@ When making claims about data, always cite your sources using these markers:
 
     if (!this.config.autoApprove.riskLevels.includes(tool.riskLevel as 'low' | 'medium')) {
       return false;
-    }
-
-    // Check cell count for write operations
-    if (toolCall.tool === 'write_range') {
-      const values = toolCall.arguments.values as unknown[][];
-      if (values) {
-        const cellCount = values.reduce((acc, row) => acc + row.length, 0);
-        if (cellCount > this.config.autoApprove.maxCells) {
-          return false;
-        }
-      }
     }
 
     return true;
@@ -564,9 +566,67 @@ When making claims about data, always cite your sources using these markers:
   }
 
   private createPendingAction(toolCall: AIToolCall): AIProposedAction {
+    if (toolCall.tool === 'write_range') {
+      const range = String(toolCall.arguments.range || '');
+      const values = toolCall.arguments.values as (string | number | boolean | null)[][];
+      const requestedType = toolCall.arguments.type ?? 'value';
+      if (requestedType !== 'value' && requestedType !== 'formula') {
+        throw new Error(`Unsupported write type: ${String(requestedType)}`);
+      }
+      const type = requestedType;
+      const target = this.validateWritePayload(range, values);
+      if (
+        type === 'formula' &&
+        values.some((row) =>
+          row.some((value) => typeof value !== 'string' || !value.startsWith('='))
+        )
+      ) {
+        throw new Error('Formula writes require formula strings beginning with =');
+      }
+      const workbook = useWorkbookStore.getState();
+      const sheetId = workbook.activeSheetId;
+      if (!sheetId || !workbook.sheets[sheetId]) {
+        throw new Error('Cannot propose a write without an active sheet');
+      }
+      const before = this.snapshotRange(sheetId, range);
+      const formulas =
+        type === 'formula'
+          ? values.map((row) => row.map((value) => (typeof value === 'string' ? value : null)))
+          : undefined;
+      const changes = values.flatMap((rowValues, rowOffset) =>
+        rowValues.map((value, colOffset) => ({
+          cell: toCellRef(target.start.row + rowOffset, target.start.col + colOffset),
+          field: type as 'value' | 'formula',
+          oldValue:
+            type === 'formula'
+              ? (before.formulas?.[rowOffset]?.[colOffset] ?? null)
+              : before.values[rowOffset][colOffset],
+          newValue: value,
+        }))
+      );
+      const affectedCells = target.rows * target.cols;
+      return {
+        id: uuidv4(),
+        sheetId,
+        workbookId: workbook.workbookId,
+        type: type === 'formula' ? 'formula' : 'write',
+        description: `Write ${affectedCells} cells in ${range}`,
+        preview: {
+          before,
+          after: { range, values, formulas },
+          changes,
+        },
+        riskLevel: affectedCells > 100 ? 'high' : affectedCells > 10 ? 'medium' : 'low',
+        affectedCells,
+        status: 'pending',
+        createdAt: new Date(),
+        toolCall,
+      };
+    }
+
     return {
       id: uuidv4(),
-      type: toolCall.tool === 'write_range' ? 'write' : 'bulk',
+      type: 'bulk',
       description: `Execute ${toolCall.tool}`,
       preview: {
         before: { range: '', values: [] },
@@ -577,7 +637,94 @@ When making claims about data, always cite your sources using these markers:
       affectedCells: 0,
       status: 'pending',
       createdAt: new Date(),
+      toolCall,
     };
+  }
+
+  private validateWritePayload(
+    range: string,
+    values: (string | number | boolean | null)[][]
+  ): { start: { row: number; col: number }; rows: number; cols: number } {
+    const [startRef, endRef = startRef] = range.split(':');
+    const start = parseCellRef(startRef);
+    const end = parseCellRef(endRef);
+    if (!start || !end || start.row > end.row || start.col > end.col) {
+      throw new Error(`Invalid action range: ${range}`);
+    }
+    const rows = end.row - start.row + 1;
+    const cols = end.col - start.col + 1;
+    if (rows * cols > MAX_AI_WRITE_CELLS) {
+      throw new Error(`AI writes are limited to ${MAX_AI_WRITE_CELLS} cells per approval`);
+    }
+    if (
+      !Array.isArray(values) ||
+      values.length !== rows ||
+      values.some((row) => !Array.isArray(row) || row.length !== cols) ||
+      values.some((row) =>
+        row.some(
+          (value) =>
+            (value !== null && !['string', 'number', 'boolean'].includes(typeof value)) ||
+            (typeof value === 'number' && !Number.isFinite(value)) ||
+            (typeof value === 'string' && value.length > MAX_AI_CELL_TEXT_LENGTH)
+        )
+      )
+    ) {
+      throw new Error(`Write payload must exactly match ${range} (${rows}x${cols})`);
+    }
+    return { start, rows, cols };
+  }
+
+  private snapshotRange(sheetId: string, range: string) {
+    const target = this.validateWritePayload(range, this.emptyRangeValues(range));
+    const workbook = useWorkbookStore.getState();
+    const sheet = workbook.sheets[sheetId];
+    if (!sheet) throw new Error(`Action sheet no longer exists: ${sheetId}`);
+    const values: (string | number | boolean | null)[][] = [];
+    const formulas: (string | null)[][] = [];
+    for (let rowOffset = 0; rowOffset < target.rows; rowOffset += 1) {
+      const rowValues: (string | number | boolean | null)[] = [];
+      const rowFormulas: (string | null)[] = [];
+      for (let colOffset = 0; colOffset < target.cols; colOffset += 1) {
+        const row = target.start.row + rowOffset;
+        const col = target.start.col + colOffset;
+        const cell = sheet?.cells[getCellKey(row, col)];
+        rowValues.push((cell?.value as string | number | boolean | null | undefined) ?? null);
+        rowFormulas.push(cell?.formula ?? null);
+      }
+      values.push(rowValues);
+      formulas.push(rowFormulas);
+    }
+    return { range, values, formulas };
+  }
+
+  private emptyRangeValues(range: string): null[][] {
+    const [startRef, endRef = startRef] = range.split(':');
+    const start = parseCellRef(startRef);
+    const end = parseCellRef(endRef);
+    if (!start || !end || start.row > end.row || start.col > end.col) {
+      throw new Error(`Invalid action range: ${range}`);
+    }
+    return Array.from({ length: end.row - start.row + 1 }, () =>
+      Array.from({ length: end.col - start.col + 1 }, () => null)
+    );
+  }
+
+  private applySnapshot(sheetId: string, snapshot: AIProposedAction['preview']['after']): void {
+    const target = this.validateWritePayload(snapshot.range, snapshot.values);
+    const workbook = useWorkbookStore.getState();
+    if (!workbook.sheets[sheetId]) throw new Error(`Action sheet no longer exists: ${sheetId}`);
+    snapshot.values.forEach((rowValues, rowOffset) => {
+      rowValues.forEach((value, colOffset) => {
+        const formula =
+          snapshot.formulas?.[rowOffset]?.[colOffset] ??
+          (typeof value === 'string' && value.startsWith('=') ? value : null);
+        workbook.updateCell(sheetId, target.start.row + rowOffset, target.start.col + colOffset, {
+          value,
+          formula,
+          displayValue: value == null ? '' : String(value),
+        });
+      });
+    });
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -588,16 +735,82 @@ When making claims about data, always cite your sources using these markers:
     return this.conversation?.pendingActions || [];
   }
 
+  /** Deterministic entry point for trusted callers that already have a write payload. */
+  async proposeWriteAction(
+    range: string,
+    values: (string | number | boolean | null)[][],
+    type: 'value' | 'formula' = 'value'
+  ): Promise<AIProposedAction> {
+    if (!this.conversation) this.startConversation();
+    const toolCall: AIToolCall = {
+      id: uuidv4(),
+      tool: 'write_range',
+      arguments: { range, values, type },
+      status: 'pending',
+      timestamp: new Date(),
+    };
+    const processed = await this.processToolCall(toolCall);
+    if (processed.status === 'failed') {
+      throw new Error(processed.error || 'Could not create write proposal');
+    }
+    const action = this.conversation?.pendingActions.find(
+      (candidate) => candidate.toolCall?.id === toolCall.id
+    );
+    if (!action) throw new Error('Write proposal was not retained for approval');
+    return action;
+  }
+
   async approveAction(actionId: string): Promise<boolean> {
     if (!this.conversation) return false;
 
-    const actionIndex = this.conversation.pendingActions.findIndex(
-      (a) => a.id === actionId
-    );
+    const actionIndex = this.conversation.pendingActions.findIndex((a) => a.id === actionId);
     if (actionIndex === -1) return false;
 
     const action = this.conversation.pendingActions[actionIndex];
+    if (action.status !== 'pending' || action.toolCall?.tool !== 'write_range' || !action.sheetId) {
+      return false;
+    }
     action.status = 'approved';
+    action.toolCall.status = 'approved';
+
+    const conversationId = this.conversation.id;
+    const auditContext = {
+      conversationId,
+      workbookId: action.workbookId,
+      toolName: action.toolCall.tool,
+    };
+    let applied = false;
+    try {
+      this.validateWritePayload(action.preview.after.range, action.preview.after.values);
+      await aiUsageLogger.logToolDecision({
+        ...auditContext,
+        actionId,
+        approved: true,
+      });
+      this.applySnapshot(action.sheetId, action.preview.after);
+      applied = true;
+      await aiUsageLogger.logToolExecution({
+        ...auditContext,
+        inputSummary: `actionId=${actionId}; sheetId=${action.sheetId}; range=${action.preview.after.range}`,
+        outputSummary: `applied ${action.affectedCells} cells`,
+        durationMs: 0,
+        status: 'success',
+      });
+    } catch {
+      if (applied) {
+        try {
+          this.applySnapshot(action.sheetId, action.preview.before);
+        } catch {
+          // Preserve the pending action so the failure is visible and retryable.
+        }
+      }
+      action.status = 'pending';
+      action.toolCall.status = 'pending';
+      return false;
+    }
+
+    action.status = 'executed';
+    action.toolCall.status = 'executed';
     action.executedAt = new Date();
 
     // Move to history
@@ -611,37 +824,62 @@ When making claims about data, always cite your sources using these markers:
     this.conversation.history.push(historyEntry);
     this.conversation.pendingActions.splice(actionIndex, 1);
 
-    // Log approval
-    aiUsageLogger.logToolDecision({
-      conversationId: this.conversation.id,
-      toolName: action.type,
-      actionId,
-      approved: true,
-    }).catch(() => {});
+    return true;
+  }
 
+  async rollbackAction(historyId: string): Promise<boolean> {
+    if (!this.conversation) return false;
+    const entry = this.conversation.history.find((item) => item.id === historyId);
+    if (!entry || entry.outcome !== 'success' || !entry.action.sheetId) return false;
+    entry.outcome = 'reverted';
+    try {
+      this.applySnapshot(entry.action.sheetId, entry.action.preview.before);
+      await aiUsageLogger.logToolExecution({
+        conversationId: this.conversation.id,
+        workbookId: entry.action.workbookId,
+        toolName: 'write_range.rollback',
+        inputSummary: `historyId=${historyId}; actionId=${entry.action.id}; sheetId=${entry.action.sheetId}`,
+        outputSummary: `restored ${entry.action.affectedCells} cells`,
+        durationMs: 0,
+        status: 'success',
+      });
+    } catch {
+      try {
+        this.applySnapshot(entry.action.sheetId, entry.action.preview.after);
+      } catch {
+        // The entry remains successful so the rollback can be retried visibly.
+      }
+      entry.outcome = 'success';
+      return false;
+    }
+    entry.revertedAt = new Date();
     return true;
   }
 
   async rejectAction(actionId: string): Promise<boolean> {
     if (!this.conversation) return false;
 
-    const actionIndex = this.conversation.pendingActions.findIndex(
-      (a) => a.id === actionId
-    );
+    const actionIndex = this.conversation.pendingActions.findIndex((a) => a.id === actionId);
     if (actionIndex === -1) return false;
 
     const action = this.conversation.pendingActions[actionIndex];
+    if (action.status !== 'pending') return false;
     action.status = 'rejected';
-
+    if (action.toolCall) action.toolCall.status = 'rejected';
+    try {
+      await aiUsageLogger.logToolDecision({
+        conversationId: this.conversation.id,
+        workbookId: action.workbookId,
+        toolName: action.toolCall?.tool ?? action.type,
+        actionId,
+        approved: false,
+      });
+    } catch {
+      action.status = 'pending';
+      if (action.toolCall) action.toolCall.status = 'pending';
+      return false;
+    }
     this.conversation.pendingActions.splice(actionIndex, 1);
-
-    // Log rejection
-    aiUsageLogger.logToolDecision({
-      conversationId: this.conversation.id,
-      toolName: action.type,
-      actionId,
-      approved: false,
-    }).catch(() => {});
 
     return true;
   }
@@ -659,9 +897,8 @@ When making claims about data, always cite your sources using these markers:
    * Uses smart token budgeting to prioritize relevant data
    */
   async assembleContext(userMessage: string): Promise<AssembledContext> {
-    const conversationHistory = this.conversation?.messages
-      .filter((m) => m.role === 'user')
-      .map((m) => m.content) || [];
+    const conversationHistory =
+      this.conversation?.messages.filter((m) => m.role === 'user').map((m) => m.content) || [];
 
     this.lastAssembledContext = await this.contextAssembler.assembleContext(
       userMessage,
@@ -706,12 +943,7 @@ When making claims about data, always cite your sources using these markers:
   /**
    * Create a grounded claim from direct cell read
    */
-  createDirectReadClaim(
-    statement: string,
-    cellRef: string,
-    value: unknown,
-    sheetName?: string
-  ) {
+  createDirectReadClaim(statement: string, cellRef: string, value: unknown, sheetName?: string) {
     // Also track the read
     this.sourceTracker.trackCellRead(cellRef, sheetName);
     return this.groundingManager.createDirectReadClaim(statement, cellRef, value, sheetName);
@@ -720,12 +952,7 @@ When making claims about data, always cite your sources using these markers:
   /**
    * Create a grounded claim from computation
    */
-  createComputedClaim(
-    statement: string,
-    formula: string,
-    result: unknown,
-    sourceCells: string[]
-  ) {
+  createComputedClaim(statement: string, formula: string, result: unknown, sourceCells: string[]) {
     // Track formula evaluation
     this.sourceTracker.trackFormulaEval(formula, result);
     return this.groundingManager.createComputedClaim(statement, formula, result, sourceCells);
@@ -734,11 +961,7 @@ When making claims about data, always cite your sources using these markers:
   /**
    * Create an inferred claim
    */
-  createInferredClaim(
-    statement: string,
-    reasoning: string,
-    supportingEvidence: string[]
-  ) {
+  createInferredClaim(statement: string, reasoning: string, supportingEvidence: string[]) {
     return this.groundingManager.createInferredClaim(statement, reasoning, supportingEvidence);
   }
 

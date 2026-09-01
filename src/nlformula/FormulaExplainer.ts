@@ -3,12 +3,7 @@
 // =============================================================================
 
 import { FunctionLibrary } from './FunctionLibrary';
-import type {
-  FormulaExplanation,
-  ExplanationStep,
-  FunctionInfo,
-  CellContext,
-} from './types';
+import type { FormulaExplanation, ExplanationStep, FunctionInfo, CellContext } from './types';
 
 interface Token {
   type: 'function' | 'reference' | 'operator' | 'literal' | 'separator';
@@ -119,11 +114,7 @@ export class FormulaExplainer {
   /**
    * Build one-line summary
    */
-  private buildSummary(
-    tokens: Token[],
-    context?: CellContext,
-    language: string = 'en'
-  ): string {
+  private buildSummary(tokens: Token[], context?: CellContext, language: string = 'en'): string {
     const mainFunc = tokens.find((t) => t.type === 'function');
     const args = this.extractArguments(tokens);
 
@@ -216,9 +207,7 @@ export class FormulaExplainer {
       }
 
       // Cell reference or range
-      const refMatch = formula
-        .slice(i)
-        .match(/^(\$?[A-Z]+\$?\d*(?::\$?[A-Z]+\$?\d*)?)/i);
+      const refMatch = formula.slice(i).match(/^(\$?[A-Z]+\$?\d*(?::\$?[A-Z]+\$?\d*)?)/i);
       if (refMatch) {
         tokens.push({ type: 'reference', value: refMatch[1], start: i });
         i += refMatch[1].length;
@@ -243,7 +232,7 @@ export class FormulaExplainer {
       }
 
       // Operator
-      if (/[+\-*\/^=<>]/.test(formula[i])) {
+      if (/[+*/^=<>-]/.test(formula[i])) {
         tokens.push({ type: 'operator', value: formula[i], start: i });
         i++;
         continue;
@@ -303,9 +292,7 @@ export class FormulaExplainer {
    * Extract functions from tokens
    */
   private extractFunctions(tokens: Token[]): FunctionInfo[] {
-    const funcNames = tokens
-      .filter((t) => t.type === 'function')
-      .map((t) => t.value);
+    const funcNames = tokens.filter((t) => t.type === 'function').map((t) => t.value);
 
     return funcNames
       .map((name) => this.functionLib.getFunction(name))
@@ -338,17 +325,11 @@ export class FormulaExplainer {
     const hasOperator = tokens.some((t) => t.type === 'operator');
 
     if (hasOperator) {
-      const ops = tokens
-        .filter((t) => t.type === 'operator')
-        .map((t) => t.value);
-      if (ops.includes('+'))
-        return language === 'vi' ? 'Phép cộng' : 'Addition';
-      if (ops.includes('-'))
-        return language === 'vi' ? 'Phép trừ' : 'Subtraction';
-      if (ops.includes('*'))
-        return language === 'vi' ? 'Phép nhân' : 'Multiplication';
-      if (ops.includes('/'))
-        return language === 'vi' ? 'Phép chia' : 'Division';
+      const ops = tokens.filter((t) => t.type === 'operator').map((t) => t.value);
+      if (ops.includes('+')) return language === 'vi' ? 'Phép cộng' : 'Addition';
+      if (ops.includes('-')) return language === 'vi' ? 'Phép trừ' : 'Subtraction';
+      if (ops.includes('*')) return language === 'vi' ? 'Phép nhân' : 'Multiplication';
+      if (ops.includes('/')) return language === 'vi' ? 'Phép chia' : 'Division';
     }
 
     return language === 'vi' ? 'Biểu thức đơn giản' : 'Simple expression';
@@ -357,11 +338,7 @@ export class FormulaExplainer {
   /**
    * Explain argument
    */
-  private explainArgument(
-    arg: string,
-    context?: CellContext,
-    _language: string = 'en'
-  ): string {
+  private explainArgument(arg: string, context?: CellContext, _language: string = 'en'): string {
     const described = this.describeRange(arg, context);
     return described;
   }

@@ -3,18 +3,10 @@
 // ============================================================
 
 import React, { useState, useEffect } from 'react';
-import {
-  X,
-  TrendingUp,
-  BarChart3,
-  Activity,
-} from 'lucide-react';
+import { X, TrendingUp, BarChart3, Activity } from 'lucide-react';
 import { useSparklineStore } from '../../stores/sparklineStore';
 import { useSelectionStore } from '../../stores/selectionStore';
-import {
-  SparklineType,
-  SPARKLINE_PRESETS,
-} from '../../types/sparkline';
+import { SparklineType, SPARKLINE_PRESETS } from '../../types/sparkline';
 import './Sparklines.css';
 
 interface SparklineDialogProps {
@@ -132,7 +124,7 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog sparkline-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog sparkline-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Insert Sparklines</h3>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -143,21 +135,24 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
         <div className="dialog-content">
           {/* Type Selection */}
           <div className="sparkline-types">
-            <button type="button"
+            <button
+              type="button"
               className={`type-btn ${type === 'line' ? 'active' : ''}`}
               onClick={() => setType('line')}
             >
               <TrendingUp size={24} />
               <span>Line</span>
             </button>
-            <button type="button"
+            <button
+              type="button"
               className={`type-btn ${type === 'column' ? 'active' : ''}`}
               onClick={() => setType('column')}
             >
               <BarChart3 size={24} />
               <span>Column</span>
             </button>
-            <button type="button"
+            <button
+              type="button"
               className={`type-btn ${type === 'winloss' ? 'active' : ''}`}
               onClick={() => setType('winloss')}
             >
@@ -197,11 +192,12 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
             <label>Color:</label>
             <div className="color-options">
               {Object.keys(SPARKLINE_PRESETS).map((color) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={color}
                   className={`color-btn ${selectedColor === color ? 'active' : ''}`}
                   style={{
-                    backgroundColor: SPARKLINE_PRESETS[color]?.lineColor || '#2563eb'
+                    backgroundColor: SPARKLINE_PRESETS[color]?.lineColor || '#2563eb',
                   }}
                   onClick={() => setSelectedColor(color)}
                 />
@@ -243,9 +239,7 @@ export const SparklineDialog: React.FC<SparklineDialogProps> = ({
           </div>
 
           {/* Error */}
-          {error && (
-            <div className="error-message">{error}</div>
-          )}
+          {error && <div className="error-message">{error}</div>}
         </div>
 
         <div className="dialog-footer">
@@ -287,11 +281,13 @@ const SparklinePreview: React.FC<{
   const normalize = (v: number) => (v - min) / range;
 
   if (type === 'line') {
-    const points = mockData.map((v, i) => {
-      const x = padding + (i / (mockData.length - 1)) * chartWidth;
-      const y = padding + (1 - normalize(v)) * chartHeight;
-      return `${x},${y}`;
-    }).join(' ');
+    const points = mockData
+      .map((v, i) => {
+        const x = padding + (i / (mockData.length - 1)) * chartWidth;
+        const y = padding + (1 - normalize(v)) * chartHeight;
+        return `${x},${y}`;
+      })
+      .join(' ');
 
     return (
       <svg width={width} height={height}>
@@ -302,17 +298,18 @@ const SparklinePreview: React.FC<{
           strokeWidth="2"
           strokeLinecap="round"
         />
-        {showMarkers && mockData.map((v, i) => {
-          const x = padding + (i / (mockData.length - 1)) * chartWidth;
-          const y = padding + (1 - normalize(v)) * chartHeight;
-          return <circle key={i} cx={x} cy={y} r={3} fill={markerColor} />;
-        })}
+        {showMarkers &&
+          mockData.map((v, i) => {
+            const x = padding + (i / (mockData.length - 1)) * chartWidth;
+            const y = padding + (1 - normalize(v)) * chartHeight;
+            return <circle key={i} cx={x} cy={y} r={3} fill={markerColor} />;
+          })}
       </svg>
     );
   }
 
   if (type === 'column') {
-    const barWidth = (chartWidth / mockData.length) - 2;
+    const barWidth = chartWidth / mockData.length - 2;
     return (
       <svg width={width} height={height}>
         {mockData.map((v, i) => {
@@ -336,7 +333,7 @@ const SparklinePreview: React.FC<{
 
   if (type === 'winloss') {
     const winLossData = [1, 1, -1, 1, -1, -1, 1, 1];
-    const barWidth = (chartWidth / winLossData.length) - 2;
+    const barWidth = chartWidth / winLossData.length - 2;
     const halfHeight = chartHeight / 2;
 
     return (

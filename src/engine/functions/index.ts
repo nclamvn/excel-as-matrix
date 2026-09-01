@@ -57,7 +57,23 @@ export function getAllFunctionNames(): string[] {
 }
 
 // Export individual function groups
-export { mathFunctions, textFunctions, logicalFunctions, dateFunctions, statisticalFunctions, lookupFunctions, financialFunctions, arrayFunctions, lambdaFunctions, engineeringFunctions, databaseFunctions, infoFunctions, webFunctions, mathExtraFunctions, compatibilityFunctions };
+export {
+  mathFunctions,
+  textFunctions,
+  logicalFunctions,
+  dateFunctions,
+  statisticalFunctions,
+  lookupFunctions,
+  financialFunctions,
+  arrayFunctions,
+  lambdaFunctions,
+  engineeringFunctions,
+  databaseFunctions,
+  infoFunctions,
+  webFunctions,
+  mathExtraFunctions,
+  compatibilityFunctions,
+};
 
 // Export utils
 export * from './utils';

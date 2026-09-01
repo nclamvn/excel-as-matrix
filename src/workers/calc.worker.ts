@@ -310,7 +310,12 @@ function evaluateFormula(formula: string, context: FormulaContext): CalculationR
           return { cellKey, value: today.getTime(), displayValue: today.toLocaleDateString() };
         }
         default:
-          return { cellKey, value: null, displayValue: '#NAME?', error: `Unknown function: ${funcName}` };
+          return {
+            cellKey,
+            value: null,
+            displayValue: '#NAME?',
+            error: `Unknown function: ${funcName}`,
+          };
       }
     }
 
@@ -341,7 +346,10 @@ function resolveValue(expr: string, context: FormulaContext): CellValue {
   if (!isNaN(num)) return num;
 
   // Check if it's a quoted string
-  if ((expr.startsWith('"') && expr.endsWith('"')) || (expr.startsWith("'") && expr.endsWith("'"))) {
+  if (
+    (expr.startsWith('"') && expr.endsWith('"')) ||
+    (expr.startsWith("'") && expr.endsWith("'"))
+  ) {
     return expr.slice(1, -1);
   }
 
@@ -370,7 +378,11 @@ function parseIfArgs(args: string): [string, CellValue, CellValue] {
   }
   parts.push(current.trim());
 
-  return [parts[0] || 'FALSE', resolveValue(parts[1] || '', { cells: {} }), resolveValue(parts[2] || '', { cells: {} })];
+  return [
+    parts[0] || 'FALSE',
+    resolveValue(parts[1] || '', { cells: {} }),
+    resolveValue(parts[2] || '', { cells: {} }),
+  ];
 }
 
 // Evaluate a condition

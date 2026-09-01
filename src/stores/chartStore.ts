@@ -200,9 +200,7 @@ export const useChartStore = create<ChartState & ChartActions>()(
           if (chart) {
             charts.set(chartId, {
               ...chart,
-              series: chart.series.map((s) =>
-                s.id === seriesId ? { ...s, ...updates } : s
-              ),
+              series: chart.series.map((s) => (s.id === seriesId ? { ...s, ...updates } : s)),
               updatedAt: new Date().toISOString(),
             });
           }

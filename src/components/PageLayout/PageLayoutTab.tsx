@@ -119,7 +119,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
     <div className="page-layout-tab">
       {/* Margins Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('margins')}
         >
@@ -135,7 +136,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
             <div className="panel-header">Margin Presets</div>
             <div className="preset-list">
               {MARGIN_PRESETS.map((preset) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={preset.name}
                   className="preset-item"
                   onClick={() => handleMarginPreset(preset.name)}
@@ -250,7 +252,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
       {/* Orientation Section */}
       <div className="layout-section">
         <div className="orientation-group">
-          <button type="button"
+          <button
+            type="button"
             className={`orientation-button ${settings.orientation === 'portrait' ? 'active' : ''}`}
             onClick={() => handleOrientationChange('portrait')}
             title="Portrait"
@@ -258,7 +261,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
             <RotateCcw size={18} />
             <span>Portrait</span>
           </button>
-          <button type="button"
+          <button
+            type="button"
             className={`orientation-button ${settings.orientation === 'landscape' ? 'active' : ''}`}
             onClick={() => handleOrientationChange('landscape')}
             title="Landscape"
@@ -271,7 +275,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
 
       {/* Page Size Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('size')}
         >
@@ -288,7 +293,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
             <div className="panel-header">Paper Size</div>
             <div className="size-list">
               {PAGE_SIZES.map((size) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={size.name}
                   className={`size-item ${settings.size.name === size.name ? 'active' : ''}`}
                   onClick={() => handlePageSize(size)}
@@ -334,7 +340,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
 
       {/* Print Area Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('printArea')}
         >
@@ -354,7 +361,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
             {settings.printArea ? (
               <div className="current-print-area">
                 <span>Current: {settings.printArea.range}</span>
-                <button type="button"
+                <button
+                  type="button"
                   className="clear-button"
                   onClick={() => clearPrintArea(sheetId)}
                 >
@@ -382,7 +390,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
 
       {/* Print Titles Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('printTitles')}
         >
@@ -404,7 +413,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
                 {settings.printTitles.repeatCols && (
                   <span>Cols: {settings.printTitles.repeatCols}</span>
                 )}
-                <button type="button"
+                <button
+                  type="button"
                   className="clear-button"
                   onClick={() => clearPrintTitles(sheetId)}
                 >
@@ -442,7 +452,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
 
       {/* Page Breaks Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('breaks')}
         >
@@ -460,19 +471,22 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
           <div className="dropdown-panel breaks-panel">
             <div className="panel-header">Page Breaks</div>
             <div className="break-buttons">
-              <button type="button"
+              <button
+                type="button"
                 className="break-action"
                 onClick={() => insertPageBreak('row', 10, sheetId)}
               >
                 Insert Row Break
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className="break-action"
                 onClick={() => insertPageBreak('column', 5, sheetId)}
               >
                 Insert Column Break
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className="break-action danger"
                 onClick={() => removeAllPageBreaks(sheetId)}
                 disabled={settings.pageBreaks.length === 0}
@@ -495,7 +509,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
 
       {/* Background Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('background')}
         >
@@ -510,17 +525,17 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
           <div className="dropdown-panel background-panel">
             <div className="panel-header">Sheet Background</div>
             <div className="background-options">
-              <button type="button"
+              <button
+                type="button"
                 className={`bg-option ${settings.background.type === 'none' ? 'active' : ''}`}
                 onClick={() => clearBackground(sheetId)}
               >
                 None
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className={`bg-option ${settings.background.type === 'color' ? 'active' : ''}`}
-                onClick={() =>
-                  setBackground({ type: 'color', color: '#f0f0f0' }, sheetId)
-                }
+                onClick={() => setBackground({ type: 'color', color: '#f0f0f0' }, sheetId)}
               >
                 Color
               </button>
@@ -530,9 +545,7 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
                 <input
                   type="color"
                   value={settings.background.color || '#f0f0f0'}
-                  onChange={(e) =>
-                    setBackground({ type: 'color', color: e.target.value }, sheetId)
-                  }
+                  onChange={(e) => setBackground({ type: 'color', color: e.target.value }, sheetId)}
                 />
                 <span>Background Color</span>
               </div>
@@ -543,7 +556,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
 
       {/* Scaling Section */}
       <div className="layout-section">
-        <button type="button"
+        <button
+          type="button"
           className="layout-button with-dropdown"
           onClick={() => togglePanel('scaling')}
         >
@@ -554,8 +568,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
               {settings.scaling.type === 'percentage'
                 ? `${settings.scaling.value}%`
                 : settings.scaling.type === 'fitToPage'
-                ? 'Fit'
-                : '100%'}
+                  ? 'Fit'
+                  : '100%'}
             </span>
           </div>
           <ChevronDown size={14} className="dropdown-arrow" />
@@ -565,13 +579,15 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
           <div className="dropdown-panel scaling-panel">
             <div className="panel-header">Print Scaling</div>
             <div className="scaling-options">
-              <button type="button"
+              <button
+                type="button"
                 className={`scale-option ${settings.scaling.type === 'none' ? 'active' : ''}`}
                 onClick={() => handleScaling('none', 100)}
               >
                 No Scaling (100%)
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className={`scale-option ${settings.scaling.type === 'fitToPage' ? 'active' : ''}`}
                 onClick={() => handleScaling('fitToPage', 1)}
               >
@@ -597,7 +613,8 @@ export const PageLayoutTab: React.FC<PageLayoutTabProps> = ({ sheetId }) => {
                 />
                 <span>%</span>
               </div>
-              <button type="button"
+              <button
+                type="button"
                 className="apply-button"
                 onClick={() => handleScaling('percentage', scalingPercent)}
               >

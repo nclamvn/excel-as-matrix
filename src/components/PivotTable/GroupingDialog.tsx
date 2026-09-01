@@ -25,7 +25,11 @@ interface NumberGroupingConfig {
   interval: number;
 }
 
-const DATE_GROUPING_OPTIONS: { value: DateGrouping | undefined; label: string; description: string }[] = [
+const DATE_GROUPING_OPTIONS: {
+  value: DateGrouping | undefined;
+  label: string;
+  description: string;
+}[] = [
   { value: undefined, label: 'None', description: 'Show individual dates' },
   { value: 'years', label: 'Years', description: 'Group by year (2023, 2024...)' },
   { value: 'quarters', label: 'Quarters', description: 'Group by quarter (Q1 2024, Q2 2024...)' },
@@ -55,7 +59,7 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
   // Get field info
   const fieldInfo = useMemo(() => {
     if (!field) return null;
-    return pivot.fields.find(f => f.id === field.fieldId);
+    return pivot.fields.find((f) => f.id === field.fieldId);
   }, [field, pivot.fields]);
 
   const isDateField = fieldInfo?.dataType === 'date';
@@ -107,7 +111,7 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
 
   return (
     <div className="pivot-dialog-overlay" onClick={onClose}>
-      <div className="pivot-dialog grouping-dialog" onClick={e => e.stopPropagation()}>
+      <div className="pivot-dialog grouping-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="pivot-dialog-header">
           <div className="pivot-dialog-title">
             {isDateField ? <Calendar size={20} /> : <Hash size={20} />}
@@ -129,11 +133,9 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
           {isDateField && (
             <div className="pivot-dialog-section">
               <h3>Date Grouping</h3>
-              <p className="section-hint">
-                Choose how to group dates in the pivot table
-              </p>
+              <p className="section-hint">Choose how to group dates in the pivot table</p>
               <div className="grouping-options">
-                {DATE_GROUPING_OPTIONS.map(option => (
+                {DATE_GROUPING_OPTIONS.map((option) => (
                   <label key={option.label} className="grouping-option">
                     <input
                       type="radio"
@@ -154,9 +156,7 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
           {isNumberField && (
             <div className="pivot-dialog-section">
               <h3>Number Grouping</h3>
-              <p className="section-hint">
-                Create ranges to group numeric values
-              </p>
+              <p className="section-hint">Create ranges to group numeric values</p>
 
               <div className="grouping-options">
                 <label className="grouping-option">
@@ -164,7 +164,7 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
                     type="radio"
                     name="numberGrouping"
                     checked={numberGrouping.type === 'none'}
-                    onChange={() => setNumberGrouping(prev => ({ ...prev, type: 'none' }))}
+                    onChange={() => setNumberGrouping((prev) => ({ ...prev, type: 'none' }))}
                   />
                   <div className="option-content">
                     <span className="option-label">None</span>
@@ -176,7 +176,7 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
                     type="radio"
                     name="numberGrouping"
                     checked={numberGrouping.type === 'custom'}
-                    onChange={() => setNumberGrouping(prev => ({ ...prev, type: 'custom' }))}
+                    onChange={() => setNumberGrouping((prev) => ({ ...prev, type: 'custom' }))}
                   />
                   <div className="option-content">
                     <span className="option-label">Custom Ranges</span>
@@ -193,10 +193,12 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
                       <input
                         type="number"
                         value={numberGrouping.startValue}
-                        onChange={e => setNumberGrouping(prev => ({
-                          ...prev,
-                          startValue: parseFloat(e.target.value) || 0,
-                        }))}
+                        onChange={(e) =>
+                          setNumberGrouping((prev) => ({
+                            ...prev,
+                            startValue: parseFloat(e.target.value) || 0,
+                          }))
+                        }
                         className="pivot-dialog-input"
                       />
                     </div>
@@ -205,10 +207,12 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
                       <input
                         type="number"
                         value={numberGrouping.endValue}
-                        onChange={e => setNumberGrouping(prev => ({
-                          ...prev,
-                          endValue: parseFloat(e.target.value) || 0,
-                        }))}
+                        onChange={(e) =>
+                          setNumberGrouping((prev) => ({
+                            ...prev,
+                            endValue: parseFloat(e.target.value) || 0,
+                          }))
+                        }
                         className="pivot-dialog-input"
                       />
                     </div>
@@ -219,10 +223,12 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
                       <input
                         type="number"
                         value={numberGrouping.interval}
-                        onChange={e => setNumberGrouping(prev => ({
-                          ...prev,
-                          interval: parseFloat(e.target.value) || 1,
-                        }))}
+                        onChange={(e) =>
+                          setNumberGrouping((prev) => ({
+                            ...prev,
+                            interval: parseFloat(e.target.value) || 1,
+                          }))
+                        }
                         className="pivot-dialog-input"
                         min="1"
                       />
@@ -232,18 +238,30 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
                   <div className="grouping-preview">
                     <h4>Preview:</h4>
                     <div className="preview-ranges">
-                      {Array.from({ length: Math.min(5, Math.ceil((numberGrouping.endValue - numberGrouping.startValue) / numberGrouping.interval)) }, (_, i) => {
-                        const start = numberGrouping.startValue + (i * numberGrouping.interval);
-                        const end = start + numberGrouping.interval;
-                        return (
-                          <span key={i} className="preview-range">
-                            {start} - {Math.min(end, numberGrouping.endValue)}
-                          </span>
-                        );
-                      })}
-                      {Math.ceil((numberGrouping.endValue - numberGrouping.startValue) / numberGrouping.interval) > 5 && (
-                        <span className="preview-more">...</span>
+                      {Array.from(
+                        {
+                          length: Math.min(
+                            5,
+                            Math.ceil(
+                              (numberGrouping.endValue - numberGrouping.startValue) /
+                                numberGrouping.interval
+                            )
+                          ),
+                        },
+                        (_, i) => {
+                          const start = numberGrouping.startValue + i * numberGrouping.interval;
+                          const end = start + numberGrouping.interval;
+                          return (
+                            <span key={i} className="preview-range">
+                              {start} - {Math.min(end, numberGrouping.endValue)}
+                            </span>
+                          );
+                        }
                       )}
+                      {Math.ceil(
+                        (numberGrouping.endValue - numberGrouping.startValue) /
+                          numberGrouping.interval
+                      ) > 5 && <span className="preview-more">...</span>}
                     </div>
                   </div>
                 </div>
@@ -269,7 +287,8 @@ export const GroupingDialog: React.FC<GroupingDialogProps> = ({
           <button type="button" className="pivot-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="pivot-btn-primary"
             onClick={handleApply}
             disabled={!isDateField && !isNumberField}

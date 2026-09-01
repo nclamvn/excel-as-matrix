@@ -13,8 +13,14 @@ const createMockAIStore = (overrides = {}) => ({
     mockMode: false,
     model: 'claude-3-sonnet',
   },
+  availability: {
+    mode: 'configured',
+    transport: 'server-proxy',
+    reason: 'Server AI proxy configured',
+  },
   closePanel: vi.fn(),
   setActiveTab: vi.fn(),
+  refreshAvailability: vi.fn().mockResolvedValue(undefined),
   ...overrides,
 });
 
@@ -74,20 +80,35 @@ describe('AICopilotDock', () => {
       expect(screen.getByTitle('Close')).toBeInTheDocument();
     });
 
-    it('should show Demo badge when in mock mode', () => {
+    it('should show Demo badge when runtime is explicitly in mock mode', () => {
       mockStore = createMockAIStore({
-        config: { mockMode: true, model: 'claude-3-sonnet' },
+        availability: {
+          mode: 'mock',
+          transport: null,
+          reason: 'Demo mode was explicitly enabled',
+        },
       });
       render(<AICopilotDock />);
       expect(screen.getByText('Demo')).toBeInTheDocument();
     });
 
-    it('should not show Demo badge when not in mock mode', () => {
-      mockStore = createMockAIStore({
-        config: { mockMode: false, model: 'claude-3-sonnet' },
-      });
+    it('should identify a live server transport', () => {
+      mockStore = createMockAIStore();
       render(<AICopilotDock />);
       expect(screen.queryByText('Demo')).not.toBeInTheDocument();
+      expect(screen.getByTestId('ai-runtime-status')).toHaveTextContent('Live · Server');
+    });
+
+    it('should make offline state visible', () => {
+      mockStore = createMockAIStore({
+        availability: {
+          mode: 'offline',
+          transport: null,
+          reason: 'AI server is unavailable or not configured',
+        },
+      });
+      render(<AICopilotDock />);
+      expect(screen.getByTestId('ai-runtime-status')).toHaveTextContent('Offline');
     });
   });
 

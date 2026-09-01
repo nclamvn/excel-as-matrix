@@ -4,7 +4,12 @@ import { useWorkbookStore } from '../../stores/workbookStore';
 import { useUIStore } from '../../stores/uiStore';
 import { useChartStore } from '../../stores/chartStore';
 import { useChartTemplateStore } from '../../stores/chartTemplateStore';
-import { ChartType, ChartTemplate, ColorScheme, DEFAULT_CHART_COLORS } from '../../types/visualization';
+import {
+  ChartType,
+  ChartTemplate,
+  ColorScheme,
+  DEFAULT_CHART_COLORS,
+} from '../../types/visualization';
 import { ChartTemplatesDialog } from '../Charts/ChartTemplatesDialog';
 
 interface InsertChartDialogProps {
@@ -15,16 +20,20 @@ interface InsertChartDialogProps {
 // Map simple type to visualization ChartType
 const mapToChartType = (type: 'bar' | 'line' | 'pie'): ChartType => {
   switch (type) {
-    case 'bar': return 'Bar';
-    case 'line': return 'Line';
-    case 'pie': return 'Pie';
-    default: return 'Bar';
+    case 'bar':
+      return 'Bar';
+    case 'line':
+      return 'Line';
+    case 'pie':
+      return 'Pie';
+    default:
+      return 'Bar';
   }
 };
 
 export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
   type: initialType,
-  onClose
+  onClose,
 }) => {
   const [chartType, setChartType] = useState(initialType);
   const [title, setTitle] = useState('Chart Title');
@@ -106,9 +115,14 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
     setShowTemplatesDialog(false);
 
     // Update chart type based on template
-    const simpleType = template.chartType === 'Bar' ? 'bar' :
-                       template.chartType === 'Line' ? 'line' :
-                       template.chartType === 'Pie' || template.chartType === 'Doughnut' ? 'pie' : 'bar';
+    const simpleType =
+      template.chartType === 'Bar'
+        ? 'bar'
+        : template.chartType === 'Line'
+          ? 'line'
+          : template.chartType === 'Pie' || template.chartType === 'Doughnut'
+            ? 'pie'
+            : 'bar';
     setChartType(simpleType);
   };
 
@@ -119,7 +133,9 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
     }
 
     // Determine chart type from template or selection
-    const finalChartType = selectedTemplate ? selectedTemplate.chartType : mapToChartType(chartType);
+    const finalChartType = selectedTemplate
+      ? selectedTemplate.chartType
+      : mapToChartType(chartType);
 
     // Create the chart
     const chart = createChart(workbookId, activeSheetId, title, finalChartType);
@@ -138,24 +154,27 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
 
     // Set chart data
     if (extractedData.categories.length > 0) {
-      const colors = selectedColorScheme?.colors || selectedTemplate?.colorScheme || DEFAULT_CHART_COLORS;
+      const colors =
+        selectedColorScheme?.colors || selectedTemplate?.colorScheme || DEFAULT_CHART_COLORS;
       setChartData(chart.id, {
         chartId: chart.id,
         chartType: finalChartType,
         categories: extractedData.categories,
-        series: [{
-          id: 'series-1',
-          name: 'Values',
-          values: extractedData.values,
-          color: colors[0],
-          statistics: {
-            min: Math.min(...extractedData.values),
-            max: Math.max(...extractedData.values),
-            sum: extractedData.values.reduce((a, b) => a + b, 0),
-            avg: extractedData.values.reduce((a, b) => a + b, 0) / extractedData.values.length,
-            count: extractedData.values.length,
+        series: [
+          {
+            id: 'series-1',
+            name: 'Values',
+            values: extractedData.values,
+            color: colors[0],
+            statistics: {
+              min: Math.min(...extractedData.values),
+              max: Math.max(...extractedData.values),
+              sum: extractedData.values.reduce((a, b) => a + b, 0),
+              avg: extractedData.values.reduce((a, b) => a + b, 0) / extractedData.values.length,
+              count: extractedData.values.length,
+            },
           },
-        }],
+        ],
         bounds: {
           minValue: Math.min(...extractedData.values, 0),
           maxValue: Math.max(...extractedData.values),
@@ -165,7 +184,8 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
       });
     }
 
-    const chartTypeName = selectedTemplate?.name || (chartType.charAt(0).toUpperCase() + chartType.slice(1));
+    const chartTypeName =
+      selectedTemplate?.name || chartType.charAt(0).toUpperCase() + chartType.slice(1);
     showToast(`${chartTypeName} chart created!`, 'success');
     onClose();
   };
@@ -173,7 +193,7 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
   return (
     <>
       <div className="dialog-overlay" onClick={onClose}>
-        <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 480 }}>
+        <div className="dialog" onClick={(e) => e.stopPropagation()} style={{ width: 480 }}>
           <div className="dialog-header">
             <h2>Insert Chart</h2>
             <button type="button" className="dialog-close" onClick={onClose}>
@@ -190,7 +210,8 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
                   <div className="template-badge">
                     <Layers size={14} />
                     <span>{selectedTemplate.name}</span>
-                    <button type="button"
+                    <button
+                      type="button"
                       className="clear-template-btn"
                       onClick={() => {
                         setSelectedTemplate(null);
@@ -213,7 +234,8 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
                   )}
                 </div>
               ) : (
-                <button type="button"
+                <button
+                  type="button"
                   className="browse-templates-btn"
                   onClick={() => setShowTemplatesDialog(true)}
                 >
@@ -227,28 +249,41 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
             <div className="dialog-field">
               <label>Chart Type</label>
               <div className="chart-type-selector">
-                <button type="button"
+                <button
+                  type="button"
                   className={`chart-type-btn ${chartType === 'bar' ? 'active' : ''}`}
-                  onClick={() => { setChartType('bar'); setSelectedTemplate(null); }}
+                  onClick={() => {
+                    setChartType('bar');
+                    setSelectedTemplate(null);
+                  }}
                 >
                   <BarChart3 size={24} />
                   <span>Bar</span>
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className={`chart-type-btn ${chartType === 'line' ? 'active' : ''}`}
-                  onClick={() => { setChartType('line'); setSelectedTemplate(null); }}
+                  onClick={() => {
+                    setChartType('line');
+                    setSelectedTemplate(null);
+                  }}
                 >
                   <LineChart size={24} />
                   <span>Line</span>
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className={`chart-type-btn ${chartType === 'pie' ? 'active' : ''}`}
-                  onClick={() => { setChartType('pie'); setSelectedTemplate(null); }}
+                  onClick={() => {
+                    setChartType('pie');
+                    setSelectedTemplate(null);
+                  }}
                 >
                   <PieChart size={24} />
                   <span>Pie</span>
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className={`chart-type-btn ${selectedTemplate && !['bar', 'line', 'pie'].includes(chartType) ? 'active' : ''}`}
                   onClick={() => setShowTemplatesDialog(true)}
                   title="More chart types"
@@ -262,12 +297,7 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
             {/* Data Range */}
             <div className="dialog-field">
               <label>Data Range</label>
-              <input
-                type="text"
-                value={getRangeString()}
-                readOnly
-                className="dialog-input"
-              />
+              <input type="text" value={getRangeString()} readOnly className="dialog-input" />
               <small>Select data in the grid before opening this dialog</small>
             </div>
 
@@ -277,7 +307,7 @@ export const InsertChartDialog: React.FC<InsertChartDialogProps> = ({
               <input
                 type="text"
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter chart title"
                 className="dialog-input"
               />

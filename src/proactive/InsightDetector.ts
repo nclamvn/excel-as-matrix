@@ -134,7 +134,7 @@ export class InsightDetector {
    */
   private detectCorrelations(data: SheetData): DataInsight[] {
     const insights: DataInsight[] = [];
-    const numericHeaders = data.headers.filter(h => h.type === 'number');
+    const numericHeaders = data.headers.filter((h) => h.type === 'number');
 
     for (let i = 0; i < numericHeaders.length; i++) {
       for (let j = i + 1; j < numericHeaders.length; j++) {
@@ -148,8 +148,12 @@ export class InsightDetector {
           const cell1 = data.cells[row]?.[header1.index];
           const cell2 = data.cells[row]?.[header2.index];
 
-          if (cell1?.type === 'number' && cell2?.type === 'number' &&
-              typeof cell1.value === 'number' && typeof cell2.value === 'number') {
+          if (
+            cell1?.type === 'number' &&
+            cell2?.type === 'number' &&
+            typeof cell1.value === 'number' &&
+            typeof cell2.value === 'number'
+          ) {
             values1.push(cell1.value);
             values2.push(cell2.value);
           }
@@ -164,8 +168,12 @@ export class InsightDetector {
           column1: header1.name,
           column2: header2.name,
           coefficient: correlation.coefficient,
-          strength: Math.abs(correlation.coefficient) > 0.9 ? 'strong' :
-                    Math.abs(correlation.coefficient) > 0.7 ? 'moderate' : 'weak',
+          strength:
+            Math.abs(correlation.coefficient) > 0.9
+              ? 'strong'
+              : Math.abs(correlation.coefficient) > 0.7
+                ? 'moderate'
+                : 'weak',
           type: correlation.coefficient > 0 ? 'positive' : 'negative',
         };
 
@@ -500,9 +508,9 @@ export class InsightDetector {
     const insights: DataInsight[] = [];
 
     // Overall data summary
-    const numericColumns = data.headers.filter(h => h.type === 'number');
+    const numericColumns = data.headers.filter((h) => h.type === 'number');
     if (numericColumns.length > 0) {
-      const summaryMetrics: InsightMetric[] = numericColumns.slice(0, 3).map(h => {
+      const summaryMetrics: InsightMetric[] = numericColumns.slice(0, 3).map((h) => {
         const values: number[] = [];
         for (let row = 1; row < data.rowCount; row++) {
           const cell = data.cells[row]?.[h.index];
@@ -631,8 +639,8 @@ export class InsightDetector {
     const stdDev = Math.sqrt(variance);
 
     // Skewness
-    const skewness = stdDev === 0 ? 0 :
-      values.reduce((acc, v) => acc + Math.pow((v - mean) / stdDev, 3), 0) / n;
+    const skewness =
+      stdDev === 0 ? 0 : values.reduce((acc, v) => acc + Math.pow((v - mean) / stdDev, 3), 0) / n;
 
     return { mean, stdDev, skewness };
   }

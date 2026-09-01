@@ -77,7 +77,9 @@ export function VersionHistoryPanel({
       </div>
 
       <div className="vh-footer">
-        <span>{snapshots.length} version{snapshots.length !== 1 ? 's' : ''}</span>
+        <span>
+          {snapshots.length} version{snapshots.length !== 1 ? 's' : ''}
+        </span>
         <span className="vh-hint">Auto-saved every 5 min</span>
       </div>
     </div>
@@ -93,12 +95,16 @@ interface VersionItemProps {
   onRestore: () => void;
 }
 
-function VersionItem({ snapshot, isCurrent, isSelected, onSelect, onPreview, onRestore }: VersionItemProps) {
+function VersionItem({
+  snapshot,
+  isCurrent,
+  isSelected,
+  onSelect,
+  onPreview,
+  onRestore,
+}: VersionItemProps) {
   return (
-    <div
-      className={`vh-item ${isSelected ? 'vh-item--selected' : ''}`}
-      onClick={onSelect}
-    >
+    <div className={`vh-item ${isSelected ? 'vh-item--selected' : ''}`} onClick={onSelect}>
       <div className="vh-item-header">
         <span className="vh-time">{timeAgo(snapshot.timestamp)}</span>
         {isCurrent && <span className="vh-badge">Current</span>}
@@ -116,11 +122,25 @@ function VersionItem({ snapshot, isCurrent, isSelected, onSelect, onPreview, onR
 
       {isSelected && (
         <div className="vh-item-actions">
-          <button type="button" className="vh-btn vh-btn--secondary" onClick={(e) => { e.stopPropagation(); onPreview(); }}>
+          <button
+            type="button"
+            className="vh-btn vh-btn--secondary"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPreview();
+            }}
+          >
             Preview
           </button>
           {!isCurrent && (
-            <button type="button" className="vh-btn vh-btn--primary" onClick={(e) => { e.stopPropagation(); onRestore(); }}>
+            <button
+              type="button"
+              className="vh-btn vh-btn--primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRestore();
+              }}
+            >
               Restore
             </button>
           )}

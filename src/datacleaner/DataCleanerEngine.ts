@@ -100,17 +100,14 @@ export class DataCleanerEngine {
   /**
    * Remove duplicates
    */
-  removeDuplicates(
-    data: CleanerSheetData,
-    groups: DuplicateGroup[]
-  ): CellChange[] {
+  removeDuplicates(data: CleanerSheetData, groups: DuplicateGroup[]): CellChange[] {
     const rowsToDelete = this.duplicateDetector.removeDuplicates(groups);
 
-    return rowsToDelete.map(row => ({
+    return rowsToDelete.map((row) => ({
       row,
       col: 0,
       ref: `Row ${row + 1}`,
-      before: data.cells[row]?.map(c => c.value).join(', '),
+      before: data.cells[row]?.map((c) => c.value).join(', '),
       after: null,
       changeType: 'deleted' as const,
     }));
@@ -130,10 +127,7 @@ export class DataCleanerEngine {
   /**
    * Standardize formats
    */
-  standardizeFormats(
-    data: CleanerSheetData,
-    issues: FormatIssue[]
-  ): CellChange[] {
+  standardizeFormats(data: CleanerSheetData, issues: FormatIssue[]): CellChange[] {
     return this.formatStandardizer.standardize(data, issues);
   }
 
@@ -151,10 +145,7 @@ export class DataCleanerEngine {
   /**
    * Fill missing values
    */
-  fillMissingValues(
-    data: CleanerSheetData,
-    info: MissingValueInfo[]
-  ): CellChange[] {
+  fillMissingValues(data: CleanerSheetData, info: MissingValueInfo[]): CellChange[] {
     return this.missingValueHandler.fill(data, info);
   }
 
@@ -172,10 +163,7 @@ export class DataCleanerEngine {
   /**
    * Fix inconsistencies
    */
-  fixInconsistencies(
-    data: CleanerSheetData,
-    groups: InconsistencyGroup[]
-  ): CellChange[] {
+  fixInconsistencies(data: CleanerSheetData, groups: InconsistencyGroup[]): CellChange[] {
     return this.inconsistencyFixer.fix(data, groups);
   }
 
@@ -243,7 +231,7 @@ export class DataCleanerEngine {
         sheetName: data.sheetName,
         qualityBefore: this.currentScore?.overall || 0,
         qualityAfter: 0, // Will be updated after re-analysis
-        changes: result.stepResults.flatMap(r => r.changes),
+        changes: result.stepResults.flatMap((r) => r.changes),
         canUndo: true,
       };
 
@@ -262,10 +250,7 @@ export class DataCleanerEngine {
   /**
    * Preview cleaning changes
    */
-  previewCleaning(
-    data: CleanerSheetData,
-    changes: CellChange[]
-  ) {
+  previewCleaning(data: CleanerSheetData, changes: CellChange[]) {
     return this.cleaningPreview.generatePreview(data, changes);
   }
 
@@ -335,7 +320,7 @@ export class DataCleanerEngine {
    * Undo last session
    */
   undoSession(sessionId: string): boolean {
-    const sessionIndex = this.sessions.findIndex(s => s.id === sessionId);
+    const sessionIndex = this.sessions.findIndex((s) => s.id === sessionId);
     if (sessionIndex === -1) return false;
 
     const session = this.sessions[sessionIndex];

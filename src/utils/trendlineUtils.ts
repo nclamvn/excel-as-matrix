@@ -2,16 +2,22 @@
 // TRENDLINE UTILITIES — Calculate and Generate Trendlines
 // ============================================================
 
-export type TrendlineType = 'linear' | 'exponential' | 'logarithmic' | 'polynomial' | 'moving-average' | 'power';
+export type TrendlineType =
+  | 'linear'
+  | 'exponential'
+  | 'logarithmic'
+  | 'polynomial'
+  | 'moving-average'
+  | 'power';
 
 export interface TrendlineConfig {
   type: TrendlineType;
-  degree?: number;         // For polynomial
-  period?: number;         // For moving average
+  degree?: number; // For polynomial
+  period?: number; // For moving average
   displayEquation?: boolean;
   displayRSquared?: boolean;
-  forward?: number;        // Forecast forward periods
-  backward?: number;       // Forecast backward periods
+  forward?: number; // Forecast forward periods
+  backward?: number; // Forecast backward periods
   color?: string;
   strokeWidth?: number;
   dashArray?: string;
@@ -93,8 +99,8 @@ export function calculateExponentialTrendline(
     return { points: [], equation: 'N/A', rSquared: 0, coefficients: [] };
   }
 
-  const validX = validIndices.map(i => xValues[i]);
-  const validY = validIndices.map(i => yValues[i]);
+  const validX = validIndices.map((i) => xValues[i]);
+  const validY = validIndices.map((i) => yValues[i]);
 
   // Linear regression on log values
   const sumX = validX.reduce((a, b) => a + b, 0);
@@ -157,7 +163,7 @@ export function calculateLogarithmicTrendline(
     return { points: [], equation: 'N/A', rSquared: 0, coefficients: [] };
   }
 
-  const validY = validIndices.map(i => yValues[i]);
+  const validY = validIndices.map((i) => yValues[i]);
 
   // Linear regression on log(x)
   const m = logX.length;
@@ -292,9 +298,9 @@ export function calculatePowerTrendline(
     return { points: [], equation: 'N/A', rSquared: 0, coefficients: [] };
   }
 
-  const logX = validIndices.map(i => Math.log(xValues[i]));
-  const logY = validIndices.map(i => Math.log(yValues[i]));
-  const validY = validIndices.map(i => yValues[i]);
+  const logX = validIndices.map((i) => Math.log(xValues[i]));
+  const logY = validIndices.map((i) => Math.log(yValues[i]));
+  const validY = validIndices.map((i) => yValues[i]);
 
   // Linear regression on log-log
   const m = logX.length;
@@ -414,11 +420,22 @@ export function calculateTrendline(
     case 'linear':
       return calculateLinearTrendline(xValues, yValues, config.forward || 0, config.backward || 0);
     case 'exponential':
-      return calculateExponentialTrendline(xValues, yValues, config.forward || 0, config.backward || 0);
+      return calculateExponentialTrendline(
+        xValues,
+        yValues,
+        config.forward || 0,
+        config.backward || 0
+      );
     case 'logarithmic':
       return calculateLogarithmicTrendline(xValues, yValues, config.forward || 0);
     case 'polynomial':
-      return calculatePolynomialTrendline(xValues, yValues, config.degree || 2, config.forward || 0, config.backward || 0);
+      return calculatePolynomialTrendline(
+        xValues,
+        yValues,
+        config.degree || 2,
+        config.forward || 0,
+        config.backward || 0
+      );
     case 'power':
       return calculatePowerTrendline(xValues, yValues, config.forward || 0);
     case 'moving-average':

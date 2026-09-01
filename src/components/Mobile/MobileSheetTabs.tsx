@@ -118,21 +118,16 @@ export const MobileSheetTabs: React.FC = () => {
     touchStartYRef.current = e.touches[0].clientY;
   }, []);
 
-  const handleTouchEndOnBar = useCallback(
-    (e: React.TouchEvent) => {
-      const deltaY = touchStartYRef.current - e.changedTouches[0].clientY;
-      if (deltaY > 50) {
-        setShowFullList(true);
-      }
-    },
-    []
-  );
+  const handleTouchEndOnBar = useCallback((e: React.TouchEvent) => {
+    const deltaY = touchStartYRef.current - e.changedTouches[0].clientY;
+    if (deltaY > 50) {
+      setShowFullList(true);
+    }
+  }, []);
 
   // ── Ordered sheets ──────────────────────────────────────────────────────
 
-  const orderedSheets = sheetOrder
-    .map((id) => sheets[id])
-    .filter(Boolean);
+  const orderedSheets = sheetOrder.map((id) => sheets[id]).filter(Boolean);
 
   // Don't render on desktop
   if (!isMobile) return null;
@@ -154,7 +149,8 @@ export const MobileSheetTabs: React.FC = () => {
         data-testid="mobile-sheet-tabs"
       >
         {/* Swipe-up indicator */}
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setShowFullList(true)}
           className={`
             flex-shrink-0 flex items-center justify-center w-8 h-full
@@ -185,11 +181,12 @@ export const MobileSheetTabs: React.FC = () => {
                   text-xs font-medium
                   transition-colors duration-150
                   select-none cursor-pointer
-                  ${isActive
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : isDark
-                      ? 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200'
-                      : 'text-neutral-600 hover:bg-neutral-200 hover:text-neutral-800'
+                  ${
+                    isActive
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : isDark
+                        ? 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200'
+                        : 'text-neutral-600 hover:bg-neutral-200 hover:text-neutral-800'
                   }
                 `}
                 onClick={() => handleTabPress(sheet.id)}
@@ -210,9 +207,10 @@ export const MobileSheetTabs: React.FC = () => {
                       className={`
                         w-20 h-6 px-1 text-xs rounded
                         outline-none border
-                        ${isDark
-                          ? 'bg-neutral-800 border-neutral-600 text-neutral-100'
-                          : 'bg-white border-neutral-300 text-neutral-900'
+                        ${
+                          isDark
+                            ? 'bg-neutral-800 border-neutral-600 text-neutral-100'
+                            : 'bg-white border-neutral-300 text-neutral-900'
                         }
                       `}
                       data-testid="mobile-sheet-rename-input"
@@ -227,15 +225,17 @@ export const MobileSheetTabs: React.FC = () => {
         </div>
 
         {/* Add sheet button */}
-        <button type="button"
+        <button
+          type="button"
           onClick={handleAddSheet}
           className={`
             flex-shrink-0 flex items-center justify-center
             w-8 h-8 mx-1 rounded-md
             transition-colors duration-150
-            ${isDark
-              ? 'text-neutral-400 hover:bg-neutral-800 hover:text-emerald-400'
-              : 'text-neutral-500 hover:bg-neutral-200 hover:text-emerald-600'
+            ${
+              isDark
+                ? 'text-neutral-400 hover:bg-neutral-800 hover:text-emerald-400'
+                : 'text-neutral-500 hover:bg-neutral-200 hover:text-emerald-600'
             }
           `}
           aria-label="Add sheet"
@@ -249,10 +249,7 @@ export const MobileSheetTabs: React.FC = () => {
       {showFullList && (
         <div className="fixed inset-0 z-50" data-testid="mobile-sheet-list">
           {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setShowFullList(false)}
-          />
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowFullList(false)} />
 
           {/* Sheet list panel */}
           <div
@@ -271,10 +268,13 @@ export const MobileSheetTabs: React.FC = () => {
                 ${isDark ? 'border-neutral-700' : 'border-neutral-200'}
               `}
             >
-              <h3 className={`font-semibold text-sm ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
+              <h3
+                className={`font-semibold text-sm ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}
+              >
                 All Sheets ({orderedSheets.length})
               </h3>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setShowFullList(false)}
                 className={`p-1 rounded-full ${isDark ? 'hover:bg-neutral-800' : 'hover:bg-neutral-100'}`}
                 aria-label="Close sheet list"
@@ -288,7 +288,8 @@ export const MobileSheetTabs: React.FC = () => {
               {orderedSheets.map((sheet, index) => {
                 const isActive = sheet.id === activeSheetId;
                 return (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={sheet.id}
                     onClick={() => {
                       setActiveSheet(sheet.id);
@@ -298,13 +299,14 @@ export const MobileSheetTabs: React.FC = () => {
                       w-full flex items-center gap-3 px-4 py-3
                       text-left text-sm
                       transition-colors duration-150
-                      ${isActive
-                        ? isDark
-                          ? 'bg-emerald-900/30 text-emerald-400'
-                          : 'bg-emerald-50 text-emerald-700'
-                        : isDark
-                          ? 'text-neutral-300 hover:bg-neutral-800'
-                          : 'text-neutral-700 hover:bg-neutral-50'
+                      ${
+                        isActive
+                          ? isDark
+                            ? 'bg-emerald-900/30 text-emerald-400'
+                            : 'bg-emerald-50 text-emerald-700'
+                          : isDark
+                            ? 'text-neutral-300 hover:bg-neutral-800'
+                            : 'text-neutral-700 hover:bg-neutral-50'
                       }
                       ${index > 0 ? (isDark ? 'border-t border-neutral-800' : 'border-t border-neutral-100') : ''}
                     `}
@@ -313,28 +315,30 @@ export const MobileSheetTabs: React.FC = () => {
                     <span
                       className={`
                         w-6 h-6 flex items-center justify-center rounded text-xs font-medium
-                        ${isActive
-                          ? 'bg-emerald-600 text-white'
-                          : isDark
-                            ? 'bg-neutral-800 text-neutral-400'
-                            : 'bg-neutral-200 text-neutral-500'
+                        ${
+                          isActive
+                            ? 'bg-emerald-600 text-white'
+                            : isDark
+                              ? 'bg-neutral-800 text-neutral-400'
+                              : 'bg-neutral-200 text-neutral-500'
                         }
                       `}
                     >
                       {index + 1}
                     </span>
                     <span className="truncate flex-1">{sheet.name}</span>
-                    {isActive && (
-                      <Check size={16} className="text-emerald-500 flex-shrink-0" />
-                    )}
+                    {isActive && <Check size={16} className="text-emerald-500 flex-shrink-0" />}
                   </button>
                 );
               })}
             </div>
 
             {/* Add sheet in list view */}
-            <div className={`px-4 py-3 border-t ${isDark ? 'border-neutral-700' : 'border-neutral-200'}`}>
-              <button type="button"
+            <div
+              className={`px-4 py-3 border-t ${isDark ? 'border-neutral-700' : 'border-neutral-200'}`}
+            >
+              <button
+                type="button"
                 onClick={() => {
                   handleAddSheet();
                   setShowFullList(false);
@@ -343,9 +347,10 @@ export const MobileSheetTabs: React.FC = () => {
                   w-full flex items-center justify-center gap-2 py-2
                   text-sm font-medium rounded-lg
                   transition-colors duration-150
-                  ${isDark
-                    ? 'text-emerald-400 bg-emerald-900/20 hover:bg-emerald-900/40'
-                    : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                  ${
+                    isDark
+                      ? 'text-emerald-400 bg-emerald-900/20 hover:bg-emerald-900/40'
+                      : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
                   }
                 `}
                 data-testid="mobile-sheet-list-add"

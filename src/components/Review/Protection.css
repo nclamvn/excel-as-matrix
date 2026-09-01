@@ -142,7 +142,7 @@
   background: var(--bg-hover, rgba(0, 0, 0, 0.05));
 }
 
-.checkbox-option input[type="checkbox"] {
+.checkbox-option input[type='checkbox'] {
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -158,61 +158,61 @@
 }
 
 /* Dark mode */
-[data-theme="dark"] .dialog {
+[data-theme='dark'] .dialog {
   background: var(--surface-1, #1a1a1a);
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .dialog-header,
-[data-theme="dark"] .dialog-footer {
+[data-theme='dark'] .dialog-header,
+[data-theme='dark'] .dialog-footer {
   border-color: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .dialog-header h3 {
+[data-theme='dark'] .dialog-header h3 {
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .form-group label {
+[data-theme='dark'] .form-group label {
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .form-group input {
+[data-theme='dark'] .form-group input {
   background: var(--surface-2, #2a2a2a);
   border-color: var(--surface-3, #404040);
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .form-group input::placeholder {
+[data-theme='dark'] .form-group input::placeholder {
   color: var(--text-4, #525252);
 }
 
-[data-theme="dark"] .options-section > label {
+[data-theme='dark'] .options-section > label {
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .checkbox-option {
+[data-theme='dark'] .checkbox-option {
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .checkbox-option:hover {
+[data-theme='dark'] .checkbox-option:hover {
   background: var(--surface-2, rgba(255, 255, 255, 0.05));
 }
 
-[data-theme="dark"] .unprotect-section p {
+[data-theme='dark'] .unprotect-section p {
   color: var(--text-2, #a3a3a3);
 }
 
-[data-theme="dark"] .dialog-footer button {
+[data-theme='dark'] .dialog-footer button {
   background: var(--surface-2, #2a2a2a);
   border-color: var(--surface-3, #404040);
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .dialog-footer button:hover {
+[data-theme='dark'] .dialog-footer button:hover {
   background: var(--surface-3, #333);
 }
 
-[data-theme="dark"] .error-message {
+[data-theme='dark'] .error-message {
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
 }

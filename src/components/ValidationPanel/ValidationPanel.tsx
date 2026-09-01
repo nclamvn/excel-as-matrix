@@ -9,7 +9,14 @@ interface ValidationPanelProps {
   onClose: () => void;
 }
 
-type ValidationTypeOption = 'any' | 'wholeNumber' | 'decimal' | 'list' | 'textLength' | 'date' | 'custom';
+type ValidationTypeOption =
+  | 'any'
+  | 'wholeNumber'
+  | 'decimal'
+  | 'list'
+  | 'textLength'
+  | 'date'
+  | 'custom';
 
 export const ValidationPanel: React.FC<ValidationPanelProps> = ({
   sheetId,
@@ -17,13 +24,8 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
   selectedCol,
   onClose,
 }) => {
-  const {
-    addRule,
-    applyToCell,
-    applyToRange,
-    getRuleForCell,
-    clearCellValidation,
-  } = useValidationStore();
+  const { addRule, applyToCell, applyToRange, getRuleForCell, clearCellValidation } =
+    useValidationStore();
 
   const [activeTab, setActiveTab] = useState<'settings' | 'input' | 'error'>('settings');
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
@@ -62,9 +64,10 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
   const [rangeStart] = useState('');
   const [rangeEnd] = useState('');
 
-  const currentRule = selectedRow !== undefined && selectedCol !== undefined
-    ? getRuleForCell(sheetId, selectedRow, selectedCol)
-    : undefined;
+  const currentRule =
+    selectedRow !== undefined && selectedCol !== undefined
+      ? getRuleForCell(sheetId, selectedRow, selectedCol)
+      : undefined;
 
   const handleCreateRule = () => {
     const now = new Date().toISOString();
@@ -72,7 +75,7 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
 
     switch (validationType) {
       case 'wholeNumber':
-      case 'decimal':
+      case 'decimal': {
         const min = parseFloat(minValue) || 0;
         const max = parseFloat(maxValue) || 100;
         validationTypeObj = {
@@ -82,15 +85,20 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
           value2: max,
         };
         break;
+      }
 
-      case 'list':
-        const values = listValues.split(',').map(v => v.trim()).filter(Boolean);
+      case 'list': {
+        const values = listValues
+          .split(',')
+          .map((v) => v.trim())
+          .filter(Boolean);
         validationTypeObj = {
           type: 'list',
           source: { type: 'values', values },
           dropdown: showDropdown,
         };
         break;
+      }
 
       case 'textLength':
         validationTypeObj = {
@@ -115,17 +123,21 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
       id: crypto.randomUUID(),
       validationType: validationTypeObj,
       allowBlank,
-      inputMessage: showInputMessage ? {
-        title: inputTitle,
-        message: inputMessage,
-        show: true,
-      } : undefined,
-      errorAlert: showErrorAlert ? {
-        style: errorStyle,
-        title: errorTitle,
-        message: errorMessage,
-        show: true,
-      } : undefined,
+      inputMessage: showInputMessage
+        ? {
+            title: inputTitle,
+            message: inputMessage,
+            show: true,
+          }
+        : undefined,
+      errorAlert: showErrorAlert
+        ? {
+            style: errorStyle,
+            title: errorTitle,
+            message: errorMessage,
+            show: true,
+          }
+        : undefined,
       createdAt: now,
       updatedAt: now,
     };
@@ -177,19 +189,22 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
 
         {/* Tabs */}
         <div className="flex border-b">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setActiveTab('settings')}
             className={`px-4 py-2 text-sm ${activeTab === 'settings' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
           >
             Settings
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setActiveTab('input')}
             className={`px-4 py-2 text-sm ${activeTab === 'input' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
           >
             Input Message
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setActiveTab('error')}
             className={`px-4 py-2 text-sm ${activeTab === 'error' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
           >
@@ -205,9 +220,7 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
               {selectedRow !== undefined && selectedCol !== undefined && (
                 <div className="text-sm text-gray-600 mb-4">
                   Selected cell: Row {selectedRow + 1}, Col {selectedCol + 1}
-                  {currentRule && (
-                    <span className="ml-2 text-blue-600">(Has validation)</span>
-                  )}
+                  {currentRule && <span className="ml-2 text-blue-600">(Has validation)</span>}
                 </div>
               )}
 
@@ -288,7 +301,9 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
 
               {validationType === 'custom' && (
                 <div>
-                  <label className="block text-sm font-medium mb-1">Formula (must return TRUE)</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Formula (must return TRUE)
+                  </label>
                   <input
                     type="text"
                     value={customFormula}
@@ -321,7 +336,9 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
                   checked={showInputMessage}
                   onChange={(e) => setShowInputMessage(e.target.checked)}
                 />
-                <span className="text-sm font-medium">Show input message when cell is selected</span>
+                <span className="text-sm font-medium">
+                  Show input message when cell is selected
+                </span>
               </label>
 
               {showInputMessage && (
@@ -357,7 +374,9 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
                   checked={showErrorAlert}
                   onChange={(e) => setShowErrorAlert(e.target.checked)}
                 />
-                <span className="text-sm font-medium">Show error alert after invalid data is entered</span>
+                <span className="text-sm font-medium">
+                  Show error alert after invalid data is entered
+                </span>
               </label>
 
               {showErrorAlert && (
@@ -401,7 +420,8 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-200 flex justify-between">
           <div className="flex gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleClearValidation}
               className="px-3 py-1 text-sm text-red-600 hover:text-red-800"
             >
@@ -409,14 +429,19 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
             </button>
           </div>
           <div className="flex gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={onClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
             >
               Cancel
             </button>
-            <button type="button"
-              onClick={() => { handleCreateRule(); handleApplyRule(); }}
+            <button
+              type="button"
+              onClick={() => {
+                handleCreateRule();
+                handleApplyRule();
+              }}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               OK

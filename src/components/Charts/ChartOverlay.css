@@ -142,50 +142,50 @@
    DARK MODE
    ═══════════════════════════════════════════════════════════════════════════ */
 
-[data-theme="dark"] .chart-overlay {
+[data-theme='dark'] .chart-overlay {
   background: #1f2937;
   border-color: #374151;
 }
 
-[data-theme="dark"] .chart-overlay__header {
+[data-theme='dark'] .chart-overlay__header {
   background: #111827;
   border-color: #374151;
 }
 
-[data-theme="dark"] .chart-overlay__title {
+[data-theme='dark'] .chart-overlay__title {
   color: #e5e7eb;
 }
 
-[data-theme="dark"] .chart-overlay__drag-icon,
-[data-theme="dark"] .chart-overlay__close {
+[data-theme='dark'] .chart-overlay__drag-icon,
+[data-theme='dark'] .chart-overlay__close {
   color: #6b7280;
 }
 
-[data-theme="dark"] .chart-overlay__close:hover {
+[data-theme='dark'] .chart-overlay__close:hover {
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
 }
 
-[data-theme="dark"] .chart-overlay__content {
+[data-theme='dark'] .chart-overlay__content {
   background: #1f2937;
 }
 
-[data-theme="dark"] .chart-overlay__content .chart-title {
+[data-theme='dark'] .chart-overlay__content .chart-title {
   color: #f3f4f6;
 }
 
-[data-theme="dark"] .chart-overlay__resize {
+[data-theme='dark'] .chart-overlay__resize {
   background: #374151;
   border-color: #4b5563;
   color: #9ca3af;
 }
 
-[data-theme="dark"] .chart-overlay__resize:hover {
+[data-theme='dark'] .chart-overlay__resize:hover {
   background: #059669;
   border-color: #059669;
   color: #ffffff;
 }
 
-[data-theme="dark"] .chart-overlay--selected {
+[data-theme='dark'] .chart-overlay--selected {
   box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
 }

@@ -1,10 +1,7 @@
 import React from 'react';
 import { RibbonGroup } from '../RibbonGroup';
 import { RibbonButton } from '../RibbonButton';
-import {
-  AlignLeft, AlignCenter, AlignRight,
-  RotateCw, Indent, Outdent
-} from 'lucide-react';
+import { AlignLeft, AlignCenter, AlignRight, RotateCw, Indent, Outdent } from 'lucide-react';
 import { useFormatStore } from '../../../stores/formatStore';
 
 export const AlignmentGroup: React.FC = () => {
@@ -38,14 +35,8 @@ export const AlignmentGroup: React.FC = () => {
             active={align === 'right'}
             onClick={() => setAlign('right')}
           />
-          <RibbonButton
-            icon={Outdent}
-            label="Decrease Indent"
-          />
-          <RibbonButton
-            icon={Indent}
-            label="Increase Indent"
-          />
+          <RibbonButton icon={Outdent} label="Decrease Indent" />
+          <RibbonButton icon={Indent} label="Increase Indent" />
         </div>
       </div>
     </RibbonGroup>

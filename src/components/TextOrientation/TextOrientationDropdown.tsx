@@ -3,15 +3,7 @@
 // ============================================================
 
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  RotateCcw,
-  RotateCw,
-  Type,
-  ArrowUp,
-  ArrowDown,
-  Settings,
-  ChevronDown
-} from 'lucide-react';
+import { RotateCcw, RotateCw, Type, ArrowUp, ArrowDown, Settings, ChevronDown } from 'lucide-react';
 import { useFormatStore } from '../../stores/formatStore';
 import { TextOrientationDialog } from './TextOrientationDialog';
 import './TextOrientation.css';
@@ -28,7 +20,13 @@ const ORIENTATION_OPTIONS: TextOrientationOption[] = [
   { id: 'horizontal', label: 'Horizontal', angle: 0, icon: <Type size={16} /> },
   { id: 'angle-ccw', label: 'Angle Counterclockwise', angle: 45, icon: <RotateCcw size={16} /> },
   { id: 'angle-cw', label: 'Angle Clockwise', angle: -45, icon: <RotateCw size={16} /> },
-  { id: 'vertical', label: 'Vertical Text', angle: 0, vertical: true, icon: <Type size={16} style={{ writingMode: 'vertical-rl' }} /> },
+  {
+    id: 'vertical',
+    label: 'Vertical Text',
+    angle: 0,
+    vertical: true,
+    icon: <Type size={16} style={{ writingMode: 'vertical-rl' }} />,
+  },
   { id: 'rotate-up', label: 'Rotate Text Up', angle: 90, icon: <ArrowUp size={16} /> },
   { id: 'rotate-down', label: 'Rotate Text Down', angle: -90, icon: <ArrowDown size={16} /> },
 ];
@@ -63,7 +61,8 @@ export const TextOrientationDropdown: React.FC = () => {
 
   return (
     <div className="text-orientation-dropdown" ref={dropdownRef}>
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-2026__btn toolbar-2026__btn--dropdown"
         onClick={() => setIsOpen(!isOpen)}
         title="Text Orientation"
@@ -78,7 +77,8 @@ export const TextOrientationDropdown: React.FC = () => {
       {isOpen && (
         <div className="orientation-menu">
           {ORIENTATION_OPTIONS.map((option) => (
-            <button type="button"
+            <button
+              type="button"
               key={option.id}
               className="orientation-item"
               onClick={() => handleSelect(option)}
@@ -88,9 +88,7 @@ export const TextOrientationDropdown: React.FC = () => {
               <span
                 className="item-preview"
                 style={{
-                  transform: option.vertical
-                    ? 'none'
-                    : `rotate(${-option.angle}deg)`,
+                  transform: option.vertical ? 'none' : `rotate(${-option.angle}deg)`,
                   writingMode: option.vertical ? 'vertical-rl' : 'horizontal-tb',
                 }}
               >
@@ -101,11 +99,17 @@ export const TextOrientationDropdown: React.FC = () => {
 
           <div className="orientation-menu-divider" />
 
-          <button type="button"
+          <button
+            type="button"
             className="orientation-item"
-            onClick={() => { setShowCustomDialog(true); setIsOpen(false); }}
+            onClick={() => {
+              setShowCustomDialog(true);
+              setIsOpen(false);
+            }}
           >
-            <span className="item-icon"><Settings size={16} /></span>
+            <span className="item-icon">
+              <Settings size={16} />
+            </span>
             <span className="item-label">Custom Angle...</span>
           </button>
         </div>

@@ -3,14 +3,7 @@
 // ============================================================
 
 import React, { useState, useMemo, useCallback } from 'react';
-import {
-  X,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Trash2,
-  MoreVertical,
-} from 'lucide-react';
+import { X, Calendar, ChevronLeft, ChevronRight, Trash2, MoreVertical } from 'lucide-react';
 import { useSlicerStore } from '../../stores/slicerStore';
 import { usePivotStore } from '../../stores/pivotStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
@@ -38,11 +31,7 @@ interface TimelinePeriod {
 //   days: 'Days',
 // };
 
-export const Timeline: React.FC<TimelineProps> = ({
-  timeline,
-  pivot,
-  onPositionChange,
-}) => {
+export const Timeline: React.FC<TimelineProps> = ({ timeline, pivot, onPositionChange }) => {
   const {
     setTimelineRange,
     setTimelineLevel,
@@ -61,7 +50,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   // Get date range from source data
   const dateRange = useMemo(() => {
-    const fieldDef = pivot.fields.find(f => f.id === timeline.fieldId);
+    const fieldDef = pivot.fields.find((f) => f.id === timeline.fieldId);
     if (!fieldDef || fieldDef.dataType !== 'date') return { min: null, max: null, dates: [] };
 
     const rangeMatch = pivot.sourceRange.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/i);
@@ -112,18 +101,26 @@ export const Timeline: React.FC<TimelineProps> = ({
           label = current.getFullYear().toString();
           periodEnd = new Date(current.getFullYear(), 11, 31, 23, 59, 59);
           break;
-        case 'quarters':
+        case 'quarters': {
           const quarter = Math.floor(current.getMonth() / 3) + 1;
           label = `Q${quarter} ${current.getFullYear()}`;
           periodEnd = new Date(current.getFullYear(), quarter * 3, 0, 23, 59, 59);
           break;
+        }
         case 'months':
           label = current.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
           periodEnd = new Date(current.getFullYear(), current.getMonth() + 1, 0, 23, 59, 59);
           break;
         case 'days':
           label = current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          periodEnd = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 23, 59, 59);
+          periodEnd = new Date(
+            current.getFullYear(),
+            current.getMonth(),
+            current.getDate(),
+            23,
+            59,
+            59
+          );
           break;
         default:
           label = current.toISOString();
@@ -131,9 +128,10 @@ export const Timeline: React.FC<TimelineProps> = ({
       }
 
       const periodStart = new Date(current);
-      const isSelected = timeline.startDate && timeline.endDate
-        ? !(periodEnd < timeline.startDate || periodStart > timeline.endDate)
-        : false;
+      const isSelected =
+        timeline.startDate && timeline.endDate
+          ? !(periodEnd < timeline.startDate || periodStart > timeline.endDate)
+          : false;
 
       result.push({
         label,
@@ -167,7 +165,10 @@ export const Timeline: React.FC<TimelineProps> = ({
     if (e.shiftKey && timeline.startDate) {
       // Extend selection
       const newStart = period.start < timeline.startDate ? period.start : timeline.startDate;
-      const newEnd = period.end > (timeline.endDate || timeline.startDate) ? period.end : timeline.endDate || timeline.startDate;
+      const newEnd =
+        period.end > (timeline.endDate || timeline.startDate)
+          ? period.end
+          : timeline.endDate || timeline.startDate;
       setTimelineRange(timeline.id, newStart, newEnd);
       updatePivotFilter(newStart, newEnd);
     } else if (period.isSelected) {
@@ -183,7 +184,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   const updatePivotFilter = (start: Date, end: Date) => {
     // Filter dates within the selected range
-    const selectedDates = dateRange.dates.filter(d => d >= start && d <= end);
+    const selectedDates = dateRange.dates.filter((d) => d >= start && d <= end);
     if (selectedDates.length === 0 || selectedDates.length === dateRange.dates.length) {
       removeFilter(pivot.id, timeline.fieldId);
     } else {
@@ -241,14 +242,17 @@ export const Timeline: React.FC<TimelineProps> = ({
     }
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (isDragging) {
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
-      updateTimelinePosition(timeline.id, { x: newX, y: newY });
-      onPositionChange?.(newX, newY);
-    }
-  }, [isDragging, dragOffset, timeline.id, updateTimelinePosition, onPositionChange]);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging) {
+        const newX = e.clientX - dragOffset.x;
+        const newY = e.clientY - dragOffset.y;
+        updateTimelinePosition(timeline.id, { x: newX, y: newY });
+        onPositionChange?.(newX, newY);
+      }
+    },
+    [isDragging, dragOffset, timeline.id, updateTimelinePosition, onPositionChange]
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -295,8 +299,8 @@ export const Timeline: React.FC<TimelineProps> = ({
           <div className="timeline-level">
             <select
               value={timeline.level}
-              onChange={e => handleLevelChange(e.target.value as TimelineLevel)}
-              onClick={e => e.stopPropagation()}
+              onChange={(e) => handleLevelChange(e.target.value as TimelineLevel)}
+              onClick={(e) => e.stopPropagation()}
             >
               <option value="years">Years</option>
               <option value="quarters">Quarters</option>
@@ -306,7 +310,8 @@ export const Timeline: React.FC<TimelineProps> = ({
           </div>
           <div className="timeline-actions">
             {hasActiveFilter && (
-              <button type="button"
+              <button
+                type="button"
                 className="timeline-action-btn"
                 onClick={handleClearFilter}
                 title="Clear Filter"
@@ -314,7 +319,8 @@ export const Timeline: React.FC<TimelineProps> = ({
                 <X size={14} />
               </button>
             )}
-            <button type="button"
+            <button
+              type="button"
               className="timeline-action-btn"
               onClick={() => setShowMenu(!showMenu)}
               title="Options"
@@ -324,7 +330,7 @@ export const Timeline: React.FC<TimelineProps> = ({
           </div>
 
           {showMenu && (
-            <div className="timeline-menu" onClick={e => e.stopPropagation()}>
+            <div className="timeline-menu" onClick={(e) => e.stopPropagation()}>
               <button type="button" onClick={handleClearFilter}>
                 <X size={14} />
                 Clear Selection
@@ -342,7 +348,8 @@ export const Timeline: React.FC<TimelineProps> = ({
       {/* Timeline Bar */}
       <div className="timeline-body">
         {scrollOffset > 0 && (
-          <button type="button"
+          <button
+            type="button"
             className="timeline-scroll-btn left"
             onClick={() => handleScroll('left')}
           >
@@ -352,18 +359,17 @@ export const Timeline: React.FC<TimelineProps> = ({
 
         <div className="timeline-periods">
           {periods.slice(scrollOffset, scrollOffset + 10).map((period, index) => (
-            <button type="button"
+            <button
+              type="button"
               key={index}
               className={`timeline-period ${period.isSelected ? 'selected' : ''}`}
               style={{
                 backgroundColor: period.isSelected
                   ? timeline.style.selectedColor
                   : timeline.style.unselectedColor,
-                color: period.isSelected
-                  ? timeline.style.headerTextColor
-                  : '#666',
+                color: period.isSelected ? timeline.style.headerTextColor : '#666',
               }}
-              onClick={e => handlePeriodClick(period, e)}
+              onClick={(e) => handlePeriodClick(period, e)}
               title={`${period.start.toLocaleDateString()} - ${period.end.toLocaleDateString()}`}
             >
               {period.label}
@@ -372,7 +378,8 @@ export const Timeline: React.FC<TimelineProps> = ({
         </div>
 
         {scrollOffset + 10 < periods.length && (
-          <button type="button"
+          <button
+            type="button"
             className="timeline-scroll-btn right"
             onClick={() => handleScroll('right')}
           >

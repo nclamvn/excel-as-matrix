@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import {
-  ArrowDownAZ, ArrowUpZA, Filter, FilterX,
-  RefreshCw, GitCompare, FileSpreadsheet, Upload,
-  SplitSquareHorizontal, Zap
+  ArrowDownAZ,
+  ArrowUpZA,
+  Filter,
+  FilterX,
+  RefreshCw,
+  GitCompare,
+  FileSpreadsheet,
+  Upload,
+  SplitSquareHorizontal,
+  Zap,
 } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
@@ -14,7 +21,8 @@ import { FlashFillDialog } from '../../Dialogs/FlashFillDialog';
 import { ImportDialog } from '../../FileIO/ImportDialog';
 
 export const DataToolbar: React.FC = () => {
-  const { sort, selectedCell, filterEnabled, toggleFilter, workbookId, activeSheetId } = useWorkbookStore();
+  const { sort, selectedCell, filterEnabled, toggleFilter, workbookId, activeSheetId } =
+    useWorkbookStore();
   const { showToast, openDialog } = useUIStore();
 
   const [showRemoveDuplicates, setShowRemoveDuplicates] = useState(false);
@@ -49,7 +57,8 @@ export const DataToolbar: React.FC = () => {
     <div className="toolbar-2026">
       {/* Sort */}
       <div className="toolbar-2026__group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={handleSortAZ}
           title="Sort A to Z"
@@ -57,7 +66,8 @@ export const DataToolbar: React.FC = () => {
           <ArrowDownAZ size={16} />
           <span>A→Z</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={handleSortZA}
           title="Sort Z to A"
@@ -65,7 +75,8 @@ export const DataToolbar: React.FC = () => {
           <ArrowUpZA size={16} />
           <span>Z→A</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => openDialog('sortRange')}
           title="Custom Sort"
@@ -78,7 +89,8 @@ export const DataToolbar: React.FC = () => {
 
       {/* Filter */}
       <div className="toolbar-2026__group">
-        <button type="button"
+        <button
+          type="button"
           className={`toolbar-2026__btn ${filterEnabled ? 'toolbar-2026__btn--active' : ''}`}
           onClick={handleToggleFilter}
           title="Toggle Filter"
@@ -86,7 +98,8 @@ export const DataToolbar: React.FC = () => {
           <Filter size={16} />
           <span>Filter</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => {
             toggleFilter();
@@ -111,7 +124,8 @@ export const DataToolbar: React.FC = () => {
 
       {/* Data Tools */}
       <div className="toolbar-2026__group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setShowRemoveDuplicates(true)}
           title="Remove Duplicates"
@@ -119,7 +133,8 @@ export const DataToolbar: React.FC = () => {
           <GitCompare size={16} />
           <span>Duplicates</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setShowTextToColumns(true)}
           title="Text to Columns"
@@ -127,7 +142,8 @@ export const DataToolbar: React.FC = () => {
           <SplitSquareHorizontal size={16} />
           <span>Split</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setShowFlashFill(true)}
           title="Flash Fill"
@@ -135,7 +151,8 @@ export const DataToolbar: React.FC = () => {
           <Zap size={16} />
           <span>Flash</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => openDialog('dataValidation')}
           title="Data Validation"
@@ -149,7 +166,8 @@ export const DataToolbar: React.FC = () => {
 
       {/* Import/Refresh */}
       <div className="toolbar-2026__group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setShowImportDialog(true)}
           title="Import Data"
@@ -157,7 +175,8 @@ export const DataToolbar: React.FC = () => {
           <Upload size={16} />
           <span>Import</span>
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => showToast('Data refreshed', 'success')}
           title="Refresh Data"
@@ -171,13 +190,9 @@ export const DataToolbar: React.FC = () => {
         <RemoveDuplicatesDialog onClose={() => setShowRemoveDuplicates(false)} />
       )}
 
-      {showTextToColumns && (
-        <TextToColumnsDialog onClose={() => setShowTextToColumns(false)} />
-      )}
+      {showTextToColumns && <TextToColumnsDialog onClose={() => setShowTextToColumns(false)} />}
 
-      {showFlashFill && (
-        <FlashFillDialog onClose={() => setShowFlashFill(false)} />
-      )}
+      {showFlashFill && <FlashFillDialog onClose={() => setShowFlashFill(false)} />}
 
       {showImportDialog && (
         <ImportDialog

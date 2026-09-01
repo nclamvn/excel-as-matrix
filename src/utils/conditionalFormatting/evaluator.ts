@@ -2,12 +2,7 @@
 // CONDITIONAL FORMATTING EVALUATOR
 // ============================================================
 
-import {
-  CFRule,
-  CFDataBar,
-  CFColorScale,
-  CFIconSet,
-} from '../../types/conditionalFormatting';
+import { CFRule, CFDataBar, CFColorScale, CFIconSet } from '../../types/conditionalFormatting';
 import { logger } from '@/utils/logger';
 
 interface CellData {
@@ -29,9 +24,7 @@ interface RangeStats {
 
 // Calculate statistics for a range
 export const calculateRangeStats = (cells: CellData[]): RangeStats => {
-  const numbers = cells
-    .map(c => parseFloat(String(c.value)))
-    .filter(n => !isNaN(n));
+  const numbers = cells.map((c) => parseFloat(String(c.value))).filter((n) => !isNaN(n));
 
   const sum = numbers.reduce((a, b) => a + b, 0);
   const count = numbers.length;
@@ -40,13 +33,13 @@ export const calculateRangeStats = (cells: CellData[]): RangeStats => {
   const max = count > 0 ? Math.max(...numbers) : 0;
 
   // Standard deviation
-  const squaredDiffs = numbers.map(n => Math.pow(n - average, 2));
+  const squaredDiffs = numbers.map((n) => Math.pow(n - average, 2));
   const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / count;
   const stdDev = Math.sqrt(avgSquaredDiff);
 
   // Duplicates
   const duplicates = new Map<string, number>();
-  cells.forEach(c => {
+  cells.forEach((c) => {
     const key = String(c.value);
     duplicates.set(key, (duplicates.get(key) || 0) + 1);
   });
@@ -55,11 +48,7 @@ export const calculateRangeStats = (cells: CellData[]): RangeStats => {
 };
 
 // Evaluate a single rule against a cell
-export const evaluateRule = (
-  rule: CFRule,
-  cell: CellData,
-  stats: RangeStats
-): boolean => {
+export const evaluateRule = (rule: CFRule, cell: CellData, stats: RangeStats): boolean => {
   if (!rule.enabled) return false;
 
   const value = cell.value;
@@ -106,15 +95,24 @@ const evaluateCellValueRule = (rule: CFRule, value: number): boolean => {
   const v2 = parseFloat(String(rule.value2)) || 0;
 
   switch (rule.operator) {
-    case 'greaterThan': return value > v1;
-    case 'lessThan': return value < v1;
-    case 'greaterThanOrEqual': return value >= v1;
-    case 'lessThanOrEqual': return value <= v1;
-    case 'equal': return value === v1;
-    case 'notEqual': return value !== v1;
-    case 'between': return value >= Math.min(v1, v2) && value <= Math.max(v1, v2);
-    case 'notBetween': return value < Math.min(v1, v2) || value > Math.max(v1, v2);
-    default: return false;
+    case 'greaterThan':
+      return value > v1;
+    case 'lessThan':
+      return value < v1;
+    case 'greaterThanOrEqual':
+      return value >= v1;
+    case 'lessThanOrEqual':
+      return value <= v1;
+    case 'equal':
+      return value === v1;
+    case 'notEqual':
+      return value !== v1;
+    case 'between':
+      return value >= Math.min(v1, v2) && value <= Math.max(v1, v2);
+    case 'notBetween':
+      return value < Math.min(v1, v2) || value > Math.max(v1, v2);
+    default:
+      return false;
   }
 };
 
@@ -124,11 +122,16 @@ const evaluateTextRule = (rule: CFRule, text: string): boolean => {
   const cellText = text.toLowerCase();
 
   switch (rule.textOperator) {
-    case 'contains': return cellText.includes(searchText);
-    case 'notContains': return !cellText.includes(searchText);
-    case 'beginsWith': return cellText.startsWith(searchText);
-    case 'endsWith': return cellText.endsWith(searchText);
-    default: return false;
+    case 'contains':
+      return cellText.includes(searchText);
+    case 'notContains':
+      return !cellText.includes(searchText);
+    case 'beginsWith':
+      return cellText.startsWith(searchText);
+    case 'endsWith':
+      return cellText.endsWith(searchText);
+    default:
+      return false;
   }
 };
 
@@ -150,15 +153,19 @@ const evaluateDateRule = (rule: CFRule, value: unknown): boolean => {
   cellDateOnly.setHours(0, 0, 0, 0);
 
   switch (rule.dateOperator) {
-    case 'yesterday': return cellDateOnly.getTime() === yesterday.getTime();
-    case 'today': return cellDateOnly.getTime() === today.getTime();
-    case 'tomorrow': return cellDateOnly.getTime() === tomorrow.getTime();
+    case 'yesterday':
+      return cellDateOnly.getTime() === yesterday.getTime();
+    case 'today':
+      return cellDateOnly.getTime() === today.getTime();
+    case 'tomorrow':
+      return cellDateOnly.getTime() === tomorrow.getTime();
     case 'last7Days': {
       const weekAgo = new Date(today);
       weekAgo.setDate(weekAgo.getDate() - 7);
       return cellDateOnly >= weekAgo && cellDateOnly <= today;
     }
-    default: return false;
+    default:
+      return false;
   }
 };
 
@@ -193,16 +200,17 @@ const evaluateTopBottomRule = (rule: CFRule, value: number, stats: RangeStats): 
       return value <= threshold;
     }
     case 'topPercent': {
-      const index = Math.ceil(sorted.length * n / 100) - 1;
+      const index = Math.ceil((sorted.length * n) / 100) - 1;
       const threshold = sorted[Math.min(index, sorted.length - 1)];
       return value >= threshold;
     }
     case 'bottomPercent': {
-      const index = sorted.length - Math.ceil(sorted.length * n / 100);
+      const index = sorted.length - Math.ceil((sorted.length * n) / 100);
       const threshold = sorted[Math.max(index, 0)];
       return value <= threshold;
     }
-    default: return false;
+    default:
+      return false;
   }
 };
 
@@ -214,13 +222,20 @@ const evaluateAverageRule = (rule: CFRule, value: number, stats: RangeStats): bo
   const stdDevMultiple = rule.stdDevMultiple || 1;
 
   switch (rule.averageType) {
-    case 'above': return value > average;
-    case 'below': return value < average;
-    case 'equalOrAbove': return value >= average;
-    case 'equalOrBelow': return value <= average;
-    case 'stdDevAbove': return value > average + (stdDev * stdDevMultiple);
-    case 'stdDevBelow': return value < average - (stdDev * stdDevMultiple);
-    default: return false;
+    case 'above':
+      return value > average;
+    case 'below':
+      return value < average;
+    case 'equalOrAbove':
+      return value >= average;
+    case 'equalOrBelow':
+      return value <= average;
+    case 'stdDevAbove':
+      return value > average + stdDev * stdDevMultiple;
+    case 'stdDevBelow':
+      return value < average - stdDev * stdDevMultiple;
+    default:
+      return false;
   }
 };
 
@@ -241,11 +256,13 @@ export const calculateDataBarWidth = (
   dataBar: CFDataBar,
   stats: RangeStats
 ): { width: number; isNegative: boolean } => {
-  let min = dataBar.minType === 'auto' ? stats.min : (dataBar.minValue || 0);
-  let max = dataBar.maxType === 'auto' ? stats.max : (dataBar.maxValue || 100);
+  let min = dataBar.minType === 'auto' ? stats.min : dataBar.minValue || 0;
+  let max = dataBar.maxType === 'auto' ? stats.max : dataBar.maxValue || 100;
 
-  if (dataBar.minType === 'percent') min = stats.min + (stats.max - stats.min) * (dataBar.minValue || 0) / 100;
-  if (dataBar.maxType === 'percent') max = stats.min + (stats.max - stats.min) * (dataBar.maxValue || 100) / 100;
+  if (dataBar.minType === 'percent')
+    min = stats.min + ((stats.max - stats.min) * (dataBar.minValue || 0)) / 100;
+  if (dataBar.maxType === 'percent')
+    max = stats.min + ((stats.max - stats.min) * (dataBar.maxValue || 100)) / 100;
 
   const range = max - min;
   if (range === 0) return { width: 0, isNegative: false };
@@ -260,8 +277,10 @@ export const calculateColorScaleColor = (
   colorScale: CFColorScale,
   stats: RangeStats
 ): string => {
-  const min = colorScale.minType === 'min' ? stats.min : (parseFloat(String(colorScale.minValue)) || 0);
-  const max = colorScale.maxType === 'max' ? stats.max : (parseFloat(String(colorScale.maxValue)) || 100);
+  const min =
+    colorScale.minType === 'min' ? stats.min : parseFloat(String(colorScale.minValue)) || 0;
+  const max =
+    colorScale.maxType === 'max' ? stats.max : parseFloat(String(colorScale.maxValue)) || 100;
 
   const range = max - min;
   if (range === 0) return colorScale.minColor;
@@ -272,9 +291,8 @@ export const calculateColorScaleColor = (
     return interpolateColor(colorScale.minColor, colorScale.maxColor, percentage);
   } else {
     // 3-color scale
-    const midValue = colorScale.midValue !== undefined
-      ? parseFloat(String(colorScale.midValue))
-      : (min + max) / 2;
+    const midValue =
+      colorScale.midValue !== undefined ? parseFloat(String(colorScale.midValue)) : (min + max) / 2;
     const midPercentage = (midValue - min) / range;
 
     if (percentage <= midPercentage) {
@@ -301,11 +319,13 @@ const interpolateColor = (color1: string, color2: string, t: number): string => 
 
 const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
-  } : { r: 0, g: 0, b: 0 };
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 0, g: 0, b: 0 };
 };
 
 // Calculate icon for icon set
@@ -316,13 +336,14 @@ export const calculateIconSetIcon = (
   iconDefinitions: { icons: string[]; defaultThresholds: number[] }
 ): string => {
   const { icons } = iconDefinitions;
-  const thresholds = iconSet.thresholds.length > 0
-    ? iconSet.thresholds
-    : iconDefinitions.defaultThresholds.map((t) => ({
-        type: 'percent' as const,
-        value: t,
-        operator: '>=' as const
-      }));
+  const thresholds =
+    iconSet.thresholds.length > 0
+      ? iconSet.thresholds
+      : iconDefinitions.defaultThresholds.map((t) => ({
+          type: 'percent' as const,
+          value: t,
+          operator: '>=' as const,
+        }));
 
   // Calculate percentile
   const sortedValues = [...stats.values].sort((a, b) => a - b);
@@ -331,13 +352,16 @@ export const calculateIconSetIcon = (
   // Find matching icon
   for (let i = 0; i < thresholds.length; i++) {
     const threshold = thresholds[i];
-    const thresholdValue = threshold.type === 'percent'
-      ? threshold.value as number
-      : parseFloat(String(threshold.value));
+    const thresholdValue =
+      threshold.type === 'percent'
+        ? (threshold.value as number)
+        : parseFloat(String(threshold.value));
 
     const compareValue = threshold.type === 'percent' ? percentile : value;
 
-    if (threshold.operator === '>=' ? compareValue >= thresholdValue : compareValue > thresholdValue) {
+    if (
+      threshold.operator === '>=' ? compareValue >= thresholdValue : compareValue > thresholdValue
+    ) {
       return iconSet.reverseOrder ? icons[icons.length - 1 - i] : icons[i];
     }
   }

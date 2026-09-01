@@ -42,11 +42,18 @@ interface DashboardActions {
   updateWidget: (dashboardId: string, widgetId: string, updates: Partial<DashboardWidget>) => void;
   removeWidget: (dashboardId: string, widgetId: string) => void;
   updateWidgetPosition: (dashboardId: string, widgetId: string, position: WidgetPosition) => void;
-  updateWidgetPositions: (dashboardId: string, updates: { id: string; position: WidgetPosition }[]) => void;
+  updateWidgetPositions: (
+    dashboardId: string,
+    updates: { id: string; position: WidgetPosition }[]
+  ) => void;
 
   // Filter management
   addDashboardFilter: (dashboardId: string, filter: DashboardFilter) => void;
-  updateDashboardFilter: (dashboardId: string, filterId: string, updates: Partial<DashboardFilter>) => void;
+  updateDashboardFilter: (
+    dashboardId: string,
+    filterId: string,
+    updates: Partial<DashboardFilter>
+  ) => void;
   removeDashboardFilter: (dashboardId: string, filterId: string) => void;
   setFilterValue: (dashboardId: string, filterId: string, values: FilterValue[]) => void;
   clearFilters: (dashboardId: string) => void;
@@ -234,10 +241,8 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             }
             return {
               dashboards,
-              selectedWidgetId:
-                state.selectedWidgetId === widgetId ? null : state.selectedWidgetId,
-              editingWidgetId:
-                state.editingWidgetId === widgetId ? null : state.editingWidgetId,
+              selectedWidgetId: state.selectedWidgetId === widgetId ? null : state.selectedWidgetId,
+              editingWidgetId: state.editingWidgetId === widgetId ? null : state.editingWidgetId,
             };
           });
         },
@@ -249,9 +254,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             if (dashboard) {
               dashboards.set(dashboardId, {
                 ...dashboard,
-                widgets: dashboard.widgets.map((w) =>
-                  w.id === widgetId ? { ...w, position } : w
-                ),
+                widgets: dashboard.widgets.map((w) => (w.id === widgetId ? { ...w, position } : w)),
                 updatedAt: new Date().toISOString(),
               });
             }
@@ -534,10 +537,7 @@ export function createKPIWidget(
   };
 }
 
-export function createTextWidget(
-  content: string,
-  position: WidgetPosition
-): DashboardWidget {
+export function createTextWidget(content: string, position: WidgetPosition): DashboardWidget {
   return {
     id: crypto.randomUUID(),
     widgetType: 'Text',

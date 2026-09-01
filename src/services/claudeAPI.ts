@@ -2,7 +2,7 @@
 // CLAUDE API CLIENT — AI Integration
 // ═══════════════════════════════════════════════════════════════════════════
 
-import type { AIMessage, AIToolCall, AIConfig, AITool } from '../ai/types';
+import type { AIMessage, AIToolCall, AIConfig, AITool, AIAvailability } from '../ai/types';
 import { loggers } from '@/utils/logger';
 import { PIIRedactor } from '../security/PIIRedactor';
 import { aiUsageLogger } from '../audit/AIUsageLogger';
@@ -55,9 +55,12 @@ interface ClaudeToolDefinition {
 
 const MOCK_RESPONSES: Record<string, string> = {
   sum: 'Tôi sẽ giúp bạn tính tổng. Dựa trên vùng chọn hiện tại [📍A1:A10], tôi đề xuất formula:\n\n```\n=SUM(A1:A10)\n```\n\nBạn có muốn tôi áp dụng formula này không?',
-  average: 'Để tính trung bình của vùng dữ liệu [📍B1:B20], bạn có thể dùng:\n\n```\n=AVERAGE(B1:B20)\n```\n\nTôi có thể thêm formula này vào ô được chọn.',
-  explain: 'Đây là bảng tính với các cột:\n- Cột A: Tên sản phẩm\n- Cột B: Số lượng\n- Cột C: Đơn giá\n- Cột D: Thành tiền (có thể dùng formula =B*C)\n\nBạn muốn tôi giúp gì thêm?',
-  default: 'Tôi là AI Copilot của ExcelAI. Tôi có thể giúp bạn:\n\n1. **Viết formulas** - SUM, AVERAGE, VLOOKUP...\n2. **Phân tích dữ liệu** - Tìm patterns, outliers\n3. **Định dạng** - Conditional formatting, styles\n4. **Giải thích** - Dependencies, cell references\n\nHãy hỏi tôi bất cứ điều gì về spreadsheet!',
+  average:
+    'Để tính trung bình của vùng dữ liệu [📍B1:B20], bạn có thể dùng:\n\n```\n=AVERAGE(B1:B20)\n```\n\nTôi có thể thêm formula này vào ô được chọn.',
+  explain:
+    'Đây là bảng tính với các cột:\n- Cột A: Tên sản phẩm\n- Cột B: Số lượng\n- Cột C: Đơn giá\n- Cột D: Thành tiền (có thể dùng formula =B*C)\n\nBạn muốn tôi giúp gì thêm?',
+  default:
+    'Tôi là AI Copilot của ExcelAI. Tôi có thể giúp bạn:\n\n1. **Viết formulas** - SUM, AVERAGE, VLOOKUP...\n2. **Phân tích dữ liệu** - Tìm patterns, outliers\n3. **Định dạng** - Conditional formatting, styles\n4. **Giải thích** - Dependencies, cell references\n\nHãy hỏi tôi bất cứ điều gì về spreadsheet!',
 };
 
 function getMockResponse(query: string): string {
@@ -69,11 +72,34 @@ function getMockResponse(query: string): string {
   if (lowerQuery.includes('average') || lowerQuery.includes('trung bình')) {
     return MOCK_RESPONSES.average;
   }
-  if (lowerQuery.includes('explain') || lowerQuery.includes('giải thích') || lowerQuery.includes('là gì')) {
+  if (
+    lowerQuery.includes('explain') ||
+    lowerQuery.includes('giải thích') ||
+    lowerQuery.includes('là gì')
+  ) {
     return MOCK_RESPONSES.explain;
   }
 
   return MOCK_RESPONSES.default;
+}
+
+function getMockToolCalls(query: string): AIToolCall[] {
+  // Deliberately narrow syntax: demo writes are explicit, deterministic, and
+  // still travel through preview -> approval -> apply -> rollback.
+  const match = query.trim().match(/^demo\s+write\s+([A-Z]+\d+)\s*=\s*(.*)$/i);
+  if (!match) return [];
+  const rawValue = match[2];
+  const numericValue = Number(rawValue);
+  const value = rawValue !== '' && Number.isFinite(numericValue) ? numericValue : rawValue;
+  return [
+    {
+      id: crypto.randomUUID(),
+      tool: 'write_range',
+      arguments: { range: match[1].toUpperCase(), values: [[value]], type: 'value' },
+      status: 'pending',
+      timestamp: new Date(),
+    },
+  ];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -88,41 +114,119 @@ export class ClaudeAPIClient {
   private useProxy = false; // Will be set to true when server proxy is available
   private piiRedactor = new PIIRedactor();
   private conversationId = crypto.randomUUID();
+  private availability: AIAvailability;
+  private availabilityCheck: Promise<AIAvailability>;
 
   constructor(config: AIConfig) {
     this.config = config;
     this.apiKey = config.apiKey || null;
-    // Check if server proxy is available
-    this.checkProxyAvailability();
+    this.availability = config.mockMode
+      ? { mode: 'mock', transport: null, reason: 'Demo mode was explicitly enabled' }
+      : this.apiKey
+        ? { mode: 'configured', transport: 'browser-key', reason: 'Browser API key configured' }
+        : { mode: 'checking', transport: null, reason: 'Checking server AI configuration' };
+    this.availabilityCheck = this.checkProxyAvailability();
   }
 
-  private async checkProxyAvailability(): Promise<void> {
+  private async checkProxyAvailability(): Promise<AIAvailability> {
     try {
-      const response = await fetch(`${this.proxyUrl}/status`, { signal: AbortSignal.timeout(2000) });
+      const response = await fetch(`${this.proxyUrl}/status`, {
+        signal: AbortSignal.timeout(2000),
+      });
       if (response.ok) {
         const data = await response.json();
         this.useProxy = data.configured === true;
         if (this.useProxy) {
           this.config.mockMode = false;
+          this.availability = {
+            mode: 'configured',
+            transport: 'server-proxy',
+            reason: 'Server AI proxy configured',
+          };
+          return this.availability;
         }
       }
     } catch {
-      // Server not available — keep current mode
+      // Resolve below from explicit local configuration.
     }
+
+    this.availability = this.config.mockMode
+      ? { mode: 'mock', transport: null, reason: 'Demo mode was explicitly enabled' }
+      : this.apiKey
+        ? { mode: 'configured', transport: 'browser-key', reason: 'Browser API key configured' }
+        : {
+            mode: 'offline',
+            transport: null,
+            reason: 'AI server is unavailable or not configured',
+          };
+    return this.availability;
   }
 
   setApiKey(key: string) {
-    this.apiKey = key;
+    this.apiKey = key.trim() || null;
     this.config.mockMode = false;
+    this.availability = this.apiKey
+      ? { mode: 'configured', transport: 'browser-key', reason: 'Browser API key configured' }
+      : { mode: 'offline', transport: null, reason: 'AI server is unavailable or not configured' };
   }
 
   updateConfig(config: Partial<AIConfig>) {
     this.config = { ...this.config, ...config };
+    if (this.useProxy) {
+      this.availability = {
+        mode: 'configured',
+        transport: 'server-proxy',
+        reason: 'Server AI proxy configured',
+      };
+    } else if (this.config.mockMode) {
+      this.availability = {
+        mode: 'mock',
+        transport: null,
+        reason: 'Demo mode was explicitly enabled',
+      };
+    } else if (this.apiKey) {
+      this.availability = {
+        mode: 'configured',
+        transport: 'browser-key',
+        reason: 'Browser API key configured',
+      };
+    } else {
+      this.availability = {
+        mode: 'offline',
+        transport: null,
+        reason: 'AI server is unavailable or not configured',
+      };
+    }
+  }
+
+  async getAvailability(): Promise<AIAvailability> {
+    await this.availabilityCheck;
+    return { ...this.availability };
+  }
+
+  async refreshAvailability(): Promise<AIAvailability> {
+    if (!this.config.mockMode && !this.apiKey) {
+      this.availability = {
+        mode: 'checking',
+        transport: null,
+        reason: 'Checking server AI configuration',
+      };
+    }
+    this.availabilityCheck = this.checkProxyAvailability();
+    return this.getAvailability();
   }
 
   /** Returns true if either API key is set or server proxy is configured */
   get isReady(): boolean {
-    return this.useProxy || !!this.apiKey;
+    return this.availability.mode === 'configured';
+  }
+
+  private async requireAvailable(): Promise<AIAvailability> {
+    const availability = await this.getAvailability();
+    if (availability.mode === 'offline') {
+      throw new AIUnavailableError(availability.reason);
+    }
+    return availability;
   }
 
   // Convert our tools to Claude format
@@ -157,17 +261,20 @@ export class ClaudeAPIClient {
     toolCalls: AIToolCall[];
     tokensUsed: number;
   }> {
-    // Mock mode - return simulated response (only when no proxy AND no API key)
-    if (this.config.mockMode || (!this.apiKey && !this.useProxy)) {
+    const availability = await this.requireAvailable();
+    if (availability.mode === 'mock') {
       const lastMessage = messages[messages.length - 1];
       const mockResponse = getMockResponse(lastMessage?.content || '');
+      const mockToolCalls = getMockToolCalls(lastMessage?.content || '');
 
       // Simulate delay
       await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
 
       return {
-        message: mockResponse,
-        toolCalls: [],
+        message: mockToolCalls.length
+          ? 'Demo write proposal created. Review the exact before/after values in Actions.'
+          : mockResponse,
+        toolCalls: mockToolCalls,
         tokensUsed: Math.floor(Math.random() * 500) + 100,
       };
     }
@@ -258,16 +365,20 @@ export class ClaudeAPIClient {
 
       // Log AI usage
       const lastUserMsg = messages[messages.length - 1]?.content || '';
-      aiUsageLogger.logChat({
-        conversationId: this.conversationId,
-        inputLength: typeof lastUserMsg === 'string' ? lastUserMsg.length : 0,
-        outputLength: messageText.length,
-        tokensUsed,
-        durationMs,
-        piiRedacted: totalPII,
-        streaming: false,
-        status: 'success',
-      }).catch(() => { /* non-blocking */ });
+      aiUsageLogger
+        .logChat({
+          conversationId: this.conversationId,
+          inputLength: typeof lastUserMsg === 'string' ? lastUserMsg.length : 0,
+          outputLength: messageText.length,
+          tokensUsed,
+          durationMs,
+          piiRedacted: totalPII,
+          streaming: false,
+          status: 'success',
+        })
+        .catch(() => {
+          /* non-blocking */
+        });
 
       return {
         message: messageText,
@@ -278,17 +389,21 @@ export class ClaudeAPIClient {
       loggers.api.error('Claude API error:', error);
 
       // Log failed request
-      aiUsageLogger.logChat({
-        conversationId: this.conversationId,
-        inputLength: 0,
-        outputLength: 0,
-        tokensUsed: 0,
-        durationMs: Date.now() - startTime,
-        piiRedacted: 0,
-        streaming: false,
-        status: 'error',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
-      }).catch(() => { /* non-blocking */ });
+      aiUsageLogger
+        .logChat({
+          conversationId: this.conversationId,
+          inputLength: 0,
+          outputLength: 0,
+          tokensUsed: 0,
+          durationMs: Date.now() - startTime,
+          piiRedacted: 0,
+          streaming: false,
+          status: 'error',
+          errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        })
+        .catch(() => {
+          /* non-blocking */
+        });
 
       throw error;
     }
@@ -300,15 +415,22 @@ export class ClaudeAPIClient {
     tools: AITool[],
     systemPrompt: string
   ): AsyncGenerator<{ type: 'text' | 'tool'; content: string | AIToolCall }> {
-    // Mock mode - simulate streaming (only when no proxy AND no API key)
-    if (this.config.mockMode || (!this.apiKey && !this.useProxy)) {
+    const availability = await this.requireAvailable();
+    if (availability.mode === 'mock') {
       const lastMessage = messages[messages.length - 1];
-      const mockResponse = getMockResponse(lastMessage?.content || '');
+      const query = lastMessage?.content || '';
+      const toolCalls = getMockToolCalls(query);
+      const mockResponse = toolCalls.length
+        ? 'Demo write proposal created. Review the exact before/after values in Actions.'
+        : getMockResponse(query);
 
       // Stream character by character with small delays
       for (const char of mockResponse) {
         await new Promise((resolve) => setTimeout(resolve, 10 + Math.random() * 20));
         yield { type: 'text', content: char };
+      }
+      for (const toolCall of toolCalls) {
+        yield { type: 'tool', content: toolCall };
       }
       return;
     }
@@ -321,6 +443,15 @@ export class ClaudeAPIClient {
     for (const toolCall of result.toolCalls) {
       yield { type: 'tool', content: toolCall };
     }
+  }
+}
+
+export class AIUnavailableError extends Error {
+  readonly code = 'AI_UNAVAILABLE';
+
+  constructor(message = 'AI is unavailable or not configured') {
+    super(message);
+    this.name = 'AIUnavailableError';
   }
 }
 

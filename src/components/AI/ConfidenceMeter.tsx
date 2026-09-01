@@ -48,7 +48,10 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
       onMouseLeave={() => setShowTooltip(false)}
     >
       {/* Circular Progress */}
-      <div className="trust-meter__ring" style={{ '--confidence-color': color } as React.CSSProperties}>
+      <div
+        className="trust-meter__ring"
+        style={{ '--confidence-color': color } as React.CSSProperties}
+      >
         <svg viewBox="0 0 36 36" className="trust-meter__svg">
           {/* Background circle */}
           <path
@@ -86,38 +89,16 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
       {/* Breakdown bars */}
       {showBreakdown && (
         <div className="trust-meter__breakdown">
-          <BreakdownBar
-            label="Data"
-            value={score.breakdown.dataQuality}
-            color={color}
-          />
-          <BreakdownBar
-            label="Intent"
-            value={score.breakdown.intentClarity}
-            color={color}
-          />
-          <BreakdownBar
-            label="Complexity"
-            value={score.breakdown.taskComplexity}
-            color={color}
-          />
-          <BreakdownBar
-            label="History"
-            value={score.breakdown.historicalAccuracy}
-            color={color}
-          />
-          <BreakdownBar
-            label="Grounding"
-            value={score.breakdown.groundingStrength}
-            color={color}
-          />
+          <BreakdownBar label="Data" value={score.breakdown.dataQuality} color={color} />
+          <BreakdownBar label="Intent" value={score.breakdown.intentClarity} color={color} />
+          <BreakdownBar label="Complexity" value={score.breakdown.taskComplexity} color={color} />
+          <BreakdownBar label="History" value={score.breakdown.historicalAccuracy} color={color} />
+          <BreakdownBar label="Grounding" value={score.breakdown.groundingStrength} color={color} />
         </div>
       )}
 
       {/* Tooltip */}
-      {showTooltip && (
-        <ConfidenceTooltip score={score} />
-      )}
+      {showTooltip && <ConfidenceTooltip score={score} />}
     </div>
   );
 };
@@ -172,7 +153,8 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
   const icon = getConfidenceIcon(score.level);
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`trust-badge ${className}`}
       onClick={onClick}
       style={{ '--badge-color': color } as React.CSSProperties}

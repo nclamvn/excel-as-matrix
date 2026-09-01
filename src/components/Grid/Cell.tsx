@@ -28,11 +28,7 @@ export const Cell: React.FC<CellProps> = memo(
     onDoubleClick,
     style,
   }) => {
-    const className = [
-      'cell',
-      isSelected && 'selected',
-      isInRange && 'in-range',
-    ]
+    const className = ['cell', isSelected && 'selected', isInRange && 'in-range']
       .filter(Boolean)
       .join(' ');
 

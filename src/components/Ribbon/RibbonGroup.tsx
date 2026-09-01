@@ -15,13 +15,12 @@ export const RibbonGroup: React.FC<RibbonGroupProps> = ({
 }) => {
   return (
     <div className="ribbon-group">
-      <div className="ribbon-group-content">
-        {children}
-      </div>
+      <div className="ribbon-group-content">{children}</div>
       <div className="ribbon-group-label">
         <span>{label}</span>
         {showDialogLauncher && (
-          <button type="button"
+          <button
+            type="button"
             className="dialog-launcher"
             onClick={onDialogLaunch}
             title={`${label} Settings`}

@@ -11,10 +11,14 @@ export const ClipboardGroup: React.FC = () => {
   const { showToast } = useUIStore();
 
   const handlePaste = (type?: string) => {
-    const mode = type === 'values' ? 'values'
-      : type === 'formulas' ? 'formulas'
-      : type === 'formatting' ? 'formatting'
-      : 'all';
+    const mode =
+      type === 'values'
+        ? 'values'
+        : type === 'formulas'
+          ? 'formulas'
+          : type === 'formatting'
+            ? 'formatting'
+            : 'all';
     paste(mode);
     showToast('Pasted', 'success');
   };
@@ -39,15 +43,40 @@ export const ClipboardGroup: React.FC = () => {
           size="large"
           options={[
             { id: 'paste', label: 'Paste', icon: ClipboardPaste, onClick: () => handlePaste() },
-            { id: 'paste-values', label: 'Paste Values', icon: Clipboard, onClick: () => handlePaste('values') },
-            { id: 'paste-formulas', label: 'Paste Formulas', icon: Clipboard, onClick: () => handlePaste('formulas') },
-            { id: 'paste-formatting', label: 'Paste Formatting', icon: Paintbrush, onClick: () => handlePaste('formatting') },
-            { id: 'paste-special', label: 'Paste Special...', icon: Clipboard, onClick: () => handlePaste('special') },
+            {
+              id: 'paste-values',
+              label: 'Paste Values',
+              icon: Clipboard,
+              onClick: () => handlePaste('values'),
+            },
+            {
+              id: 'paste-formulas',
+              label: 'Paste Formulas',
+              icon: Clipboard,
+              onClick: () => handlePaste('formulas'),
+            },
+            {
+              id: 'paste-formatting',
+              label: 'Paste Formatting',
+              icon: Paintbrush,
+              onClick: () => handlePaste('formatting'),
+            },
+            {
+              id: 'paste-special',
+              label: 'Paste Special...',
+              icon: Clipboard,
+              onClick: () => handlePaste('special'),
+            },
           ]}
         />
         <div className="clipboard-buttons">
           <RibbonButton icon={Scissors} label="Cut" onClick={handleCut} title="Cut (Ctrl+X)" />
-          <RibbonButton icon={ClipboardCopy} label="Copy" onClick={handleCopy} title="Copy (Ctrl+C)" />
+          <RibbonButton
+            icon={ClipboardCopy}
+            label="Copy"
+            onClick={handleCopy}
+            title="Copy (Ctrl+C)"
+          />
           <RibbonButton icon={Paintbrush} label="Format Painter" title="Format Painter" />
         </div>
       </div>

@@ -15,8 +15,12 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
   const { addRule } = useConditionalFormattingStore();
   const { selectionRange } = useSelectionStore();
 
-  const twoColorPresets = COLOR_SCALE_PRESETS.filter(p => p.config.colorScale?.type === '2-color');
-  const threeColorPresets = COLOR_SCALE_PRESETS.filter(p => p.config.colorScale?.type === '3-color');
+  const twoColorPresets = COLOR_SCALE_PRESETS.filter(
+    (p) => p.config.colorScale?.type === '2-color'
+  );
+  const threeColorPresets = COLOR_SCALE_PRESETS.filter(
+    (p) => p.config.colorScale?.type === '3-color'
+  );
 
   const getSelectionRangeString = (): string | null => {
     if (!selectionRange) return null;
@@ -26,7 +30,7 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
     return `${startCol}${start.row + 1}:${endCol}${end.row + 1}`;
   };
 
-  const handleSelect = (preset: typeof COLOR_SCALE_PRESETS[0]) => {
+  const handleSelect = (preset: (typeof COLOR_SCALE_PRESETS)[0]) => {
     const range = getSelectionRangeString();
     if (!range) return;
 
@@ -47,16 +51,14 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
         <div className="preview-section-title">2-Color Scale</div>
         <div className="preview-grid cols-3">
           {twoColorPresets.map((preset) => (
-            <button type="button"
+            <button
+              type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
               title={preset.name}
             >
-              <div
-                className="color-scale-sample"
-                style={{ background: preset.preview }}
-              />
+              <div className="color-scale-sample" style={{ background: preset.preview }} />
             </button>
           ))}
         </div>
@@ -66,16 +68,14 @@ export const ColorScalesPreview: React.FC<ColorScalesPreviewProps> = ({ onSelect
         <div className="preview-section-title">3-Color Scale</div>
         <div className="preview-grid cols-3">
           {threeColorPresets.map((preset) => (
-            <button type="button"
+            <button
+              type="button"
               key={preset.id}
               className="preview-item"
               onClick={() => handleSelect(preset)}
               title={preset.name}
             >
-              <div
-                className="color-scale-sample"
-                style={{ background: preset.preview }}
-              />
+              <div className="color-scale-sample" style={{ background: preset.preview }} />
             </button>
           ))}
         </div>

@@ -58,11 +58,7 @@ interface ImportOptions {
 const MAX_RECOMMENDED_ROWS = 50000;
 const DEFAULT_MAX_ROWS = 50000;
 
-export const ImportDialog: React.FC<ImportDialogProps> = ({
-  isOpen,
-  onClose,
-  onImport,
-}) => {
+export const ImportDialog: React.FC<ImportDialogProps> = ({ isOpen, onClose, onImport }) => {
   const [activeTab, setActiveTab] = useState<'file' | 'google'>('file');
   const [step, setStep] = useState<'upload' | 'preview' | 'options'>('upload');
   const [file, setFile] = useState<File | null>(null);
@@ -224,13 +220,16 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
           csvRows.push({ index: r, cells });
         }
 
-        onImport({
-          rows: csvRows,
-          column_count: maxCol + 1,
-          row_count: Math.min(maxRow + 1, maxRows),
-          detected_delimiter: ',',
-          detected_encoding: 'utf-8',
-        }, { hasHeader, skipRows, maxRows });
+        onImport(
+          {
+            rows: csvRows,
+            column_count: maxCol + 1,
+            row_count: Math.min(maxRow + 1, maxRows),
+            detected_delimiter: ',',
+            detected_encoding: 'utf-8',
+          },
+          { hasHeader, skipRows, maxRows }
+        );
       } else {
         const result = await importExcelFile(file);
         const sheets: ImportedSheet[] = result.sheets.map((sheet) => {
@@ -264,11 +263,14 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
         });
 
         const sheetNames = result.sheets.map((s) => s.name);
-        onImport({
-          sheets,
-          sheet_names: sheetNames,
-          detected_format: 'XLSX',
-        }, { selectedSheets, hasHeader, skipRows, maxRows });
+        onImport(
+          {
+            sheets,
+            sheet_names: sheetNames,
+            detected_format: 'XLSX',
+          },
+          { selectedSheets, hasHeader, skipRows, maxRows }
+        );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to import file');
@@ -279,9 +281,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
 
   const toggleSheet = (sheetName: string) => {
     setSelectedSheets((prev) =>
-      prev.includes(sheetName)
-        ? prev.filter((s) => s !== sheetName)
-        : [...prev, sheetName]
+      prev.includes(sheetName) ? prev.filter((s) => s !== sheetName) : [...prev, sheetName]
     );
   };
 
@@ -300,12 +300,14 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-lg font-semibold">Import File</h2>
-          <button type="button"
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
+          <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -316,7 +318,10 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
             <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', marginBottom: 20 }}>
               <button
                 type="button"
-                onClick={() => { setActiveTab('file'); setGoogleError(null); }}
+                onClick={() => {
+                  setActiveTab('file');
+                  setGoogleError(null);
+                }}
                 style={{
                   flex: 1,
                   padding: '12px 16px',
@@ -333,7 +338,10 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => { setActiveTab('google'); setError(null); }}
+                onClick={() => {
+                  setActiveTab('google');
+                  setError(null);
+                }}
                 style={{
                   flex: 1,
                   padding: '12px 16px',
@@ -357,10 +365,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
           )}
 
           {step === 'upload' && activeTab === 'file' && (
-            <FileDropZone
-              onFileDrop={handleFileDrop}
-              disabled={loading}
-            />
+            <FileDropZone onFileDrop={handleFileDrop} disabled={loading} />
           )}
 
           {step === 'upload' && activeTab === 'google' && (
@@ -374,7 +379,10 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                 type="url"
                 placeholder="https://docs.google.com/spreadsheets/d/..."
                 value={googleUrl}
-                onChange={(e) => { setGoogleUrl(e.target.value); setGoogleError(null); }}
+                onChange={(e) => {
+                  setGoogleUrl(e.target.value);
+                  setGoogleError(null);
+                }}
                 style={{
                   width: '100%',
                   padding: '12px 14px',
@@ -384,20 +392,26 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                   marginBottom: 12,
                   outline: 'none',
                 }}
-                onFocus={(e) => { e.target.style.borderColor = '#2563eb'; }}
-                onBlur={(e) => { e.target.style.borderColor = googleError ? '#ef4444' : '#d1d5db'; }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#2563eb';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = googleError ? '#ef4444' : '#d1d5db';
+                }}
               />
 
               {googleError && (
-                <div style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fecaca',
-                  borderRadius: 8,
-                  padding: '10px 14px',
-                  marginBottom: 12,
-                  fontSize: 13,
-                  color: '#dc2626',
-                }}>
+                <div
+                  style={{
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    borderRadius: 8,
+                    padding: '10px 14px',
+                    marginBottom: 12,
+                    fontSize: 13,
+                    color: '#dc2626',
+                  }}
+                >
                   {googleError}
                 </div>
               )}
@@ -424,14 +438,17 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                 }}
               >
                 {googleLoading && (
-                  <span style={{
-                    width: 16, height: 16,
-                    border: '2px solid rgba(255,255,255,0.3)',
-                    borderTopColor: '#fff',
-                    borderRadius: '50%',
-                    animation: 'spin 0.6s linear infinite',
-                    display: 'inline-block',
-                  }} />
+                  <span
+                    style={{
+                      width: 16,
+                      height: 16,
+                      border: '2px solid rgba(255,255,255,0.3)',
+                      borderTopColor: '#fff',
+                      borderRadius: '50%',
+                      animation: 'spin 0.6s linear infinite',
+                      display: 'inline-block',
+                    }}
+                  />
                 )}
                 {googleLoading ? 'Importing...' : 'Import from Google Sheets'}
               </button>
@@ -454,7 +471,8 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
               <p className="text-red-600">{error}</p>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => {
                   setError(null);
                   setStep('upload');
@@ -483,7 +501,8 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {previewData.sheet_names.map((name) => (
-                      <button type="button"
+                      <button
+                        type="button"
                         key={name}
                         onClick={() => toggleSheet(name)}
                         className={`px-3 py-1.5 rounded text-sm ${
@@ -509,9 +528,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                           <td className="px-3 py-1 bg-gray-50 text-gray-500 text-xs w-10">
                             {cell.row + 1}
                           </td>
-                          <td className="px-3 py-1">
-                            {renderCellValue(cell.value)}
-                          </td>
+                          <td className="px-3 py-1">{renderCellValue(cell.value)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -527,8 +544,12 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                 <span>File:</span>
                 <span className="font-medium">{file?.name}</span>
                 <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">
-                  Delimiter: {csvPreviewData.detected_delimiter === ',' ? 'Comma' :
-                    csvPreviewData.detected_delimiter === '\t' ? 'Tab' : csvPreviewData.detected_delimiter}
+                  Delimiter:{' '}
+                  {csvPreviewData.detected_delimiter === ','
+                    ? 'Comma'
+                    : csvPreviewData.detected_delimiter === '\t'
+                      ? 'Tab'
+                      : csvPreviewData.detected_delimiter}
                 </span>
                 <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">
                   {csvPreviewData.detected_encoding}
@@ -575,7 +596,8 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
                 </div>
                 {maxRows < totalRowCount && (
                   <p className="text-xs text-gray-500">
-                    Will import first {maxRows.toLocaleString()} of {totalRowCount.toLocaleString()} rows
+                    Will import first {maxRows.toLocaleString()} of {totalRowCount.toLocaleString()}{' '}
+                    rows
                   </p>
                 )}
               </div>
@@ -619,21 +641,24 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
 
         <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
           {step === 'preview' && (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setStep('upload')}
               className="px-4 py-2 text-gray-600 hover:text-gray-800"
             >
               Back
             </button>
           )}
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 text-gray-600 hover:text-gray-800"
           >
             Cancel
           </button>
           {step === 'preview' && (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleImport}
               disabled={selectedSheets.length === 0 && previewData !== null}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"

@@ -72,9 +72,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
     return (
       <div className="formula-debug-panel formula-debug-panel--success">
         <div className="formula-debug-panel__header">
-          <span className="formula-debug-panel__icon formula-debug-panel__icon--success">
-            ✓
-          </span>
+          <span className="formula-debug-panel__icon formula-debug-panel__icon--success">✓</span>
           <span className="formula-debug-panel__title">No Issues Found</span>
           {onClose && (
             <button type="button" className="formula-debug-panel__close" onClick={onClose}>
@@ -82,9 +80,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
             </button>
           )}
         </div>
-        <p className="formula-debug-panel__message">
-          This formula appears to be correct.
-        </p>
+        <p className="formula-debug-panel__message">This formula appears to be correct.</p>
       </div>
     );
   }
@@ -95,9 +91,7 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
     <div className="formula-debug-panel">
       {/* Header */}
       <div className="formula-debug-panel__header">
-        <span className="formula-debug-panel__icon formula-debug-panel__icon--error">
-          !
-        </span>
+        <span className="formula-debug-panel__icon formula-debug-panel__icon--error">!</span>
         <span className="formula-debug-panel__title">Issue Found</span>
         {onClose && (
           <button type="button" className="formula-debug-panel__close" onClick={onClose}>
@@ -117,7 +111,9 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
         <div className="formula-debug-panel__errors">
           <div className="formula-debug-panel__error">
             <div className="formula-debug-panel__error-header">
-              <span className={`formula-debug-panel__error-type formula-debug-panel__error-type--${debugResult.errorType.toLowerCase()}`}>
+              <span
+                className={`formula-debug-panel__error-type formula-debug-panel__error-type--${debugResult.errorType.toLowerCase()}`}
+              >
                 {getErrorTypeLabel(debugResult.errorType)}
               </span>
               {debugResult.errorLocation && (
@@ -158,19 +154,16 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
                     {Math.round(fix.confidence * 100)}% match
                   </span>
                 </div>
-                <code className="formula-debug-panel__fix-formula">
-                  {fix.fix}
-                </code>
-                <p className="formula-debug-panel__fix-explanation">
-                  {fix.explanation}
-                </p>
+                <code className="formula-debug-panel__fix-formula">{fix.fix}</code>
+                <p className="formula-debug-panel__fix-explanation">{fix.explanation}</p>
               </div>
             ))}
           </div>
 
           {/* Apply Fix Button */}
           <div className="formula-debug-panel__actions">
-            <button type="button"
+            <button
+              type="button"
               className="formula-debug-panel__action formula-debug-panel__action--primary"
               onClick={() => {
                 if (suggestedFixes[selectedFix]) {
@@ -181,7 +174,8 @@ export const FormulaDebugPanel: React.FC<FormulaDebugPanelProps> = ({
               Apply Fix
             </button>
             {onClose && (
-              <button type="button"
+              <button
+                type="button"
                 className="formula-debug-panel__action formula-debug-panel__action--secondary"
                 onClick={onClose}
               >

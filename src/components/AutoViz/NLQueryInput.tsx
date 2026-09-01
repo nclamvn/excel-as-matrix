@@ -45,14 +45,11 @@ export const NLQueryInput: React.FC<NLQueryInputProps> = ({
     [query, onQuery, disabled]
   );
 
-  const handleSuggestionClick = useCallback(
-    (suggestion: string) => {
-      setQuery(suggestion);
-      setShowSuggestions(false);
-      inputRef.current?.focus();
-    },
-    []
-  );
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setQuery(suggestion);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -131,12 +128,33 @@ export const NLQueryInput: React.FC<NLQueryInputProps> = ({
           >
             {isLoading ? (
               <svg className="loading-spinner" width="20" height="20" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.3"/>
-                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round"/>
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <path
+                  d="M12 2a10 10 0 0 1 10 10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeLinecap="round"
+                />
               </svg>
             ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
               </svg>
             )}
             <span>{isLoading ? t.loading : t.submit}</span>
@@ -145,10 +163,7 @@ export const NLQueryInput: React.FC<NLQueryInputProps> = ({
 
         {/* Suggestions dropdown */}
         {showSuggestions && suggestions.length > 0 && (
-          <div
-            className="nl-query-suggestions"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="nl-query-suggestions" onClick={(e) => e.stopPropagation()}>
             {suggestions.map((suggestion, i) => (
               <button
                 key={i}
@@ -156,9 +171,16 @@ export const NLQueryInput: React.FC<NLQueryInputProps> = ({
                 className="suggestion-item"
                 onClick={() => handleSuggestionClick(suggestion)}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="M21 21l-4.35-4.35"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
                 </svg>
                 <span>{suggestion}</span>
               </button>
@@ -187,10 +209,17 @@ export const NLQueryInput: React.FC<NLQueryInputProps> = ({
 
       {/* AI Icon */}
       <div className="nl-query-ai-badge">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
-          <circle cx="8" cy="14" r="1"/>
-          <circle cx="16" cy="14" r="1"/>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
+          <circle cx="8" cy="14" r="1" />
+          <circle cx="16" cy="14" r="1" />
         </svg>
         <span>{language === 'vi' ? 'Hỗ trợ bởi AI' : 'AI Powered'}</span>
       </div>

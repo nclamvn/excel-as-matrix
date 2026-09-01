@@ -2,13 +2,7 @@
 // DATA SCANNER — Scan for data quality issues
 // =============================================================================
 
-import type {
-  SheetData,
-  DataIssue,
-  IssueExample,
-  OutlierInfo,
-  ScanConfig,
-} from './types';
+import type { SheetData, DataIssue, IssueExample, OutlierInfo, ScanConfig } from './types';
 
 /**
  * Scans spreadsheet data for quality issues
@@ -49,9 +43,9 @@ export class DataScanner {
     // Hash each row
     for (let row = 0; row < data.rowCount; row++) {
       const rowData = data.cells[row];
-      if (!rowData || rowData.every(c => c.type === 'empty')) continue;
+      if (!rowData || rowData.every((c) => c.type === 'empty')) continue;
 
-      const hash = rowData.map(c => String(c.value)).join('|');
+      const hash = rowData.map((c) => String(c.value)).join('|');
       const existing = rowHashes.get(hash) || [];
       existing.push(row);
       rowHashes.set(hash, existing);
@@ -60,7 +54,7 @@ export class DataScanner {
     // Find duplicates
     for (const [_hash, rows] of rowHashes) {
       if (rows.length >= this.config.duplicateThreshold) {
-        const affectedCells = rows.map(r => `${r + 1}`);
+        const affectedCells = rows.map((r) => `${r + 1}`);
 
         issues.push({
           id: `dup-${rows.join('-')}`,
@@ -104,9 +98,9 @@ export class DataScanner {
           category: 'data_quality',
           tags: ['duplicates', 'cleanup'],
 
-          examples: rows.slice(0, 3).map(r => ({
+          examples: rows.slice(0, 3).map((r) => ({
             cellRef: `Row ${r + 1}`,
-            value: data.cells[r]?.map(c => c.value).join(', '),
+            value: data.cells[r]?.map((c) => c.value).join(', '),
             reason: r === rows[0] ? 'First occurrence' : 'Duplicate',
           })),
           autoFixAvailable: true,
@@ -437,7 +431,7 @@ export class DataScanner {
       }
 
       if (inconsistent.length > 0) {
-        const examples: IssueExample[] = inconsistent.slice(0, 3).map(i => ({
+        const examples: IssueExample[] = inconsistent.slice(0, 3).map((i) => ({
           cellRef: header.letter,
           value: i.variants.join(', '),
           expected: i.variants[0],
@@ -580,8 +574,8 @@ export class DataScanner {
       }
 
       const types = Object.keys(typeCounts);
-      if (types.length > 1 && !types.every(t => t === 'empty')) {
-        const examples: IssueExample[] = types.slice(0, 3).map(t => ({
+      if (types.length > 1 && !types.every((t) => t === 'empty')) {
+        const examples: IssueExample[] = types.slice(0, 3).map((t) => ({
           cellRef: typeExamples[t]?.[0] || header.letter,
           value: t,
           reason: `${typeCounts[t]} cells of this type`,
@@ -638,11 +632,11 @@ export class DataScanner {
 
     for (let row = 1; row < data.rowCount - 1; row++) {
       const rowData = data.cells[row];
-      if (rowData && rowData.every(c => c.type === 'empty')) {
+      if (rowData && rowData.every((c) => c.type === 'empty')) {
         // Check if there's data after this row
         let hasDataAfter = false;
         for (let r = row + 1; r < data.rowCount; r++) {
-          if (data.cells[r]?.some(c => c.type !== 'empty')) {
+          if (data.cells[r]?.some((c) => c.type !== 'empty')) {
             hasDataAfter = true;
             break;
           }
@@ -662,10 +656,13 @@ export class DataScanner {
         status: 'pending',
 
         title: `${emptyRows.length} empty rows in data`,
-        description: `Rows ${emptyRows.slice(0, 3).map(r => r + 1).join(', ')}${emptyRows.length > 3 ? '...' : ''} are empty`,
+        description: `Rows ${emptyRows
+          .slice(0, 3)
+          .map((r) => r + 1)
+          .join(', ')}${emptyRows.length > 3 ? '...' : ''} are empty`,
 
         sheetId: data.sheetId,
-        affectedCells: emptyRows.map(r => `${r + 1}`),
+        affectedCells: emptyRows.map((r) => `${r + 1}`),
 
         confidence: 1.0,
         impact: {
@@ -688,7 +685,7 @@ export class DataScanner {
         category: 'data_quality',
         tags: ['empty', 'cleanup'],
 
-        examples: emptyRows.slice(0, 3).map(r => ({
+        examples: emptyRows.slice(0, 3).map((r) => ({
           cellRef: `Row ${r + 1}`,
           value: '(empty)',
           reason: 'Empty row in middle of data',
@@ -711,7 +708,7 @@ export class DataScanner {
       /^\d{1,2}-\d{1,2}-\d{2,4}$/,
       /^\w{3}\s+\d{1,2},?\s+\d{4}$/,
     ];
-    return datePatterns.some(p => p.test(value.trim()));
+    return datePatterns.some((p) => p.test(value.trim()));
   }
 
   private looksLikeNumber(value: string): boolean {

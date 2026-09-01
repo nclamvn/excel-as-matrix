@@ -29,9 +29,9 @@ function gamma(z: number): number {
   z -= 1;
   const g = 7;
   const c = [
-    0.99999999999980993, 676.5203681218851, -1259.1392167224028,
-    771.32342877765313, -176.61502916214059, 12.507343278686905,
-    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
+    -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6,
+    1.5056327351493116e-7,
   ];
   let x = c[0];
   for (let i = 1; i < g + 2; i++) {
@@ -128,7 +128,9 @@ export const engineeringFunctions: FunctionDef[] = [
       const bin = ensureString(args[0]);
       const dec = parseInt(bin, 2);
       const places = args[1] !== undefined ? ensureNumber(args[1]) : 0;
-      const hex = (dec < 0 ? (dec + Math.pow(16, 10)).toString(16) : dec.toString(16)).toUpperCase();
+      const hex = (
+        dec < 0 ? (dec + Math.pow(16, 10)).toString(16) : dec.toString(16)
+      ).toUpperCase();
       return places > 0 ? hex.padStart(places, '0') : hex;
     },
   },
@@ -269,7 +271,8 @@ export const engineeringFunctions: FunctionDef[] = [
       const real = ensureNumber(args[0]);
       const imag = ensureNumber(args[1]);
       const suffix = args[2] !== undefined ? ensureString(args[2]) : 'i';
-      if (suffix !== 'i' && suffix !== 'j') throw new FormulaError('#VALUE!', 'Suffix must be i or j');
+      if (suffix !== 'i' && suffix !== 'j')
+        throw new FormulaError('#VALUE!', 'Suffix must be i or j');
       if (imag === 0) return String(real);
       if (real === 0) return imag === 1 ? suffix : imag === -1 ? `-${suffix}` : `${imag}${suffix}`;
       const sign = imag > 0 ? '+' : '';
@@ -290,7 +293,8 @@ export const engineeringFunctions: FunctionDef[] = [
         throw new FormulaError('#NUM!', 'Not a complex number');
       }
       const imagPart = match[2] || match[1] || '1';
-      const val = imagPart === '+' || imagPart === '' ? 1 : imagPart === '-' ? -1 : parseFloat(imagPart);
+      const val =
+        imagPart === '+' || imagPart === '' ? 1 : imagPart === '-' ? -1 : parseFloat(imagPart);
       return val;
     },
   },
@@ -320,7 +324,11 @@ export const engineeringFunctions: FunctionDef[] = [
       if (parts) {
         real = parts[1] ? parseFloat(parts[1]) : 0;
         if (str.includes('i') || str.includes('j')) {
-          imag = parts[2] ? parseFloat(parts[2]) : (parts[1] && !str.match(/[ij]$/) ? 0 : parseFloat(parts[1] || '1'));
+          imag = parts[2]
+            ? parseFloat(parts[2])
+            : parts[1] && !str.match(/[ij]$/)
+              ? 0
+              : parseFloat(parts[1] || '1');
         }
       }
       return Math.sqrt(real * real + imag * imag);
@@ -417,7 +425,10 @@ export const engineeringFunctions: FunctionDef[] = [
       // Rational approximation (Abramowitz and Stegun)
       const a = p < 0.5 ? p : 1 - p;
       const t = Math.sqrt(-2 * Math.log(a));
-      let z = t - (2.515517 + t * (0.802853 + t * 0.010328)) / (1 + t * (1.432788 + t * (0.189269 + t * 0.001308)));
+      let z =
+        t -
+        (2.515517 + t * (0.802853 + t * 0.010328)) /
+          (1 + t * (1.432788 + t * (0.189269 + t * 0.001308)));
       if (p < 0.5) z = -z;
       return mean + z * stddev;
     },
@@ -458,11 +469,11 @@ export const engineeringFunctions: FunctionDef[] = [
       if (cumulative) {
         let sum = 0;
         for (let k = 0; k <= x; k++) {
-          sum += Math.pow(mean, k) * Math.exp(-mean) / gamma(k + 1);
+          sum += (Math.pow(mean, k) * Math.exp(-mean)) / gamma(k + 1);
         }
         return sum;
       }
-      return Math.pow(mean, x) * Math.exp(-mean) / gamma(x + 1);
+      return (Math.pow(mean, x) * Math.exp(-mean)) / gamma(x + 1);
     },
   },
   {
@@ -498,12 +509,13 @@ export const engineeringFunctions: FunctionDef[] = [
 
       if (!cumulative) {
         // PDF of F-distribution
-        const num = Math.pow(d1 * x / (d1 * x + d2), d1 / 2) * Math.pow(d2 / (d1 * x + d2), d2 / 2);
+        const num =
+          Math.pow((d1 * x) / (d1 * x + d2), d1 / 2) * Math.pow(d2 / (d1 * x + d2), d2 / 2);
         return num / (x * beta(d1 / 2, d2 / 2));
       }
       // CDF — use regularized incomplete beta function approximation
-      const z = d1 * x / (d1 * x + d2);
-      return gammainc(d1 / 2, z * d1 / 2);
+      const z = (d1 * x) / (d1 * x + d2);
+      return gammainc(d1 / 2, (z * d1) / 2);
     },
   },
   {
@@ -562,7 +574,9 @@ export const engineeringFunctions: FunctionDef[] = [
       if (z < 0 || z > 1) throw new FormulaError('#NUM!');
 
       if (!cumulative) {
-        return Math.pow(z, alpha - 1) * Math.pow(1 - z, b - 1) / beta(alpha, b) / (b_bound - a_bound);
+        return (
+          (Math.pow(z, alpha - 1) * Math.pow(1 - z, b - 1)) / beta(alpha, b) / (b_bound - a_bound)
+        );
       }
       // CDF — approximate with incomplete beta
       return gammainc(alpha, z * alpha);
@@ -598,8 +612,10 @@ export const engineeringFunctions: FunctionDef[] = [
 
       if (!cumulative) {
         // PDF of Student's t-distribution
-        return (gamma((df + 1) / 2) / (Math.sqrt(df * Math.PI) * gamma(df / 2))) *
-          Math.pow(1 + x * x / df, -(df + 1) / 2);
+        return (
+          (gamma((df + 1) / 2) / (Math.sqrt(df * Math.PI) * gamma(df / 2))) *
+          Math.pow(1 + (x * x) / df, -(df + 1) / 2)
+        );
       }
       // CDF approximation using normal CDF for large df
       if (df > 100) return normalCDF(x);
@@ -643,7 +659,16 @@ export const engineeringFunctions: FunctionDef[] = [
       // Define conversion factors to a base unit per category
       const conversions: Record<string, Record<string, number>> = {
         // Length (base: meter)
-        m: { m: 1, cm: 100, mm: 1000, km: 0.001, in: 39.3701, ft: 3.28084, yd: 1.09361, mi: 0.000621371 },
+        m: {
+          m: 1,
+          cm: 100,
+          mm: 1000,
+          km: 0.001,
+          in: 39.3701,
+          ft: 3.28084,
+          yd: 1.09361,
+          mi: 0.000621371,
+        },
         cm: { m: 0.01 },
         mm: { m: 0.001 },
         km: { m: 1000 },
@@ -660,21 +685,24 @@ export const engineeringFunctions: FunctionDef[] = [
         ton: { kg: 1000 },
         // Temperature handled separately
         // Time (base: second)
-        s: { s: 1, min: 1/60, hr: 1/3600, day: 1/86400 },
+        s: { s: 1, min: 1 / 60, hr: 1 / 3600, day: 1 / 86400 },
         min: { s: 60 },
         hr: { s: 3600 },
         day: { s: 86400 },
       };
 
       // Temperature special handling
-      if ((from === 'c' || from === 'f' || from === 'k') && (to === 'c' || to === 'f' || to === 'k')) {
+      if (
+        (from === 'c' || from === 'f' || from === 'k') &&
+        (to === 'c' || to === 'f' || to === 'k')
+      ) {
         let celsius: number;
         if (from === 'c') celsius = value;
-        else if (from === 'f') celsius = (value - 32) * 5 / 9;
+        else if (from === 'f') celsius = ((value - 32) * 5) / 9;
         else celsius = value - 273.15;
 
         if (to === 'c') return celsius;
-        if (to === 'f') return celsius * 9 / 5 + 32;
+        if (to === 'f') return (celsius * 9) / 5 + 32;
         return celsius + 273.15;
       }
 

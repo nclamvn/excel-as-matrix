@@ -2,12 +2,7 @@
 // PATTERN RECOGNIZER — Detect repetitive user actions
 // =============================================================================
 
-import type {
-  SheetData,
-  UserPattern,
-  ActionRecord,
-  ScanConfig,
-} from './types';
+import type { SheetData, UserPattern, ActionRecord, ScanConfig } from './types';
 
 /**
  * Recognizes repetitive user patterns and suggests automation
@@ -67,10 +62,10 @@ export class PatternRecognizer {
 
           title: 'Repetitive actions detected',
           description: `You've performed this ${seq.actions.length}-step sequence ${seq.frequency} times`,
-          details: seq.actions.map(a => a.type).join(' → '),
+          details: seq.actions.map((a) => a.type).join(' → '),
 
           sheetId: '',
-          affectedCells: seq.actions.filter(a => a.cellRef).map(a => a.cellRef!),
+          affectedCells: seq.actions.filter((a) => a.cellRef).map((a) => a.cellRef!),
 
           confidence: 0.8,
           impact: {
@@ -119,7 +114,7 @@ export class PatternRecognizer {
   private detectCopyPastePatterns(): UserPattern[] {
     const patterns: UserPattern[] = [];
     const copyPasteActions = this.actionHistory.filter(
-      a => a.type === 'copy' || a.type === 'paste'
+      (a) => a.type === 'copy' || a.type === 'paste'
     );
 
     if (copyPasteActions.length < 6) return patterns;
@@ -269,7 +264,7 @@ export class PatternRecognizer {
   private detectDataEntryPatterns(_data: SheetData): UserPattern[] {
     const patterns: UserPattern[] = [];
     const recentEdits = this.actionHistory.filter(
-      a => a.type === 'edit' && a.value !== undefined
+      (a) => a.type === 'edit' && a.value !== undefined
     );
 
     if (recentEdits.length < 5) return patterns;
@@ -339,7 +334,7 @@ export class PatternRecognizer {
    */
   private detectFormattingPatterns(): UserPattern[] {
     const patterns: UserPattern[] = [];
-    const formatActions = this.actionHistory.filter(a => a.type === 'format');
+    const formatActions = this.actionHistory.filter((a) => a.type === 'format');
 
     if (formatActions.length < 5) return patterns;
 
@@ -428,7 +423,7 @@ export class PatternRecognizer {
     }
 
     return Array.from(sequences.values())
-      .filter(s => s.frequency >= this.config.patternMinFrequency)
+      .filter((s) => s.frequency >= this.config.patternMinFrequency)
       .sort((a, b) => b.frequency - a.frequency);
   }
 
@@ -436,7 +431,7 @@ export class PatternRecognizer {
    * Hash a sequence of actions for comparison
    */
   private hashSequence(actions: ActionRecord[]): string {
-    return actions.map(a => `${a.type}:${a.cellRef || ''}`).join('|');
+    return actions.map((a) => `${a.type}:${a.cellRef || ''}`).join('|');
   }
 
   /**

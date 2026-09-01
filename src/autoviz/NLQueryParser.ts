@@ -44,7 +44,15 @@ const QUERY_PATTERNS: QueryPattern[] = [
   },
   // Composition patterns
   {
-    keywords: ['breakdown', 'composition', 'distribution', 'share', 'proportion', 'percentage', 'parts'],
+    keywords: [
+      'breakdown',
+      'composition',
+      'distribution',
+      'share',
+      'proportion',
+      'percentage',
+      'parts',
+    ],
     keywordsVi: ['phân bổ', 'cấu thành', 'tỷ lệ', 'phần trăm', 'thị phần'],
     chartType: 'pie',
     intent: 'show_composition',
@@ -210,12 +218,7 @@ export class NLQueryParser {
     const timeRange = this.extractTimeRange(text);
 
     // Calculate confidence
-    const confidence = this.calculateConfidence(
-      matchedPattern,
-      metrics,
-      dimensions,
-      filters
-    );
+    const confidence = this.calculateConfidence(matchedPattern, metrics, dimensions, filters);
 
     return {
       understood: confidence > 0.3,
@@ -255,17 +258,13 @@ export class NLQueryParser {
   /**
    * Find best matching pattern
    */
-  private findBestPattern(
-    text: string,
-    language: 'en' | 'vi'
-  ): QueryPattern | null {
+  private findBestPattern(text: string, language: 'en' | 'vi'): QueryPattern | null {
     let bestMatch: QueryPattern | null = null;
     let bestScore = 0;
 
     for (const pattern of QUERY_PATTERNS) {
-      const keywords = language === 'vi'
-        ? [...pattern.keywords, ...(pattern.keywordsVi || [])]
-        : pattern.keywords;
+      const keywords =
+        language === 'vi' ? [...pattern.keywords, ...(pattern.keywordsVi || [])] : pattern.keywords;
 
       let score = 0;
       for (const keyword of keywords) {
@@ -300,9 +299,24 @@ export class NLQueryParser {
 
     // Common metric keywords
     const metricKeywords = [
-      'sales', 'revenue', 'profit', 'cost', 'count', 'amount', 'total',
-      'average', 'sum', 'quantity', 'price', 'value',
-      'doanh thu', 'lợi nhuận', 'chi phí', 'số lượng', 'giá', 'tổng',
+      'sales',
+      'revenue',
+      'profit',
+      'cost',
+      'count',
+      'amount',
+      'total',
+      'average',
+      'sum',
+      'quantity',
+      'price',
+      'value',
+      'doanh thu',
+      'lợi nhuận',
+      'chi phí',
+      'số lượng',
+      'giá',
+      'tổng',
     ];
 
     for (const keyword of metricKeywords) {
@@ -332,10 +346,30 @@ export class NLQueryParser {
 
     // Common dimension keywords
     const dimensionKeywords = [
-      'by', 'per', 'each', 'group by', 'category', 'region', 'product',
-      'customer', 'date', 'month', 'year', 'quarter',
-      'theo', 'mỗi', 'từng', 'nhóm', 'danh mục', 'vùng', 'sản phẩm',
-      'khách hàng', 'ngày', 'tháng', 'năm', 'quý',
+      'by',
+      'per',
+      'each',
+      'group by',
+      'category',
+      'region',
+      'product',
+      'customer',
+      'date',
+      'month',
+      'year',
+      'quarter',
+      'theo',
+      'mỗi',
+      'từng',
+      'nhóm',
+      'danh mục',
+      'vùng',
+      'sản phẩm',
+      'khách hàng',
+      'ngày',
+      'tháng',
+      'năm',
+      'quý',
     ];
 
     for (const keyword of dimensionKeywords) {
@@ -356,7 +390,8 @@ export class NLQueryParser {
     const filters: NLFilter[] = [];
 
     // Pattern: "where/when X is/equals Y"
-    const wherePattern = /(?:where|when|với|khi)\s+(\w+)\s+(?:is|=|equals|bằng|là)\s+["']?([^"'\s]+)["']?/gi;
+    const wherePattern =
+      /(?:where|when|với|khi)\s+(\w+)\s+(?:is|=|equals|bằng|là)\s+["']?([^"'\s]+)["']?/gi;
     let match;
 
     while ((match = wherePattern.exec(text)) !== null) {

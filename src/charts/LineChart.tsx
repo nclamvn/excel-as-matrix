@@ -63,9 +63,7 @@ export const LineChart: React.FC<LineChartProps> = ({
           })
           .join(' ');
       } else {
-        pathData = pts
-          .map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`)
-          .join(' ');
+        pathData = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`).join(' ');
       }
 
       // Area path
@@ -106,7 +104,6 @@ export const LineChart: React.FC<LineChartProps> = ({
     }));
 
     return { paths, points: paths.flatMap((p) => p.points), gridLines, xLabels, yLabels };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, chartWidth, chartHeight, colorScheme.colors, smooth, showArea]);
 
   // `points` is computed for future use (tooltips, etc.)
@@ -114,11 +111,7 @@ export const LineChart: React.FC<LineChartProps> = ({
 
   return (
     <ChartWrapper config={config} className="line-chart">
-      <svg
-        width={chartWidth}
-        height={chartHeight}
-        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-      >
+      <svg width={chartWidth} height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
         {/* Grid lines */}
         {yAxis?.showGrid !== false && (
           <g className="grid-lines">
@@ -207,9 +200,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                   className={style.animation ? 'animate-point' : ''}
                   style={{ animationDelay: `${i * 50}ms` }}
                 />
-                {tooltip?.enabled && (
-                  <title>{`${pt.label}: ${formatNumber(pt.value)}`}</title>
-                )}
+                {tooltip?.enabled && <title>{`${pt.label}: ${formatNumber(pt.value)}`}</title>}
               </g>
             ))
           )}

@@ -15,8 +15,14 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .panel-header {
@@ -358,128 +364,128 @@
 }
 
 /* Dark mode */
-[data-theme="dark"] .comment-panel {
+[data-theme='dark'] .comment-panel {
   background: var(--surface-1, #1a1a1a);
   border-color: var(--surface-3, #404040);
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .panel-header,
-[data-theme="dark"] .panel-toolbar {
+[data-theme='dark'] .panel-header,
+[data-theme='dark'] .panel-toolbar {
   border-color: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .panel-header h3 {
+[data-theme='dark'] .panel-header h3 {
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .close-btn {
+[data-theme='dark'] .close-btn {
   color: var(--text-2, #a3a3a3);
 }
 
-[data-theme="dark"] .close-btn:hover {
+[data-theme='dark'] .close-btn:hover {
   background: var(--surface-2, #2a2a2a);
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .comment-thread {
+[data-theme='dark'] .comment-thread {
   background: var(--surface-2, #2a2a2a);
   border-color: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .search-input,
-[data-theme="dark"] .comment-editor textarea,
-[data-theme="dark"] .reply-editor textarea {
+[data-theme='dark'] .search-input,
+[data-theme='dark'] .comment-editor textarea,
+[data-theme='dark'] .reply-editor textarea {
   background: var(--surface-1, #1a1a1a);
   border-color: var(--surface-3, #404040);
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .search-input::placeholder {
+[data-theme='dark'] .search-input::placeholder {
   color: var(--text-4, #525252);
 }
 
-[data-theme="dark"] .search-icon {
+[data-theme='dark'] .search-icon {
   color: var(--text-3, #737373);
 }
 
-[data-theme="dark"] .checkbox-label {
+[data-theme='dark'] .checkbox-label {
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .author-name {
+[data-theme='dark'] .author-name {
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .comment-time,
-[data-theme="dark"] .reply-time {
+[data-theme='dark'] .comment-time,
+[data-theme='dark'] .reply-time {
   color: var(--text-3, #737373);
 }
 
-[data-theme="dark"] .comment-content,
-[data-theme="dark"] .reply-content {
+[data-theme='dark'] .comment-content,
+[data-theme='dark'] .reply-content {
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .comment-actions button {
+[data-theme='dark'] .comment-actions button {
   color: var(--text-2, #a3a3a3);
 }
 
-[data-theme="dark"] .comment-actions button:hover {
+[data-theme='dark'] .comment-actions button:hover {
   background: var(--surface-3, #333);
   color: var(--text-0, #fafafa);
 }
 
-[data-theme="dark"] .empty-state {
+[data-theme='dark'] .empty-state {
   color: var(--text-3, #737373);
 }
 
-[data-theme="dark"] .empty-state p {
+[data-theme='dark'] .empty-state p {
   color: var(--text-2, #a3a3a3);
 }
 
-[data-theme="dark"] .reply-btn {
+[data-theme='dark'] .reply-btn {
   border-color: var(--surface-3, #404040);
   color: var(--text-3, #737373);
 }
 
-[data-theme="dark"] .reply-btn:hover {
+[data-theme='dark'] .reply-btn:hover {
   border-color: var(--green-accent, #059669);
   color: var(--green-accent, #10b981);
 }
 
-[data-theme="dark"] .reply-area {
+[data-theme='dark'] .reply-area {
   background: var(--surface-1, #1a1a1a);
   border-color: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .comment-replies {
+[data-theme='dark'] .comment-replies {
   border-color: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .reply-item {
+[data-theme='dark'] .reply-item {
   border-color: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .delete-reply {
+[data-theme='dark'] .delete-reply {
   color: var(--text-3, #737373);
 }
 
-[data-theme="dark"] .delete-reply:hover {
+[data-theme='dark'] .delete-reply:hover {
   color: var(--error-color, #f87171);
 }
 
-[data-theme="dark"] .editor-actions button {
+[data-theme='dark'] .editor-actions button {
   background: var(--surface-2, #2a2a2a);
   border-color: var(--surface-3, #404040);
   color: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .editor-actions button:hover {
+[data-theme='dark'] .editor-actions button:hover {
   background: var(--surface-3, #333);
 }
 
-[data-theme="dark"] .resolved-badge {
+[data-theme='dark'] .resolved-badge {
   background: rgba(34, 197, 94, 0.2);
   color: #4ade80;
 }

@@ -3,15 +3,7 @@
 // ============================================================
 
 import React, { useState } from 'react';
-import {
-  Grid,
-  Rows,
-  Columns,
-  ImageIcon,
-  Printer,
-  Eye,
-  EyeOff,
-} from 'lucide-react';
+import { Grid, Rows, Columns, ImageIcon, Printer, Eye, EyeOff } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { usePrintStore } from '../../../stores/printStore';
 import { useUIStore } from '../../../stores/uiStore';
@@ -76,7 +68,8 @@ export const PageLayoutToolbar: React.FC = () => {
 
         {/* Print Area Section */}
         <div className="toolbar-2026__group">
-          <button type="button"
+          <button
+            type="button"
             className="toolbar-2026__btn"
             onClick={() => showToast('Set print area from selection', 'info')}
             title="Print Area"
@@ -84,7 +77,8 @@ export const PageLayoutToolbar: React.FC = () => {
             <Printer size={16} />
             <span>Print Area</span>
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="toolbar-2026__btn"
             onClick={() => activeSheetId && setShowPrintTitlesDialog(true)}
             title="Print Titles"
@@ -98,7 +92,8 @@ export const PageLayoutToolbar: React.FC = () => {
 
         {/* Page Breaks Section */}
         <div className="toolbar-2026__group">
-          <button type="button"
+          <button
+            type="button"
             className="toolbar-2026__btn"
             onClick={handleInsertPageBreak}
             title="Insert Page Break"
@@ -112,7 +107,8 @@ export const PageLayoutToolbar: React.FC = () => {
 
         {/* Background Section */}
         <div className="toolbar-2026__group">
-          <button type="button"
+          <button
+            type="button"
             className="toolbar-2026__btn"
             onClick={() => activeSheetId && setShowBackgroundDialog(true)}
             title="Sheet Background"
@@ -126,7 +122,8 @@ export const PageLayoutToolbar: React.FC = () => {
 
         {/* Sheet Options Section */}
         <div className="toolbar-2026__group">
-          <button type="button"
+          <button
+            type="button"
             className={`toolbar-2026__btn ${settings?.printGridlines ? 'active' : ''}`}
             onClick={handleToggleGridlines}
             title="Print Gridlines"
@@ -134,7 +131,8 @@ export const PageLayoutToolbar: React.FC = () => {
             <Grid size={16} />
             <span>Gridlines</span>
           </button>
-          <button type="button"
+          <button
+            type="button"
             className={`toolbar-2026__btn ${settings?.printRowColHeaders ? 'active' : ''}`}
             onClick={handleToggleHeadings}
             title="Print Headings"

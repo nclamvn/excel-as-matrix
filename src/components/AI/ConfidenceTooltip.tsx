@@ -18,17 +18,12 @@ interface ConfidenceTooltipProps {
 // Component
 // -----------------------------------------------------------------------------
 
-export const ConfidenceTooltip: React.FC<ConfidenceTooltipProps> = ({
-  score,
-  className = '',
-}) => {
+export const ConfidenceTooltip: React.FC<ConfidenceTooltipProps> = ({ score, className = '' }) => {
   return (
     <div className={`trust-tooltip ${className}`}>
       <div className="trust-tooltip__header">
         <span className="trust-tooltip__title">Confidence Breakdown</span>
-        <span className="trust-tooltip__score">
-          {Math.round(score.overall * 100)}%
-        </span>
+        <span className="trust-tooltip__score">{Math.round(score.overall * 100)}%</span>
       </div>
 
       <div className="trust-tooltip__factors">
@@ -59,14 +54,10 @@ export const ConfidenceTooltip: React.FC<ConfidenceTooltipProps> = ({
         />
       </div>
 
-      <div className="trust-tooltip__explanation">
-        {score.explanation}
-      </div>
+      <div className="trust-tooltip__explanation">{score.explanation}</div>
 
       <div className="trust-tooltip__footer">
-        <span className="trust-tooltip__time">
-          Assessed {formatTime(score.assessedAt)}
-        </span>
+        <span className="trust-tooltip__time">Assessed {formatTime(score.assessedAt)}</span>
       </div>
     </div>
   );
@@ -126,14 +117,9 @@ export const InlineConfidence: React.FC<InlineConfidenceProps> = ({
 
   return (
     <span className={`trust-inline ${className}`}>
-      <span
-        className="trust-inline__indicator"
-        style={{ backgroundColor: color }}
-      />
+      <span className="trust-inline__indicator" style={{ backgroundColor: color }} />
       <span className="trust-inline__value">{percentage}%</span>
-      {showExplanation && (
-        <span className="trust-inline__explanation">{score.explanation}</span>
-      )}
+      {showExplanation && <span className="trust-inline__explanation">{score.explanation}</span>}
     </span>
   );
 };

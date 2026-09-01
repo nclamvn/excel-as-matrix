@@ -104,17 +104,18 @@ export const BarChart: React.FC<BarChartProps> = ({
     <svg width={width} height={height} className="overflow-visible">
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {/* Grid lines */}
-        {axes.yAxis.gridlines && yTicks.map((tick, i) => (
-          <line
-            key={`grid-${i}`}
-            x1={0}
-            y1={scaleY(tick)}
-            x2={chartWidth}
-            y2={scaleY(tick)}
-            stroke="#E5E7EB"
-            strokeDasharray="4,4"
-          />
-        ))}
+        {axes.yAxis.gridlines &&
+          yTicks.map((tick, i) => (
+            <line
+              key={`grid-${i}`}
+              x1={0}
+              y1={scaleY(tick)}
+              x2={chartWidth}
+              y2={scaleY(tick)}
+              stroke="#E5E7EB"
+              strokeDasharray="4,4"
+            />
+          ))}
 
         {/* Zero line */}
         {minValue < 0 && (
@@ -148,9 +149,19 @@ export const BarChart: React.FC<BarChartProps> = ({
         {/* X Axis */}
         {axes.xAxis.visible && (
           <>
-            <line x1={0} y1={chartHeight} x2={chartWidth} y2={chartHeight} stroke="#9CA3AF" strokeWidth={1} />
+            <line
+              x1={0}
+              y1={chartHeight}
+              x2={chartWidth}
+              y2={chartHeight}
+              stroke="#9CA3AF"
+              strokeWidth={1}
+            />
             {categories.map((cat, i) => (
-              <g key={`x-tick-${i}`} transform={`translate(${i * groupWidth + groupWidth / 2}, ${chartHeight})`}>
+              <g
+                key={`x-tick-${i}`}
+                transform={`translate(${i * groupWidth + groupWidth / 2}, ${chartHeight})`}
+              >
                 <line x1={0} y1={0} x2={0} y2={5} stroke="#9CA3AF" />
                 {axes.xAxis.labelsVisible && (
                   <text
@@ -158,7 +169,9 @@ export const BarChart: React.FC<BarChartProps> = ({
                     y={18}
                     textAnchor="middle"
                     className="text-xs fill-gray-500"
-                    transform={axes.xAxis.labelRotation ? `rotate(${axes.xAxis.labelRotation})` : ''}
+                    transform={
+                      axes.xAxis.labelRotation ? `rotate(${axes.xAxis.labelRotation})` : ''
+                    }
                   >
                     {cat}
                   </text>
@@ -169,62 +182,60 @@ export const BarChart: React.FC<BarChartProps> = ({
         )}
 
         {/* Bars */}
-        {stacked ? (
-          // Stacked bars
-          categories.map((cat, catIndex) => (
-            <g key={`category-${catIndex}`}>
-              {getStackedBars(catIndex).map((bar) => {
-                const barId = `${catIndex}-${bar.seriesIndex}`;
+        {stacked
+          ? // Stacked bars
+            categories.map((cat, catIndex) => (
+              <g key={`category-${catIndex}`}>
+                {getStackedBars(catIndex).map((bar) => {
+                  const barId = `${catIndex}-${bar.seriesIndex}`;
+                  const isHovered = hoveredBar === barId;
+                  return (
+                    <rect
+                      key={barId}
+                      x={getBarX(catIndex, 0)}
+                      y={bar.y}
+                      width={barWidth}
+                      height={bar.height}
+                      fill={bar.color}
+                      opacity={isHovered ? 1 : 0.85}
+                      className="transition-opacity duration-150 cursor-pointer"
+                      onMouseEnter={() => setHoveredBar(barId)}
+                      onMouseLeave={() => setHoveredBar(null)}
+                    >
+                      <title>{`${bar.name} (${cat}): ${bar.value}`}</title>
+                    </rect>
+                  );
+                })}
+              </g>
+            ))
+          : // Grouped bars
+            categories.map((cat, catIndex) =>
+              series.map((s, seriesIndex) => {
+                const value = s.values[catIndex] || 0;
+                const barHeight = Math.abs(scaleY(0) - scaleY(value));
+                const barY = value >= 0 ? scaleY(value) : scaleY(0);
+                const barId = `${catIndex}-${seriesIndex}`;
                 const isHovered = hoveredBar === barId;
+
                 return (
                   <rect
                     key={barId}
-                    x={getBarX(catIndex, 0)}
-                    y={bar.y}
+                    x={getBarX(catIndex, seriesIndex)}
+                    y={barY}
                     width={barWidth}
-                    height={bar.height}
-                    fill={bar.color}
+                    height={barHeight}
+                    fill={s.color}
                     opacity={isHovered ? 1 : 0.85}
+                    rx={2}
                     className="transition-opacity duration-150 cursor-pointer"
                     onMouseEnter={() => setHoveredBar(barId)}
                     onMouseLeave={() => setHoveredBar(null)}
                   >
-                    <title>{`${bar.name} (${cat}): ${bar.value}`}</title>
+                    <title>{`${s.name} (${cat}): ${value}`}</title>
                   </rect>
                 );
-              })}
-            </g>
-          ))
-        ) : (
-          // Grouped bars
-          categories.map((cat, catIndex) =>
-            series.map((s, seriesIndex) => {
-              const value = s.values[catIndex] || 0;
-              const barHeight = Math.abs(scaleY(0) - scaleY(value));
-              const barY = value >= 0 ? scaleY(value) : scaleY(0);
-              const barId = `${catIndex}-${seriesIndex}`;
-              const isHovered = hoveredBar === barId;
-
-              return (
-                <rect
-                  key={barId}
-                  x={getBarX(catIndex, seriesIndex)}
-                  y={barY}
-                  width={barWidth}
-                  height={barHeight}
-                  fill={s.color}
-                  opacity={isHovered ? 1 : 0.85}
-                  rx={2}
-                  className="transition-opacity duration-150 cursor-pointer"
-                  onMouseEnter={() => setHoveredBar(barId)}
-                  onMouseLeave={() => setHoveredBar(null)}
-                >
-                  <title>{`${s.name} (${cat}): ${value}`}</title>
-                </rect>
-              );
-            })
-          )
-        )}
+              })
+            )}
 
         {/* Legend */}
         {legend.visible && (

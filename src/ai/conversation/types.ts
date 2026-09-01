@@ -10,16 +10,16 @@
  * All possible conversation states
  */
 export type ConversationState =
-  | 'idle'               // Ready for input
-  | 'intent_gathering'   // Understanding request
-  | 'clarifying'         // Asking questions
-  | 'planning'           // Breaking down task
-  | 'executing'          // Running steps
-  | 'reviewing'          // User checks results
-  | 'awaiting_approval'  // Waiting for approval
-  | 'complete'           // Task finished
-  | 'error'              // Something went wrong
-  | 'cancelled';         // User cancelled
+  | 'idle' // Ready for input
+  | 'intent_gathering' // Understanding request
+  | 'clarifying' // Asking questions
+  | 'planning' // Breaking down task
+  | 'executing' // Running steps
+  | 'reviewing' // User checks results
+  | 'awaiting_approval' // Waiting for approval
+  | 'complete' // Task finished
+  | 'error' // Something went wrong
+  | 'cancelled'; // User cancelled
 
 /**
  * Valid state transitions
@@ -80,8 +80,8 @@ export interface ConversationContext {
  * Parsed user intent
  */
 export interface ParsedIntent {
-  action: string;           // What to do
-  target?: string;          // Where to do it
+  action: string; // What to do
+  target?: string; // Where to do it
   parameters: Record<string, unknown>;
   confidence: number;
   ambiguities: string[];
@@ -114,7 +114,7 @@ export interface TaskStep {
   description: string;
   action: string;
   parameters: Record<string, unknown>;
-  dependencies: string[];   // IDs of steps this depends on
+  dependencies: string[]; // IDs of steps this depends on
   status: StepStatus;
   canRetry: boolean;
   optional: boolean;
@@ -123,12 +123,7 @@ export interface TaskStep {
 /**
  * Status of a task step
  */
-export type StepStatus =
-  | 'pending'
-  | 'running'
-  | 'completed'
-  | 'failed'
-  | 'skipped';
+export type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
 
 /**
  * Result of executing a step
@@ -151,12 +146,12 @@ export interface StepResult {
  * Types of clarification questions
  */
 export type ClarificationType =
-  | 'target_selection'       // Which cells?
-  | 'action_confirmation'    // Is this right?
-  | 'parameter_value'        // What value?
-  | 'ambiguity_resolution'   // Which meaning?
-  | 'scope_definition'       // How much?
-  | 'format_preference';     // How to display?
+  | 'target_selection' // Which cells?
+  | 'action_confirmation' // Is this right?
+  | 'parameter_value' // What value?
+  | 'ambiguity_resolution' // Which meaning?
+  | 'scope_definition' // How much?
+  | 'format_preference'; // How to display?
 
 /**
  * A clarification request to the user
@@ -202,12 +197,12 @@ export interface ClarificationResponse {
  * Types of errors that can occur
  */
 export type ErrorType =
-  | 'parse_error'        // Failed to understand request
-  | 'validation_error'   // Invalid parameters
-  | 'execution_error'    // Step failed to execute
-  | 'permission_error'   // Not allowed
-  | 'timeout_error'      // Took too long
-  | 'unknown_error';     // Something else
+  | 'parse_error' // Failed to understand request
+  | 'validation_error' // Invalid parameters
+  | 'execution_error' // Step failed to execute
+  | 'permission_error' // Not allowed
+  | 'timeout_error' // Took too long
+  | 'unknown_error'; // Something else
 
 /**
  * A conversation error
@@ -227,11 +222,11 @@ export interface ConversationError {
  * Possible recovery actions
  */
 export type RecoveryAction =
-  | 'retry'      // Try again
-  | 'skip'       // Skip this step
-  | 'modify'     // Change approach
-  | 'abort'      // Cancel task
-  | 'ask_user';  // Get help
+  | 'retry' // Try again
+  | 'skip' // Skip this step
+  | 'modify' // Change approach
+  | 'abort' // Cancel task
+  | 'ask_user'; // Get help
 
 /**
  * Recovery attempt
@@ -252,11 +247,7 @@ export interface RecoveryAttempt {
 /**
  * Types of feedback
  */
-export type FeedbackType =
-  | 'thumbs_up'
-  | 'thumbs_down'
-  | 'correction'
-  | 'suggestion';
+export type FeedbackType = 'thumbs_up' | 'thumbs_down' | 'correction' | 'suggestion';
 
 /**
  * User feedback on AI response
@@ -265,10 +256,10 @@ export interface UserFeedback {
   id: string;
   conversationId: string;
   type: FeedbackType;
-  rating?: number;          // 1-5
+  rating?: number; // 1-5
   comment?: string;
-  correction?: string;      // What should have happened
-  categories?: FeedbackCategory[];    // What went wrong
+  correction?: string; // What should have happened
+  categories?: FeedbackCategory[]; // What went wrong
   providedAt: Date;
 }
 
@@ -285,7 +276,7 @@ export const FEEDBACK_CATEGORIES = [
   'other',
 ] as const;
 
-export type FeedbackCategory = typeof FEEDBACK_CATEGORIES[number];
+export type FeedbackCategory = (typeof FEEDBACK_CATEGORIES)[number];
 
 // -----------------------------------------------------------------------------
 // Events
@@ -329,7 +320,7 @@ export interface ConversationEvent {
 export interface ConversationConfig {
   maxClarificationAttempts: number;
   maxRecoveryAttempts: number;
-  stepTimeout: number;          // ms
+  stepTimeout: number; // ms
   autoRetryOnError: boolean;
   requireApprovalForChanges: boolean;
   collectFeedback: boolean;

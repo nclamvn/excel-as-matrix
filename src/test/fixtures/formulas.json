@@ -50,7 +50,11 @@
     { "formula": "=SUBSTITUTE(\"Hello\",\"l\",\"L\")", "expected": "HeLLo" },
     { "formula": "=REPLACE(\"Hello\",2,3,\"XYZ\")", "expected": "HXYZo" },
     { "formula": "=FIND(\"l\",\"Hello\")", "expected": 3 },
-    { "formula": "=SEARCH(\"L\",\"Hello\")", "expected": 3, "description": "Case insensitive search" },
+    {
+      "formula": "=SEARCH(\"L\",\"Hello\")",
+      "expected": 3,
+      "description": "Case insensitive search"
+    },
     { "formula": "=TEXT(1234.5,\"#,##0.00\")", "expected": "1,234.50" },
     { "formula": "=VALUE(\"123\")", "expected": 123 },
     { "formula": "=T(123)", "expected": "" },
@@ -176,9 +180,16 @@
     { "formula": "=CONCATENATE(LEFT(\"Hello\",2),RIGHT(\"World\",3))", "expected": "Herld" }
   ],
   "arrays": [
-    { "formula": "={1,2,3}", "expected": [[1,2,3]], "description": "Horizontal array" },
-    { "formula": "={1;2;3}", "expected": [[1],[2],[3]], "description": "Vertical array" },
-    { "formula": "={1,2;3,4}", "expected": [[1,2],[3,4]], "description": "2D array" },
+    { "formula": "={1,2,3}", "expected": [[1, 2, 3]], "description": "Horizontal array" },
+    { "formula": "={1;2;3}", "expected": [[1], [2], [3]], "description": "Vertical array" },
+    {
+      "formula": "={1,2;3,4}",
+      "expected": [
+        [1, 2],
+        [3, 4]
+      ],
+      "description": "2D array"
+    },
     { "formula": "=SUM({1,2,3})", "expected": 6 },
     { "formula": "=AVERAGE({1,2,3,4,5})", "expected": 3 },
     { "formula": "=SUM({1,2,3}*{1,2,3})", "expected": 14, "description": "Array multiplication" }

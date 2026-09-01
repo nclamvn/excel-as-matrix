@@ -64,7 +64,11 @@ export const SparklineRenderer: React.FC<SparklineRendererProps> = ({
   }, [sparkline, sheet]);
 
   // Calculate min/max
-  const { min, max, range: valueRange } = useMemo(() => {
+  const {
+    min,
+    max,
+    range: valueRange,
+  } = useMemo(() => {
     if (data.length === 0) return { min: 0, max: 1, range: 1 };
 
     const dataMin = sparkline.minValue ?? Math.min(...data);
@@ -153,13 +157,7 @@ export const SparklineRenderer: React.FC<SparklineRendererProps> = ({
 
         {/* Markers */}
         {markerPoints.map((point, i) => (
-          <circle
-            key={i}
-            cx={point.x}
-            cy={point.y}
-            r={3}
-            fill={point.color}
-          />
+          <circle key={i} cx={point.x} cy={point.y} r={3} fill={point.color} />
         ))}
       </svg>
     );
@@ -168,7 +166,7 @@ export const SparklineRenderer: React.FC<SparklineRendererProps> = ({
   // Render Column Sparkline
   const renderColumnSparkline = () => {
     const { style } = sparkline;
-    const barWidth = Math.max(2, (chartWidth / data.length) - 2);
+    const barWidth = Math.max(2, chartWidth / data.length - 2);
     const gap = 1;
 
     return (
@@ -233,7 +231,7 @@ export const SparklineRenderer: React.FC<SparklineRendererProps> = ({
   // Render Win/Loss Sparkline
   const renderWinLossSparkline = () => {
     const { style } = sparkline;
-    const barWidth = Math.max(2, (chartWidth / data.length) - 2);
+    const barWidth = Math.max(2, chartWidth / data.length - 2);
     const gap = 1;
     const halfHeight = chartHeight / 2;
 

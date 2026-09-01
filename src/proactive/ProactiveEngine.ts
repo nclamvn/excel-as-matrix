@@ -136,23 +136,20 @@ export class ProactiveEngine {
   /**
    * Scan only specific types
    */
-  async scanTypes(
-    data: SheetData,
-    types: SuggestionType[]
-  ): Promise<ProactiveSuggestion[]> {
+  async scanTypes(data: SheetData, types: SuggestionType[]): Promise<ProactiveSuggestion[]> {
     const suggestions: ProactiveSuggestion[] = [];
 
     if (types.includes('issue')) {
-      suggestions.push(...await this.scanner.scan(data));
+      suggestions.push(...(await this.scanner.scan(data)));
     }
     if (types.includes('insight')) {
-      suggestions.push(...await this.insightDetector.detect(data));
+      suggestions.push(...(await this.insightDetector.detect(data)));
     }
     if (types.includes('optimization')) {
-      suggestions.push(...await this.formulaOptimizer.optimize(data));
+      suggestions.push(...(await this.formulaOptimizer.optimize(data)));
     }
     if (types.includes('pattern')) {
-      suggestions.push(...await this.patternRecognizer.detect(data));
+      suggestions.push(...(await this.patternRecognizer.detect(data)));
     }
 
     return this.ranker.rank(suggestions);
@@ -166,15 +163,14 @@ export class ProactiveEngine {
    * Get all suggestions
    */
   getSuggestions(): ProactiveSuggestion[] {
-    return Array.from(this.suggestions.values())
-      .filter(s => s.status === 'pending');
+    return Array.from(this.suggestions.values()).filter((s) => s.status === 'pending');
   }
 
   /**
    * Get suggestions by type
    */
   getSuggestionsByType(type: SuggestionType): ProactiveSuggestion[] {
-    return this.getSuggestions().filter(s => s.type === type);
+    return this.getSuggestions().filter((s) => s.type === type);
   }
 
   /**
@@ -235,16 +231,13 @@ export class ProactiveEngine {
   /**
    * Execute an action
    */
-  async executeAction(
-    suggestionId: string,
-    actionId: string
-  ): Promise<ActionResult> {
+  async executeAction(suggestionId: string, actionId: string): Promise<ActionResult> {
     const suggestion = this.suggestions.get(suggestionId);
     if (!suggestion) {
       return { success: false, message: 'Suggestion not found' };
     }
 
-    const action = suggestion.actions.find(a => a.id === actionId);
+    const action = suggestion.actions.find((a) => a.id === actionId);
     if (!action) {
       return { success: false, message: 'Action not found' };
     }
@@ -364,7 +357,11 @@ export class ProactiveEngine {
   private updateSuggestions(newSuggestions: ProactiveSuggestion[]): void {
     // Remove expired snoozed suggestions
     for (const [_id, suggestion] of this.suggestions) {
-      if (suggestion.status === 'snoozed' && suggestion.expiresAt && suggestion.expiresAt < Date.now()) {
+      if (
+        suggestion.status === 'snoozed' &&
+        suggestion.expiresAt &&
+        suggestion.expiresAt < Date.now()
+      ) {
         suggestion.status = 'pending';
       }
     }
@@ -384,8 +381,9 @@ export class ProactiveEngine {
 
     // Limit total suggestions
     if (this.suggestions.size > this.config.maxSuggestions * 2) {
-      const sorted = Array.from(this.suggestions.entries())
-        .sort((a, b) => b[1].detectedAt - a[1].detectedAt);
+      const sorted = Array.from(this.suggestions.entries()).sort(
+        (a, b) => b[1].detectedAt - a[1].detectedAt
+      );
 
       const toRemove = sorted.slice(this.config.maxSuggestions * 2);
       for (const [id] of toRemove) {
@@ -418,9 +416,9 @@ export class ProactiveEngine {
     }
 
     const topIssues = suggestions
-      .filter(s => s.type === 'issue')
+      .filter((s) => s.type === 'issue')
       .slice(0, 3)
-      .map(s => s.title);
+      .map((s) => s.title);
 
     return {
       totalSuggestions: suggestions.length,

@@ -51,10 +51,7 @@ const getChangeTypeLabel = (type: ChangeType): string => {
 // Format Cell Value
 // -----------------------------------------------------------------------------
 
-const formatCellValue = (
-  value: unknown,
-  formula: string | null
-): string => {
+const formatCellValue = (value: unknown, formula: string | null): string => {
   if (formula) {
     return formula.length > 30 ? formula.substring(0, 27) + '...' : formula;
   }
@@ -102,9 +99,7 @@ const DiffRow: React.FC<DiffRowProps> = ({ change, compact }) => {
     <tr className={`diff-row diff-row--${change.changeType}`}>
       <td className="diff-cell diff-cell--ref">
         <span className="diff-cell-ref">{change.ref}</span>
-        {change.sheetName && (
-          <span className="diff-cell-sheet">{change.sheetName}</span>
-        )}
+        {change.sheetName && <span className="diff-cell-sheet">{change.sheetName}</span>}
       </td>
       <td
         className={`diff-cell diff-cell--before ${isFormulaBefore ? 'diff-cell--formula' : ''}`}
@@ -241,10 +236,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
           </div>
           <div className="diff-sort">
             <label>Sort:</label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'ref' | 'type')}
-            >
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as 'ref' | 'type')}>
               <option value="ref">By Cell Reference</option>
               <option value="type">By Change Type</option>
             </select>

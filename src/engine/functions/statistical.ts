@@ -232,7 +232,8 @@ export const statisticalFunctions: FunctionDef[] = [
       }
 
       const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-      const variance = numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (numbers.length - 1);
+      const variance =
+        numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (numbers.length - 1);
       return Math.sqrt(variance);
     },
   },
@@ -249,7 +250,8 @@ export const statisticalFunctions: FunctionDef[] = [
       }
 
       const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-      const variance = numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numbers.length;
+      const variance =
+        numbers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numbers.length;
       return Math.sqrt(variance);
     },
   },
@@ -993,7 +995,7 @@ export const statisticalFunctions: FunctionDef[] = [
         }
       }
 
-      return result.map(v => [v]);
+      return result.map((v) => [v]);
     },
   },
 
@@ -1022,7 +1024,7 @@ export const statisticalFunctions: FunctionDef[] = [
       const intercept = (sumY - slope * sumX) / n;
 
       // Calculate trend values for newX
-      return newX.map(x => [intercept + slope * x]);
+      return newX.map((x) => [intercept + slope * x]);
     },
   },
 
@@ -1041,13 +1043,13 @@ export const statisticalFunctions: FunctionDef[] = [
       }
 
       // Check for non-positive Y values
-      if (knownY.some(y => y <= 0)) {
+      if (knownY.some((y) => y <= 0)) {
         return new FormulaError('#NUM!');
       }
 
       // Calculate exponential regression: y = b * m^x
       // Take log: ln(y) = ln(b) + x*ln(m)
-      const logY = knownY.map(y => Math.log(y));
+      const logY = knownY.map((y) => Math.log(y));
       const n = knownY.length;
       const sumX = knownX.reduce((a, b) => a + b, 0);
       const sumLogY = logY.reduce((a, b) => a + b, 0);
@@ -1061,7 +1063,7 @@ export const statisticalFunctions: FunctionDef[] = [
       const b = Math.exp(logB);
 
       // Calculate growth values for newX
-      return newX.map(x => [b * Math.pow(m, x)]);
+      return newX.map((x) => [b * Math.pow(m, x)]);
     },
   },
 
@@ -1204,7 +1206,9 @@ export const statisticalFunctions: FunctionDef[] = [
       const n = array1.length;
       const mean1 = array1.reduce((a, b) => a + b, 0) / n;
       const mean2 = array2.reduce((a, b) => a + b, 0) / n;
-      let sumProduct = 0, sumSq1 = 0, sumSq2 = 0;
+      let sumProduct = 0,
+        sumSq1 = 0,
+        sumSq2 = 0;
       for (let i = 0; i < n; i++) {
         const d1 = array1[i] - mean1;
         const d2 = array2[i] - mean2;
@@ -1281,7 +1285,7 @@ export const statisticalFunctions: FunctionDef[] = [
       if (a <= 0 || a >= 1 || s <= 0 || n < 1) return new FormulaError('#NUM!');
       // z-value for two-tailed test
       const z = normInv(1 - a / 2);
-      return z * s / Math.sqrt(n);
+      return (z * s) / Math.sqrt(n);
     },
   },
 
@@ -1302,7 +1306,7 @@ export const statisticalFunctions: FunctionDef[] = [
       const n = Math.floor(size as number);
       if (a <= 0 || a >= 1 || s <= 0 || n < 1) return new FormulaError('#NUM!');
       const z = normInv(1 - a / 2);
-      return z * s / Math.sqrt(n);
+      return (z * s) / Math.sqrt(n);
     },
   },
 
@@ -1356,12 +1360,12 @@ export const statisticalFunctions: FunctionDef[] = [
         // CDF: sum of PMF from 0 to x
         let sum = 0;
         for (let k = 0; k <= xVal; k++) {
-          sum += Math.pow(meanVal, k) * Math.exp(-meanVal) / factorial(k);
+          sum += (Math.pow(meanVal, k) * Math.exp(-meanVal)) / factorial(k);
         }
         return sum;
       }
       // PMF
-      return Math.pow(meanVal, xVal) * Math.exp(-meanVal) / factorial(xVal);
+      return (Math.pow(meanVal, xVal) * Math.exp(-meanVal)) / factorial(xVal);
     },
   },
 
@@ -1485,7 +1489,7 @@ export const statisticalFunctions: FunctionDef[] = [
         return gammaIncLower(a, xVal / b) / gamma(a);
       }
       // PDF
-      return Math.pow(xVal, a - 1) * Math.exp(-xVal / b) / (Math.pow(b, a) * gamma(a));
+      return (Math.pow(xVal, a - 1) * Math.exp(-xVal / b)) / (Math.pow(b, a) * gamma(a));
     },
   },
 
@@ -1601,8 +1605,8 @@ export const statisticalFunctions: FunctionDef[] = [
         return betaInc(a, b, xNorm);
       }
       // PDF
-      const betaFunc = gamma(a) * gamma(b) / gamma(a + b);
-      return Math.pow(xNorm, a - 1) * Math.pow(1 - xNorm, b - 1) / (betaFunc * (hi - lo));
+      const betaFunc = (gamma(a) * gamma(b)) / gamma(a + b);
+      return (Math.pow(xNorm, a - 1) * Math.pow(1 - xNorm, b - 1)) / (betaFunc * (hi - lo));
     },
   },
 
@@ -1629,7 +1633,7 @@ export const statisticalFunctions: FunctionDef[] = [
       }
       // PDF
       const k2 = dfVal / 2;
-      return Math.pow(xVal, k2 - 1) * Math.exp(-xVal / 2) / (Math.pow(2, k2) * gamma(k2));
+      return (Math.pow(xVal, k2 - 1) * Math.exp(-xVal / 2)) / (Math.pow(2, k2) * gamma(k2));
     },
   },
 
@@ -1655,7 +1659,7 @@ export const statisticalFunctions: FunctionDef[] = [
       for (let iter = 0; iter < 100; iter++) {
         const cdf = gammaIncLower(dfVal / 2, x / 2) / gamma(dfVal / 2);
         const k2 = dfVal / 2;
-        const pdf = Math.pow(x, k2 - 1) * Math.exp(-x / 2) / (Math.pow(2, k2) * gamma(k2));
+        const pdf = (Math.pow(x, k2 - 1) * Math.exp(-x / 2)) / (Math.pow(2, k2) * gamma(k2));
         if (pdf === 0) break;
         const delta = (cdf - pVal) / pdf;
         x = Math.max(0.0001, x - delta);
@@ -1687,13 +1691,15 @@ export const statisticalFunctions: FunctionDef[] = [
 
       if (cumulative === true || cumulative === 'TRUE') {
         // CDF using incomplete beta function
-        const z = d1 * xVal / (d1 * xVal + d2);
+        const z = (d1 * xVal) / (d1 * xVal + d2);
         return betaInc(d1 / 2, d2 / 2, z);
       }
       // PDF
-      const betaFunc = gamma(d1 / 2) * gamma(d2 / 2) / gamma((d1 + d2) / 2);
-      return Math.pow(d1 / d2, d1 / 2) * Math.pow(xVal, d1 / 2 - 1) /
-             (betaFunc * Math.pow(1 + d1 * xVal / d2, (d1 + d2) / 2));
+      const betaFunc = (gamma(d1 / 2) * gamma(d2 / 2)) / gamma((d1 + d2) / 2);
+      return (
+        (Math.pow(d1 / d2, d1 / 2) * Math.pow(xVal, d1 / 2 - 1)) /
+        (betaFunc * Math.pow(1 + (d1 * xVal) / d2, (d1 + d2) / 2))
+      );
     },
   },
 
@@ -1885,7 +1891,8 @@ export const statisticalFunctions: FunctionDef[] = [
       }
       if (values.length < 2) return new FormulaError('#DIV/0!');
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (values.length - 1);
+      const variance =
+        values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (values.length - 1);
       return Math.sqrt(variance);
     },
   },
@@ -1928,7 +1935,7 @@ export const statisticalFunctions: FunctionDef[] = [
       if (xRange.length !== probRange.length) return new FormulaError('#N/A');
 
       // Check probabilities sum to ~1 and are all valid
-      if (probRange.some(p => p < 0 || p > 1)) return new FormulaError('#NUM!');
+      if (probRange.some((p) => p < 0 || p > 1)) return new FormulaError('#NUM!');
 
       let result = 0;
       for (let i = 0; i < xRange.length; i++) {
@@ -2014,8 +2021,10 @@ export const statisticalFunctions: FunctionDef[] = [
       const s = Math.sqrt(numbers.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (n - 1));
       if (s === 0) return new FormulaError('#DIV/0!');
       const m4 = numbers.reduce((sum, v) => sum + Math.pow((v - mean) / s, 4), 0);
-      return ((n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3))) * m4 -
-             (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
+      return (
+        ((n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3))) * m4 -
+        (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3))
+      );
     },
   },
 
@@ -2043,8 +2052,9 @@ export const statisticalFunctions: FunctionDef[] = [
       for (let iter = 0; iter < 50; iter++) {
         const cdf = tDistCDF(x, dfVal);
         const k2 = (dfVal + 1) / 2;
-        const pdf = gamma(k2) / (Math.sqrt(dfVal * Math.PI) * gamma(dfVal / 2)) *
-                    Math.pow(1 + x * x / dfVal, -k2);
+        const pdf =
+          (gamma(k2) / (Math.sqrt(dfVal * Math.PI) * gamma(dfVal / 2))) *
+          Math.pow(1 + (x * x) / dfVal, -k2);
         if (pdf === 0) break;
         const delta = (cdf - pVal) / pdf;
         x -= delta;
@@ -2078,8 +2088,9 @@ export const statisticalFunctions: FunctionDef[] = [
       for (let iter = 0; iter < 50; iter++) {
         const cdf = tDistCDF(x, dfVal);
         const k2 = (dfVal + 1) / 2;
-        const pdf = gamma(k2) / (Math.sqrt(dfVal * Math.PI) * gamma(dfVal / 2)) *
-                    Math.pow(1 + x * x / dfVal, -k2);
+        const pdf =
+          (gamma(k2) / (Math.sqrt(dfVal * Math.PI) * gamma(dfVal / 2))) *
+          Math.pow(1 + (x * x) / dfVal, -k2);
         if (pdf === 0) break;
         const delta = (cdf - target) / pdf;
         x -= delta;
@@ -2173,7 +2184,7 @@ export const statisticalFunctions: FunctionDef[] = [
       for (let iter = 0; iter < 100; iter++) {
         const cdf = gammaIncLower(dfVal / 2, x / 2) / gamma(dfVal / 2);
         const k2 = dfVal / 2;
-        const pdf = Math.pow(x, k2 - 1) * Math.exp(-x / 2) / (Math.pow(2, k2) * gamma(k2));
+        const pdf = (Math.pow(x, k2 - 1) * Math.exp(-x / 2)) / (Math.pow(2, k2) * gamma(k2));
         if (pdf === 0) break;
         const delta = (cdf - target) / pdf;
         x = Math.max(0.0001, x - delta);
@@ -2186,18 +2197,18 @@ export const statisticalFunctions: FunctionDef[] = [
 
 // Error function approximation for normal distribution
 function erf(x: number): number {
-  const a1 =  0.254829592;
+  const a1 = 0.254829592;
   const a2 = -0.284496736;
-  const a3 =  1.421413741;
+  const a3 = 1.421413741;
   const a4 = -1.453152027;
-  const a5 =  1.061405429;
-  const p  =  0.3275911;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
 
   const sign = x < 0 ? -1 : 1;
   x = Math.abs(x);
 
   const t = 1.0 / (1.0 + p * x);
-  const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+  const y = 1.0 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
 
   return sign * y;
 }
@@ -2205,14 +2216,19 @@ function erf(x: number): number {
 // Inverse normal distribution approximation
 function normInv(p: number): number {
   // Rational approximation for lower tail
-  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
-             1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
-  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
-             6.680131188771972e+01, -1.328068155288572e+01];
-  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
-             -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
-  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
-             3.754408661907416e+00];
+  const a = [
+    -3.969683028665376e1, 2.209460984245205e2, -2.759285104469687e2, 1.38357751867269e2,
+    -3.066479806614716e1, 2.506628277459239,
+  ];
+  const b = [
+    -5.447609879822406e1, 1.615858368580409e2, -1.556989798598866e2, 6.680131188771972e1,
+    -1.328068155288572e1,
+  ];
+  const c = [
+    -7.784894002430293e-3, -3.223964580411365e-1, -2.400758277161838, -2.549732539343734,
+    4.374664141464968, 2.938163982698783,
+  ];
+  const d = [7.784695709041462e-3, 3.224671290700398e-1, 2.445134137142996, 3.754408661907416];
 
   const pLow = 0.02425;
   const pHigh = 1 - pLow;
@@ -2220,17 +2236,23 @@ function normInv(p: number): number {
 
   if (p < pLow) {
     q = Math.sqrt(-2 * Math.log(p));
-    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-           ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+    return (
+      (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+      ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
+    );
   } else if (p <= pHigh) {
     q = p - 0.5;
     r = q * q;
-    return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
-           (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+    return (
+      ((((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q) /
+      (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1)
+    );
   } else {
     q = Math.sqrt(-2 * Math.log(1 - p));
-    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-            ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+    return (
+      -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+      ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
+    );
   }
 }
 
@@ -2241,9 +2263,11 @@ function gamma(z: number): number {
   }
   z -= 1;
   const g = 7;
-  const C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
-             771.32342877765313, -176.61502916214059, 12.507343278686905,
-             -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  const C = [
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
+    -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6,
+    1.5056327351493116e-7,
+  ];
   let x = C[0];
   for (let i = 1; i < g + 2; i++) {
     x += C[i] / (z + i);
@@ -2263,15 +2287,12 @@ function betaInc(a: number, b: number, x: number): number {
   if (x === 0) return 0;
   if (x === 1) return 1;
 
-  const bt = Math.exp(
-    gamma(a + b) - gamma(a) - gamma(b) +
-    a * Math.log(x) + b * Math.log(1 - x)
-  );
+  const bt = Math.exp(gamma(a + b) - gamma(a) - gamma(b) + a * Math.log(x) + b * Math.log(1 - x));
 
   if (x < (a + 1) / (a + b + 2)) {
-    return bt * betaCF(a, b, x) / a;
+    return (bt * betaCF(a, b, x)) / a;
   } else {
-    return 1 - bt * betaCF(b, a, 1 - x) / b;
+    return 1 - (bt * betaCF(b, a, 1 - x)) / b;
   }
 }
 
@@ -2280,25 +2301,25 @@ function betaCF(a: number, b: number, x: number): number {
   const maxIterations = 100;
   const epsilon = 1e-10;
 
-  let qab = a + b;
-  let qap = a + 1;
-  let qam = a - 1;
+  const qab = a + b;
+  const qap = a + 1;
+  const qam = a - 1;
   let c = 1;
-  let d = 1 - qab * x / qap;
+  let d = 1 - (qab * x) / qap;
   if (Math.abs(d) < epsilon) d = epsilon;
   d = 1 / d;
   let h = d;
 
   for (let m = 1; m <= maxIterations; m++) {
     const m2 = 2 * m;
-    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    let aa = (m * (b - m) * x) / ((qam + m2) * (a + m2));
     d = 1 + aa * d;
     if (Math.abs(d) < epsilon) d = epsilon;
     c = 1 + aa / c;
     if (Math.abs(c) < epsilon) c = epsilon;
     d = 1 / d;
     h *= d * c;
-    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    aa = (-(a + m) * (qab + m) * x) / ((a + m2) * (qap + m2));
     d = 1 + aa * d;
     if (Math.abs(d) < epsilon) d = epsilon;
     c = 1 + aa / c;
@@ -2348,17 +2369,28 @@ function matchesCriteria(value: FormulaValue, criteria: FormulaValue): boolean {
 
       if (!isNaN(numCompare) && !isNaN(numValue)) {
         switch (op) {
-          case '>': return numValue > numCompare;
-          case '<': return numValue < numCompare;
-          case '>=': return numValue >= numCompare;
-          case '<=': return numValue <= numCompare;
-          case '<>': case '!=': return numValue !== numCompare;
-          case '=': return numValue === numCompare;
+          case '>':
+            return numValue > numCompare;
+          case '<':
+            return numValue < numCompare;
+          case '>=':
+            return numValue >= numCompare;
+          case '<=':
+            return numValue <= numCompare;
+          case '<>':
+          case '!=':
+            return numValue !== numCompare;
+          case '=':
+            return numValue === numCompare;
         }
       } else {
         switch (op) {
-          case '<>': case '!=': return String(value) !== compareVal;
-          case '=': default: return String(value) === compareVal;
+          case '<>':
+          case '!=':
+            return String(value) !== compareVal;
+          case '=':
+          default:
+            return String(value) === compareVal;
         }
       }
     }

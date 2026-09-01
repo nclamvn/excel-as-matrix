@@ -50,11 +50,12 @@ export const PremiumTooltip: React.FC<PremiumTooltipProps> = ({
     setCoords({ top, left });
   }, [anchorEl, position]);
 
-  const transformStyle = position === 'top' || position === 'bottom'
-    ? 'translateX(-50%)'
-    : position === 'left'
-      ? 'translate(-100%, -50%)'
-      : 'translateY(-50%)';
+  const transformStyle =
+    position === 'top' || position === 'bottom'
+      ? 'translateX(-50%)'
+      : position === 'left'
+        ? 'translate(-100%, -50%)'
+        : 'translateY(-50%)';
 
   const tooltipContent = (
     <div
@@ -67,12 +68,8 @@ export const PremiumTooltip: React.FC<PremiumTooltipProps> = ({
     >
       <div className="premium-tooltip__content">
         <span className="premium-tooltip__title">{title}</span>
-        {shortcut && (
-          <span className="premium-tooltip__shortcut">{shortcut}</span>
-        )}
-        {description && (
-          <span className="premium-tooltip__description">{description}</span>
-        )}
+        {shortcut && <span className="premium-tooltip__shortcut">{shortcut}</span>}
+        {description && <span className="premium-tooltip__description">{description}</span>}
       </div>
     </div>
   );

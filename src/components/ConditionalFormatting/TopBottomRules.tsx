@@ -5,21 +5,31 @@
 import React, { useState } from 'react';
 import { useConditionalFormattingStore } from '../../stores/conditionalFormattingStore';
 import { useSelectionStore } from '../../stores/selectionStore';
-import { HIGHLIGHT_STYLES, CFTopBottomType, CFAverageType } from '../../types/conditionalFormatting';
+import {
+  HIGHLIGHT_STYLES,
+  CFTopBottomType,
+  CFAverageType,
+} from '../../types/conditionalFormatting';
 import {
   ArrowUp,
   TrendingUp,
   ArrowDown,
   TrendingDown,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
 } from 'lucide-react';
 
 interface TopBottomRulesProps {
   onSelect: () => void;
 }
 
-type RuleType = 'top10' | 'top10Percent' | 'bottom10' | 'bottom10Percent' | 'aboveAverage' | 'belowAverage';
+type RuleType =
+  | 'top10'
+  | 'top10Percent'
+  | 'bottom10'
+  | 'bottom10Percent'
+  | 'aboveAverage'
+  | 'belowAverage';
 
 interface RuleConfig {
   label: string;
@@ -29,12 +39,42 @@ interface RuleConfig {
 }
 
 const RULE_CONFIGS: RuleConfig[] = [
-  { label: 'Top 10 Items...', icon: <ArrowUp size={14} color="#16a34a" strokeWidth={2.5} />, bgColor: '#C6EFCE', type: 'top10' },
-  { label: 'Top 10%...', icon: <TrendingUp size={14} color="#16a34a" strokeWidth={2.5} />, bgColor: '#C6EFCE', type: 'top10Percent' },
-  { label: 'Bottom 10 Items...', icon: <ArrowDown size={14} color="#dc2626" strokeWidth={2.5} />, bgColor: '#FFC7CE', type: 'bottom10' },
-  { label: 'Bottom 10%...', icon: <TrendingDown size={14} color="#dc2626" strokeWidth={2.5} />, bgColor: '#FFC7CE', type: 'bottom10Percent' },
-  { label: 'Above Average...', icon: <ArrowUpRight size={14} color="#ca8a04" strokeWidth={2.5} />, bgColor: '#FFEB9C', type: 'aboveAverage' },
-  { label: 'Below Average...', icon: <ArrowDownRight size={14} color="#ca8a04" strokeWidth={2.5} />, bgColor: '#FFEB9C', type: 'belowAverage' },
+  {
+    label: 'Top 10 Items...',
+    icon: <ArrowUp size={14} color="#16a34a" strokeWidth={2.5} />,
+    bgColor: '#C6EFCE',
+    type: 'top10',
+  },
+  {
+    label: 'Top 10%...',
+    icon: <TrendingUp size={14} color="#16a34a" strokeWidth={2.5} />,
+    bgColor: '#C6EFCE',
+    type: 'top10Percent',
+  },
+  {
+    label: 'Bottom 10 Items...',
+    icon: <ArrowDown size={14} color="#dc2626" strokeWidth={2.5} />,
+    bgColor: '#FFC7CE',
+    type: 'bottom10',
+  },
+  {
+    label: 'Bottom 10%...',
+    icon: <TrendingDown size={14} color="#dc2626" strokeWidth={2.5} />,
+    bgColor: '#FFC7CE',
+    type: 'bottom10Percent',
+  },
+  {
+    label: 'Above Average...',
+    icon: <ArrowUpRight size={14} color="#ca8a04" strokeWidth={2.5} />,
+    bgColor: '#FFEB9C',
+    type: 'aboveAverage',
+  },
+  {
+    label: 'Below Average...',
+    icon: <ArrowDownRight size={14} color="#ca8a04" strokeWidth={2.5} />,
+    bgColor: '#FFEB9C',
+    type: 'belowAverage',
+  },
 ];
 
 export const TopBottomRules: React.FC<TopBottomRulesProps> = ({ onSelect }) => {
@@ -137,14 +177,12 @@ export const TopBottomRules: React.FC<TopBottomRulesProps> = ({ onSelect }) => {
     return (
       <div className="highlight-dialog">
         <div className="dialog-header">
-          {RULE_CONFIGS.find(r => r.type === showDialog)?.label}
+          {RULE_CONFIGS.find((r) => r.type === showDialog)?.label}
         </div>
         <div className="dialog-content">
           {needsValue && (
             <div className="input-group">
-              <label>
-                {showDialog.includes('Percent') ? 'Percentage:' : 'Number of items:'}
-              </label>
+              <label>{showDialog.includes('Percent') ? 'Percentage:' : 'Number of items:'}</label>
               <input
                 type="number"
                 min="1"
@@ -162,14 +200,20 @@ export const TopBottomRules: React.FC<TopBottomRulesProps> = ({ onSelect }) => {
               onChange={(e) => setSelectedStyle(parseInt(e.target.value))}
             >
               {HIGHLIGHT_STYLES.map((style, idx) => (
-                <option key={idx} value={idx}>{style.name}</option>
+                <option key={idx} value={idx}>
+                  {style.name}
+                </option>
               ))}
             </select>
           </div>
         </div>
         <div className="dialog-footer">
-          <button type="button" className="btn-cancel" onClick={() => setShowDialog(null)}>Cancel</button>
-          <button type="button" className="btn-ok" onClick={handleApply}>OK</button>
+          <button type="button" className="btn-cancel" onClick={() => setShowDialog(null)}>
+            Cancel
+          </button>
+          <button type="button" className="btn-ok" onClick={handleApply}>
+            OK
+          </button>
         </div>
       </div>
     );
@@ -178,7 +222,8 @@ export const TopBottomRules: React.FC<TopBottomRulesProps> = ({ onSelect }) => {
   return (
     <div className="highlight-rules-menu">
       {RULE_CONFIGS.map((rule) => (
-        <button type="button"
+        <button
+          type="button"
           key={rule.type}
           className="highlight-rule-item"
           onClick={() => setShowDialog(rule.type)}

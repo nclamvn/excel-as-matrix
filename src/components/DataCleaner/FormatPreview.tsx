@@ -58,11 +58,13 @@ export const FormatPreview: React.FC<FormatPreviewProps> = ({
       grouped.set(change.formatType, existing);
     }
 
-    return Array.from(grouped.entries()).map(([type, items]): FormatSummary => ({
-      type,
-      count: items.length,
-      examples: items.slice(0, 5),
-    }));
+    return Array.from(grouped.entries()).map(
+      ([type, items]): FormatSummary => ({
+        type,
+        count: items.length,
+        examples: items.slice(0, 5),
+      })
+    );
   }, [changes]);
 
   const toggleType = (type: FormatType) => {
@@ -75,7 +77,7 @@ export const FormatPreview: React.FC<FormatPreviewProps> = ({
     setSelectedTypes(newSelected);
   };
 
-  const selectedChanges = changes.filter(c => selectedTypes.has(c.formatType));
+  const selectedChanges = changes.filter((c) => selectedTypes.has(c.formatType));
 
   if (changes.length === 0) {
     return (
@@ -96,7 +98,8 @@ export const FormatPreview: React.FC<FormatPreviewProps> = ({
           <span className="format-preview__label">can be standardized</span>
         </div>
         {onApply && selectedChanges.length > 0 && (
-          <button type="button"
+          <button
+            type="button"
             className="format-preview__apply-selected"
             onClick={() => onApply(selectedChanges)}
           >
@@ -114,9 +117,9 @@ export const FormatPreview: React.FC<FormatPreviewProps> = ({
             isSelected={selectedTypes.has(summary.type)}
             isExpanded={expandedType === summary.type}
             onToggleSelect={() => toggleType(summary.type)}
-            onToggleExpand={() => setExpandedType(
-              expandedType === summary.type ? null : summary.type
-            )}
+            onToggleExpand={() =>
+              setExpandedType(expandedType === summary.type ? null : summary.type)
+            }
             onApply={onApplyByType}
             onReject={onReject}
           />
@@ -156,11 +159,7 @@ const FormatTypeCard: React.FC<FormatTypeCardProps> = ({
       {/* Card Header */}
       <div className="format-type-card__header">
         <div className="format-type-card__select">
-          <input
-            type="checkbox"
-            checked={isSelected}
-            onChange={onToggleSelect}
-          />
+          <input type="checkbox" checked={isSelected} onChange={onToggleSelect} />
         </div>
         <div className="format-type-card__icon" style={{ color: typeConfig.color }}>
           {typeConfig.icon}
@@ -171,7 +170,8 @@ const FormatTypeCard: React.FC<FormatTypeCardProps> = ({
         </div>
         <div className="format-type-card__actions">
           {onApply && (
-            <button type="button"
+            <button
+              type="button"
               className="format-type-card__apply"
               onClick={() => onApply(summary.type)}
             >
@@ -200,7 +200,8 @@ const FormatTypeCard: React.FC<FormatTypeCardProps> = ({
               <span className="format-type-card__arrow">→</span>
               <span className="format-type-card__standardized">{example.standardizedValue}</span>
               {onReject && (
-                <button type="button"
+                <button
+                  type="button"
                   className="format-type-card__reject"
                   onClick={() => onReject(example)}
                   title="Reject this change"
@@ -211,9 +212,7 @@ const FormatTypeCard: React.FC<FormatTypeCardProps> = ({
             </div>
           ))}
           {summary.count > 5 && (
-            <div className="format-type-card__more">
-              +{summary.count - 5} more values
-            </div>
+            <div className="format-type-card__more">+{summary.count - 5} more values</div>
           )}
         </div>
       )}
@@ -231,11 +230,7 @@ interface FormatSettingsProps {
   onChange: (settings: Record<string, unknown>) => void;
 }
 
-export const FormatSettings: React.FC<FormatSettingsProps> = ({
-  type,
-  settings,
-  onChange,
-}) => {
+export const FormatSettings: React.FC<FormatSettingsProps> = ({ type, settings, onChange }) => {
   switch (type) {
     case 'date':
       return (
@@ -243,7 +238,7 @@ export const FormatSettings: React.FC<FormatSettingsProps> = ({
           <label className="format-settings__label">
             Target Format
             <select
-              value={settings.targetFormat as string || 'YYYY-MM-DD'}
+              value={(settings.targetFormat as string) || 'YYYY-MM-DD'}
               onChange={(e) => onChange({ ...settings, targetFormat: e.target.value })}
               className="format-settings__select"
             >
@@ -262,7 +257,7 @@ export const FormatSettings: React.FC<FormatSettingsProps> = ({
           <label className="format-settings__label">
             Phone Format
             <select
-              value={settings.phoneFormat as string || 'national'}
+              value={(settings.phoneFormat as string) || 'national'}
               onChange={(e) => onChange({ ...settings, phoneFormat: e.target.value })}
               className="format-settings__select"
             >
@@ -280,7 +275,7 @@ export const FormatSettings: React.FC<FormatSettingsProps> = ({
           <label className="format-settings__label">
             Name Capitalization
             <select
-              value={settings.nameCase as string || 'title'}
+              value={(settings.nameCase as string) || 'title'}
               onChange={(e) => onChange({ ...settings, nameCase: e.target.value })}
               className="format-settings__select"
             >
@@ -366,7 +361,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>

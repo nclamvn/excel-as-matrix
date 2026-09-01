@@ -32,7 +32,10 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
   return (
     <div className="optimization-card">
       <div className="optimization-card__header">
-        <div className="optimization-card__icon" style={{ backgroundColor: categoryConfig.bgColor }}>
+        <div
+          className="optimization-card__icon"
+          style={{ backgroundColor: categoryConfig.bgColor }}
+        >
           {categoryConfig.icon}
         </div>
         <div className="optimization-card__title-area">
@@ -42,7 +45,8 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
             <span>{metadata?.speedImprovement || 'Performance boost'}</span>
           </div>
         </div>
-        <button type="button"
+        <button
+          type="button"
           className="optimization-card__dismiss"
           onClick={() => onDismiss(optimization.id)}
           title="Dismiss"
@@ -77,14 +81,16 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
           <div className="optimization-card__affected">
             <CellIcon />
             <span>
-              {optimization.impact.cellCount} formula{optimization.impact.cellCount !== 1 ? 's' : ''} can be optimized
+              {optimization.impact.cellCount} formula
+              {optimization.impact.cellCount !== 1 ? 's' : ''} can be optimized
             </span>
           </div>
         )}
 
         {/* Preview toggle */}
         {metadata?.previewData && (
-          <button type="button"
+          <button
+            type="button"
             className="optimization-card__preview-toggle"
             onClick={() => setShowPreview(!showPreview)}
           >
@@ -135,8 +141,9 @@ export const OptimizationCard: React.FC<OptimizationCardProps> = ({
       </div>
 
       <div className="optimization-card__actions">
-        {optimization.actions.map(action => (
-          <button type="button"
+        {optimization.actions.map((action) => (
+          <button
+            type="button"
             key={action.id}
             className={`optimization-card__action optimization-card__action--${action.type}`}
             onClick={() => onAction(optimization.id, action.id)}
@@ -198,7 +205,9 @@ function getCategoryConfig(category?: string) {
       bgColor: '#fce7f3',
     },
   };
-  return configs[category || ''] || { label: 'Optimization', icon: <ZapIcon />, bgColor: '#f3f4f6' };
+  return (
+    configs[category || ''] || { label: 'Optimization', icon: <ZapIcon />, bgColor: '#f3f4f6' }
+  );
 }
 
 // -----------------------------------------------------------------------------

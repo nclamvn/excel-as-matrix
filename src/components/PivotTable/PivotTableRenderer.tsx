@@ -20,10 +20,7 @@ interface PivotTableRendererProps {
   onCellClick?: (cell: PivotCellData) => void;
 }
 
-export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
-  pivot,
-  onCellClick,
-}) => {
+export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({ pivot, onCellClick }) => {
   const { toggleRowExpansion, markForRefresh } = usePivotStore();
   const { getCellValue } = useWorkbookStore();
   const { getSlicersForPivot, getTimelinesForPivot } = useSlicerStore();
@@ -37,7 +34,7 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
   const timelines = getTimelinesForPivot(pivot.id);
 
   // Check if there are any date fields for timeline
-  const hasDateFields = pivot.fields.some(f => f.dataType === 'date');
+  const hasDateFields = pivot.fields.some((f) => f.dataType === 'date');
 
   // Get source data from the workbook
   const sourceData = useMemo(() => {
@@ -64,18 +61,22 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
   const result: PivotResult = useMemo(() => {
     if (sourceData.length === 0) {
       return {
-        cells: [[{
-          value: 'No data',
-          formattedValue: 'No data',
-          isHeader: true,
-          isTotal: false,
-          isSubtotal: false,
-          rowPath: [],
-          colPath: [],
-          level: 0,
-          isCollapsible: false,
-          isExpanded: true,
-        }]],
+        cells: [
+          [
+            {
+              value: 'No data',
+              formattedValue: 'No data',
+              isHeader: true,
+              isTotal: false,
+              isSubtotal: false,
+              rowPath: [],
+              colPath: [],
+              level: 0,
+              isCollapsible: false,
+              isExpanded: true,
+            },
+          ],
+        ],
         rowCount: 1,
         colCount: 1,
       };
@@ -83,9 +84,12 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
     return calculatePivot(pivot, sourceData);
   }, [pivot, sourceData]);
 
-  const handleToggleExpand = useCallback((rowKey: string) => {
-    toggleRowExpansion(pivot.id, rowKey);
-  }, [pivot.id, toggleRowExpansion]);
+  const handleToggleExpand = useCallback(
+    (rowKey: string) => {
+      toggleRowExpansion(pivot.id, rowKey);
+    },
+    [pivot.id, toggleRowExpansion]
+  );
 
   const handleRefresh = useCallback(() => {
     markForRefresh(pivot.id);
@@ -98,7 +102,9 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
       cell.isTotal ? 'total' : '',
       cell.isSubtotal ? 'subtotal' : '',
       cell.isCollapsible ? 'collapsible' : '',
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const style: React.CSSProperties = {
       paddingLeft: cell.isHeader && cell.level > 0 ? `${cell.level * 16 + 8}px` : undefined,
@@ -112,18 +118,15 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
         onClick={() => onCellClick?.(cell)}
       >
         {cell.isCollapsible && (
-          <button type="button"
+          <button
+            type="button"
             className="expand-btn"
             onClick={(e) => {
               e.stopPropagation();
               handleToggleExpand(cell.rowPath.join('|'));
             }}
           >
-            {cell.isExpanded ? (
-              <ChevronDown size={12} />
-            ) : (
-              <ChevronRight size={12} />
-            )}
+            {cell.isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
           </button>
         )}
         <span className="cell-value">{cell.formattedValue}</span>
@@ -136,7 +139,8 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
       <div className="pivot-table-header">
         <span className="pivot-table-name">{pivot.name}</span>
         <div className="pivot-header-actions">
-          <button type="button"
+          <button
+            type="button"
             className="pivot-action-btn"
             onClick={() => setShowSlicerDialog(true)}
             title="Insert Slicer"
@@ -144,7 +148,8 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
             <Filter size={14} />
           </button>
           {hasDateFields && (
-            <button type="button"
+            <button
+              type="button"
               className="pivot-action-btn"
               onClick={() => setShowTimelineDialog(true)}
               title="Insert Timeline"
@@ -152,14 +157,16 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
               <Calendar size={14} />
             </button>
           )}
-          <button type="button"
+          <button
+            type="button"
             className="pivot-chart-btn"
             onClick={() => setShowChartDialog(true)}
             title="Create Pivot Chart"
           >
             <BarChart2 size={14} />
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="pivot-refresh-btn"
             onClick={handleRefresh}
             title="Refresh pivot table"
@@ -191,21 +198,13 @@ export const PivotTableRenderer: React.FC<PivotTableRendererProps> = ({
       </div>
 
       {/* Slicers */}
-      {slicers.map(slicer => (
-        <Slicer
-          key={slicer.id}
-          slicer={slicer}
-          pivot={pivot}
-        />
+      {slicers.map((slicer) => (
+        <Slicer key={slicer.id} slicer={slicer} pivot={pivot} />
       ))}
 
       {/* Timelines */}
-      {timelines.map(timeline => (
-        <Timeline
-          key={timeline.id}
-          timeline={timeline}
-          pivot={pivot}
-        />
+      {timelines.map((timeline) => (
+        <Timeline key={timeline.id} timeline={timeline} pivot={pivot} />
       ))}
 
       {/* Dialogs */}

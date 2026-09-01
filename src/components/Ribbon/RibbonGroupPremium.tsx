@@ -15,13 +15,12 @@ export const RibbonGroupPremium: React.FC<RibbonGroupPremiumProps> = ({
 }) => {
   return (
     <div className="ribbon-group-premium">
-      <div className="ribbon-group__content">
-        {children}
-      </div>
+      <div className="ribbon-group__content">{children}</div>
       <div className="ribbon-group__label">
         {label}
         {showDialogLauncher && (
-          <button type="button"
+          <button
+            type="button"
             className="ribbon-group__dialog-launcher"
             onClick={onDialogLaunch}
             title={`${label} settings`}

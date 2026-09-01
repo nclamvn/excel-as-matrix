@@ -85,10 +85,7 @@ export const StorageIndicator: React.FC = () => {
     <div
       className={`
         flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
-        ${usagePercent > 90
-          ? 'bg-red-100 text-red-700'
-          : 'bg-yellow-100 text-yellow-700'
-        }
+        ${usagePercent > 90 ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}
       `}
       title={`Storage: ${usagePercent.toFixed(0)}% used`}
     >

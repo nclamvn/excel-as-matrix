@@ -84,7 +84,9 @@ export class DataSourceConnector {
 
       const columns = data.length > 0 ? Object.keys(data[0]) : [];
 
-      loggers.ai.info(`DataSource: fetched ${data.length} rows from ${source.type} in ${Date.now() - startTime}ms`);
+      loggers.ai.info(
+        `DataSource: fetched ${data.length} rows from ${source.type} in ${Date.now() - startTime}ms`
+      );
 
       return {
         data,
@@ -216,7 +218,7 @@ export class DataSourceConnector {
     const response = await fetch(config.apiUrl, {
       method: config.apiMethod || 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         ...config.apiHeaders,
       },
       body: config.apiMethod === 'POST' ? config.apiBody : undefined,
@@ -265,7 +267,10 @@ export class DataSourceConnector {
       return this.parseJSONText(text);
     } catch {
       // Single column of values
-      return text.split('\n').filter(Boolean).map((line) => ({ value: this.inferType(line.trim()) }));
+      return text
+        .split('\n')
+        .filter(Boolean)
+        .map((line) => ({ value: this.inferType(line.trim()) }));
     }
   }
 
@@ -292,7 +297,11 @@ export class DataSourceConnector {
 
       if (value === null || value === undefined) {
         row[fullKey] = null;
-      } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      } else if (
+        typeof value === 'string' ||
+        typeof value === 'number' ||
+        typeof value === 'boolean'
+      ) {
         row[fullKey] = value;
       } else if (Array.isArray(value)) {
         row[fullKey] = JSON.stringify(value);
@@ -309,7 +318,11 @@ export class DataSourceConnector {
 // Factory
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function createDataSource(type: DataSourceType, name: string, config: DataSourceConfig = {}): DataSource {
+export function createDataSource(
+  type: DataSourceType,
+  name: string,
+  config: DataSourceConfig = {}
+): DataSource {
   return {
     id: `ds-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type,

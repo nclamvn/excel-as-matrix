@@ -157,7 +157,9 @@ export interface MockUserSession {
   clientVersion: string;
 }
 
-export function createMockUser(overrides: Partial<MockCollaborationUser> = {}): MockCollaborationUser {
+export function createMockUser(
+  overrides: Partial<MockCollaborationUser> = {}
+): MockCollaborationUser {
   const id = nextId('user');
   return {
     id,
@@ -252,7 +254,9 @@ export function createMockToolCall(overrides: Partial<MockToolCall> = {}): MockT
   };
 }
 
-export function createMockAIConversation(overrides: Partial<MockAIConversation> = {}): MockAIConversation {
+export function createMockAIConversation(
+  overrides: Partial<MockAIConversation> = {}
+): MockAIConversation {
   return {
     id: nextId('conv'),
     messages: [],
@@ -293,7 +297,9 @@ export interface MockQualityReport {
   };
 }
 
-export function createMockCleaningIssue(overrides: Partial<MockCleaningIssue> = {}): MockCleaningIssue {
+export function createMockCleaningIssue(
+  overrides: Partial<MockCleaningIssue> = {}
+): MockCleaningIssue {
   return {
     id: nextId('issue'),
     type: 'duplicate',
@@ -307,7 +313,9 @@ export function createMockCleaningIssue(overrides: Partial<MockCleaningIssue> = 
   };
 }
 
-export function createMockQualityReport(overrides: Partial<MockQualityReport> = {}): MockQualityReport {
+export function createMockQualityReport(
+  overrides: Partial<MockQualityReport> = {}
+): MockQualityReport {
   return {
     score: 85,
     totalRows: 100,
@@ -315,7 +323,7 @@ export function createMockQualityReport(overrides: Partial<MockQualityReport> = 
     issues: [],
     metrics: {
       completeness: 0.95,
-      consistency: 0.90,
+      consistency: 0.9,
       accuracy: 0.88,
       uniqueness: 0.85,
     },

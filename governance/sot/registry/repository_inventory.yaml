@@ -1,0 +1,123 @@
+generated_by: adapter_csv.py
+source: repository_inventory.csv
+facts:
+- id: REPO.URL
+  key: Repository URL
+  value: https://github.com/nclamvn/excel-as-matrix
+  unit: ''
+  status: VERIFIED
+  evidence: 'git command: git remote -v; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 2
+  provenance_level: verified_primary
+- id: REPO.BRANCH
+  key: Checked out branch
+  value: main
+  unit: ''
+  status: VERIFIED
+  evidence: 'git command: git branch --show-current; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 3
+  provenance_level: verified_primary
+- id: REPO.HEAD
+  key: Checked out commit
+  value: 92a5fd8
+  unit: ''
+  status: VERIFIED
+  evidence: 'git command: git log -1 --oneline; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 4
+  provenance_level: verified_primary
+- id: REPO.TRACKED_FILES
+  key: Tracked files
+  value: 786
+  unit: files
+  status: VERIFIED
+  evidence: 'git command: git ls-files | wc -l; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 5
+  provenance_level: verified_primary
+- id: REPO.SOURCE_FILES
+  key: Files under src
+  value: 715
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: find src -type f | wc -l; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 6
+  provenance_level: verified_primary
+- id: REPO.TS_LOC
+  key: TypeScript and SQL lines in src server e2e supabase
+  value: 189449
+  unit: lines
+  status: VERIFIED
+  evidence: 'source scan: wc -l over ts tsx sql files; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 7
+  provenance_level: verified_primary
+- id: REPO.COMPONENT_FILES
+  key: Files under src/components
+  value: 375
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: find src/components -type f | wc -l; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 8
+  provenance_level: verified_primary
+- id: REPO.STORE_FILES
+  key: Top-level TypeScript store files
+  value: 41
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: find src/stores maxdepth 1 name *.ts; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 9
+  provenance_level: verified_primary
+- id: REPO.HOOK_FILES
+  key: Top-level TypeScript hook files
+  value: 23
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: find src/hooks maxdepth 1 name *.ts; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 10
+  provenance_level: verified_primary
+- id: REPO.UNIT_TEST_FILES
+  key: Unit test files under src
+  value: 35
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: find *.test.* and *.spec.* under src; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 11
+  provenance_level: verified_primary
+- id: REPO.E2E_SPEC_FILES
+  key: Playwright specification files
+  value: 3
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: find e2e -name *.spec.ts; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 12
+  provenance_level: verified_primary
+- id: REPO.SERVER.ROUTES
+  key: Backend route modules
+  value: 5
+  unit: files
+  status: VERIFIED
+  evidence: 'source scan: server/routes contains ai billing compliance scim webhooks; 2026-08-27'
+  source:
+    file: source_canonical/repository_inventory.csv
+    row: 13
+  provenance_level: verified_primary

@@ -233,28 +233,58 @@ export const infoFunctions: FunctionDef[] = [
 
       // Simplified conversion tables
       const lengthToMeter: Record<string, number> = {
-        'm': 1, 'cm': 0.01, 'mm': 0.001, 'km': 1000, 'in': 0.0254,
-        'ft': 0.3048, 'yd': 0.9144, 'mi': 1609.344, 'nm': 1852,
-        'ang': 1e-10, 'um': 1e-6,
+        m: 1,
+        cm: 0.01,
+        mm: 0.001,
+        km: 1000,
+        in: 0.0254,
+        ft: 0.3048,
+        yd: 0.9144,
+        mi: 1609.344,
+        nm: 1852,
+        ang: 1e-10,
+        um: 1e-6,
       };
       const weightToKg: Record<string, number> = {
-        'kg': 1, 'g': 0.001, 'mg': 0.000001, 'lbm': 0.45359237,
-        'ozm': 0.028349523125, 'ton': 907.18474, 'sg': 14.593903,
-        'u': 1.66053906660e-27,
+        kg: 1,
+        g: 0.001,
+        mg: 0.000001,
+        lbm: 0.45359237,
+        ozm: 0.028349523125,
+        ton: 907.18474,
+        sg: 14.593903,
+        u: 1.6605390666e-27,
       };
       const tempConvert = (val: number, from: string, to: string): number | null => {
         let celsius: number;
         switch (from) {
-          case 'c': case 'cel': celsius = val; break;
-          case 'f': case 'fah': celsius = (val - 32) * 5 / 9; break;
-          case 'k': case 'kel': celsius = val - 273.15; break;
-          default: return null;
+          case 'c':
+          case 'cel':
+            celsius = val;
+            break;
+          case 'f':
+          case 'fah':
+            celsius = ((val - 32) * 5) / 9;
+            break;
+          case 'k':
+          case 'kel':
+            celsius = val - 273.15;
+            break;
+          default:
+            return null;
         }
         switch (to) {
-          case 'c': case 'cel': return celsius;
-          case 'f': case 'fah': return celsius * 9 / 5 + 32;
-          case 'k': case 'kel': return celsius + 273.15;
-          default: return null;
+          case 'c':
+          case 'cel':
+            return celsius;
+          case 'f':
+          case 'fah':
+            return (celsius * 9) / 5 + 32;
+          case 'k':
+          case 'kel':
+            return celsius + 273.15;
+          default:
+            return null;
         }
       };
 
@@ -266,12 +296,12 @@ export const infoFunctions: FunctionDef[] = [
 
       // Try length
       if (fromUnit in lengthToMeter && toUnit in lengthToMeter) {
-        return val * lengthToMeter[fromUnit] / lengthToMeter[toUnit];
+        return (val * lengthToMeter[fromUnit]) / lengthToMeter[toUnit];
       }
 
       // Try weight
       if (fromUnit in weightToKg && toUnit in weightToKg) {
-        return val * weightToKg[fromUnit] / weightToKg[toUnit];
+        return (val * weightToKg[fromUnit]) / weightToKg[toUnit];
       }
 
       return new FormulaError('#N/A', `Cannot convert from "${fromUnit}" to "${toUnit}"`);
@@ -369,20 +399,38 @@ export const infoFunctions: FunctionDef[] = [
 
       if (a1Style) {
         switch (absType) {
-          case 1: result += `$${colStr}$${rowVal}`; break;
-          case 2: result += `${colStr}$${rowVal}`; break;
-          case 3: result += `$${colStr}${rowVal}`; break;
-          case 4: result += `${colStr}${rowVal}`; break;
-          default: result += `$${colStr}$${rowVal}`;
+          case 1:
+            result += `$${colStr}$${rowVal}`;
+            break;
+          case 2:
+            result += `${colStr}$${rowVal}`;
+            break;
+          case 3:
+            result += `$${colStr}${rowVal}`;
+            break;
+          case 4:
+            result += `${colStr}${rowVal}`;
+            break;
+          default:
+            result += `$${colStr}$${rowVal}`;
         }
       } else {
         // R1C1 style
         switch (absType) {
-          case 1: result += `R${rowVal}C${colVal}`; break;
-          case 2: result += `R${rowVal}C[${colVal}]`; break;
-          case 3: result += `R[${rowVal}]C${colVal}`; break;
-          case 4: result += `R[${rowVal}]C[${colVal}]`; break;
-          default: result += `R${rowVal}C${colVal}`;
+          case 1:
+            result += `R${rowVal}C${colVal}`;
+            break;
+          case 2:
+            result += `R${rowVal}C[${colVal}]`;
+            break;
+          case 3:
+            result += `R[${rowVal}]C${colVal}`;
+            break;
+          case 4:
+            result += `R[${rowVal}]C[${colVal}]`;
+            break;
+          default:
+            result += `R${rowVal}C${colVal}`;
         }
       }
 
@@ -442,7 +490,7 @@ export const infoFunctions: FunctionDef[] = [
       for (let c = 0; c < cols; c++) {
         const row: FormulaValue[] = [];
         for (let r = 0; r < rows; r++) {
-          row.push(Array.isArray(arr[r]) ? arr[r][c] : arr[r] as unknown as FormulaValue);
+          row.push(Array.isArray(arr[r]) ? arr[r][c] : (arr[r] as unknown as FormulaValue));
         }
         result.push(row);
       }
@@ -504,7 +552,7 @@ export const infoFunctions: FunctionDef[] = [
     minArgs: 2,
     maxArgs: 2,
     fn: (args: FormulaValue[]): FormulaValue => {
-      return (args[0] === null || args[0] === undefined) ? args[1] : args[0];
+      return args[0] === null || args[0] === undefined ? args[1] : args[0];
     },
   },
 ];

@@ -1,0 +1,9 @@
+id,key,value,unit,status,evidence
+CLAIM.PRODUCTION_READY,Project is production ready,Production Ready,,FLAG,"P0 stabilization and trusted single-range AI write gates pass but configured AI realtime and backend security/persistence production paths remain unverified; reviewed 2026-09-01"
+CLAIM.BUILD_PASSING,Frontend and server builds pass,PASS,,VERIFIED,"local commands: npm run build and npm run build:server; both exit 0; 2026-09-01"
+CLAIM.E2E.PASSING,E2E tests passing,22 passing,,FLAG,"old static README badge removed; verified evidence is 5 critical Chromium and 16 legacy regression scenarios not a blanket 22-test production claim; reviewed 2026-09-01"
+CLAIM.REALTIME,Real-time collaboration works,Multi-cursor presence avatars and cell locking,,CLAIM,"README.md feature list; code exists but production backend/Supabase behavior not independently verified; 2026-08-27"
+CLAIM.AI_COPILOT,AI Copilot works,Natural language formulas and data insights,,CLAIM,"README.md feature list; runtime code exists but real configured model path not integration-tested in this baseline; 2026-08-27"
+CLAIM.MOBILE,Mobile responsive works,Touch-friendly with bottom toolbar,,CLAIM,"README.md feature list; components exist but no current mobile E2E evidence; 2026-08-27"
+CLAIM.OFFLINE,Offline single-user mode works,All features except real-time sync,,CLAIM,"README.md configuration section; PWA and IndexedDB code exist but offline journey not independently E2E-tested; 2026-08-27"
+CLAIM.AI.TRUSTED_WRITE,Single-range AI write approval and rollback works,PASS,,VERIFIED,"focused unit integration and critical Chromium journey prove exact preview approval captured-sheet mutation durable action audit and one-time rollback; 2026-09-01"

@@ -145,7 +145,9 @@ export const NLFormulaBar: React.FC<NLFormulaBarProps> = ({
       <div className="nl-formula-bar__cell-ref">{cellRef}</div>
 
       {/* Mode indicator */}
-      <div className={`nl-formula-bar__mode ${isNaturalLanguage ? 'nl-formula-bar__mode--nl' : isFormula ? 'nl-formula-bar__mode--formula' : ''}`}>
+      <div
+        className={`nl-formula-bar__mode ${isNaturalLanguage ? 'nl-formula-bar__mode--nl' : isFormula ? 'nl-formula-bar__mode--formula' : ''}`}
+      >
         {isNaturalLanguage ? (
           <span title="Natural language mode">NL</span>
         ) : isFormula ? (
@@ -200,7 +202,8 @@ export const NLFormulaBar: React.FC<NLFormulaBarProps> = ({
       {/* Action buttons */}
       <div className="nl-formula-bar__actions">
         {interpretation?.success && (
-          <button type="button"
+          <button
+            type="button"
             className="nl-formula-bar__action nl-formula-bar__action--accept"
             onClick={handleAcceptInterpretation}
             title="Accept formula (Enter)"
@@ -208,7 +211,8 @@ export const NLFormulaBar: React.FC<NLFormulaBarProps> = ({
             <CheckIcon />
           </button>
         )}
-        <button type="button"
+        <button
+          type="button"
           className="nl-formula-bar__action"
           onClick={() => {
             onChange('');

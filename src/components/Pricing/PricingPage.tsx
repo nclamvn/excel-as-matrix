@@ -4,11 +4,7 @@
 
 import React, { useCallback } from 'react';
 import { Check, X, Sparkles, Zap, Building2 } from 'lucide-react';
-import {
-  useSubscriptionStore,
-  PLANS,
-  type PlanTier,
-} from '../../stores/subscriptionStore';
+import { useSubscriptionStore, PLANS, type PlanTier } from '../../stores/subscriptionStore';
 import { useUIStore } from '../../stores/uiStore';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -24,13 +20,16 @@ export const PricingPage: React.FC = () => {
   const subscription = useSubscriptionStore((s) => s.subscription);
   const createCheckoutSession = useSubscriptionStore((s) => s.createCheckoutSession);
 
-  const handleUpgrade = useCallback(async (planId: PlanTier) => {
-    if (planId === 'free') return;
-    const url = await createCheckoutSession(planId);
-    if (url) {
-      window.location.href = url;
-    }
-  }, [createCheckoutSession]);
+  const handleUpgrade = useCallback(
+    async (planId: PlanTier) => {
+      if (planId === 'free') return;
+      const url = await createCheckoutSession(planId);
+      if (url) {
+        window.location.href = url;
+      }
+    },
+    [createCheckoutSession]
+  );
 
   const planOrder: PlanTier[] = ['free', 'pro', 'team'];
   const planIcons: Record<PlanTier, React.ReactNode> = {
@@ -40,7 +39,9 @@ export const PricingPage: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen py-16 px-4 ${isDark ? 'bg-neutral-950 text-neutral-100' : 'bg-white text-neutral-900'}`}>
+    <div
+      className={`min-h-screen py-16 px-4 ${isDark ? 'bg-neutral-950 text-neutral-100' : 'bg-white text-neutral-900'}`}
+    >
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -51,10 +52,13 @@ export const PricingPage: React.FC = () => {
 
           {/* Billing toggle */}
           <div className="flex items-center justify-center gap-3 mt-6">
-            <span className={`text-sm ${billingCycle === 'monthly' ? 'font-semibold' : isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+            <span
+              className={`text-sm ${billingCycle === 'monthly' ? 'font-semibold' : isDark ? 'text-neutral-500' : 'text-neutral-400'}`}
+            >
               Monthly
             </span>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
               className={`
                 relative w-12 h-6 rounded-full transition-colors
@@ -69,7 +73,9 @@ export const PricingPage: React.FC = () => {
                 `}
               />
             </button>
-            <span className={`text-sm ${billingCycle === 'yearly' ? 'font-semibold' : isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+            <span
+              className={`text-sm ${billingCycle === 'yearly' ? 'font-semibold' : isDark ? 'text-neutral-500' : 'text-neutral-400'}`}
+            >
               Yearly
               <span className="ml-1 text-xs text-emerald-500 font-medium">Save 17%</span>
             </span>
@@ -82,18 +88,20 @@ export const PricingPage: React.FC = () => {
             const plan = PLANS[planId];
             const isCurrent = subscription.planId === planId;
             const isPopular = planId === 'pro';
-            const price = billingCycle === 'yearly'
-              ? Math.round(plan.yearlyPrice / 12)
-              : plan.monthlyPrice;
+            const price =
+              billingCycle === 'yearly' ? Math.round(plan.yearlyPrice / 12) : plan.monthlyPrice;
 
             return (
               <div
                 key={planId}
                 className={`
                   relative rounded-2xl p-6 border-2 transition-shadow
-                  ${isPopular
-                    ? 'border-emerald-500 shadow-lg shadow-emerald-500/10'
-                    : isDark ? 'border-neutral-800' : 'border-neutral-200'
+                  ${
+                    isPopular
+                      ? 'border-emerald-500 shadow-lg shadow-emerald-500/10'
+                      : isDark
+                        ? 'border-neutral-800'
+                        : 'border-neutral-200'
                   }
                   ${isDark ? 'bg-neutral-900' : 'bg-white'}
                 `}
@@ -126,25 +134,36 @@ export const PricingPage: React.FC = () => {
                     )}
                   </div>
                   {billingCycle === 'yearly' && price > 0 && (
-                    <p className={`text-xs mt-1 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
-                      Billed ${(plan.yearlyPrice / 100).toFixed(0)}/year{planId === 'team' ? ' per seat' : ''}
+                    <p
+                      className={`text-xs mt-1 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}
+                    >
+                      Billed ${(plan.yearlyPrice / 100).toFixed(0)}/year
+                      {planId === 'team' ? ' per seat' : ''}
                     </p>
                   )}
                 </div>
 
                 {/* CTA Button */}
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => handleUpgrade(planId)}
                   disabled={isCurrent || planId === 'free'}
                   className={`
                     w-full py-2.5 rounded-lg text-sm font-semibold transition-colors mb-6
-                    ${isCurrent
-                      ? isDark ? 'bg-neutral-800 text-neutral-500 cursor-default' : 'bg-neutral-100 text-neutral-400 cursor-default'
-                      : isPopular
-                        ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                        : planId === 'free'
-                          ? isDark ? 'bg-neutral-800 text-neutral-400 cursor-default' : 'bg-neutral-100 text-neutral-500 cursor-default'
-                          : isDark ? 'bg-neutral-700 text-neutral-200 hover:bg-neutral-600' : 'bg-neutral-900 text-white hover:bg-neutral-800'
+                    ${
+                      isCurrent
+                        ? isDark
+                          ? 'bg-neutral-800 text-neutral-500 cursor-default'
+                          : 'bg-neutral-100 text-neutral-400 cursor-default'
+                        : isPopular
+                          ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                          : planId === 'free'
+                            ? isDark
+                              ? 'bg-neutral-800 text-neutral-400 cursor-default'
+                              : 'bg-neutral-100 text-neutral-500 cursor-default'
+                            : isDark
+                              ? 'bg-neutral-700 text-neutral-200 hover:bg-neutral-600'
+                              : 'bg-neutral-900 text-white hover:bg-neutral-800'
                     }
                   `}
                 >
@@ -158,12 +177,19 @@ export const PricingPage: React.FC = () => {
                       {feature.included ? (
                         <Check size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
                       ) : (
-                        <X size={16} className={`flex-shrink-0 mt-0.5 ${isDark ? 'text-neutral-700' : 'text-neutral-300'}`} />
+                        <X
+                          size={16}
+                          className={`flex-shrink-0 mt-0.5 ${isDark ? 'text-neutral-700' : 'text-neutral-300'}`}
+                        />
                       )}
-                      <span className={`text-sm ${feature.included ? '' : isDark ? 'text-neutral-600' : 'text-neutral-400'}`}>
+                      <span
+                        className={`text-sm ${feature.included ? '' : isDark ? 'text-neutral-600' : 'text-neutral-400'}`}
+                      >
                         {feature.label}
                         {feature.limit && feature.included && (
-                          <span className={`ml-1 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                          <span
+                            className={`ml-1 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}
+                          >
                             ({feature.limit})
                           </span>
                         )}

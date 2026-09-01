@@ -499,11 +499,11 @@ export const SHAPE_DEFINITIONS: ShapeDefinition[] = [
 // ═══════════════════════════════════════════════════════════
 
 export const getShapeById = (id: string): ShapeDefinition | undefined => {
-  return SHAPE_DEFINITIONS.find(s => s.id === id);
+  return SHAPE_DEFINITIONS.find((s) => s.id === id);
 };
 
 export const getShapesByCategory = (category: ShapeCategory): ShapeDefinition[] => {
-  return SHAPE_DEFINITIONS.filter(s => s.category === category);
+  return SHAPE_DEFINITIONS.filter((s) => s.category === category);
 };
 
 export const SHAPES_BY_CATEGORY: Record<ShapeCategory, ShapeDefinition[]> = {
@@ -519,21 +519,49 @@ export const SHAPES_BY_CATEGORY: Record<ShapeCategory, ShapeDefinition[]> = {
 // Recent shapes (for quick access)
 export const getRecentShapes = (recentIds: string[]): ShapeDefinition[] => {
   return recentIds
-    .map(id => getShapeById(id))
+    .map((id) => getShapeById(id))
     .filter((s): s is ShapeDefinition => s !== undefined);
 };
 
 // Shape presets for fill colors
 export const SHAPE_FILL_PRESETS = [
-  '#4285F4', '#EA4335', '#FBBC04', '#34A853', '#FF6D01',
-  '#46BDC6', '#7BAAF7', '#F07B72', '#FDD663', '#81C995',
-  '#1A73E8', '#D93025', '#F9AB00', '#188038', '#E37400',
-  '#FFFFFF', '#F8F9FA', '#E8EAED', '#9AA0A6', '#202124',
+  '#4285F4',
+  '#EA4335',
+  '#FBBC04',
+  '#34A853',
+  '#FF6D01',
+  '#46BDC6',
+  '#7BAAF7',
+  '#F07B72',
+  '#FDD663',
+  '#81C995',
+  '#1A73E8',
+  '#D93025',
+  '#F9AB00',
+  '#188038',
+  '#E37400',
+  '#FFFFFF',
+  '#F8F9FA',
+  '#E8EAED',
+  '#9AA0A6',
+  '#202124',
 ];
 
 // Shape presets for stroke colors
 export const SHAPE_STROKE_PRESETS = [
-  '#1A73E8', '#C5221F', '#E37400', '#137333', '#C26401',
-  '#007B83', '#4285F4', '#EA4335', '#FBBC04', '#34A853',
-  '#5F6368', '#80868B', '#9AA0A6', '#BDC1C6', '#202124',
+  '#1A73E8',
+  '#C5221F',
+  '#E37400',
+  '#137333',
+  '#C26401',
+  '#007B83',
+  '#4285F4',
+  '#EA4335',
+  '#FBBC04',
+  '#34A853',
+  '#5F6368',
+  '#80868B',
+  '#9AA0A6',
+  '#BDC1C6',
+  '#202124',
 ];

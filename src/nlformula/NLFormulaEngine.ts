@@ -113,11 +113,7 @@ export class NLFormulaEngine {
   /**
    * Debug a formula with errors
    */
-  async debug(
-    formula: string,
-    error: string,
-    context?: CellContext
-  ): Promise<DebugResult> {
+  async debug(formula: string, error: string, context?: CellContext): Promise<DebugResult> {
     return this.debugger.debug(formula, error, context);
   }
 
@@ -157,10 +153,8 @@ export class NLFormulaEngine {
    * Detect input language
    */
   detectLanguage(input: string): 'en' | 'vi' {
-    const viPatterns =
-      /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
-    const viWords =
-      /\b(của|và|hoặc|nếu|thì|là|trong|với|từ|đến|tổng|đếm|trung bình)\b/i;
+    const viPatterns = /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+    const viWords = /\b(của|và|hoặc|nếu|thì|là|trong|với|từ|đến|tổng|đếm|trung bình)\b/i;
 
     if (viPatterns.test(input) || viWords.test(input)) {
       return 'vi';
@@ -171,10 +165,7 @@ export class NLFormulaEngine {
   /**
    * Process input - auto-detect if NL or formula
    */
-  async processInput(
-    input: string,
-    context: CellContext
-  ): Promise<InterpretationResult | null> {
+  async processInput(input: string, context: CellContext): Promise<InterpretationResult | null> {
     if (!input || input.trim().length === 0) {
       return null;
     }

@@ -13,17 +13,11 @@ interface BackgroundDialogProps {
   onClose: () => void;
 }
 
-export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
-  sheetId,
-  isOpen,
-  onClose,
-}) => {
+export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({ sheetId, isOpen, onClose }) => {
   const { getSettings, setBackground } = usePrintStore();
   const settings = getSettings(sheetId);
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    settings.background || null
-  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(settings.background || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +65,7 @@ export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
 
   return (
     <div className="background-overlay" onClick={onClose}>
-      <div className="background-dialog" onClick={e => e.stopPropagation()}>
+      <div className="background-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>Sheet Background</h2>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -81,8 +75,8 @@ export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
 
         <div className="dialog-content">
           <p className="dialog-description">
-            Select an image to use as the sheet background. The image will be
-            tiled across the sheet.
+            Select an image to use as the sheet background. The image will be tiled across the
+            sheet.
           </p>
 
           <div
@@ -94,7 +88,8 @@ export const BackgroundDialog: React.FC<BackgroundDialogProps> = ({
             {previewUrl ? (
               <div className="preview-container">
                 <img src={previewUrl} alt="Background preview" />
-                <button type="button"
+                <button
+                  type="button"
                   className="remove-btn"
                   onClick={(e) => {
                     e.stopPropagation();

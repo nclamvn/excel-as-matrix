@@ -7,7 +7,17 @@ interface PasteSpecialDialogProps {
   onClose: () => void;
 }
 
-type PasteType = 'all' | 'formulas' | 'values' | 'formats' | 'comments' | 'validation' | 'allExceptBorders' | 'columnWidths' | 'formulasAndNumberFormats' | 'valuesAndNumberFormats';
+type PasteType =
+  | 'all'
+  | 'formulas'
+  | 'values'
+  | 'formats'
+  | 'comments'
+  | 'validation'
+  | 'allExceptBorders'
+  | 'columnWidths'
+  | 'formulasAndNumberFormats'
+  | 'valuesAndNumberFormats';
 
 type PasteOperation = 'none' | 'add' | 'subtract' | 'multiply' | 'divide';
 
@@ -156,7 +166,10 @@ export const PasteSpecialDialog: React.FC<PasteSpecialDialogProps> = ({ onClose 
           </div>
 
           {!clipboard && (
-            <p className="dialog-info" style={{ marginTop: 'var(--spacing-md)', color: 'var(--orange-accent)' }}>
+            <p
+              className="dialog-info"
+              style={{ marginTop: 'var(--spacing-md)', color: 'var(--orange-accent)' }}
+            >
               No data in clipboard. Copy cells first (Ctrl+C).
             </p>
           )}
@@ -166,7 +179,12 @@ export const PasteSpecialDialog: React.FC<PasteSpecialDialogProps> = ({ onClose 
           <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button" className="dialog-btn-primary" onClick={handlePaste} disabled={!clipboard}>
+          <button
+            type="button"
+            className="dialog-btn-primary"
+            onClick={handlePaste}
+            disabled={!clipboard}
+          >
             <Clipboard size={14} style={{ marginRight: 6 }} />
             OK
           </button>

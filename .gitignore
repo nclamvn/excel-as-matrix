@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+governance/sot/.python-deps/
+governance/sot/registry/_backup/
 
 # Build output
 dist/
@@ -30,6 +32,9 @@ npm-debug.log*
 
 # Test coverage
 coverage/
+playwright-report/
+test-results/
+release-evidence/
 
 # Bundle analysis (generated)
 bundle-analysis.html

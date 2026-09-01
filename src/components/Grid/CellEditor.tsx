@@ -42,14 +42,17 @@ export const CellEditor: React.FC<CellEditorProps> = ({
     switch (e.key) {
       case 'Enter':
         e.preventDefault();
+        e.stopPropagation();
         onSubmit(value);
         break;
       case 'Escape':
         e.preventDefault();
+        e.stopPropagation();
         onCancel();
         break;
       case 'Tab':
         e.preventDefault();
+        e.stopPropagation();
         onSubmit(value);
         break;
     }
@@ -71,7 +74,7 @@ export const CellEditor: React.FC<CellEditorProps> = ({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        className={`absolute z-20 px-1 font-mono text-sm border-2 outline-none bg-white dark:bg-neutral-800 dark:text-white ${
+        className={`cell-editor absolute z-20 px-1 font-mono text-sm border-2 outline-none bg-white dark:bg-neutral-800 dark:text-white ${
           validationError
             ? 'border-red-500 dark:border-red-400'
             : 'border-blue-500 dark:border-blue-400'
@@ -105,9 +108,7 @@ export const CellEditor: React.FC<CellEditorProps> = ({
             top: top + cellHeight + 2,
           }}
         >
-          {inputMessage.title && (
-            <div className="font-semibold">{inputMessage.title}</div>
-          )}
+          {inputMessage.title && <div className="font-semibold">{inputMessage.title}</div>}
           {inputMessage.message && <div>{inputMessage.message}</div>}
         </div>
       )}

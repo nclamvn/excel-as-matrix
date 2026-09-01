@@ -38,11 +38,7 @@ export const FormulaSuggestions: React.FC<FormulaSuggestionsProps> = ({
     const fetchSuggestions = async () => {
       setIsLoading(true);
       try {
-        const result = await nlFormulaEngine.suggest(
-          input,
-          cursorPosition,
-          context
-        );
+        const result = await nlFormulaEngine.suggest(input, cursorPosition, context);
         setSuggestions(result.suggestions.slice(0, maxSuggestions));
         setSelectedIndex(0);
       } catch {
@@ -62,14 +58,10 @@ export const FormulaSuggestions: React.FC<FormulaSuggestionsProps> = ({
 
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : 0
-        );
+        setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : suggestions.length - 1
-        );
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
       } else if (e.key === 'Tab' || (e.key === 'Enter' && suggestions.length > 0)) {
         if (suggestions[selectedIndex]) {
           e.preventDefault();
@@ -89,9 +81,7 @@ export const FormulaSuggestions: React.FC<FormulaSuggestionsProps> = ({
   return (
     <div className="formula-suggestions">
       {isLoading ? (
-        <div className="formula-suggestions__loading">
-          Loading suggestions...
-        </div>
+        <div className="formula-suggestions__loading">Loading suggestions...</div>
       ) : (
         <ul className="formula-suggestions__list">
           {suggestions.map((suggestion, index) => (
@@ -103,17 +93,15 @@ export const FormulaSuggestions: React.FC<FormulaSuggestionsProps> = ({
               onClick={() => onSelect(suggestion.insert)}
               onMouseEnter={() => setSelectedIndex(index)}
             >
-              <span className={`formula-suggestions__icon formula-suggestions__icon--${suggestion.type}`}>
+              <span
+                className={`formula-suggestions__icon formula-suggestions__icon--${suggestion.type}`}
+              >
                 {getIcon(suggestion.type)}
               </span>
               <span className="formula-suggestions__text">
-                <span className="formula-suggestions__display">
-                  {suggestion.display}
-                </span>
+                <span className="formula-suggestions__display">{suggestion.display}</span>
                 {suggestion.description && (
-                  <span className="formula-suggestions__description">
-                    {suggestion.description}
-                  </span>
+                  <span className="formula-suggestions__description">{suggestion.description}</span>
                 )}
               </span>
               {suggestion.type === 'function' && (

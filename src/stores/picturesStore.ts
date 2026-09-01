@@ -14,11 +14,17 @@ import {
 
 interface PicturesStore {
   // State
-  pictures: Record<string, PictureObject[]>;  // sheetId -> pictures
+  pictures: Record<string, PictureObject[]>; // sheetId -> pictures
   selection: PictureSelection;
 
   // Picture CRUD
-  addPicture: (sheetId: string, src: string, width: number, height: number, name?: string) => string;
+  addPicture: (
+    sheetId: string,
+    src: string,
+    width: number,
+    height: number,
+    name?: string
+  ) => string;
   updatePicture: (sheetId: string, id: string, updates: Partial<PictureObject>) => void;
   deletePicture: (sheetId: string, id: string) => void;
   duplicatePicture: (sheetId: string, id: string) => string | null;
@@ -30,7 +36,13 @@ interface PicturesStore {
 
   // Position & Size
   movePicture: (sheetId: string, id: string, x: number, y: number) => void;
-  resizePicture: (sheetId: string, id: string, width: number, height: number, maintainAspect?: boolean) => void;
+  resizePicture: (
+    sheetId: string,
+    id: string,
+    width: number,
+    height: number,
+    maintainAspect?: boolean
+  ) => void;
   rotatePicture: (sheetId: string, id: string, rotation: number) => void;
 
   // Style
@@ -38,7 +50,11 @@ interface PicturesStore {
   setShadow: (sheetId: string, id: string, shadow: PictureShadow | undefined) => void;
 
   // Crop
-  setCrop: (sheetId: string, id: string, crop: { top: number; bottom: number; left: number; right: number }) => void;
+  setCrop: (
+    sheetId: string,
+    id: string,
+    crop: { top: number; bottom: number; left: number; right: number }
+  ) => void;
   resetCrop: (sheetId: string, id: string) => void;
 
   // Z-Index
@@ -70,9 +86,7 @@ export const usePicturesStore = create<PicturesStore>()(
       addPicture: (sheetId, src, width, height, name) => {
         const id = nanoid(8);
         const pictures = get().pictures[sheetId] || [];
-        const maxZ = pictures.length > 0
-          ? Math.max(...pictures.map(p => p.zIndex))
-          : 0;
+        const maxZ = pictures.length > 0 ? Math.max(...pictures.map((p) => p.zIndex)) : 0;
 
         // Calculate initial position (center of visible area)
         const x = 100;
@@ -110,7 +124,7 @@ export const usePicturesStore = create<PicturesStore>()(
           updatedAt: Date.now(),
         };
 
-        set(state => ({
+        set((state) => ({
           pictures: {
             ...state.pictures,
             [sheetId]: [...(state.pictures[sheetId] || []), newPicture],
@@ -122,27 +136,26 @@ export const usePicturesStore = create<PicturesStore>()(
       },
 
       updatePicture: (sheetId, id, updates) => {
-        set(state => ({
+        set((state) => ({
           pictures: {
             ...state.pictures,
-            [sheetId]: (state.pictures[sheetId] || []).map(pic =>
-              pic.id === id
-                ? { ...pic, ...updates, updatedAt: Date.now() }
-                : pic
+            [sheetId]: (state.pictures[sheetId] || []).map((pic) =>
+              pic.id === id ? { ...pic, ...updates, updatedAt: Date.now() } : pic
             ),
           },
         }));
       },
 
       deletePicture: (sheetId, id) => {
-        set(state => ({
+        set((state) => ({
           pictures: {
             ...state.pictures,
-            [sheetId]: (state.pictures[sheetId] || []).filter(p => p.id !== id),
+            [sheetId]: (state.pictures[sheetId] || []).filter((p) => p.id !== id),
           },
-          selection: state.selection.pictureId === id
-            ? { ...state.selection, pictureId: null }
-            : state.selection,
+          selection:
+            state.selection.pictureId === id
+              ? { ...state.selection, pictureId: null }
+              : state.selection,
         }));
       },
 
@@ -152,7 +165,7 @@ export const usePicturesStore = create<PicturesStore>()(
 
         const newId = nanoid(8);
         const pictures = get().pictures[sheetId] || [];
-        const maxZ = Math.max(...pictures.map(p => p.zIndex), 0);
+        const maxZ = Math.max(...pictures.map((p) => p.zIndex), 0);
 
         const newPicture: PictureObject = {
           ...picture,
@@ -164,7 +177,7 @@ export const usePicturesStore = create<PicturesStore>()(
           updatedAt: Date.now(),
         };
 
-        set(state => ({
+        set((state) => ({
           pictures: {
             ...state.pictures,
             [sheetId]: [...(state.pictures[sheetId] || []), newPicture],
@@ -180,13 +193,13 @@ export const usePicturesStore = create<PicturesStore>()(
       // ─────────────────────────────────────────────────────────
 
       selectPicture: (id) => {
-        set(state => ({
+        set((state) => ({
           selection: { ...state.selection, pictureId: id },
         }));
       },
 
       clearSelection: () => {
-        set(state => ({
+        set((state) => ({
           selection: {
             ...state.selection,
             pictureId: null,
@@ -199,7 +212,7 @@ export const usePicturesStore = create<PicturesStore>()(
       },
 
       setSelectionState: (updates) => {
-        set(state => ({
+        set((state) => ({
           selection: { ...state.selection, ...updates },
         }));
       },
@@ -279,13 +292,13 @@ export const usePicturesStore = create<PicturesStore>()(
 
       bringToFront: (sheetId, id) => {
         const pictures = get().pictures[sheetId] || [];
-        const maxZ = Math.max(...pictures.map(p => p.zIndex), 0);
+        const maxZ = Math.max(...pictures.map((p) => p.zIndex), 0);
         get().updatePicture(sheetId, id, { zIndex: maxZ + 1 });
       },
 
       sendToBack: (sheetId, id) => {
         const pictures = get().pictures[sheetId] || [];
-        const minZ = Math.min(...pictures.map(p => p.zIndex), 0);
+        const minZ = Math.min(...pictures.map((p) => p.zIndex), 0);
         get().updatePicture(sheetId, id, { zIndex: minZ - 1 });
       },
 
@@ -295,12 +308,12 @@ export const usePicturesStore = create<PicturesStore>()(
 
       getPicturesForSheet: (sheetId) => {
         return (get().pictures[sheetId] || [])
-          .filter(p => !p.hidden)
+          .filter((p) => !p.hidden)
           .sort((a, b) => a.zIndex - b.zIndex);
       },
 
       getPictureById: (sheetId, id) => {
-        return (get().pictures[sheetId] || []).find(p => p.id === id);
+        return (get().pictures[sheetId] || []).find((p) => p.id === id);
       },
 
       getSelectedPicture: (sheetId) => {

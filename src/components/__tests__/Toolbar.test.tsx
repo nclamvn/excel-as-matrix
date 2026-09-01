@@ -47,8 +47,12 @@ vi.mock('../FileIO', () => ({
   ImportDialog: vi.fn(({ isOpen, onClose, onImport }) =>
     isOpen ? (
       <div data-testid="import-dialog">
-        <button type="button" data-testid="import-close" onClick={onClose}>Close</button>
-        <button type="button" data-testid="import-confirm" onClick={() => onImport({}, {})}>Import</button>
+        <button type="button" data-testid="import-close" onClick={onClose}>
+          Close
+        </button>
+        <button type="button" data-testid="import-confirm" onClick={() => onImport({}, {})}>
+          Import
+        </button>
       </div>
     ) : null
   ),
@@ -56,8 +60,12 @@ vi.mock('../FileIO', () => ({
     isOpen ? (
       <div data-testid="export-dialog">
         <span data-testid="sheet-count">{sheetNames.length} sheets</span>
-        <button type="button" data-testid="export-close" onClick={onClose}>Close</button>
-        <button type="button" data-testid="export-confirm" onClick={() => onExport('xlsx', {})}>Export</button>
+        <button type="button" data-testid="export-close" onClick={onClose}>
+          Close
+        </button>
+        <button type="button" data-testid="export-confirm" onClick={() => onExport('xlsx', {})}>
+          Export
+        </button>
       </div>
     ) : null
   ),

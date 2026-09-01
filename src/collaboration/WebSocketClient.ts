@@ -160,11 +160,7 @@ export class WebSocketClient {
    * Check if connected
    */
   isConnected(): boolean {
-    return (
-      this.status === 'connected' &&
-      this.ws !== null &&
-      this.ws.readyState === WebSocket.OPEN
-    );
+    return this.status === 'connected' && this.ws !== null && this.ws.readyState === WebSocket.OPEN;
   }
 
   /**

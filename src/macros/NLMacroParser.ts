@@ -2,13 +2,7 @@
 // NL MACRO PARSER — Parse natural language to macros/workflows
 // =============================================================================
 
-import type {
-  Workflow,
-  WorkflowStep,
-  MacroTrigger,
-  ScheduleConfig,
-  ActionType,
-} from './types';
+import type { Workflow, WorkflowStep, MacroTrigger, ScheduleConfig, ActionType } from './types';
 
 /**
  * Parse result
@@ -120,43 +114,43 @@ export class NLMacroParser {
     const schedulePatterns: { pattern: RegExp; config: Partial<ScheduleConfig> }[] = [
       {
         pattern: /every\s+day|daily|mỗi\s+ngày|hàng\s+ngày/i,
-        config: { type: 'daily', timeOfDay: '09:00' }
+        config: { type: 'daily', timeOfDay: '09:00' },
       },
       {
         pattern: /every\s+monday|on\s+mondays|thứ\s+hai/i,
-        config: { type: 'weekly', daysOfWeek: [1] }
+        config: { type: 'weekly', daysOfWeek: [1] },
       },
       {
         pattern: /every\s+tuesday|thứ\s+ba/i,
-        config: { type: 'weekly', daysOfWeek: [2] }
+        config: { type: 'weekly', daysOfWeek: [2] },
       },
       {
         pattern: /every\s+wednesday|thứ\s+tư/i,
-        config: { type: 'weekly', daysOfWeek: [3] }
+        config: { type: 'weekly', daysOfWeek: [3] },
       },
       {
         pattern: /every\s+thursday|thứ\s+năm/i,
-        config: { type: 'weekly', daysOfWeek: [4] }
+        config: { type: 'weekly', daysOfWeek: [4] },
       },
       {
         pattern: /every\s+friday|thứ\s+sáu/i,
-        config: { type: 'weekly', daysOfWeek: [5] }
+        config: { type: 'weekly', daysOfWeek: [5] },
       },
       {
         pattern: /every\s+week|weekly|hàng\s+tuần/i,
-        config: { type: 'weekly', daysOfWeek: [1] }
+        config: { type: 'weekly', daysOfWeek: [1] },
       },
       {
         pattern: /every\s+month|monthly|hàng\s+tháng/i,
-        config: { type: 'monthly', dayOfMonth: 1 }
+        config: { type: 'monthly', dayOfMonth: 1 },
       },
       {
         pattern: /every\s+(\d+)\s*(?:min|minute)/i,
-        config: { type: 'interval', intervalMinutes: 0 }
+        config: { type: 'interval', intervalMinutes: 0 },
       },
       {
         pattern: /every\s+(\d+)\s*(?:hour)/i,
-        config: { type: 'interval', intervalMinutes: 60 }
+        config: { type: 'interval', intervalMinutes: 60 },
       },
     ];
 
@@ -195,8 +189,10 @@ export class NLMacroParser {
     }
 
     // Data change triggers
-    if (/when\s+(?:data|value|cell)\s+(?:change|update)/i.test(text) ||
-        /khi\s+(?:dữ liệu|giá trị)\s+(?:thay đổi)/i.test(text)) {
+    if (
+      /when\s+(?:data|value|cell)\s+(?:change|update)/i.test(text) ||
+      /khi\s+(?:dữ liệu|giá trị)\s+(?:thay đổi)/i.test(text)
+    ) {
       return {
         type: 'data_change',
         config: { changeType: 'any' },
@@ -228,7 +224,11 @@ export class NLMacroParser {
   private detectActions(text: string): DetectedAction[] {
     const actions: DetectedAction[] = [];
 
-    const actionPatterns: { pattern: RegExp; type: ActionType; extractParams: (m: RegExpMatchArray) => Record<string, unknown> }[] = [
+    const actionPatterns: {
+      pattern: RegExp;
+      type: ActionType;
+      extractParams: (m: RegExpMatchArray) => Record<string, unknown>;
+    }[] = [
       // Reports & Exports
       {
         pattern: /(?:create|generate|make)\s+(?:a\s+)?(?:sales\s+)?report/i,
@@ -439,7 +439,10 @@ export class NLMacroParser {
   // ═══════════════════════════════════════════════════════════════
 
   private generateName(actions: DetectedAction[], trigger: MacroTrigger): string {
-    const actionNames = actions.slice(0, 2).map(a => a.label).join(' + ');
+    const actionNames = actions
+      .slice(0, 2)
+      .map((a) => a.label)
+      .join(' + ');
 
     let triggerName = '';
     if (trigger.type === 'schedule') {

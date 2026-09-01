@@ -7,14 +7,10 @@ interface RibbonTabProps {
   onClick: () => void;
 }
 
-export const RibbonTab: React.FC<RibbonTabProps> = ({
-  id,
-  label,
-  isActive,
-  onClick,
-}) => {
+export const RibbonTab: React.FC<RibbonTabProps> = ({ id, label, isActive, onClick }) => {
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`ribbon-tab ${isActive ? 'active' : ''}`}
       onClick={onClick}
       data-tab={id}

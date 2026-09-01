@@ -51,9 +51,7 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
   });
 
   // Display items
-  const displayItems = showAll
-    ? filteredHistory
-    : filteredHistory.slice(0, maxItems);
+  const displayItems = showAll ? filteredHistory : filteredHistory.slice(0, maxItems);
 
   // Format timestamp
   const formatTime = useCallback((timestamp: number) => {
@@ -76,9 +74,7 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
       <div className="formula-history formula-history--empty">
         <EmptyHistoryIcon />
         <p>No formula history yet</p>
-        <span className="formula-history__hint">
-          Your recent formulas will appear here
-        </span>
+        <span className="formula-history__hint">Your recent formulas will appear here</span>
       </div>
     );
   }
@@ -91,7 +87,8 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
           <HistoryIcon /> Recent Formulas
         </h4>
         {onClear && history.length > 0 && (
-          <button type="button"
+          <button
+            type="button"
             className="formula-history__clear"
             onClick={onClear}
             title="Clear history"
@@ -112,7 +109,8 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
           onChange={(e) => setFilter(e.target.value)}
         />
         {filter && (
-          <button type="button"
+          <button
+            type="button"
             className="formula-history__search-clear"
             onClick={() => setFilter('')}
           >
@@ -138,19 +136,11 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
           >
             <div className="formula-history__item-main">
               <code className="formula-history__formula">{item.formula}</code>
-              {item.nlInput && (
-                <span className="formula-history__nl-input">
-                  "{item.nlInput}"
-                </span>
-              )}
+              {item.nlInput && <span className="formula-history__nl-input">"{item.nlInput}"</span>}
             </div>
             <div className="formula-history__item-meta">
-              {item.cellRef && (
-                <span className="formula-history__cell-ref">{item.cellRef}</span>
-              )}
-              <span className="formula-history__time">
-                {formatTime(item.timestamp)}
-              </span>
+              {item.cellRef && <span className="formula-history__cell-ref">{item.cellRef}</span>}
+              <span className="formula-history__time">{formatTime(item.timestamp)}</span>
             </div>
           </li>
         ))}
@@ -158,7 +148,8 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
 
       {/* Show more */}
       {filteredHistory.length > maxItems && !showAll && (
-        <button type="button"
+        <button
+          type="button"
           className="formula-history__show-more"
           onClick={() => setShowAll(true)}
         >
@@ -168,7 +159,8 @@ export const FormulaHistory: React.FC<FormulaHistoryProps> = ({
 
       {/* Show less */}
       {showAll && filteredHistory.length > maxItems && (
-        <button type="button"
+        <button
+          type="button"
           className="formula-history__show-less"
           onClick={() => setShowAll(false)}
         >

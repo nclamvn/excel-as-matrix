@@ -1,0 +1,115 @@
+name: Production gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Build, test, audit and SOT
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out the exact revision
+        uses: actions/checkout@v6
+
+      - name: Use the project Node version
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install the locked dependency graph
+        run: npm ci
+
+      - name: Create evidence directory
+        run: mkdir -p release-evidence
+
+      - name: Lint
+        run: npm run lint | tee release-evidence/lint.txt
+
+      - name: Check formatting
+        run: npm run format:check | tee release-evidence/format.txt
+
+      - name: Build frontend
+        run: npm run build | tee release-evidence/frontend-build.txt
+
+      - name: Build server
+        run: npm run build:server | tee release-evidence/server-build.txt
+
+      - name: Run frontend unit tests
+        run: npm run test:run -- --reporter=junit --outputFile=release-evidence/unit-tests.xml
+
+      - name: Run server tests
+        run: npm run test:server -- --reporter=junit --outputFile=release-evidence/server-tests.xml
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --json > release-evidence/production-audit.json
+
+      - name: Verify SOT hashes, A3 and gate digest
+        run: |
+          npm run test:governance
+          node scripts/sot-ci-check.mjs release-evidence/sot-check.json
+
+      - name: Derive release status from the SOT
+        env:
+          GIT_COMMIT: ${{ github.sha }}
+        run: npm run release:evidence
+
+      - name: Upload immutable quality evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: quality-evidence-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            release-evidence/
+            dist/
+            server/dist/
+          if-no-files-found: error
+          retention-days: 30
+
+  chromium:
+    name: Critical Chromium journeys
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the exact revision
+        uses: actions/checkout@v6
+
+      - name: Use the project Node version
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install the locked dependency graph
+        run: npm ci
+
+      - name: Install Chromium runtime
+        run: npx playwright install --with-deps chromium
+
+      - name: Run the deterministic release gate
+        run: npm run test:e2e:critical
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: chromium-evidence-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 30

@@ -174,9 +174,7 @@ export const useVersionStore = create<VersionState & VersionActions>()((set, get
 
         // Refresh in-memory
         set((state) => ({
-          snapshots: state.snapshots.filter(
-            (s) => !toDelete.some((d) => d.id === s.id)
-          ),
+          snapshots: state.snapshots.filter((s) => !toDelete.some((d) => d.id === s.id)),
         }));
       }
     } catch (e) {

@@ -398,7 +398,14 @@ export function useTouchGestures(
       container.removeEventListener('touchcancel', handleTouchCancel);
       clearLongPress();
     };
-  }, [containerRef, handleTouchStart, handleTouchMove, handleTouchEnd, handleTouchCancel, clearLongPress]);
+  }, [
+    containerRef,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    handleTouchCancel,
+    clearLongPress,
+  ]);
 
   // ── Public API ──────────────────────────────────────────────────────────
 

@@ -4,11 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { proactiveEngine } from '../../proactive';
-import type {
-  ProactiveSuggestion,
-  SuggestionType,
-  ProactiveEvent,
-} from '../../proactive/types';
+import type { ProactiveSuggestion, SuggestionType, ProactiveEvent } from '../../proactive/types';
 import { SuggestionCard } from './SuggestionCard';
 import { QuickActions } from './QuickActions';
 
@@ -66,29 +62,34 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
   }, [loadSuggestions]);
 
   // Handle action execution
-  const handleAction = useCallback(async (suggestionId: string, actionId: string) => {
-    await proactiveEngine.executeAction(suggestionId, actionId);
-    loadSuggestions();
-  }, [loadSuggestions]);
+  const handleAction = useCallback(
+    async (suggestionId: string, actionId: string) => {
+      await proactiveEngine.executeAction(suggestionId, actionId);
+      loadSuggestions();
+    },
+    [loadSuggestions]
+  );
 
   // Handle dismiss
-  const handleDismiss = useCallback((suggestionId: string) => {
-    proactiveEngine.dismissSuggestion(suggestionId);
-    loadSuggestions();
-  }, [loadSuggestions]);
+  const handleDismiss = useCallback(
+    (suggestionId: string) => {
+      proactiveEngine.dismissSuggestion(suggestionId);
+      loadSuggestions();
+    },
+    [loadSuggestions]
+  );
 
   // Filter suggestions
-  const filteredSuggestions = activeFilter === 'all'
-    ? suggestions
-    : suggestions.filter(s => s.type === activeFilter);
+  const filteredSuggestions =
+    activeFilter === 'all' ? suggestions : suggestions.filter((s) => s.type === activeFilter);
 
   // Count by type
   const counts = {
     all: suggestions.length,
-    issue: suggestions.filter(s => s.type === 'issue').length,
-    insight: suggestions.filter(s => s.type === 'insight').length,
-    optimization: suggestions.filter(s => s.type === 'optimization').length,
-    pattern: suggestions.filter(s => s.type === 'pattern').length,
+    issue: suggestions.filter((s) => s.type === 'issue').length,
+    insight: suggestions.filter((s) => s.type === 'insight').length,
+    optimization: suggestions.filter((s) => s.type === 'optimization').length,
+    pattern: suggestions.filter((s) => s.type === 'pattern').length,
   };
 
   if (!isOpen) return null;
@@ -106,7 +107,8 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
         </div>
         <div className="proactive-panel__actions">
           {onOpenSettings && (
-            <button type="button"
+            <button
+              type="button"
               className="proactive-panel__action"
               onClick={onOpenSettings}
               title="Settings"
@@ -114,11 +116,7 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
               <SettingsIcon />
             </button>
           )}
-          <button type="button"
-            className="proactive-panel__action"
-            onClick={onClose}
-            title="Close"
-          >
+          <button type="button" className="proactive-panel__action" onClick={onClose} title="Close">
             <CloseIcon />
           </button>
         </div>
@@ -158,7 +156,7 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
       {/* Quick Actions */}
       {counts.issue > 0 && activeFilter === 'all' && (
         <QuickActions
-          issues={suggestions.filter(s => s.type === 'issue')}
+          issues={suggestions.filter((s) => s.type === 'issue')}
           onAction={handleAction}
         />
       )}
@@ -180,7 +178,7 @@ export const ProactivePanel: React.FC<ProactivePanelProps> = ({
           </div>
         )}
 
-        {filteredSuggestions.map(suggestion => (
+        {filteredSuggestions.map((suggestion) => (
           <SuggestionCard
             key={suggestion.id}
             suggestion={suggestion}
@@ -212,14 +210,9 @@ interface FilterButtonProps {
   icon?: React.ReactNode;
 }
 
-const FilterButton: React.FC<FilterButtonProps> = ({
-  label,
-  count,
-  active,
-  onClick,
-  icon,
-}) => (
-  <button type="button"
+const FilterButton: React.FC<FilterButtonProps> = ({ label, count, active, onClick, icon }) => (
+  <button
+    type="button"
     className={`proactive-panel__filter ${active ? 'proactive-panel__filter--active' : ''}`}
     onClick={onClick}
   >

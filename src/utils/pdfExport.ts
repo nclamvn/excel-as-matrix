@@ -51,10 +51,7 @@ function findDataBounds(sheet: Sheet): { maxRow: number; maxCol: number } {
  * Export sheet(s) to PDF using browser print dialog.
  * Creates a hidden iframe with formatted HTML table and triggers print.
  */
-export function exportToPdf(
-  sheets: Sheet[],
-  options: PdfExportOptions
-): void {
+export function exportToPdf(sheets: Sheet[], options: PdfExportOptions): void {
   const { orientation, includeGridLines, includeSheetName, includePageNumbers, title } = options;
   const pageSize = PAGE_SIZES[options.pageSize];
 

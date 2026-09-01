@@ -23,9 +23,7 @@ interface TestImportResult {
   }>;
 }
 
-async function generateWorkbook(
-  builder: (wb: ExcelJS.Workbook) => void
-): Promise<ArrayBuffer> {
+async function generateWorkbook(builder: (wb: ExcelJS.Workbook) => void): Promise<ArrayBuffer> {
   const wb = new ExcelJS.Workbook();
   builder(wb);
   return wb.xlsx.writeBuffer() as Promise<ArrayBuffer>;
@@ -60,7 +58,12 @@ async function importExcel(buffer: ArrayBuffer): Promise<TestImportResult> {
             const obj = cellValue as Record<string, unknown>;
             if ('formula' in obj) {
               formula = String(obj.formula || '');
-              value = obj.result != null ? (typeof obj.result === 'object' ? String(obj.result) : obj.result as string | number | boolean) : null;
+              value =
+                obj.result != null
+                  ? typeof obj.result === 'object'
+                    ? String(obj.result)
+                    : (obj.result as string | number | boolean)
+                  : null;
             } else if (cellValue instanceof Date) {
               value = cellValue.toISOString();
             } else if ('richText' in obj) {
@@ -77,7 +80,10 @@ async function importExcel(buffer: ArrayBuffer): Promise<TestImportResult> {
         if (cell.font?.bold) format.bold = true;
         if (cell.font?.italic) format.italic = true;
         if (cell.font?.color?.argb) {
-          const rgb = cell.font.color.argb.length === 8 ? cell.font.color.argb.slice(2) : cell.font.color.argb;
+          const rgb =
+            cell.font.color.argb.length === 8
+              ? cell.font.color.argb.slice(2)
+              : cell.font.color.argb;
           format.fontColor = `#${rgb}`;
         }
 
@@ -85,7 +91,7 @@ async function importExcel(buffer: ArrayBuffer): Promise<TestImportResult> {
           value,
           formula: formula ?? undefined,
           displayValue: value != null ? String(value) : '',
-          format: Object.keys(format).length > 0 ? format as CellData['format'] : undefined,
+          format: Object.keys(format).length > 0 ? (format as CellData['format']) : undefined,
         } as CellData;
       });
     });
@@ -93,7 +99,8 @@ async function importExcel(buffer: ArrayBuffer): Promise<TestImportResult> {
     // Column widths
     if (worksheet.columns) {
       worksheet.columns.forEach((col, idx) => {
-        if (col && col.width && col.width !== 8) { // 8 is default
+        if (col && col.width && col.width !== 8) {
+          // 8 is default
           columnWidths[idx] = Math.round(col.width * 8); // Convert chars to px approx
         }
       });

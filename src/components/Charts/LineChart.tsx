@@ -91,17 +91,18 @@ export const LineChart: React.FC<LineChartProps> = ({
     <svg width={width} height={height} className="overflow-visible">
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {/* Grid lines */}
-        {axes.yAxis.gridlines && yTicks.map((tick, i) => (
-          <line
-            key={`grid-${i}`}
-            x1={0}
-            y1={scaleY(tick)}
-            x2={chartWidth}
-            y2={scaleY(tick)}
-            stroke="#E5E7EB"
-            strokeDasharray="4,4"
-          />
-        ))}
+        {axes.yAxis.gridlines &&
+          yTicks.map((tick, i) => (
+            <line
+              key={`grid-${i}`}
+              x1={0}
+              y1={scaleY(tick)}
+              x2={chartWidth}
+              y2={scaleY(tick)}
+              stroke="#E5E7EB"
+              strokeDasharray="4,4"
+            />
+          ))}
 
         {/* Y Axis */}
         {axes.yAxis.visible && (
@@ -123,7 +124,14 @@ export const LineChart: React.FC<LineChartProps> = ({
         {/* X Axis */}
         {axes.xAxis.visible && (
           <>
-            <line x1={0} y1={chartHeight} x2={chartWidth} y2={chartHeight} stroke="#9CA3AF" strokeWidth={1} />
+            <line
+              x1={0}
+              y1={chartHeight}
+              x2={chartWidth}
+              y2={chartHeight}
+              stroke="#9CA3AF"
+              strokeWidth={1}
+            />
             {categories.map((cat, i) => (
               <g key={`x-tick-${i}`} transform={`translate(${scaleX(i)}, ${chartHeight})`}>
                 <line x1={0} y1={0} x2={0} y2={5} stroke="#9CA3AF" />
@@ -133,7 +141,9 @@ export const LineChart: React.FC<LineChartProps> = ({
                     y={18}
                     textAnchor="middle"
                     className="text-xs fill-gray-500"
-                    transform={axes.xAxis.labelRotation ? `rotate(${axes.xAxis.labelRotation})` : ''}
+                    transform={
+                      axes.xAxis.labelRotation ? `rotate(${axes.xAxis.labelRotation})` : ''
+                    }
                   >
                     {cat}
                   </text>
@@ -154,20 +164,21 @@ export const LineChart: React.FC<LineChartProps> = ({
               className="transition-all duration-300"
             />
             {/* Markers */}
-            {showMarkers && s.values.map((v, i) => (
-              <circle
-                key={`marker-${seriesIndex}-${i}`}
-                cx={scaleX(i)}
-                cy={scaleY(v)}
-                r={4}
-                fill={s.color}
-                stroke="white"
-                strokeWidth={2}
-                className="transition-all duration-150 hover:r-6"
-              >
-                <title>{`${s.name}: ${v}`}</title>
-              </circle>
-            ))}
+            {showMarkers &&
+              s.values.map((v, i) => (
+                <circle
+                  key={`marker-${seriesIndex}-${i}`}
+                  cx={scaleX(i)}
+                  cy={scaleY(v)}
+                  r={4}
+                  fill={s.color}
+                  stroke="white"
+                  strokeWidth={2}
+                  className="transition-all duration-150 hover:r-6"
+                >
+                  <title>{`${s.name}: ${v}`}</title>
+                </circle>
+              ))}
           </g>
         ))}
 

@@ -41,9 +41,7 @@ export const BarChart: React.FC<BarChartProps> = ({
     let maxValue: number;
     if (stacked) {
       maxValue = Math.max(
-        ...data.labels!.map((_, i) =>
-          data.datasets.reduce((sum, ds) => sum + (ds.data[i] || 0), 0)
-        )
+        ...data.labels!.map((_, i) => data.datasets.reduce((sum, ds) => sum + (ds.data[i] || 0), 0))
       );
     } else {
       maxValue = Math.max(...data.datasets.flatMap((ds) => ds.data), 0);
@@ -58,9 +56,7 @@ export const BarChart: React.FC<BarChartProps> = ({
       ? (plotHeight - gap * (barCount - 1)) / barCount / groupCount
       : (plotWidth - gap * (barCount - 1)) / barCount / groupCount;
 
-    const scale = horizontal
-      ? (plotWidth - 20) / maxValue
-      : (plotHeight - 20) / maxValue;
+    const scale = horizontal ? (plotWidth - 20) / maxValue : (plotHeight - 20) / maxValue;
 
     const bars: Array<{
       x: number;
@@ -156,12 +152,13 @@ export const BarChart: React.FC<BarChartProps> = ({
     });
 
     // Axis labels
-    const axisLabels = data.labels?.map((label, i) => ({
-      position: horizontal
-        ? padding.top + i * (barSize * groupCount + gap) + (barSize * groupCount) / 2
-        : padding.left + i * (barSize * groupCount + gap) + (barSize * groupCount) / 2,
-      label: label.length > 10 ? `${label.slice(0, 10)}...` : label,
-    })) || [];
+    const axisLabels =
+      data.labels?.map((label, i) => ({
+        position: horizontal
+          ? padding.top + i * (barSize * groupCount + gap) + (barSize * groupCount) / 2
+          : padding.left + i * (barSize * groupCount + gap) + (barSize * groupCount) / 2,
+        label: label.length > 10 ? `${label.slice(0, 10)}...` : label,
+      })) || [];
 
     // Value labels
     const valueLabels = gridLines.map((line) => ({
@@ -174,11 +171,7 @@ export const BarChart: React.FC<BarChartProps> = ({
 
   return (
     <ChartWrapper config={config} className={`bar-chart ${horizontal ? 'horizontal' : 'vertical'}`}>
-      <svg
-        width={chartWidth}
-        height={chartHeight}
-        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-      >
+      <svg width={chartWidth} height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
         {/* Grid lines */}
         {yAxis?.showGrid !== false && (
           <g className="grid-lines">
@@ -321,12 +314,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                     strokeDasharray="6"
                   />
                   {annotation.label && (
-                    <text
-                      x={xPos + 5}
-                      y={15}
-                      fontSize={11}
-                      fill={annotation.color || '#f59e0b'}
-                    >
+                    <text x={xPos + 5} y={15} fontSize={11} fill={annotation.color || '#f59e0b'}>
                       {annotation.label}
                     </text>
                   )}

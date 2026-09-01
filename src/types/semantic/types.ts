@@ -486,15 +486,57 @@ export interface TypeCategoryInfo {
 }
 
 export const TYPE_CATEGORIES: TypeCategoryInfo[] = [
-  { id: 'numeric', name: 'Numeric', icon: '#', color: '#3b82f6', description: 'Numbers and calculations' },
-  { id: 'financial', name: 'Financial', icon: '$', color: '#22c55e', description: 'Currency and accounting' },
-  { id: 'temporal', name: 'Temporal', icon: '📅', color: '#f59e0b', description: 'Dates and times' },
+  {
+    id: 'numeric',
+    name: 'Numeric',
+    icon: '#',
+    color: '#3b82f6',
+    description: 'Numbers and calculations',
+  },
+  {
+    id: 'financial',
+    name: 'Financial',
+    icon: '$',
+    color: '#22c55e',
+    description: 'Currency and accounting',
+  },
+  {
+    id: 'temporal',
+    name: 'Temporal',
+    icon: '📅',
+    color: '#f59e0b',
+    description: 'Dates and times',
+  },
   { id: 'text', name: 'Text', icon: 'Aa', color: '#6b7280', description: 'Text and strings' },
-  { id: 'measurement', name: 'Measurement', icon: '📏', color: '#ec4899', description: 'Physical units' },
-  { id: 'contact', name: 'Contact', icon: '📧', color: '#06b6d4', description: 'Contact information' },
+  {
+    id: 'measurement',
+    name: 'Measurement',
+    icon: '📏',
+    color: '#ec4899',
+    description: 'Physical units',
+  },
+  {
+    id: 'contact',
+    name: 'Contact',
+    icon: '📧',
+    color: '#06b6d4',
+    description: 'Contact information',
+  },
   { id: 'boolean', name: 'Boolean', icon: '✓', color: '#10b981', description: 'Yes/No values' },
-  { id: 'geographic', name: 'Geographic', icon: '🌍', color: '#14b8a6', description: 'Location data' },
-  { id: 'identifier', name: 'Identifier', icon: '🆔', color: '#64748b', description: 'Unique identifiers' },
+  {
+    id: 'geographic',
+    name: 'Geographic',
+    icon: '🌍',
+    color: '#14b8a6',
+    description: 'Location data',
+  },
+  {
+    id: 'identifier',
+    name: 'Identifier',
+    icon: '🆔',
+    color: '#64748b',
+    description: 'Unique identifiers',
+  },
 ];
 
 // -----------------------------------------------------------------------------

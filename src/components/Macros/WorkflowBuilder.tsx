@@ -15,18 +15,16 @@ interface WorkflowBuilderProps {
   onCancel: () => void;
 }
 
-export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
-  macro,
-  onSave,
-  onCancel,
-}) => {
+export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({ macro, onSave, onCancel }) => {
   const [name, setName] = useState(macro?.name || 'New Macro');
   const [steps, setSteps] = useState<WorkflowStep[]>(macro?.workflow.steps || []);
-  const [trigger, setTrigger] = useState(macro?.trigger || {
-    type: 'manual' as const,
-    config: {},
-    enabled: true,
-  });
+  const [trigger, setTrigger] = useState(
+    macro?.trigger || {
+      type: 'manual' as const,
+      config: {},
+      enabled: true,
+    }
+  );
   const [showActionPicker, setShowActionPicker] = useState(false);
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
 
@@ -64,11 +62,11 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   };
 
   const handleRemoveStep = (stepId: string) => {
-    setSteps(steps.filter(s => s.id !== stepId).map((s, i) => ({ ...s, order: i + 1 })));
+    setSteps(steps.filter((s) => s.id !== stepId).map((s, i) => ({ ...s, order: i + 1 })));
   };
 
   const handleMoveStep = (stepId: string, direction: 'up' | 'down') => {
-    const index = steps.findIndex(s => s.id === stepId);
+    const index = steps.findIndex((s) => s.id === stepId);
     if (index < 0) return;
 
     const newIndex = direction === 'up' ? index - 1 : index + 1;
@@ -80,7 +78,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   };
 
   const handleUpdateStep = (stepId: string, updates: Partial<WorkflowStep>) => {
-    setSteps(steps.map(s => s.id === stepId ? { ...s, ...updates } : s));
+    setSteps(steps.map((s) => (s.id === stepId ? { ...s, ...updates } : s)));
   };
 
   const handleSave = () => {
@@ -123,24 +121,29 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       </div>
 
       {/* Trigger Configuration */}
-      <TriggerConfig
-        trigger={trigger}
-        onChange={setTrigger}
-      />
+      <TriggerConfig trigger={trigger} onChange={setTrigger} />
 
       {/* Steps */}
       <div className="steps-container">
         <div className="steps-header">
           <span className="steps-title">Steps ({steps.length})</span>
-          <button type="button"
+          <button
+            type="button"
             className="add-step-btn"
             onClick={() => {
               setEditingStepIndex(null);
               setShowActionPicker(true);
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12h14"/>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M12 5v14M5 12h14" />
             </svg>
             Add Step
           </button>
@@ -150,12 +153,20 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
           {steps.length === 0 ? (
             <div className="empty-steps">
               <p>No steps yet. Add actions to build your workflow.</p>
-              <button type="button"
+              <button
+                type="button"
                 className="add-first-step"
                 onClick={() => setShowActionPicker(true)}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 5v14M5 12h14"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M12 5v14M5 12h14" />
                 </svg>
                 Add First Step
               </button>
@@ -187,15 +198,23 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         <button type="button" className="cancel-btn" onClick={onCancel}>
           Cancel
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="save-btn"
           onClick={handleSave}
           disabled={steps.length === 0}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-            <polyline points="17 21 17 13 7 13 7 21"/>
-            <polyline points="7 3 7 8 15 8"/>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
           </svg>
           {macro ? 'Update' : 'Create'} Macro
         </button>

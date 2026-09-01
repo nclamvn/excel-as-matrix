@@ -50,9 +50,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
     }));
 
     // Line path
-    const linePath = pts
-      .map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`)
-      .join(' ');
+    const linePath = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`).join(' ');
 
     // Area path
     const areaPath = showArea
@@ -85,12 +83,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
     >
       {/* Area fill */}
       {showArea && areaPath && (
-        <path
-          d={areaPath}
-          fill={color}
-          opacity={0.15}
-          className={animated ? 'animate-area' : ''}
-        />
+        <path d={areaPath} fill={color} opacity={0.15} className={animated ? 'animate-area' : ''} />
       )}
 
       {/* Line */}
@@ -121,20 +114,8 @@ export const Sparkline: React.FC<SparklineProps> = ({
       {/* Min/Max markers */}
       {showMinMax && minPoint && minPoint !== maxPoint && (
         <>
-          <circle
-            cx={minPoint.x}
-            cy={minPoint.y}
-            r={3}
-            fill="#ef4444"
-          />
-          {maxPoint && (
-            <circle
-              cx={maxPoint.x}
-              cy={maxPoint.y}
-              r={3}
-              fill="#22c55e"
-            />
-          )}
+          <circle cx={minPoint.x} cy={minPoint.y} r={3} fill="#ef4444" />
+          {maxPoint && <circle cx={maxPoint.x} cy={maxPoint.y} r={3} fill="#22c55e" />}
         </>
       )}
 
@@ -181,7 +162,7 @@ export const SparklineBar: React.FC<SparklineBarProps> = ({
     const maxAbsValue = Math.max(...data.map(Math.abs), 1);
     const barWidth = (plotWidth - gap * (data.length - 1)) / data.length;
     const yCenter = padding + plotHeight / 2;
-    const yScale = (plotHeight / 2) / maxAbsValue;
+    const yScale = plotHeight / 2 / maxAbsValue;
 
     return data.map((value, i) => {
       const barHeight = Math.abs(value) * yScale;
@@ -203,12 +184,7 @@ export const SparklineBar: React.FC<SparklineBarProps> = ({
   }
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      className="sparkline-bar"
-    >
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="sparkline-bar">
       {/* Center line */}
       <line
         x1={2}
@@ -278,12 +254,7 @@ export const SparklineWithReference: React.FC<SparklineWithReferenceProps> = ({
           opacity={0.5}
         />
         {referenceLabel && (
-          <text
-            x={2}
-            y={refY - 3}
-            fontSize={8}
-            fill={color}
-          >
+          <text x={2} y={refY - 3} fontSize={8} fill={color}>
             {referenceLabel}
           </text>
         )}

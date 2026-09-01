@@ -5,11 +5,7 @@
 import React, { useState } from 'react';
 import { useConditionalFormattingStore } from '../../stores/conditionalFormattingStore';
 import { useSelectionStore } from '../../stores/selectionStore';
-import {
-  CFRuleType,
-  CFOperator,
-  HIGHLIGHT_STYLES,
-} from '../../types/conditionalFormatting';
+import { CFRuleType, CFOperator, HIGHLIGHT_STYLES } from '../../types/conditionalFormatting';
 import { X } from 'lucide-react';
 
 interface CFRuleDialogProps {
@@ -76,7 +72,10 @@ export const CFRuleDialog: React.FC<CFRuleDialogProps> = ({ onClose, onSave }) =
           stopIfTrue: false,
           operator,
           value1: parseFloat(value1) || 0,
-          value2: operator === 'between' || operator === 'notBetween' ? parseFloat(value2) || 0 : undefined,
+          value2:
+            operator === 'between' || operator === 'notBetween'
+              ? parseFloat(value2) || 0
+              : undefined,
           style,
         });
         break;
@@ -146,7 +145,9 @@ export const CFRuleDialog: React.FC<CFRuleDialogProps> = ({ onClose, onSave }) =
               <label>Operator:</label>
               <select value={operator} onChange={(e) => setOperator(e.target.value as CFOperator)}>
                 {OPERATORS.map((op) => (
-                  <option key={op.value} value={op.value}>{op.label}</option>
+                  <option key={op.value} value={op.value}>
+                    {op.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -257,7 +258,9 @@ export const CFRuleDialog: React.FC<CFRuleDialogProps> = ({ onClose, onSave }) =
                 onChange={(e) => setSelectedStyle(parseInt(e.target.value))}
               >
                 {HIGHLIGHT_STYLES.map((style, idx) => (
-                  <option key={idx} value={idx}>{style.name}</option>
+                  <option key={idx} value={idx}>
+                    {style.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -274,8 +277,12 @@ export const CFRuleDialog: React.FC<CFRuleDialogProps> = ({ onClose, onSave }) =
         </div>
 
         <div className="cf-dialog-footer">
-          <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
-          <button type="button" className="btn-ok" onClick={handleSave}>OK</button>
+          <button type="button" className="btn-cancel" onClick={onClose}>
+            Cancel
+          </button>
+          <button type="button" className="btn-ok" onClick={handleSave}>
+            OK
+          </button>
         </div>
       </div>
     </div>

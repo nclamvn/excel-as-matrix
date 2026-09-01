@@ -62,17 +62,20 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
     updateSheet,
   } = usePresenceStore();
 
-  const sendMessage = useCallback((type: WsMessageType, payload: unknown) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      const message: WsMessage = {
-        type,
-        payload,
-        timestamp: new Date().toISOString(),
-        senderId: localUser?.sessionId,
-      };
-      wsRef.current.send(JSON.stringify(message));
-    }
-  }, [localUser?.sessionId]);
+  const sendMessage = useCallback(
+    (type: WsMessageType, payload: unknown) => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        const message: WsMessage = {
+          type,
+          payload,
+          timestamp: new Date().toISOString(),
+          senderId: localUser?.sessionId,
+        };
+        wsRef.current.send(JSON.stringify(message));
+      }
+    },
+    [localUser?.sessionId]
+  );
 
   const startPing = useCallback(() => {
     if (pingIntervalRef.current) {
@@ -102,138 +105,141 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
     }
   }, []);
 
-  const handleMessage = useCallback((event: MessageEvent) => {
-    try {
-      const message: WsMessage = JSON.parse(event.data);
+  const handleMessage = useCallback(
+    (event: MessageEvent) => {
+      try {
+        const message: WsMessage = JSON.parse(event.data);
 
-      switch (message.type) {
-        case 'pong':
-          if (pongTimeoutRef.current) {
-            clearTimeout(pongTimeoutRef.current);
-            pongTimeoutRef.current = null;
-          }
-          break;
+        switch (message.type) {
+          case 'pong':
+            if (pongTimeoutRef.current) {
+              clearTimeout(pongTimeoutRef.current);
+              pongTimeoutRef.current = null;
+            }
+            break;
 
-        case 'presence_update': {
-          const payload = message.payload as Record<string, unknown>;
-          const action = payload.action as string;
+          case 'presence_update': {
+            const payload = message.payload as Record<string, unknown>;
+            const action = payload.action as string;
 
-          if (action === 'init') {
-            // Server sends initial member list on connect
-            const members = payload.members as Array<{ userId: string; userName: string }>;
-            members?.forEach((m) => {
-              addRemoteUser({
-                sessionId: m.userId,
-                userId: m.userId,
-                workbookId,
-                sheetId,
-                displayName: m.userName,
-                color: '',
-                lastActivity: new Date().toISOString(),
-                status: 'active',
+            if (action === 'init') {
+              // Server sends initial member list on connect
+              const members = payload.members as Array<{ userId: string; userName: string }>;
+              members?.forEach((m) => {
+                addRemoteUser({
+                  sessionId: m.userId,
+                  userId: m.userId,
+                  workbookId,
+                  sheetId,
+                  displayName: m.userName,
+                  color: '',
+                  lastActivity: new Date().toISOString(),
+                  status: 'active',
+                });
               });
-            });
-          } else if (action === 'join') {
-            const userId = payload.userId as string;
-            if (userId !== localUser?.sessionId) {
-              addRemoteUser({
-                sessionId: userId,
-                userId,
-                workbookId,
-                sheetId,
-                displayName: (payload.userName as string) || 'Anonymous',
-                color: '',
-                lastActivity: new Date().toISOString(),
-                status: 'active',
+            } else if (action === 'join') {
+              const userId = payload.userId as string;
+              if (userId !== localUser?.sessionId) {
+                addRemoteUser({
+                  sessionId: userId,
+                  userId,
+                  workbookId,
+                  sheetId,
+                  displayName: (payload.userName as string) || 'Anonymous',
+                  color: '',
+                  lastActivity: new Date().toISOString(),
+                  status: 'active',
+                });
+              }
+            } else if (action === 'leave') {
+              const userId = payload.userId as string;
+              removeRemoteUser(userId);
+            }
+            break;
+          }
+
+          case 'cursor_move': {
+            const cursorPayload = message.payload as CursorMovePayload & { userId?: string };
+            const senderId = cursorPayload.userId || message.senderId;
+            if (senderId && senderId !== localUser?.sessionId) {
+              updateRemoteUser(senderId, {
+                cursorPosition: {
+                  row: cursorPayload.row,
+                  col: cursorPayload.col,
+                  sheetId: cursorPayload.sheetId,
+                },
               });
             }
-          } else if (action === 'leave') {
-            const userId = payload.userId as string;
-            removeRemoteUser(userId);
+            break;
           }
-          break;
-        }
 
-        case 'cursor_move': {
-          const cursorPayload = message.payload as CursorMovePayload & { userId?: string };
-          const senderId = cursorPayload.userId || message.senderId;
-          if (senderId && senderId !== localUser?.sessionId) {
-            updateRemoteUser(senderId, {
-              cursorPosition: {
-                row: cursorPayload.row,
-                col: cursorPayload.col,
-                sheetId: cursorPayload.sheetId,
-              },
-            });
+          case 'selection_change': {
+            const selPayload = message.payload as SelectionChangePayload & { userId?: string };
+            const senderId = selPayload.userId || message.senderId;
+            if (senderId && senderId !== localUser?.sessionId) {
+              updateRemoteUser(senderId, {
+                selection: {
+                  sheetId: selPayload.sheetId,
+                  startRow: selPayload.startRow,
+                  startCol: selPayload.startCol,
+                  endRow: selPayload.endRow,
+                  endCol: selPayload.endCol,
+                },
+              });
+            }
+            break;
           }
-          break;
-        }
 
-        case 'selection_change': {
-          const selPayload = message.payload as SelectionChangePayload & { userId?: string };
-          const senderId = selPayload.userId || message.senderId;
-          if (senderId && senderId !== localUser?.sessionId) {
-            updateRemoteUser(senderId, {
-              selection: {
-                sheetId: selPayload.sheetId,
-                startRow: selPayload.startRow,
-                startCol: selPayload.startCol,
-                endRow: selPayload.endRow,
-                endCol: selPayload.endCol,
-              },
-            });
+          case 'cell_update': {
+            const cellPayload = message.payload as CellUpdatePayload;
+            onCellUpdate?.(cellPayload);
+            break;
           }
-          break;
-        }
 
-        case 'cell_update': {
-          const cellPayload = message.payload as CellUpdatePayload;
-          onCellUpdate?.(cellPayload);
-          break;
-        }
+          case 'conflict':
+            onConflict?.(message.payload);
+            break;
 
-        case 'conflict':
-          onConflict?.(message.payload);
-          break;
+          case 'sync':
+            onSync?.(message.payload);
+            break;
 
-        case 'sync':
-          onSync?.(message.payload);
-          break;
-
-        case 'sheet_change': {
-          const sheetPayload = message.payload as { userId?: string; sheetId: string };
-          const senderId = sheetPayload.userId || message.senderId;
-          if (senderId && senderId !== localUser?.sessionId) {
-            updateRemoteUser(senderId, {
-              sheetId: sheetPayload.sheetId,
-              cursorPosition: undefined,
-              selection: undefined,
-            });
+          case 'sheet_change': {
+            const sheetPayload = message.payload as { userId?: string; sheetId: string };
+            const senderId = sheetPayload.userId || message.senderId;
+            if (senderId && senderId !== localUser?.sessionId) {
+              updateRemoteUser(senderId, {
+                sheetId: sheetPayload.sheetId,
+                cursorPosition: undefined,
+                selection: undefined,
+              });
+            }
+            break;
           }
-          break;
-        }
 
-        case 'error': {
-          const errorPayload = message.payload as { message: string };
-          setError(errorPayload.message);
-          break;
+          case 'error': {
+            const errorPayload = message.payload as { message: string };
+            setError(errorPayload.message);
+            break;
+          }
         }
+      } catch (e) {
+        loggers.websocket.error('Failed to parse WebSocket message:', e);
       }
-    } catch (e) {
-      loggers.websocket.error('Failed to parse WebSocket message:', e);
-    }
-  }, [
-    workbookId,
-    sheetId,
-    localUser?.sessionId,
-    addRemoteUser,
-    removeRemoteUser,
-    updateRemoteUser,
-    onCellUpdate,
-    onConflict,
-    onSync,
-    setError,
-  ]);
+    },
+    [
+      workbookId,
+      sheetId,
+      localUser?.sessionId,
+      addRemoteUser,
+      removeRemoteUser,
+      updateRemoteUser,
+      onCellUpdate,
+      onConflict,
+      onSync,
+      setError,
+    ]
+  );
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
@@ -355,27 +361,39 @@ export const useWebSocket = (options: UseWebSocketOptions): UseWebSocketReturn =
     }
   }, [sheetId, connectionStatus, localUser, updateSheet, sendMessage]);
 
-  const sendCellUpdate = useCallback((payload: CellUpdatePayload) => {
-    sendMessage('cell_update', payload);
-  }, [sendMessage]);
+  const sendCellUpdate = useCallback(
+    (payload: CellUpdatePayload) => {
+      sendMessage('cell_update', payload);
+    },
+    [sendMessage]
+  );
 
-  const sendCursorMove = useCallback((row: number, col: number) => {
-    sendMessage('cursor_move', { sheetId, row, col });
-  }, [sendMessage, sheetId]);
+  const sendCursorMove = useCallback(
+    (row: number, col: number) => {
+      sendMessage('cursor_move', { sheetId, row, col });
+    },
+    [sendMessage, sheetId]
+  );
 
-  const sendSelectionChange = useCallback((startRow: number, startCol: number, endRow: number, endCol: number) => {
-    sendMessage('selection_change', {
-      sheetId,
-      startRow,
-      startCol,
-      endRow,
-      endCol,
-    });
-  }, [sendMessage, sheetId]);
+  const sendSelectionChange = useCallback(
+    (startRow: number, startCol: number, endRow: number, endCol: number) => {
+      sendMessage('selection_change', {
+        sheetId,
+        startRow,
+        startCol,
+        endRow,
+        endCol,
+      });
+    },
+    [sendMessage, sheetId]
+  );
 
-  const sendSheetChange = useCallback((newSheetId: string) => {
-    sendMessage('sheet_change', { sheetId: newSheetId });
-  }, [sendMessage]);
+  const sendSheetChange = useCallback(
+    (newSheetId: string) => {
+      sendMessage('sheet_change', { sheetId: newSheetId });
+    },
+    [sendMessage]
+  );
 
   return {
     isConnected: connectionStatus === 'connected',

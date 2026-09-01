@@ -18,7 +18,8 @@ interface ScheduledJob {
 export class TriggerManager {
   private macroRunner: MacroRunner;
   private scheduledJobs: Map<string, ScheduledJob> = new Map();
-  private dataWatchers: Map<string, { macroId: string; range?: string; sheet?: string }> = new Map();
+  private dataWatchers: Map<string, { macroId: string; range?: string; sheet?: string }> =
+    new Map();
   private webhookHandlers: Map<string, string> = new Map();
 
   constructor(macroRunner: MacroRunner) {
@@ -104,14 +105,17 @@ export class TriggerManager {
 
     const delay = nextRun.getTime() - Date.now();
 
-    const timeoutId = setTimeout(() => {
-      this.macroRunner(macro.id, { scheduledAt: nextRun });
+    const timeoutId = setTimeout(
+      () => {
+        this.macroRunner(macro.id, { scheduledAt: nextRun });
 
-      // Re-schedule for recurring schedules
-      if (schedule.type !== 'once') {
-        this.registerSchedule(macro);
-      }
-    }, Math.max(delay, 0));
+        // Re-schedule for recurring schedules
+        if (schedule.type !== 'once') {
+          this.registerSchedule(macro);
+        }
+      },
+      Math.max(delay, 0)
+    );
 
     this.scheduledJobs.set(macro.id, {
       macroId: macro.id,

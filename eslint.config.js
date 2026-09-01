@@ -11,7 +11,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.{tsx,jsx}'],
+    files: ['**/*.{ts,tsx,js,jsx}'],
     plugins: { react, 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y },
     settings: { react: { version: 'detect' } },
     rules: {

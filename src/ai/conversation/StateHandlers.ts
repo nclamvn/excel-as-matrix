@@ -45,10 +45,7 @@ export class IdleHandler implements StateHandler {
 export class IntentGatheringHandler implements StateHandler {
   state: ConversationState = 'intent_gathering';
 
-  async enter(
-    context: ConversationContext,
-    machine: ConversationStateMachine
-  ): Promise<void> {
+  async enter(context: ConversationContext, machine: ConversationStateMachine): Promise<void> {
     // Parse the user's request
     const intent = await this.parseIntent(context.originalRequest, context);
 
@@ -61,10 +58,7 @@ export class IntentGatheringHandler implements StateHandler {
     machine.setIntent(intent);
   }
 
-  private async parseIntent(
-    request: string,
-    _context: ConversationContext
-  ): Promise<ParsedIntent> {
+  private async parseIntent(request: string, _context: ConversationContext): Promise<ParsedIntent> {
     // Basic intent parsing (would be AI-powered in production)
     const lowerRequest = request.toLowerCase();
 
@@ -116,9 +110,7 @@ export class IntentGatheringHandler implements StateHandler {
       switch (response.type) {
         case 'target_selection':
           intent.target = String(response.value);
-          intent.ambiguities = intent.ambiguities.filter(
-            (a) => a !== 'target_cells'
-          );
+          intent.ambiguities = intent.ambiguities.filter((a) => a !== 'target_cells');
           break;
         case 'parameter_value':
           intent.parameters[response.requestId] = response.value;
@@ -147,10 +139,7 @@ export class IntentGatheringHandler implements StateHandler {
 export class ClarifyingHandler implements StateHandler {
   state: ConversationState = 'clarifying';
 
-  async enter(
-    context: ConversationContext,
-    machine: ConversationStateMachine
-  ): Promise<void> {
+  async enter(context: ConversationContext, machine: ConversationStateMachine): Promise<void> {
     // Generate clarification question if not already pending
     if (!context.pendingClarification && context.parsedIntent) {
       const question = this.generateClarificationQuestion(context.parsedIntent);
@@ -160,9 +149,7 @@ export class ClarifyingHandler implements StateHandler {
     }
   }
 
-  private generateClarificationQuestion(
-    intent: ParsedIntent
-  ): ClarificationRequest | null {
+  private generateClarificationQuestion(intent: ParsedIntent): ClarificationRequest | null {
     // Generate based on ambiguities
     const ambiguity = intent.ambiguities[0];
 
@@ -171,7 +158,7 @@ export class ClarifyingHandler implements StateHandler {
         id: crypto.randomUUID(),
         type: 'target_selection',
         question: 'Which cells would you like to apply this to?',
-        context: `You asked to "${intent.action}" but didn\'t specify the target cells.`,
+        context: `You asked to "${intent.action}" but didn't specify the target cells.`,
         options: [
           { id: 'selected', label: 'Selected cells', value: 'selected' },
           { id: 'column', label: 'Entire column', value: 'column' },
@@ -215,20 +202,14 @@ export class ClarifyingHandler implements StateHandler {
 export class PlanningHandler implements StateHandler {
   state: ConversationState = 'planning';
 
-  async enter(
-    context: ConversationContext,
-    machine: ConversationStateMachine
-  ): Promise<void> {
+  async enter(context: ConversationContext, machine: ConversationStateMachine): Promise<void> {
     if (!context.parsedIntent) return;
 
     const plan = await this.createPlan(context.parsedIntent, context);
     machine.setPlan(plan);
   }
 
-  private async createPlan(
-    intent: ParsedIntent,
-    _context: ConversationContext
-  ): Promise<TaskPlan> {
+  private async createPlan(intent: ParsedIntent, _context: ConversationContext): Promise<TaskPlan> {
     // Create task plan based on intent
     const steps = this.generateSteps(intent);
 
@@ -330,10 +311,7 @@ export class PlanningHandler implements StateHandler {
 export class ExecutingHandler implements StateHandler {
   state: ConversationState = 'executing';
 
-  async enter(
-    context: ConversationContext,
-    machine: ConversationStateMachine
-  ): Promise<void> {
+  async enter(context: ConversationContext, machine: ConversationStateMachine): Promise<void> {
     const nextStep = machine.getNextStep();
 
     if (nextStep >= 0 && context.taskPlan) {
@@ -341,16 +319,10 @@ export class ExecutingHandler implements StateHandler {
 
       try {
         // Execute the step (mock execution)
-        const result = await this.executeStep(
-          context.taskPlan.steps[nextStep],
-          context
-        );
+        const result = await this.executeStep(context.taskPlan.steps[nextStep], context);
         machine.completeStep(nextStep, result);
       } catch (error) {
-        machine.failStep(
-          nextStep,
-          error instanceof Error ? error.message : 'Unknown error'
-        );
+        machine.failStep(nextStep, error instanceof Error ? error.message : 'Unknown error');
       }
     } else {
       // No more steps, move to review
@@ -370,7 +342,12 @@ export class ExecutingHandler implements StateHandler {
       case 'validate':
         return { valid: true };
       case 'read_range':
-        return { values: [[1, 2, 3], [4, 5, 6]] };
+        return {
+          values: [
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+        };
       case 'calculate_sum':
         return { result: 21 };
       case 'calculate_average':
@@ -394,10 +371,7 @@ export class ExecutingHandler implements StateHandler {
 export class ReviewingHandler implements StateHandler {
   state: ConversationState = 'reviewing';
 
-  async enter(
-    _context: ConversationContext,
-    machine: ConversationStateMachine
-  ): Promise<void> {
+  async enter(_context: ConversationContext, machine: ConversationStateMachine): Promise<void> {
     // Check if approval is required
     const config = machine.getConfig();
     if (config.requireApprovalForChanges) {

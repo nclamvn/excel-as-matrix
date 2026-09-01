@@ -2,12 +2,24 @@ import { useCallback } from 'react';
 import { useWorkbookStore } from '../stores/workbookStore';
 import { useUndoStore } from '../stores/undoStore';
 import { CellValue, getCellKey } from '../types/cell';
-import { detectPattern as detectPatternUtil, generateSeriesValues, DetectedPattern } from '../utils/fillSeriesUtils';
+import {
+  detectPattern as detectPatternUtil,
+  generateSeriesValues,
+  DetectedPattern,
+} from '../utils/fillSeriesUtils';
 
 export type FillDirection = 'down' | 'up' | 'left' | 'right';
 
 export interface FillPattern {
-  type: 'copy' | 'series' | 'date' | 'dayName' | 'monthName' | 'quarter' | 'textWithNumber' | 'custom';
+  type:
+    | 'copy'
+    | 'series'
+    | 'date'
+    | 'dayName'
+    | 'monthName'
+    | 'quarter'
+    | 'textWithNumber'
+    | 'custom';
   step?: number;
   format?: string;
   detectedPattern?: DetectedPattern;

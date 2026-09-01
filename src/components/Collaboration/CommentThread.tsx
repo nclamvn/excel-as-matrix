@@ -61,7 +61,9 @@ function renderContentWithMentions(content: string): React.ReactNode {
   const parts = content.split(/(@\w+)/g);
   return parts.map((part, i) =>
     part.startsWith('@') ? (
-      <span key={i} style={{ color: '#4285f4', fontWeight: 600 }}>{part}</span>
+      <span key={i} style={{ color: '#4285f4', fontWeight: 600 }}>
+        {part}
+      </span>
     ) : (
       part
     )
@@ -89,10 +91,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       textareaRef.current.focus();
-      textareaRef.current.setSelectionRange(
-        editContent.length,
-        editContent.length
-      );
+      textareaRef.current.setSelectionRange(editContent.length, editContent.length);
     }
   }, [isEditing, editContent.length]);
 
@@ -135,14 +134,16 @@ const SingleComment: React.FC<SingleCommentProps> = ({
         </div>
         {isAuthor && showActions && !isEditing && (
           <div className="comment__actions">
-            <button type="button"
+            <button
+              type="button"
               className="comment__action"
               onClick={() => setIsEditing(true)}
               title="Edit"
             >
               <EditIcon />
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="comment__action comment__action--delete"
               onClick={onDelete}
               title="Delete"
@@ -164,13 +165,15 @@ const SingleComment: React.FC<SingleCommentProps> = ({
             rows={3}
           />
           <div className="comment__edit-actions">
-            <button type="button"
+            <button
+              type="button"
               className="comment__btn comment__btn--secondary"
               onClick={handleCancelEdit}
             >
               Cancel
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="comment__btn comment__btn--primary"
               onClick={handleSaveEdit}
               disabled={!editContent.trim()}
@@ -238,11 +241,10 @@ export const CommentThread: React.FC<CommentThreadProps> = ({
       {/* Thread header */}
       <div className="comment-thread__header">
         <span className="comment-thread__cell">{thread.cellRef}</span>
-        {thread.resolved && (
-          <span className="comment-thread__resolved-badge">Resolved</span>
-        )}
+        {thread.resolved && <span className="comment-thread__resolved-badge">Resolved</span>}
         {onToggleExpand && (
-          <button type="button"
+          <button
+            type="button"
             className="comment-thread__toggle"
             onClick={onToggleExpand}
             title={isExpanded ? 'Collapse' : 'Expand'}
@@ -291,7 +293,8 @@ export const CommentThread: React.FC<CommentThreadProps> = ({
                 rows={2}
               />
               <div className="comment__edit-actions">
-                <button type="button"
+                <button
+                  type="button"
                   className="comment__btn comment__btn--secondary"
                   onClick={() => {
                     setIsReplying(false);
@@ -300,7 +303,8 @@ export const CommentThread: React.FC<CommentThreadProps> = ({
                 >
                   Cancel
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   className="comment__btn comment__btn--primary"
                   onClick={handleSubmitReply}
                   disabled={!replyContent.trim()}
@@ -311,21 +315,20 @@ export const CommentThread: React.FC<CommentThreadProps> = ({
             </div>
           ) : (
             <div className="comment-thread__actions">
-              <button type="button"
+              <button
+                type="button"
                 className="comment-thread__action"
                 onClick={() => setIsReplying(true)}
               >
                 Reply
               </button>
               {thread.resolved ? (
-                <button type="button"
-                  className="comment-thread__action"
-                  onClick={onReopen}
-                >
+                <button type="button" className="comment-thread__action" onClick={onReopen}>
                   Reopen
                 </button>
               ) : (
-                <button type="button"
+                <button
+                  type="button"
                   className="comment-thread__action comment-thread__action--resolve"
                   onClick={onResolve}
                 >
@@ -367,9 +370,7 @@ export const CommentPanel: React.FC<CommentPanelProps> = ({
   showResolved = false,
   onToggleResolved,
 }) => {
-  const filteredThreads = showResolved
-    ? threads
-    : threads.filter((t) => !t.resolved);
+  const filteredThreads = showResolved ? threads : threads.filter((t) => !t.resolved);
 
   const resolvedCount = threads.filter((t) => t.resolved).length;
 
@@ -381,7 +382,8 @@ export const CommentPanel: React.FC<CommentPanelProps> = ({
           {filteredThreads.length} {showResolved ? 'total' : 'open'}
         </span>
         {onToggleResolved && resolvedCount > 0 && (
-          <button type="button"
+          <button
+            type="button"
             className="comment-panel__toggle-resolved"
             onClick={onToggleResolved}
           >

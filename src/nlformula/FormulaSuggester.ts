@@ -3,12 +3,7 @@
 // =============================================================================
 
 import { FunctionLibrary } from './FunctionLibrary';
-import type {
-  FormulaSuggestionContext,
-  SuggestionResult,
-  Suggestion,
-  CellContext,
-} from './types';
+import type { FormulaSuggestionContext, SuggestionResult, Suggestion, CellContext } from './types';
 
 /**
  * Provide formula suggestions while typing
@@ -147,10 +142,7 @@ export class FormulaSuggester {
   /**
    * Get natural language suggestions
    */
-  private getNLSuggestions(
-    input: string,
-    context: CellContext
-  ): SuggestionResult {
+  private getNLSuggestions(input: string, context: CellContext): SuggestionResult {
     const suggestions: Suggestion[] = [];
     const lower = input.toLowerCase();
 
@@ -210,10 +202,7 @@ export class FormulaSuggester {
 
     // Add column-aware suggestions
     for (const header of context.headers.slice(0, 3)) {
-      if (
-        header.dataType === 'number' ||
-        header.dataType === 'currency'
-      ) {
+      if (header.dataType === 'number' || header.dataType === 'currency') {
         suggestions.push({
           type: 'nl_formula',
           display: `sum of ${header.name}`,
@@ -253,10 +242,7 @@ export class FormulaSuggester {
 
     // Also check for contains
     for (const func of functions) {
-      if (
-        func.name.includes(upperPartial) &&
-        !func.name.startsWith(upperPartial)
-      ) {
+      if (func.name.includes(upperPartial) && !func.name.startsWith(upperPartial)) {
         suggestions.push({
           type: 'function',
           display: func.name,
@@ -274,10 +260,7 @@ export class FormulaSuggester {
   /**
    * Get reference suggestions
    */
-  private getReferenceSuggestions(
-    partial: string,
-    context: CellContext
-  ): Suggestion[] {
+  private getReferenceSuggestions(partial: string, context: CellContext): Suggestion[] {
     const suggestions: Suggestion[] = [];
     const upperPartial = partial.toUpperCase();
 
@@ -324,10 +307,7 @@ export class FormulaSuggester {
   /**
    * Get token at cursor position
    */
-  private getTokenAtCursor(
-    formula: string,
-    cursorPos: number
-  ): { type: string; value: string } {
+  private getTokenAtCursor(formula: string, cursorPos: number): { type: string; value: string } {
     // Find what we're in the middle of
     const before = formula.slice(0, cursorPos + 1);
 

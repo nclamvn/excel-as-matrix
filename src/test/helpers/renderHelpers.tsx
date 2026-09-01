@@ -96,7 +96,10 @@ export function createMouseEvent(
 }
 
 // Simulate wheel event
-export function createWheelEvent(deltaY: number, options: Partial<WheelEventInit> = {}): WheelEvent {
+export function createWheelEvent(
+  deltaY: number,
+  options: Partial<WheelEventInit> = {}
+): WheelEvent {
   return new WheelEvent('wheel', {
     bubbles: true,
     cancelable: true,
@@ -178,12 +181,7 @@ export function getCellPosition(
     headerWidth?: number;
   } = {}
 ): { x: number; y: number; width: number; height: number } {
-  const {
-    rowHeight = 24,
-    colWidth = 100,
-    headerHeight = 28,
-    headerWidth = 50,
-  } = options;
+  const { rowHeight = 24, colWidth = 100, headerHeight = 28, headerWidth = 50 } = options;
 
   return {
     x: headerWidth + col * colWidth,
@@ -342,7 +340,9 @@ export function checkAccessibility(element: HTMLElement): {
   issues: string[];
 } {
   const issues: string[] = [];
-  const hasRole = !!element.getAttribute('role') || ['button', 'input', 'a'].includes(element.tagName.toLowerCase());
+  const hasRole =
+    !!element.getAttribute('role') ||
+    ['button', 'input', 'a'].includes(element.tagName.toLowerCase());
 
   const hasLabel =
     !!element.getAttribute('aria-label') ||

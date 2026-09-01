@@ -1,0 +1,423 @@
+generated_by: adapter_csv.py
+source: qa_baseline.csv
+facts:
+- id: QA.INSTALL.STANDARD
+  key: Standard dependency install
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: npm ci; 893 packages installed without force or legacy-peer-deps;
+    exit 0; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 2
+  provenance_level: verified_primary
+- id: QA.INSTALL.LEGACY
+  key: Legacy peer dependency install
+  value: NOT_REQUIRED
+  unit: ''
+  status: VERIFIED
+  evidence: dependency peer contract corrected; standard npm ci is canonical; owner
+    ExcelAI maintainer; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 3
+  provenance_level: verified_primary
+- id: QA.DEP.VULNERABILITIES
+  key: Full dependency vulnerabilities
+  value: 4
+  unit: findings
+  status: VERIFIED
+  evidence: 'local command: npm audit --json; 1 high + 2 moderate + 1 low, all dev-toolchain;
+    owner ExcelAI maintainer; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 4
+  provenance_level: verified_primary
+- id: QA.DEP.CRITICAL
+  key: Critical dependency vulnerabilities
+  value: 0
+  unit: findings
+  status: VERIFIED
+  evidence: 'local command: npm audit --json; current advisory registry; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 5
+  provenance_level: verified_primary
+- id: QA.DEP.PRODUCTION
+  key: Production dependency vulnerabilities
+  value: 0
+  unit: findings
+  status: VERIFIED
+  evidence: 'local command: npm audit --omit=dev --json; all severities zero; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 6
+  provenance_level: verified_primary
+- id: QA.DEP.DEV_HIGH
+  key: Development dependency high vulnerabilities
+  value: 1
+  unit: findings
+  status: VERIFIED
+  evidence: Vite <=6 advisory affects local dev server; fixed release requires Vite
+    8 major migration; owner ExcelAI maintainer; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 7
+  provenance_level: verified_primary
+- id: QA.DEP.DEV_MODERATE
+  key: Development dependency moderate vulnerabilities
+  value: 2
+  unit: findings
+  status: VERIFIED
+  evidence: Vite/esbuild and vite-plugin-pwa advisory chain is excluded from production
+    install; owner ExcelAI maintainer; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 8
+  provenance_level: verified_primary
+- id: QA.DEP.DEV_LOW
+  key: Development dependency low vulnerabilities
+  value: 1
+  unit: findings
+  status: VERIFIED
+  evidence: Babel sourceMappingURL local compiler input advisory; no production dependency
+    exposure; owner ExcelAI maintainer; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 9
+  provenance_level: verified_primary
+- id: QA.FRONTEND.BUILD
+  key: Frontend production build
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: npm run build after clean npm ci; exit 0; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 10
+  provenance_level: verified_primary
+- id: QA.FRONTEND.BUILD_TIME
+  key: Frontend build time
+  value: 20.51
+  unit: seconds
+  status: VERIFIED
+  evidence: 'local command: npm run build after final trusted AI write guards; Vite
+    output; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 11
+  provenance_level: verified_primary
+- id: QA.BUNDLE.EXCELJS
+  key: ExcelJS minified chunk
+  value: 931.15
+  unit: kB
+  status: VERIFIED
+  evidence: 'local command: npm run build; dist/assets/vendor-exceljs; 2026-08-27'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 12
+  provenance_level: verified_primary
+- id: QA.BUNDLE.CSS
+  key: Main CSS minified size
+  value: 598.9
+  unit: kB
+  status: VERIFIED
+  evidence: 'local command: npm run build; dist/assets/index CSS; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 13
+  provenance_level: verified_primary
+- id: QA.BUILD.CIRCULAR_CHUNK
+  key: Circular chunk warning
+  value: engine-functions -> engine-core -> engine-functions
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: npm run build; Vite warning; 2026-08-27'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 14
+  provenance_level: verified_primary
+- id: QA.SERVER.BUILD
+  key: Server TypeScript build
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: npm run build:server; strict NodeNext ESM compile exit
+    0; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 15
+  provenance_level: verified_primary
+- id: QA.SERVER.TS_ERRORS
+  key: Server TypeScript errors
+  value: 0
+  unit: errors
+  status: VERIFIED
+  evidence: 'local command: npm run build:server; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 16
+  provenance_level: verified_primary
+- id: QA.SERVER.CONFIG_TESTS
+  key: Server environment and status tests
+  value: 10
+  unit: tests
+  status: VERIFIED
+  evidence: 'local command: npm run test:server; 2/2 files and 10/10 tests pass; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 17
+  provenance_level: verified_primary
+- id: QA.SERVER.COMPILED_BOOT
+  key: Compiled server boot and health
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: npm run start:server then GET /api/health; server/dist/index.js
+    booted and returned HTTP 200; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 18
+  provenance_level: verified_primary
+- id: QA.SERVER.FAIL_CLOSED
+  key: Disabled server features fail closed
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local HTTP checks: AI billing and SCIM returned HTTP 503 without credentials;
+    owner ExcelAI maintainer; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 19
+  provenance_level: verified_primary
+- id: QA.UNIT.TEST_FILES
+  key: Passing unit test files
+  value: 38
+  unit: files
+  status: VERIFIED
+  evidence: 'local command: npm run test:run; 38/38; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 20
+  provenance_level: verified_primary
+- id: QA.UNIT.TESTS
+  key: Passing unit tests
+  value: 1894
+  unit: tests
+  status: VERIFIED
+  evidence: 'local command: npm run test:run; 1894/1894; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 21
+  provenance_level: verified_primary
+- id: QA.LINT.ERRORS
+  key: ESLint errors
+  value: 0
+  unit: errors
+  status: VERIFIED
+  evidence: 'local command: npm run lint; exit 0 with 0 errors and 187 warnings; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 22
+  provenance_level: verified_primary
+- id: QA.LINT.WARNINGS
+  key: ESLint warnings
+  value: 187
+  unit: warnings
+  status: VERIFIED
+  evidence: 'local command: npm run lint; warnings remain visible and non-blocking;
+    owner ExcelAI maintainer; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 23
+  provenance_level: verified_primary
+- id: QA.FORMAT.DRIFT
+  key: Files failing Prettier check
+  value: 0
+  unit: files
+  status: VERIFIED
+  evidence: 'local command: npm run format:check; all matched files use Prettier code
+    style; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 24
+  provenance_level: verified_primary
+- id: QA.E2E.VERIFY
+  key: Chromium feature verification
+  value: 16
+  unit: tests passed
+  status: VERIFIED
+  evidence: 'local command: npm run test:e2e:verify -- --project=chromium; 16/16 passed;
+    2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 25
+  provenance_level: verified_primary
+- id: QA.E2E.PORT_MISMATCH
+  key: E2E dev server port mismatch
+  value: RESOLVED
+  unit: ''
+  status: VERIFIED
+  evidence: 'source scan and local command: Playwright baseURL and webServer both
+    http://127.0.0.1:5174 with strictPort; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 26
+  provenance_level: verified_primary
+- id: QA.E2E.CRITICAL
+  key: Deterministic Chromium release gate
+  value: 5
+  unit: tests passed
+  status: VERIFIED
+  evidence: 'local command: npm run test:e2e:critical; 5/5 passed including explicit
+    AI offline-to-demo opt-in and trusted write rollback; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 27
+  provenance_level: verified_primary
+- id: QA.E2E.PORT_COLLISION
+  key: Occupied E2E port fails loudly
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: second npm run dev -- --host 127.0.0.1 --strictPort exited
+    1 with Port 5174 is already in use; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 28
+  provenance_level: verified_primary
+- id: QA.E2E.FAILURE_ARTIFACTS
+  key: Failed E2E retains evidence
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: local failed mobile run retained trace.zip screenshot PNG video WebM and
+    error-context.md under test-results; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 29
+  provenance_level: verified_primary
+- id: QA.CI.WORKFLOW_SYNTAX
+  key: GitHub Actions workflow syntax
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: Ruby YAML parser loaded .github/workflows/ci.yml; Node
+    scripts pass syntax checks; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 30
+  provenance_level: verified_primary
+- id: QA.CI.LOCAL_SIMULATION
+  key: Clean-install CI gate simulation
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: standard npm ci baseline plus current lint format builds 1894 unit tests
+    10 server tests 4 governance bites 5 Chromium journeys and production audit all
+    pass; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 31
+  provenance_level: verified_primary
+- id: QA.CI.REMOTE_RUN
+  key: Remote GitHub Actions run
+  value: NOT_RUN
+  unit: ''
+  status: VERIFIED
+  evidence: workflow exists only in local working tree and has not been pushed; no
+    remote run is claimed; owner ExcelAI maintainer; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 32
+  provenance_level: verified_primary
+- id: QA.SOT.PORTABLE
+  key: Portable SOT adversarial tests
+  value: 4
+  unit: tests passed
+  status: VERIFIED
+  evidence: 'local command: npm run test:governance; clean stale-token A3-exposure
+    and canonical-hash scenarios all pass; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 33
+  provenance_level: verified_primary
+- id: QA.RELEASE.CLASSIFICATION
+  key: Derived release classification
+  value: NOT_PRODUCTION_READY
+  unit: ''
+  status: VERIFIED
+  evidence: 'local command: npm run release:evidence; README and JSON derive from
+    canonical SOT and all scoped stabilization gates pass; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 34
+  provenance_level: verified_primary
+- id: QA.AI.DEFAULT_STATE
+  key: Default AI runtime state
+  value: offline
+  unit: ''
+  status: VERIFIED
+  evidence: 'unit and Chromium checks: default mockMode false; unconfigured send throws
+    AI_UNAVAILABLE and UI input is disabled; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 35
+  provenance_level: verified_primary
+- id: QA.AI.MOCK_OPT_IN
+  key: AI demo requires explicit opt-in
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'unit and Chromium checks: simulated response only after Enable demo and
+    UI labels simulated answers; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 36
+  provenance_level: verified_primary
+- id: QA.AI.CONFIGURED_PROXY
+  key: Configured AI proxy state
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'unit test: configured status selects server-proxy transport and sends
+    chat to /api/ai/chat; no external model credential used; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 37
+  provenance_level: verified_primary
+- id: QA.AI.TRUSTED_WRITE
+  key: Trusted AI write transaction
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'focused integration test and Chromium journey: exact before/after preview
+    captured-sheet apply history and one-time rollback all pass; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 38
+  provenance_level: verified_primary
+- id: QA.AI.WRITE.SHAPE_GUARD
+  key: AI write matrix shape guard
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'focused integration test: A1:B2 with a 1x1 payload throws before pending
+    action creation or workbook mutation; 2026-09-01'
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 39
+  provenance_level: verified_primary
+- id: QA.AI.WRITE.AUDIT
+  key: AI write action audit durability
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: runtime awaits proposal approval apply and rollback audit writes; AIUsageLogger
+    flushes tool events to append-only IndexedDB before success; verified by integration
+    and Chromium tests; 2026-09-01
+  source:
+    file: source_canonical/qa_baseline.csv
+    row: 40
+  provenance_level: verified_primary

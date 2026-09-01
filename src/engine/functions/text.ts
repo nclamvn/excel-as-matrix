@@ -78,7 +78,10 @@ export const textFunctions: FunctionDef[] = [
       if ((startNum as number) < 1 || (numChars as number) < 0) {
         return new FormulaError('#VALUE!');
       }
-      return text.substring((startNum as number) - 1, (startNum as number) - 1 + (numChars as number));
+      return text.substring(
+        (startNum as number) - 1,
+        (startNum as number) - 1 + (numChars as number)
+      );
     },
   },
 
@@ -120,11 +123,13 @@ export const textFunctions: FunctionDef[] = [
     fn: (args: FormulaValue[]): FormulaValue => {
       const text = toString(args[0]);
       // Capitalize first letter and any letter after a non-letter character
-      return text.replace(/(^|[^a-zA-Z])([a-zA-Z])/g, (_match, prefix, letter) => {
-        return prefix + letter.toUpperCase();
-      }).replace(/([a-zA-Z])([a-zA-Z]+)/g, (_match, first, rest) => {
-        return first + rest.toLowerCase();
-      });
+      return text
+        .replace(/(^|[^a-zA-Z])([a-zA-Z])/g, (_match, prefix, letter) => {
+          return prefix + letter.toUpperCase();
+        })
+        .replace(/([a-zA-Z])([a-zA-Z]+)/g, (_match, first, rest) => {
+          return first + rest.toLowerCase();
+        });
     },
   },
 
@@ -202,7 +207,9 @@ export const textFunctions: FunctionDef[] = [
       if (isError(numChars)) return numChars;
 
       const start = (startNum as number) - 1;
-      return oldText.substring(0, start) + newText + oldText.substring(start + (numChars as number));
+      return (
+        oldText.substring(0, start) + newText + oldText.substring(start + (numChars as number))
+      );
     },
   },
 
@@ -281,7 +288,12 @@ export const textFunctions: FunctionDef[] = [
         const formatted = percentValue.toFixed(decimals);
         // Add thousands separator if format has comma
         if (format.includes(',')) {
-          return parseFloat(formatted).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
+          return (
+            parseFloat(formatted).toLocaleString('en-US', {
+              minimumFractionDigits: decimals,
+              maximumFractionDigits: decimals,
+            }) + '%'
+          );
         }
         return formatted + '%';
       }
@@ -324,7 +336,11 @@ export const textFunctions: FunctionDef[] = [
       }
 
       // Date format
-      if (format.toLowerCase().includes('yy') || format.toLowerCase().includes('mm') || format.toLowerCase().includes('dd')) {
+      if (
+        format.toLowerCase().includes('yy') ||
+        format.toLowerCase().includes('mm') ||
+        format.toLowerCase().includes('dd')
+      ) {
         const date = new Date(1900, 0, num - 1);
         return date.toLocaleDateString();
       }

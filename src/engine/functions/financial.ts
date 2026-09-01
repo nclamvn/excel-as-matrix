@@ -74,7 +74,7 @@ export const financialFunctions: FunctionDef[] = [
       }
 
       const pvif = Math.pow(1 + r, n);
-      let fv = -presentValue * pvif - (payment * (1 + r * paymentType) * (pvif - 1)) / r;
+      const fv = -presentValue * pvif - (payment * (1 + r * paymentType) * (pvif - 1)) / r;
 
       return fv;
     },
@@ -148,9 +148,7 @@ export const financialFunctions: FunctionDef[] = [
     minArgs: 1,
     maxArgs: 2,
     fn: (args: FormulaValue[]): FormulaValue => {
-      const cashFlows = flattenValues([args[0]]).filter(
-        (v): v is number => typeof v === 'number'
-      );
+      const cashFlows = flattenValues([args[0]]).filter((v): v is number => typeof v === 'number');
       const guess = args[1] !== undefined ? toNumber(args[1]) : 0.1;
 
       if (isError(guess)) return guess;
@@ -231,9 +229,9 @@ export const financialFunctions: FunctionDef[] = [
           futureValue;
         const dy =
           n * presentValue * Math.pow(1 + rate, n - 1) +
-          (payment *
+          payment *
             (1 + rate * paymentType) *
-            ((n * Math.pow(1 + rate, n - 1) * rate - pvif + 1) / (rate * rate))) +
+            ((n * Math.pow(1 + rate, n - 1) * rate - pvif + 1) / (rate * rate)) +
           (payment * paymentType * (pvif - 1)) / rate;
 
         if (Math.abs(dy) < tolerance) {
@@ -630,12 +628,8 @@ export const financialFunctions: FunctionDef[] = [
       const rate = toNumber(args[0]);
       if (isError(rate)) return rate;
 
-      const values = flattenValues([args[1]]).filter(
-        (v): v is number => typeof v === 'number'
-      );
-      const dates = flattenValues([args[2]]).filter(
-        (v): v is number => typeof v === 'number'
-      );
+      const values = flattenValues([args[1]]).filter((v): v is number => typeof v === 'number');
+      const dates = flattenValues([args[2]]).filter((v): v is number => typeof v === 'number');
 
       if (values.length !== dates.length || values.length === 0) {
         return new FormulaError('#NUM!');
@@ -660,12 +654,8 @@ export const financialFunctions: FunctionDef[] = [
     minArgs: 2,
     maxArgs: 3,
     fn: (args: FormulaValue[]): FormulaValue => {
-      const values = flattenValues([args[0]]).filter(
-        (v): v is number => typeof v === 'number'
-      );
-      const dates = flattenValues([args[1]]).filter(
-        (v): v is number => typeof v === 'number'
-      );
+      const values = flattenValues([args[0]]).filter((v): v is number => typeof v === 'number');
+      const dates = flattenValues([args[1]]).filter((v): v is number => typeof v === 'number');
       const guess = args[2] !== undefined ? toNumber(args[2]) : 0.1;
 
       if (isError(guess)) return guess;
@@ -688,7 +678,7 @@ export const financialFunctions: FunctionDef[] = [
           const factor = Math.pow(1 + rate, years);
           xnpv += values[j] / factor;
           if (years !== 0) {
-            dxnpv -= years * values[j] / (factor * (1 + rate));
+            dxnpv -= (years * values[j]) / (factor * (1 + rate));
           }
         }
 
@@ -840,7 +830,7 @@ export const financialFunctions: FunctionDef[] = [
       }
 
       // Newton-Raphson to find yield
-      let yld = rate as number || 0.05;
+      let yld = (rate as number) || 0.05;
       const maxIterations = 100;
       const tolerance = 1e-10;
 
@@ -849,7 +839,9 @@ export const financialFunctions: FunctionDef[] = [
 
       for (let i = 0; i < maxIterations; i++) {
         const calcArgs = [args[0], args[1], args[2], yld, args[4], args[5], args[6]];
-        const calcPrice = financialFunctions.find(f => f.name === 'PRICE')!.fn(calcArgs as FormulaValue[], internalContext);
+        const calcPrice = financialFunctions
+          .find((f) => f.name === 'PRICE')!
+          .fn(calcArgs as FormulaValue[], internalContext);
         if (isError(calcPrice)) return calcPrice;
 
         const diff = (calcPrice as number) - price;
@@ -860,7 +852,9 @@ export const financialFunctions: FunctionDef[] = [
         // Numerical derivative
         const yld2 = yld + 0.0001;
         const calcArgs2 = [args[0], args[1], args[2], yld2, args[4], args[5], args[6]];
-        const calcPrice2 = financialFunctions.find(f => f.name === 'PRICE')!.fn(calcArgs2 as FormulaValue[], internalContext);
+        const calcPrice2 = financialFunctions
+          .find((f) => f.name === 'PRICE')!
+          .fn(calcArgs2 as FormulaValue[], internalContext);
         if (isError(calcPrice2)) return calcPrice2;
 
         const deriv = ((calcPrice2 as number) - (calcPrice as number)) / 0.0001;
@@ -932,7 +926,7 @@ export const financialFunctions: FunctionDef[] = [
         return new FormulaError('#NUM!');
       }
 
-      return 100 * (1 - d * days / 360);
+      return 100 * (1 - (d * days) / 360);
     },
   },
 
@@ -1013,14 +1007,22 @@ export const financialFunctions: FunctionDef[] = [
       const end = Math.floor(endPeriod as number);
       const paymentType = type as number;
 
-      if (r <= 0 || n <= 0 || presentValue <= 0 || start < 1 || end < start || end > n || (paymentType !== 0 && paymentType !== 1)) {
+      if (
+        r <= 0 ||
+        n <= 0 ||
+        presentValue <= 0 ||
+        start < 1 ||
+        end < start ||
+        end > n ||
+        (paymentType !== 0 && paymentType !== 1)
+      ) {
         return new FormulaError('#NUM!');
       }
 
       // Calculate PMT first (negative for loans with positive pv)
       let pmt: number;
       if (r === 0) {
-        pmt = -(presentValue) / n;
+        pmt = -presentValue / n;
       } else {
         const pvif = Math.pow(1 + r, n);
         pmt = -(r * (presentValue * pvif)) / (pvif - 1);
@@ -1076,14 +1078,22 @@ export const financialFunctions: FunctionDef[] = [
       const end = Math.floor(endPeriod as number);
       const paymentType = type as number;
 
-      if (r <= 0 || n <= 0 || presentValue <= 0 || start < 1 || end < start || end > n || (paymentType !== 0 && paymentType !== 1)) {
+      if (
+        r <= 0 ||
+        n <= 0 ||
+        presentValue <= 0 ||
+        start < 1 ||
+        end < start ||
+        end > n ||
+        (paymentType !== 0 && paymentType !== 1)
+      ) {
         return new FormulaError('#NUM!');
       }
 
       // Calculate PMT first (negative for loans with positive pv)
       let pmt: number;
       if (r === 0) {
-        pmt = -(presentValue) / n;
+        pmt = -presentValue / n;
       } else {
         const pvif = Math.pow(1 + r, n);
         pmt = -(r * (presentValue * pvif)) / (pvif - 1);
@@ -1124,9 +1134,7 @@ export const financialFunctions: FunctionDef[] = [
     minArgs: 3,
     maxArgs: 3,
     fn: (args: FormulaValue[]): FormulaValue => {
-      const values = flattenValues([args[0]]).filter(
-        (v): v is number => typeof v === 'number'
-      );
+      const values = flattenValues([args[0]]).filter((v): v is number => typeof v === 'number');
       const financeRate = toNumber(args[1]);
       const reinvestRate = toNumber(args[2]);
 
@@ -1220,7 +1228,7 @@ export const financialFunctions: FunctionDef[] = [
         return new FormulaError('#NUM!');
       }
 
-      return red * (1 - disc * days / yearDays);
+      return red * (1 - (disc * days) / yearDays);
     },
   },
 
@@ -1251,7 +1259,7 @@ export const financialFunctions: FunctionDef[] = [
         return new FormulaError('#NUM!');
       }
 
-      return inv / (1 - disc * days / yearDays);
+      return inv / (1 - (disc * days) / yearDays);
     },
   },
 
@@ -1290,11 +1298,17 @@ export const financialFunctions: FunctionDef[] = [
 // Helper function to get days in year based on basis
 function getDaysInYear(basis: number): number {
   switch (basis) {
-    case 0: return 360; // US (NASD) 30/360
-    case 1: return 365; // Actual/actual
-    case 2: return 360; // Actual/360
-    case 3: return 365; // Actual/365
-    case 4: return 360; // European 30/360
-    default: return 360;
+    case 0:
+      return 360; // US (NASD) 30/360
+    case 1:
+      return 365; // Actual/actual
+    case 2:
+      return 360; // Actual/360
+    case 3:
+      return 365; // Actual/365
+    case 4:
+      return 360; // European 30/360
+    default:
+      return 360;
   }
 }

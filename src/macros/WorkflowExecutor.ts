@@ -2,13 +2,7 @@
 // WORKFLOW EXECUTOR — Execute workflow steps with full action implementations
 // =============================================================================
 
-import type {
-  Workflow,
-  WorkflowStep,
-  MacroExecution,
-  StepResult,
-  StepCondition,
-} from './types';
+import type { Workflow, WorkflowStep, MacroExecution, StepResult, StepCondition } from './types';
 import { useWorkbookStore } from '../stores/workbookStore';
 import { useChartStore } from '../stores/chartStore';
 import { useUIStore } from '../stores/uiStore';
@@ -156,7 +150,6 @@ export class WorkflowExecutor {
         completedAt,
         duration: completedAt.getTime() - startedAt.getTime(),
       };
-
     } catch (error) {
       const completedAt = new Date();
       return {
@@ -217,16 +210,21 @@ export class WorkflowExecutor {
         }
         break;
 
-      case 'while':
+      case 'while': {
         let iterations = 0;
-        while (loop.condition && this.evaluateCondition(loop.condition) && iterations < (loop.maxIterations || 1000)) {
+        while (
+          loop.condition &&
+          this.evaluateCondition(loop.condition) &&
+          iterations < (loop.maxIterations || 1000)
+        ) {
           await this.executeAction(step);
           iterations++;
         }
         break;
+      }
 
-      case 'for_each':
-        const collection = this.variables.get(loop.collection!) as unknown[] || [];
+      case 'for_each': {
+        const collection = (this.variables.get(loop.collection!) as unknown[]) || [];
         for (let i = 0; i < collection.length; i++) {
           if (loop.itemVariable) {
             this.variables.set(loop.itemVariable, collection[i]);
@@ -237,6 +235,7 @@ export class WorkflowExecutor {
           await this.executeAction(step);
         }
         break;
+      }
     }
 
     // Suppress unused parameter warning
@@ -248,7 +247,7 @@ export class WorkflowExecutor {
    */
   private async executeWait(step: WorkflowStep): Promise<void> {
     const delay = (step.action?.params?.delay as number) || 1000;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
 
   /**
@@ -257,8 +256,8 @@ export class WorkflowExecutor {
   private async executeParallel(step: WorkflowStep, workflow: Workflow): Promise<unknown[]> {
     if (!step.branches) return [];
 
-    const promises = step.branches.map(branch =>
-      Promise.all(branch.steps.map(s => this.executeStep(s, workflow)))
+    const promises = step.branches.map((branch) =>
+      Promise.all(branch.steps.map((s) => this.executeStep(s, workflow)))
     );
 
     return Promise.all(promises);
@@ -269,27 +268,36 @@ export class WorkflowExecutor {
    */
   private evaluateCondition(condition: StepCondition): boolean {
     if (condition.type === 'compound' && condition.conditions) {
-      const results = condition.conditions.map(c => this.evaluateCondition(c));
-      return condition.logicalOperator === 'and'
-        ? results.every(r => r)
-        : results.some(r => r);
+      const results = condition.conditions.map((c) => this.evaluateCondition(c));
+      return condition.logicalOperator === 'and' ? results.every((r) => r) : results.some((r) => r);
     }
 
     const left = this.resolveValue(condition.leftOperand);
     const right = condition.rightOperand;
 
     switch (condition.operator) {
-      case 'equals': return left === right;
-      case 'not_equals': return left !== right;
-      case 'greater': return (left as number) > (right as number);
-      case 'greater_equal': return (left as number) >= (right as number);
-      case 'less': return (left as number) < (right as number);
-      case 'less_equal': return (left as number) <= (right as number);
-      case 'contains': return String(left).includes(String(right));
-      case 'not_contains': return !String(left).includes(String(right));
-      case 'starts_with': return String(left).startsWith(String(right));
-      case 'ends_with': return String(left).endsWith(String(right));
-      default: return true;
+      case 'equals':
+        return left === right;
+      case 'not_equals':
+        return left !== right;
+      case 'greater':
+        return (left as number) > (right as number);
+      case 'greater_equal':
+        return (left as number) >= (right as number);
+      case 'less':
+        return (left as number) < (right as number);
+      case 'less_equal':
+        return (left as number) <= (right as number);
+      case 'contains':
+        return String(left).includes(String(right));
+      case 'not_contains':
+        return !String(left).includes(String(right));
+      case 'starts_with':
+        return String(left).startsWith(String(right));
+      case 'ends_with':
+        return String(left).endsWith(String(right));
+      default:
+        return true;
     }
   }
 
@@ -360,7 +368,7 @@ export class WorkflowExecutor {
       return {
         copied: true,
         cellCount: Object.keys(this.clipboardData).length,
-        range: `${range.start.row}:${range.start.col} to ${range.end.row}:${range.end.col}`
+        range: `${range.start.row}:${range.start.col} to ${range.end.row}:${range.end.col}`,
       };
     },
 
@@ -406,7 +414,7 @@ export class WorkflowExecutor {
       return {
         pasted: true,
         target: `${targetRow}:${targetCol}`,
-        mode
+        mode,
       };
     },
 
@@ -530,7 +538,7 @@ export class WorkflowExecutor {
         matchCount: matchingRows.length,
         column,
         criteria,
-        operator
+        operator,
       };
     },
 
@@ -576,7 +584,8 @@ export class WorkflowExecutor {
       }
 
       // Get columns to check (default: all columns in range)
-      const columnsToCheck = (params.columns as number[]) ||
+      const columnsToCheck =
+        (params.columns as number[]) ||
         Array.from({ length: range.end.col - range.start.col + 1 }, (_, i) => range!.start.col + i);
 
       // Find duplicates
@@ -584,10 +593,12 @@ export class WorkflowExecutor {
       const duplicateRows: number[] = [];
 
       for (let row = range.start.row; row <= range.end.row; row++) {
-        const rowKey = columnsToCheck.map(col => {
-          const key = getCellKey(row, col);
-          return String(sheet.cells[key]?.value ?? '');
-        }).join('|');
+        const rowKey = columnsToCheck
+          .map((col) => {
+            const key = getCellKey(row, col);
+            return String(sheet.cells[key]?.value ?? '');
+          })
+          .join('|');
 
         if (seen.has(rowKey)) {
           duplicateRows.push(row);
@@ -598,14 +609,16 @@ export class WorkflowExecutor {
 
       // Remove duplicate rows (from bottom to top to preserve indices)
       store.pushHistory();
-      duplicateRows.sort((a, b) => b - a).forEach(row => {
-        store.deleteRow(row, 1);
-      });
+      duplicateRows
+        .sort((a, b) => b - a)
+        .forEach((row) => {
+          store.deleteRow(row, 1);
+        });
 
       return {
         removed: true,
         duplicatesFound: duplicateRows.length,
-        uniqueRows: range.end.row - range.start.row + 1 - duplicateRows.length
+        uniqueRows: range.end.row - range.start.row + 1 - duplicateRows.length,
       };
     },
 
@@ -651,7 +664,7 @@ export class WorkflowExecutor {
           store.updateCell(activeSheetId, row, col, {
             formula: adjustedFormula,
             value: null,
-            displayValue: ''
+            displayValue: '',
           });
           appliedCount++;
         }
@@ -675,9 +688,11 @@ export class WorkflowExecutor {
       if (params.underline !== undefined) format.underline = params.underline as boolean;
       if (params.fontFamily) format.fontFamily = params.fontFamily as string;
       if (params.fontSize) format.fontSize = params.fontSize as number;
-      if (params.fontColor || params.textColor) format.textColor = (params.fontColor || params.textColor) as string;
+      if (params.fontColor || params.textColor)
+        format.textColor = (params.fontColor || params.textColor) as string;
       if (params.backgroundColor) format.backgroundColor = params.backgroundColor as string;
-      if (params.textAlign || params.align) format.align = (params.textAlign || params.align) as 'left' | 'center' | 'right';
+      if (params.textAlign || params.align)
+        format.align = (params.textAlign || params.align) as 'left' | 'center' | 'right';
       if (params.numberFormat) format.numberFormat = params.numberFormat as string;
 
       // Get range
@@ -731,7 +746,7 @@ export class WorkflowExecutor {
                 startCol: range.start.col,
                 endCol: range.end.col,
               },
-            }
+            },
           });
         }
       }
@@ -895,7 +910,11 @@ export class WorkflowExecutor {
       }
 
       // AI data cleaning operations
-      const cleaningActions = (params.actions as string[]) || ['trim', 'lowercase', 'remove_duplicates'];
+      const cleaningActions = (params.actions as string[]) || [
+        'trim',
+        'lowercase',
+        'remove_duplicates',
+      ];
       let cleanedCount = 0;
 
       store.pushHistory();
@@ -931,7 +950,7 @@ export class WorkflowExecutor {
             if (value !== cell.value) {
               store.updateCell(activeSheetId, row, col, {
                 value,
-                displayValue: value
+                displayValue: value,
               });
               cleanedCount++;
             }
@@ -1006,8 +1025,8 @@ export class WorkflowExecutor {
         actualType: chartType,
         dataAnalysis: {
           rows: rowCount,
-          columns: colCount
-        }
+          columns: colCount,
+        },
       };
     },
 
@@ -1020,13 +1039,13 @@ export class WorkflowExecutor {
 
       // Simple NL to formula mapping (in production, this would use AI)
       const formulaMap: Record<string, string> = {
-        'sum': '=SUM(A1:A10)',
-        'average': '=AVERAGE(A1:A10)',
-        'count': '=COUNT(A1:A10)',
-        'max': '=MAX(A1:A10)',
-        'min': '=MIN(A1:A10)',
-        'total': '=SUM(A1:A10)',
-        'mean': '=AVERAGE(A1:A10)',
+        sum: '=SUM(A1:A10)',
+        average: '=AVERAGE(A1:A10)',
+        count: '=COUNT(A1:A10)',
+        max: '=MAX(A1:A10)',
+        min: '=MIN(A1:A10)',
+        total: '=SUM(A1:A10)',
+        mean: '=AVERAGE(A1:A10)',
       };
 
       // Find matching formula
@@ -1107,12 +1126,16 @@ export class WorkflowExecutor {
 
         // Generate insights
         if (max > avg * 3) {
-          insights.push(`Potential outlier detected: ${max} is significantly higher than average (${avg.toFixed(2)})`);
+          insights.push(
+            `Potential outlier detected: ${max} is significantly higher than average (${avg.toFixed(2)})`
+          );
         }
         if (min < avg / 3 && min >= 0) {
-          insights.push(`Potential outlier detected: ${min} is significantly lower than average (${avg.toFixed(2)})`);
+          insights.push(
+            `Potential outlier detected: ${min} is significantly lower than average (${avg.toFixed(2)})`
+          );
         }
-        if (values.some(v => v < 0)) {
+        if (values.some((v) => v < 0)) {
           insights.push('Data contains negative values');
         }
       }
@@ -1121,13 +1144,16 @@ export class WorkflowExecutor {
       if (textValues.length > 0) {
         const uniqueValues = new Set(textValues);
         if (uniqueValues.size < textValues.length * 0.5) {
-          insights.push(`High duplication in text data: ${uniqueValues.size} unique values out of ${textValues.length}`);
+          insights.push(
+            `High duplication in text data: ${uniqueValues.size} unique values out of ${textValues.length}`
+          );
         }
       }
 
       // Data quality assessment
-      const totalCells = (range.end.row - range.start.row + 1) * (range.end.col - range.start.col + 1);
-      const completeness = ((totalCells - emptyCells) / totalCells * 100).toFixed(1);
+      const totalCells =
+        (range.end.row - range.start.row + 1) * (range.end.col - range.start.col + 1);
+      const completeness = (((totalCells - emptyCells) / totalCells) * 100).toFixed(1);
 
       if (emptyCells > totalCells * 0.1) {
         insights.push(`Data completeness: ${completeness}% (${emptyCells} empty cells)`);
@@ -1141,8 +1167,8 @@ export class WorkflowExecutor {
           emptyCells,
           numericCells,
           textCells,
-          completeness: parseFloat(completeness)
-        }
+          completeness: parseFloat(completeness),
+        },
       };
     },
   };

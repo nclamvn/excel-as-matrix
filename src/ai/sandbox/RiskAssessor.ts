@@ -63,17 +63,11 @@ export class RiskAssessor {
     const overallRisk = this.determineRiskLevel(riskScore);
 
     // Determine if approval is required
-    const requiresApproval = this.checkRequiresApproval(
-      overallRisk,
-      diff,
-      detectedRisks
-    );
+    const requiresApproval = this.checkRequiresApproval(overallRisk, diff, detectedRisks);
 
     // Determine if auto-apply is possible
     const canAutoApply =
-      this.config.autoApprove.enabled &&
-      !requiresApproval &&
-      overallRisk === 'low';
+      this.config.autoApprove.enabled && !requiresApproval && overallRisk === 'low';
 
     return {
       sandboxId,
@@ -90,10 +84,7 @@ export class RiskAssessor {
   // Risk Factor Checks
   // ---------------------------------------------------------------------------
 
-  private checkLargeBlastRadius(
-    diff: SandboxDiff,
-    risks: DetectedRisk[]
-  ): void {
+  private checkLargeBlastRadius(diff: SandboxDiff, risks: DetectedRisk[]): void {
     const threshold = this.config.riskThresholds.largeBatchSize;
 
     if (diff.summary.totalChanges > threshold) {
@@ -106,10 +97,7 @@ export class RiskAssessor {
     }
   }
 
-  private checkFormulaComplexity(
-    diff: SandboxDiff,
-    risks: DetectedRisk[]
-  ): void {
+  private checkFormulaComplexity(diff: SandboxDiff, risks: DetectedRisk[]): void {
     const complexFormulas: string[] = [];
 
     for (const change of diff.changes) {
@@ -147,9 +135,7 @@ export class RiskAssessor {
   }
 
   private checkFormulaRemoval(diff: SandboxDiff, risks: DetectedRisk[]): void {
-    const formulasRemoved = diff.changes.filter(
-      (c) => c.before?.formula && !c.after?.formula
-    );
+    const formulasRemoved = diff.changes.filter((c) => c.before?.formula && !c.after?.formula);
 
     if (formulasRemoved.length > 0) {
       risks.push({
@@ -173,10 +159,7 @@ export class RiskAssessor {
     }
   }
 
-  private checkCircularDependency(
-    diff: SandboxDiff,
-    risks: DetectedRisk[]
-  ): void {
+  private checkCircularDependency(diff: SandboxDiff, risks: DetectedRisk[]): void {
     // Check for potential circular references in new formulas
     const potentialCircular: string[] = [];
 
@@ -202,10 +185,7 @@ export class RiskAssessor {
     }
   }
 
-  private checkExternalReferences(
-    diff: SandboxDiff,
-    risks: DetectedRisk[]
-  ): void {
+  private checkExternalReferences(diff: SandboxDiff, risks: DetectedRisk[]): void {
     const externalRefs: string[] = [];
 
     for (const change of diff.changes) {
@@ -247,10 +227,7 @@ export class RiskAssessor {
     }
   }
 
-  private checkVolatileFunctions(
-    diff: SandboxDiff,
-    risks: DetectedRisk[]
-  ): void {
+  private checkVolatileFunctions(diff: SandboxDiff, risks: DetectedRisk[]): void {
     const volatileCells: string[] = [];
     const volatileFuncs = ['RAND', 'RANDBETWEEN', 'NOW', 'TODAY', 'OFFSET', 'INDIRECT'];
 
@@ -355,18 +332,12 @@ export class RiskAssessor {
     }
 
     // Check if formula changes require approval
-    if (
-      this.config.autoApprove.requireForFormulas &&
-      diff.summary.formulaChanges > 0
-    ) {
+    if (this.config.autoApprove.requireForFormulas && diff.summary.formulaChanges > 0) {
       return true;
     }
 
     // Check if any critical risk factors are present
-    const criticalFactors: RiskFactor[] = [
-      'circular_dependency',
-      'data_loss',
-    ];
+    const criticalFactors: RiskFactor[] = ['circular_dependency', 'data_loss'];
     if (risks.some((r) => criticalFactors.includes(r.factor))) {
       return true;
     }

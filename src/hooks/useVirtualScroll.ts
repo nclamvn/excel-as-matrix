@@ -66,13 +66,7 @@ export interface VirtualScrollMetrics {
 const columnWidthCache = new Map<string, number>();
 
 export function useVirtualScroll(config: VirtualScrollConfig): VirtualScrollResult {
-  const {
-    totalRows,
-    totalCols,
-    rowHeight,
-    colWidth,
-    overscan = 5,
-  } = config;
+  const { totalRows, totalCols, rowHeight, colWidth, overscan = 5 } = config;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);

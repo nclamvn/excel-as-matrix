@@ -48,8 +48,9 @@ export const RibbonSplitButton: React.FC<RibbonSplitButtonProps> = ({
 
       {isOpen && (
         <div className="split-menu">
-          {options.map(option => (
-            <button type="button"
+          {options.map((option) => (
+            <button
+              type="button"
               key={option.id}
               className="dropdown-item"
               onClick={() => {

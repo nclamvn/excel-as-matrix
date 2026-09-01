@@ -42,9 +42,7 @@ export class FunctionLibrary {
    * Get functions by category
    */
   getByCategory(category: FunctionCategory): ExcelFunction[] {
-    return Array.from(this.functions.values()).filter(
-      (f) => f.category === category
-    );
+    return Array.from(this.functions.values()).filter((f) => f.category === category);
   }
 
   /**
@@ -190,9 +188,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MAX(A1:A10)', description: 'Maximum in A1 to A10', result: null },
-      ],
+      examples: [{ formula: '=MAX(A1:A10)', description: 'Maximum in A1 to A10', result: null }],
       nlPatterns: [
         { pattern: 'max(?:imum)? (?:of )?(.+)', language: 'en', priority: 1, transform: 'MAX($1)' },
         { pattern: 'lớn nhất (.+)', language: 'vi', priority: 1, transform: 'MAX($1)' },
@@ -216,9 +212,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MIN(A1:A10)', description: 'Minimum in A1 to A10', result: null },
-      ],
+      examples: [{ formula: '=MIN(A1:A10)', description: 'Minimum in A1 to A10', result: null }],
       nlPatterns: [
         { pattern: 'min(?:imum)? (?:of )?(.+)', language: 'en', priority: 1, transform: 'MIN($1)' },
         { pattern: 'nhỏ nhất (.+)', language: 'vi', priority: 1, transform: 'MIN($1)' },
@@ -638,9 +632,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'text',
-      examples: [
-        { formula: '=LEFT(A1,3)', description: 'First 3 characters', result: null },
-      ],
+      examples: [{ formula: '=LEFT(A1,3)', description: 'First 3 characters', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -668,9 +660,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'text',
-      examples: [
-        { formula: '=RIGHT(A1,3)', description: 'Last 3 characters', result: null },
-      ],
+      examples: [{ formula: '=RIGHT(A1,3)', description: 'Last 3 characters', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -687,9 +677,7 @@ export class FunctionLibrary {
       syntax: 'TODAY()',
       parameters: [],
       returnType: 'date',
-      examples: [
-        { formula: '=TODAY()', description: 'Current date', result: null },
-      ],
+      examples: [{ formula: '=TODAY()', description: 'Current date', result: null }],
       nlPatterns: [
         { pattern: "today(?:'s)? date", language: 'en', priority: 1, transform: 'TODAY()' },
         { pattern: 'hôm nay', language: 'vi', priority: 1, transform: 'TODAY()' },
@@ -706,9 +694,7 @@ export class FunctionLibrary {
       syntax: 'NOW()',
       parameters: [],
       returnType: 'datetime',
-      examples: [
-        { formula: '=NOW()', description: 'Current date and time', result: null },
-      ],
+      examples: [{ formula: '=NOW()', description: 'Current date and time', result: null }],
       nlPatterns: [
         { pattern: 'current time', language: 'en', priority: 1, transform: 'NOW()' },
         { pattern: 'hiện tại', language: 'vi', priority: 1, transform: 'NOW()' },
@@ -732,9 +718,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=YEAR(A1)', description: 'Year of date in A1', result: null },
-      ],
+      examples: [{ formula: '=YEAR(A1)', description: 'Year of date in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -755,9 +739,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MONTH(A1)', description: 'Month of date in A1', result: null },
-      ],
+      examples: [{ formula: '=MONTH(A1)', description: 'Month of date in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -778,9 +760,7 @@ export class FunctionLibrary {
         },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=DAY(A1)', description: 'Day of date in A1', result: null },
-      ],
+      examples: [{ formula: '=DAY(A1)', description: 'Day of date in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -794,22 +774,53 @@ export class FunctionLibrary {
       category: 'lookup',
       description: 'Searches a range and returns an item corresponding to the first match',
       descriptionVi: 'Tìm kiếm trong phạm vi và trả về giá trị tương ứng với kết quả đầu tiên',
-      syntax: 'XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found], [match_mode], [search_mode])',
+      syntax:
+        'XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found], [match_mode], [search_mode])',
       parameters: [
         { name: 'lookup_value', type: 'any', required: true, description: 'Value to search for' },
         { name: 'lookup_array', type: 'range', required: true, description: 'Range to search' },
-        { name: 'return_array', type: 'range', required: true, description: 'Range to return from' },
+        {
+          name: 'return_array',
+          type: 'range',
+          required: true,
+          description: 'Range to return from',
+        },
         { name: 'if_not_found', type: 'any', required: false, description: 'Value if not found' },
-        { name: 'match_mode', type: 'number', required: false, description: '0=exact, -1=exact or smaller, 1=exact or larger, 2=wildcard' },
-        { name: 'search_mode', type: 'number', required: false, description: '1=first to last, -1=last to first, 2=binary ascending, -2=binary descending' },
+        {
+          name: 'match_mode',
+          type: 'number',
+          required: false,
+          description: '0=exact, -1=exact or smaller, 1=exact or larger, 2=wildcard',
+        },
+        {
+          name: 'search_mode',
+          type: 'number',
+          required: false,
+          description:
+            '1=first to last, -1=last to first, 2=binary ascending, -2=binary descending',
+        },
       ],
       returnType: 'any',
       examples: [
-        { formula: '=XLOOKUP("Apple",A:A,B:B,"Not found")', description: 'Find Apple in A, return from B', result: null },
+        {
+          formula: '=XLOOKUP("Apple",A:A,B:B,"Not found")',
+          description: 'Find Apple in A, return from B',
+          result: null,
+        },
       ],
       nlPatterns: [
-        { pattern: 'lookup (.+) in (.+) return (.+)', language: 'en', priority: 1, transform: 'XLOOKUP($1,$2,$3)' },
-        { pattern: 'tìm (.+) trong (.+) trả về (.+)', language: 'vi', priority: 1, transform: 'XLOOKUP($1,$2,$3)' },
+        {
+          pattern: 'lookup (.+) in (.+) return (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'XLOOKUP($1,$2,$3)',
+        },
+        {
+          pattern: 'tìm (.+) trong (.+) trả về (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'XLOOKUP($1,$2,$3)',
+        },
       ],
       excelVersion: '365',
       googleSheets: false,
@@ -831,7 +842,12 @@ export class FunctionLibrary {
         { formula: '=FILTER(A:B,A:A>100)', description: 'Filter rows where A > 100', result: null },
       ],
       nlPatterns: [
-        { pattern: 'filter (.+) where (.+)', language: 'en', priority: 1, transform: 'FILTER($1,$2)' },
+        {
+          pattern: 'filter (.+) where (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'FILTER($1,$2)',
+        },
         { pattern: 'lọc (.+) với (.+)', language: 'vi', priority: 1, transform: 'FILTER($1,$2)' },
       ],
       excelVersion: '365',
@@ -845,17 +861,42 @@ export class FunctionLibrary {
       descriptionVi: 'Trả về các giá trị duy nhất từ phạm vi',
       syntax: 'UNIQUE(array, [by_col], [exactly_once])',
       parameters: [
-        { name: 'array', type: 'range', required: true, description: 'Range to extract unique values from' },
-        { name: 'by_col', type: 'boolean', required: false, description: 'TRUE to compare columns' },
-        { name: 'exactly_once', type: 'boolean', required: false, description: 'TRUE for values appearing exactly once' },
+        {
+          name: 'array',
+          type: 'range',
+          required: true,
+          description: 'Range to extract unique values from',
+        },
+        {
+          name: 'by_col',
+          type: 'boolean',
+          required: false,
+          description: 'TRUE to compare columns',
+        },
+        {
+          name: 'exactly_once',
+          type: 'boolean',
+          required: false,
+          description: 'TRUE for values appearing exactly once',
+        },
       ],
       returnType: 'array',
       examples: [
         { formula: '=UNIQUE(A:A)', description: 'Unique values in column A', result: null },
       ],
       nlPatterns: [
-        { pattern: 'unique (?:values )?(?:in|of) (.+)', language: 'en', priority: 1, transform: 'UNIQUE($1)' },
-        { pattern: 'giá trị duy nhất (?:trong|của) (.+)', language: 'vi', priority: 1, transform: 'UNIQUE($1)' },
+        {
+          pattern: 'unique (?:values )?(?:in|of) (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'UNIQUE($1)',
+        },
+        {
+          pattern: 'giá trị duy nhất (?:trong|của) (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'UNIQUE($1)',
+        },
       ],
       excelVersion: '365',
       googleSheets: true,
@@ -869,17 +910,41 @@ export class FunctionLibrary {
       syntax: 'SORT(array, [sort_index], [sort_order], [by_col])',
       parameters: [
         { name: 'array', type: 'range', required: true, description: 'Range to sort' },
-        { name: 'sort_index', type: 'number', required: false, description: 'Column or row number to sort by' },
-        { name: 'sort_order', type: 'number', required: false, description: '1=ascending, -1=descending' },
-        { name: 'by_col', type: 'boolean', required: false, description: 'TRUE to sort by columns' },
+        {
+          name: 'sort_index',
+          type: 'number',
+          required: false,
+          description: 'Column or row number to sort by',
+        },
+        {
+          name: 'sort_order',
+          type: 'number',
+          required: false,
+          description: '1=ascending, -1=descending',
+        },
+        {
+          name: 'by_col',
+          type: 'boolean',
+          required: false,
+          description: 'TRUE to sort by columns',
+        },
       ],
       returnType: 'array',
       examples: [
-        { formula: '=SORT(A:B,2,-1)', description: 'Sort A:B by column 2 descending', result: null },
+        {
+          formula: '=SORT(A:B,2,-1)',
+          description: 'Sort A:B by column 2 descending',
+          result: null,
+        },
       ],
       nlPatterns: [
         { pattern: 'sort (.+) by (.+)', language: 'en', priority: 1, transform: 'SORT($1,$2)' },
-        { pattern: 'sắp xếp (.+) theo (.+)', language: 'vi', priority: 1, transform: 'SORT($1,$2)' },
+        {
+          pattern: 'sắp xếp (.+) theo (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'SORT($1,$2)',
+        },
       ],
       excelVersion: '365',
       googleSheets: true,
@@ -894,7 +959,12 @@ export class FunctionLibrary {
       parameters: [
         { name: 'array', type: 'range', required: true, description: 'Range to sort' },
         { name: 'by_array1', type: 'range', required: true, description: 'Range to sort by' },
-        { name: 'sort_order1', type: 'number', required: false, description: '1=ascending, -1=descending' },
+        {
+          name: 'sort_order1',
+          type: 'number',
+          required: false,
+          description: '1=ascending, -1=descending',
+        },
       ],
       returnType: 'array',
       examples: [
@@ -916,16 +986,35 @@ export class FunctionLibrary {
       syntax: 'SUMIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
       parameters: [
         { name: 'sum_range', type: 'range', required: true, description: 'Range to sum' },
-        { name: 'criteria_range1', type: 'range', required: true, description: 'First criteria range' },
+        {
+          name: 'criteria_range1',
+          type: 'range',
+          required: true,
+          description: 'First criteria range',
+        },
         { name: 'criteria1', type: 'string|number', required: true, description: 'First criteria' },
       ],
       returnType: 'number',
       examples: [
-        { formula: '=SUMIFS(C:C,A:A,"North",B:B,">100")', description: 'Sum C where A=North AND B>100', result: null },
+        {
+          formula: '=SUMIFS(C:C,A:A,"North",B:B,">100")',
+          description: 'Sum C where A=North AND B>100',
+          result: null,
+        },
       ],
       nlPatterns: [
-        { pattern: 'sum (.+) where (.+) is (.+) and (.+) is (.+)', language: 'en', priority: 2, transform: 'SUMIFS($1,$2,"$3",$4,"$5")' },
-        { pattern: 'tổng (.+) khi (.+) là (.+) và (.+) là (.+)', language: 'vi', priority: 2, transform: 'SUMIFS($1,$2,"$3",$4,"$5")' },
+        {
+          pattern: 'sum (.+) where (.+) is (.+) and (.+) is (.+)',
+          language: 'en',
+          priority: 2,
+          transform: 'SUMIFS($1,$2,"$3",$4,"$5")',
+        },
+        {
+          pattern: 'tổng (.+) khi (.+) là (.+) và (.+) là (.+)',
+          language: 'vi',
+          priority: 2,
+          transform: 'SUMIFS($1,$2,"$3",$4,"$5")',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -938,16 +1027,35 @@ export class FunctionLibrary {
       descriptionVi: 'Đếm các ô thỏa nhiều điều kiện',
       syntax: 'COUNTIFS(criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
       parameters: [
-        { name: 'criteria_range1', type: 'range', required: true, description: 'First criteria range' },
+        {
+          name: 'criteria_range1',
+          type: 'range',
+          required: true,
+          description: 'First criteria range',
+        },
         { name: 'criteria1', type: 'string|number', required: true, description: 'First criteria' },
       ],
       returnType: 'number',
       examples: [
-        { formula: '=COUNTIFS(A:A,"North",B:B,">100")', description: 'Count where A=North AND B>100', result: null },
+        {
+          formula: '=COUNTIFS(A:A,"North",B:B,">100")',
+          description: 'Count where A=North AND B>100',
+          result: null,
+        },
       ],
       nlPatterns: [
-        { pattern: 'count where (.+) is (.+) and (.+) is (.+)', language: 'en', priority: 2, transform: 'COUNTIFS($1,"$2",$3,"$4")' },
-        { pattern: 'đếm khi (.+) là (.+) và (.+) là (.+)', language: 'vi', priority: 2, transform: 'COUNTIFS($1,"$2",$3,"$4")' },
+        {
+          pattern: 'count where (.+) is (.+) and (.+) is (.+)',
+          language: 'en',
+          priority: 2,
+          transform: 'COUNTIFS($1,"$2",$3,"$4")',
+        },
+        {
+          pattern: 'đếm khi (.+) là (.+) và (.+) là (.+)',
+          language: 'vi',
+          priority: 2,
+          transform: 'COUNTIFS($1,"$2",$3,"$4")',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -958,15 +1066,25 @@ export class FunctionLibrary {
       category: 'statistical',
       description: 'Averages cells that meet multiple criteria',
       descriptionVi: 'Tính trung bình các ô thỏa nhiều điều kiện',
-      syntax: 'AVERAGEIFS(average_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
+      syntax:
+        'AVERAGEIFS(average_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
       parameters: [
         { name: 'average_range', type: 'range', required: true, description: 'Range to average' },
-        { name: 'criteria_range1', type: 'range', required: true, description: 'First criteria range' },
+        {
+          name: 'criteria_range1',
+          type: 'range',
+          required: true,
+          description: 'First criteria range',
+        },
         { name: 'criteria1', type: 'string|number', required: true, description: 'First criteria' },
       ],
       returnType: 'number',
       examples: [
-        { formula: '=AVERAGEIFS(C:C,A:A,"North",B:B,">100")', description: 'Average C where A=North AND B>100', result: null },
+        {
+          formula: '=AVERAGEIFS(C:C,A:A,"North",B:B,">100")',
+          description: 'Average C where A=North AND B>100',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '2007',
@@ -981,7 +1099,12 @@ export class FunctionLibrary {
       syntax: 'MAXIFS(max_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
       parameters: [
         { name: 'max_range', type: 'range', required: true, description: 'Range to find max' },
-        { name: 'criteria_range1', type: 'range', required: true, description: 'First criteria range' },
+        {
+          name: 'criteria_range1',
+          type: 'range',
+          required: true,
+          description: 'First criteria range',
+        },
         { name: 'criteria1', type: 'string|number', required: true, description: 'First criteria' },
       ],
       returnType: 'number',
@@ -1001,7 +1124,12 @@ export class FunctionLibrary {
       syntax: 'MINIFS(min_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
       parameters: [
         { name: 'min_range', type: 'range', required: true, description: 'Range to find min' },
-        { name: 'criteria_range1', type: 'range', required: true, description: 'First criteria range' },
+        {
+          name: 'criteria_range1',
+          type: 'range',
+          required: true,
+          description: 'First criteria range',
+        },
         { name: 'criteria1', type: 'string|number', required: true, description: 'First criteria' },
       ],
       returnType: 'number',
@@ -1026,9 +1154,7 @@ export class FunctionLibrary {
         { name: 'logical1', type: 'boolean', required: true, description: 'First condition' },
       ],
       returnType: 'boolean',
-      examples: [
-        { formula: '=AND(A1>10,B1<20)', description: 'A1>10 AND B1<20', result: null },
-      ],
+      examples: [{ formula: '=AND(A1>10,B1<20)', description: 'A1>10 AND B1<20', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1044,9 +1170,7 @@ export class FunctionLibrary {
         { name: 'logical1', type: 'boolean', required: true, description: 'First condition' },
       ],
       returnType: 'boolean',
-      examples: [
-        { formula: '=OR(A1>10,B1<20)', description: 'A1>10 OR B1<20', result: null },
-      ],
+      examples: [{ formula: '=OR(A1>10,B1<20)', description: 'A1>10 OR B1<20', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1062,9 +1186,7 @@ export class FunctionLibrary {
         { name: 'logical', type: 'boolean', required: true, description: 'Value to reverse' },
       ],
       returnType: 'boolean',
-      examples: [
-        { formula: '=NOT(A1>10)', description: 'NOT(A1>10)', result: null },
-      ],
+      examples: [{ formula: '=NOT(A1>10)', description: 'NOT(A1>10)', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1078,11 +1200,20 @@ export class FunctionLibrary {
       syntax: 'IFS(logical_test1, value_if_true1, [logical_test2, value_if_true2], ...)',
       parameters: [
         { name: 'logical_test1', type: 'boolean', required: true, description: 'First condition' },
-        { name: 'value_if_true1', type: 'any', required: true, description: 'Value if first condition is TRUE' },
+        {
+          name: 'value_if_true1',
+          type: 'any',
+          required: true,
+          description: 'Value if first condition is TRUE',
+        },
       ],
       returnType: 'any',
       examples: [
-        { formula: '=IFS(A1>=90,"A",A1>=80,"B",A1>=70,"C",TRUE,"F")', description: 'Grade based on score', result: null },
+        {
+          formula: '=IFS(A1>=90,"A",A1>=80,"B",A1>=70,"C",TRUE,"F")',
+          description: 'Grade based on score',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '2016',
@@ -1092,18 +1223,33 @@ export class FunctionLibrary {
     this.addFunction({
       name: 'SWITCH',
       category: 'logical',
-      description: 'Evaluates an expression against a list of values and returns the corresponding result',
+      description:
+        'Evaluates an expression against a list of values and returns the corresponding result',
       descriptionVi: 'Đánh giá biểu thức với danh sách giá trị và trả về kết quả tương ứng',
       syntax: 'SWITCH(expression, value1, result1, [value2, result2], ..., [default])',
       parameters: [
         { name: 'expression', type: 'any', required: true, description: 'Value to match' },
-        { name: 'value1', type: 'any', required: true, description: 'First value to match against' },
+        {
+          name: 'value1',
+          type: 'any',
+          required: true,
+          description: 'First value to match against',
+        },
         { name: 'result1', type: 'any', required: true, description: 'Result if value1 matches' },
-        { name: 'default', type: 'any', required: false, description: 'Default result if no match' },
+        {
+          name: 'default',
+          type: 'any',
+          required: false,
+          description: 'Default result if no match',
+        },
       ],
       returnType: 'any',
       examples: [
-        { formula: '=SWITCH(A1,1,"One",2,"Two",3,"Three","Other")', description: 'Map number to word', result: null },
+        {
+          formula: '=SWITCH(A1,1,"One",2,"Two",3,"Three","Other")',
+          description: 'Map number to word',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '2016',
@@ -1138,12 +1284,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trả về giá trị tuyệt đối của số',
       syntax: 'ABS(number)',
       parameters: [
-        { name: 'number', type: 'number', required: true, description: 'Number to get absolute value of' },
+        {
+          name: 'number',
+          type: 'number',
+          required: true,
+          description: 'Number to get absolute value of',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=ABS(-5)', description: 'Absolute value of -5', result: 5 },
-      ],
+      examples: [{ formula: '=ABS(-5)', description: 'Absolute value of -5', result: 5 }],
       nlPatterns: [
         { pattern: 'absolute value of (.+)', language: 'en', priority: 1, transform: 'ABS($1)' },
         { pattern: 'giá trị tuyệt đối (.+)', language: 'vi', priority: 1, transform: 'ABS($1)' },
@@ -1159,12 +1308,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trả về căn bậc hai của số',
       syntax: 'SQRT(number)',
       parameters: [
-        { name: 'number', type: 'number', required: true, description: 'Number to get square root of' },
+        {
+          name: 'number',
+          type: 'number',
+          required: true,
+          description: 'Number to get square root of',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=SQRT(16)', description: 'Square root of 16', result: 4 },
-      ],
+      examples: [{ formula: '=SQRT(16)', description: 'Square root of 16', result: 4 }],
       nlPatterns: [
         { pattern: 'square root of (.+)', language: 'en', priority: 1, transform: 'SQRT($1)' },
         { pattern: 'căn bậc hai (.+)', language: 'vi', priority: 1, transform: 'SQRT($1)' },
@@ -1184,11 +1336,14 @@ export class FunctionLibrary {
         { name: 'power', type: 'number', required: true, description: 'Exponent' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=POWER(2,8)', description: '2 to the power of 8', result: 256 },
-      ],
+      examples: [{ formula: '=POWER(2,8)', description: '2 to the power of 8', result: 256 }],
       nlPatterns: [
-        { pattern: '(.+) to the power of (.+)', language: 'en', priority: 1, transform: 'POWER($1,$2)' },
+        {
+          pattern: '(.+) to the power of (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'POWER($1,$2)',
+        },
         { pattern: '(.+) mũ (.+)', language: 'vi', priority: 1, transform: 'POWER($1,$2)' },
       ],
       excelVersion: '1.0',
@@ -1206,11 +1361,14 @@ export class FunctionLibrary {
         { name: 'divisor', type: 'number', required: true, description: 'Divisor' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MOD(10,3)', description: 'Remainder of 10/3', result: 1 },
-      ],
+      examples: [{ formula: '=MOD(10,3)', description: 'Remainder of 10/3', result: 1 }],
       nlPatterns: [
-        { pattern: 'remainder of (.+) divided by (.+)', language: 'en', priority: 1, transform: 'MOD($1,$2)' },
+        {
+          pattern: 'remainder of (.+) divided by (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'MOD($1,$2)',
+        },
         { pattern: 'phần dư (.+) chia (.+)', language: 'vi', priority: 1, transform: 'MOD($1,$2)' },
       ],
       excelVersion: '1.0',
@@ -1225,12 +1383,15 @@ export class FunctionLibrary {
       syntax: 'CEILING(number, significance)',
       parameters: [
         { name: 'number', type: 'number', required: true, description: 'Number to round up' },
-        { name: 'significance', type: 'number', required: true, description: 'Multiple to round to' },
+        {
+          name: 'significance',
+          type: 'number',
+          required: true,
+          description: 'Multiple to round to',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=CEILING(4.2,1)', description: 'Round 4.2 up', result: 5 },
-      ],
+      examples: [{ formula: '=CEILING(4.2,1)', description: 'Round 4.2 up', result: 5 }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1244,12 +1405,15 @@ export class FunctionLibrary {
       syntax: 'FLOOR(number, significance)',
       parameters: [
         { name: 'number', type: 'number', required: true, description: 'Number to round down' },
-        { name: 'significance', type: 'number', required: true, description: 'Multiple to round to' },
+        {
+          name: 'significance',
+          type: 'number',
+          required: true,
+          description: 'Multiple to round to',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=FLOOR(4.8,1)', description: 'Round 4.8 down', result: 4 },
-      ],
+      examples: [{ formula: '=FLOOR(4.8,1)', description: 'Round 4.8 down', result: 4 }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1300,12 +1464,15 @@ export class FunctionLibrary {
       descriptionVi: 'Nhân tất cả các số',
       syntax: 'PRODUCT(number1, [number2], ...)',
       parameters: [
-        { name: 'number1', type: 'number|range', required: true, description: 'First number or range' },
+        {
+          name: 'number1',
+          type: 'number|range',
+          required: true,
+          description: 'First number or range',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=PRODUCT(A1:A5)', description: 'Product of A1 to A5', result: null },
-      ],
+      examples: [{ formula: '=PRODUCT(A1:A5)', description: 'Product of A1 to A5', result: null }],
       nlPatterns: [
         { pattern: 'product of (.+)', language: 'en', priority: 1, transform: 'PRODUCT($1)' },
         { pattern: 'tích của (.+)', language: 'vi', priority: 1, transform: 'PRODUCT($1)' },
@@ -1329,8 +1496,18 @@ export class FunctionLibrary {
         { formula: '=SUMPRODUCT(A1:A3,B1:B3)', description: 'Sum of A*B products', result: null },
       ],
       nlPatterns: [
-        { pattern: 'sum product of (.+) and (.+)', language: 'en', priority: 1, transform: 'SUMPRODUCT($1,$2)' },
-        { pattern: 'tổng tích (.+) và (.+)', language: 'vi', priority: 1, transform: 'SUMPRODUCT($1,$2)' },
+        {
+          pattern: 'sum product of (.+) and (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'SUMPRODUCT($1,$2)',
+        },
+        {
+          pattern: 'tổng tích (.+) và (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'SUMPRODUCT($1,$2)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1344,9 +1521,7 @@ export class FunctionLibrary {
       syntax: 'RAND()',
       parameters: [],
       returnType: 'number',
-      examples: [
-        { formula: '=RAND()', description: 'Random number 0-1', result: null },
-      ],
+      examples: [{ formula: '=RAND()', description: 'Random number 0-1', result: null }],
       nlPatterns: [
         { pattern: 'random number', language: 'en', priority: 1, transform: 'RAND()' },
         { pattern: 'số ngẫu nhiên', language: 'vi', priority: 1, transform: 'RAND()' },
@@ -1370,8 +1545,18 @@ export class FunctionLibrary {
         { formula: '=RANDBETWEEN(1,100)', description: 'Random integer 1-100', result: null },
       ],
       nlPatterns: [
-        { pattern: 'random (?:number )?between (.+) and (.+)', language: 'en', priority: 1, transform: 'RANDBETWEEN($1,$2)' },
-        { pattern: 'số ngẫu nhiên từ (.+) đến (.+)', language: 'vi', priority: 1, transform: 'RANDBETWEEN($1,$2)' },
+        {
+          pattern: 'random (?:number )?between (.+) and (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'RANDBETWEEN($1,$2)',
+        },
+        {
+          pattern: 'số ngẫu nhiên từ (.+) đến (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'RANDBETWEEN($1,$2)',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -1386,13 +1571,9 @@ export class FunctionLibrary {
       description: 'Removes extra spaces from text',
       descriptionVi: 'Xóa khoảng trắng thừa từ văn bản',
       syntax: 'TRIM(text)',
-      parameters: [
-        { name: 'text', type: 'text', required: true, description: 'Text to trim' },
-      ],
+      parameters: [{ name: 'text', type: 'text', required: true, description: 'Text to trim' }],
       returnType: 'text',
-      examples: [
-        { formula: '=TRIM(A1)', description: 'Trim spaces from A1', result: null },
-      ],
+      examples: [{ formula: '=TRIM(A1)', description: 'Trim spaces from A1', result: null }],
       nlPatterns: [
         { pattern: 'trim (.+)', language: 'en', priority: 1, transform: 'TRIM($1)' },
         { pattern: 'cắt khoảng trắng (.+)', language: 'vi', priority: 1, transform: 'TRIM($1)' },
@@ -1407,13 +1588,9 @@ export class FunctionLibrary {
       description: 'Converts text to uppercase',
       descriptionVi: 'Chuyển văn bản thành chữ hoa',
       syntax: 'UPPER(text)',
-      parameters: [
-        { name: 'text', type: 'text', required: true, description: 'Text to convert' },
-      ],
+      parameters: [{ name: 'text', type: 'text', required: true, description: 'Text to convert' }],
       returnType: 'text',
-      examples: [
-        { formula: '=UPPER(A1)', description: 'Uppercase A1', result: null },
-      ],
+      examples: [{ formula: '=UPPER(A1)', description: 'Uppercase A1', result: null }],
       nlPatterns: [
         { pattern: 'uppercase (.+)', language: 'en', priority: 1, transform: 'UPPER($1)' },
         { pattern: 'chữ hoa (.+)', language: 'vi', priority: 1, transform: 'UPPER($1)' },
@@ -1428,13 +1605,9 @@ export class FunctionLibrary {
       description: 'Converts text to lowercase',
       descriptionVi: 'Chuyển văn bản thành chữ thường',
       syntax: 'LOWER(text)',
-      parameters: [
-        { name: 'text', type: 'text', required: true, description: 'Text to convert' },
-      ],
+      parameters: [{ name: 'text', type: 'text', required: true, description: 'Text to convert' }],
       returnType: 'text',
-      examples: [
-        { formula: '=LOWER(A1)', description: 'Lowercase A1', result: null },
-      ],
+      examples: [{ formula: '=LOWER(A1)', description: 'Lowercase A1', result: null }],
       nlPatterns: [
         { pattern: 'lowercase (.+)', language: 'en', priority: 1, transform: 'LOWER($1)' },
         { pattern: 'chữ thường (.+)', language: 'vi', priority: 1, transform: 'LOWER($1)' },
@@ -1449,13 +1622,9 @@ export class FunctionLibrary {
       description: 'Capitalizes the first letter of each word',
       descriptionVi: 'Viết hoa chữ cái đầu mỗi từ',
       syntax: 'PROPER(text)',
-      parameters: [
-        { name: 'text', type: 'text', required: true, description: 'Text to convert' },
-      ],
+      parameters: [{ name: 'text', type: 'text', required: true, description: 'Text to convert' }],
       returnType: 'text',
-      examples: [
-        { formula: '=PROPER("john doe")', description: 'Title case', result: 'John Doe' },
-      ],
+      examples: [{ formula: '=PROPER("john doe")', description: 'Title case', result: 'John Doe' }],
       nlPatterns: [
         { pattern: 'title case (.+)', language: 'en', priority: 1, transform: 'PROPER($1)' },
         { pattern: 'viết hoa đầu (.+)', language: 'vi', priority: 1, transform: 'PROPER($1)' },
@@ -1490,13 +1659,9 @@ export class FunctionLibrary {
       description: 'Returns the number of characters in a text string',
       descriptionVi: 'Trả về số ký tự trong chuỗi',
       syntax: 'LEN(text)',
-      parameters: [
-        { name: 'text', type: 'text', required: true, description: 'Text to measure' },
-      ],
+      parameters: [{ name: 'text', type: 'text', required: true, description: 'Text to measure' }],
       returnType: 'number',
-      examples: [
-        { formula: '=LEN(A1)', description: 'Length of text in A1', result: null },
-      ],
+      examples: [{ formula: '=LEN(A1)', description: 'Length of text in A1', result: null }],
       nlPatterns: [
         { pattern: 'length of (.+)', language: 'en', priority: 1, transform: 'LEN($1)' },
         { pattern: 'độ dài (.+)', language: 'vi', priority: 1, transform: 'LEN($1)' },
@@ -1517,9 +1682,7 @@ export class FunctionLibrary {
         { name: 'start_num', type: 'number', required: false, description: 'Starting position' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=FIND("a",A1)', description: 'Position of "a" in A1', result: null },
-      ],
+      examples: [{ formula: '=FIND("a",A1)', description: 'Position of "a" in A1', result: null }],
       nlPatterns: [
         { pattern: 'find (.+) in (.+)', language: 'en', priority: 1, transform: 'FIND("$1",$2)' },
         { pattern: 'tìm (.+) trong (.+)', language: 'vi', priority: 1, transform: 'FIND("$1",$2)' },
@@ -1541,7 +1704,11 @@ export class FunctionLibrary {
       ],
       returnType: 'number',
       examples: [
-        { formula: '=SEARCH("a",A1)', description: 'Position of "a" in A1 (case-insensitive)', result: null },
+        {
+          formula: '=SEARCH("a",A1)',
+          description: 'Position of "a" in A1 (case-insensitive)',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '1.0',
@@ -1562,7 +1729,11 @@ export class FunctionLibrary {
       ],
       returnType: 'text',
       examples: [
-        { formula: '=REPLACE(A1,1,3,"New")', description: 'Replace first 3 chars with "New"', result: null },
+        {
+          formula: '=REPLACE(A1,1,3,"New")',
+          description: 'Replace first 3 chars with "New"',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '1.0',
@@ -1579,15 +1750,34 @@ export class FunctionLibrary {
         { name: 'text', type: 'text', required: true, description: 'Text to modify' },
         { name: 'old_text', type: 'text', required: true, description: 'Text to replace' },
         { name: 'new_text', type: 'text', required: true, description: 'Replacement text' },
-        { name: 'instance_num', type: 'number', required: false, description: 'Which instance to replace' },
+        {
+          name: 'instance_num',
+          type: 'number',
+          required: false,
+          description: 'Which instance to replace',
+        },
       ],
       returnType: 'text',
       examples: [
-        { formula: '=SUBSTITUTE(A1,"old","new")', description: 'Replace "old" with "new"', result: null },
+        {
+          formula: '=SUBSTITUTE(A1,"old","new")',
+          description: 'Replace "old" with "new"',
+          result: null,
+        },
       ],
       nlPatterns: [
-        { pattern: 'replace (.+) with (.+) in (.+)', language: 'en', priority: 1, transform: 'SUBSTITUTE($3,"$1","$2")' },
-        { pattern: 'thay (.+) bằng (.+) trong (.+)', language: 'vi', priority: 1, transform: 'SUBSTITUTE($3,"$1","$2")' },
+        {
+          pattern: 'replace (.+) with (.+) in (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'SUBSTITUTE($3,"$1","$2")',
+        },
+        {
+          pattern: 'thay (.+) bằng (.+) trong (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'SUBSTITUTE($3,"$1","$2")',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1610,7 +1800,12 @@ export class FunctionLibrary {
       ],
       nlPatterns: [
         { pattern: 'format (.+) as (.+)', language: 'en', priority: 1, transform: 'TEXT($1,"$2")' },
-        { pattern: 'định dạng (.+) thành (.+)', language: 'vi', priority: 1, transform: 'TEXT($1,"$2")' },
+        {
+          pattern: 'định dạng (.+) thành (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'TEXT($1,"$2")',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1624,7 +1819,12 @@ export class FunctionLibrary {
       syntax: 'TEXTJOIN(delimiter, ignore_empty, text1, [text2], ...)',
       parameters: [
         { name: 'delimiter', type: 'text', required: true, description: 'Separator between texts' },
-        { name: 'ignore_empty', type: 'boolean', required: true, description: 'TRUE to ignore empty cells' },
+        {
+          name: 'ignore_empty',
+          type: 'boolean',
+          required: true,
+          description: 'TRUE to ignore empty cells',
+        },
         { name: 'text1', type: 'text|range', required: true, description: 'First text or range' },
       ],
       returnType: 'text',
@@ -1632,8 +1832,18 @@ export class FunctionLibrary {
         { formula: '=TEXTJOIN(",",TRUE,A1:A5)', description: 'Join with comma', result: null },
       ],
       nlPatterns: [
-        { pattern: 'join (.+) with (.+)', language: 'en', priority: 1, transform: 'TEXTJOIN("$2",TRUE,$1)' },
-        { pattern: 'nối (.+) bằng (.+)', language: 'vi', priority: 1, transform: 'TEXTJOIN("$2",TRUE,$1)' },
+        {
+          pattern: 'join (.+) with (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'TEXTJOIN("$2",TRUE,$1)',
+        },
+        {
+          pattern: 'nối (.+) bằng (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'TEXTJOIN("$2",TRUE,$1)',
+        },
       ],
       excelVersion: '2016',
       googleSheets: true,
@@ -1668,11 +1878,14 @@ export class FunctionLibrary {
         { name: 'number_times', type: 'number', required: true, description: 'Times to repeat' },
       ],
       returnType: 'text',
-      examples: [
-        { formula: '=REPT("*",5)', description: 'Repeat * five times', result: '*****' },
-      ],
+      examples: [{ formula: '=REPT("*",5)', description: 'Repeat * five times', result: '*****' }],
       nlPatterns: [
-        { pattern: 'repeat (.+) (\\d+) times', language: 'en', priority: 1, transform: 'REPT("$1",$2)' },
+        {
+          pattern: 'repeat (.+) (\\d+) times',
+          language: 'en',
+          priority: 1,
+          transform: 'REPT("$1",$2)',
+        },
         { pattern: 'lặp (.+) (\\d+) lần', language: 'vi', priority: 1, transform: 'REPT("$1",$2)' },
       ],
       excelVersion: '1.0',
@@ -1694,9 +1907,7 @@ export class FunctionLibrary {
         { name: 'day', type: 'number', required: true, description: 'Day' },
       ],
       returnType: 'date',
-      examples: [
-        { formula: '=DATE(2024,1,15)', description: 'January 15, 2024', result: null },
-      ],
+      examples: [{ formula: '=DATE(2024,1,15)', description: 'January 15, 2024', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1711,15 +1922,30 @@ export class FunctionLibrary {
       parameters: [
         { name: 'start_date', type: 'date', required: true, description: 'Start date' },
         { name: 'end_date', type: 'date', required: true, description: 'End date' },
-        { name: 'unit', type: 'text', required: true, description: '"Y", "M", "D", "MD", "YM", "YD"' },
+        {
+          name: 'unit',
+          type: 'text',
+          required: true,
+          description: '"Y", "M", "D", "MD", "YM", "YD"',
+        },
       ],
       returnType: 'number',
       examples: [
         { formula: '=DATEDIF(A1,B1,"D")', description: 'Days between A1 and B1', result: null },
       ],
       nlPatterns: [
-        { pattern: 'days between (.+) and (.+)', language: 'en', priority: 1, transform: 'DATEDIF($1,$2,"D")' },
-        { pattern: 'số ngày từ (.+) đến (.+)', language: 'vi', priority: 1, transform: 'DATEDIF($1,$2,"D")' },
+        {
+          pattern: 'days between (.+) and (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'DATEDIF($1,$2,"D")',
+        },
+        {
+          pattern: 'số ngày từ (.+) đến (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'DATEDIF($1,$2,"D")',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1733,15 +1959,28 @@ export class FunctionLibrary {
       syntax: 'EDATE(start_date, months)',
       parameters: [
         { name: 'start_date', type: 'date', required: true, description: 'Start date' },
-        { name: 'months', type: 'number', required: true, description: 'Months to add (can be negative)' },
+        {
+          name: 'months',
+          type: 'number',
+          required: true,
+          description: 'Months to add (can be negative)',
+        },
       ],
       returnType: 'date',
-      examples: [
-        { formula: '=EDATE(A1,3)', description: 'Add 3 months to A1', result: null },
-      ],
+      examples: [{ formula: '=EDATE(A1,3)', description: 'Add 3 months to A1', result: null }],
       nlPatterns: [
-        { pattern: '(.+) plus (\\d+) months', language: 'en', priority: 1, transform: 'EDATE($1,$2)' },
-        { pattern: '(.+) cộng (\\d+) tháng', language: 'vi', priority: 1, transform: 'EDATE($1,$2)' },
+        {
+          pattern: '(.+) plus (\\d+) months',
+          language: 'en',
+          priority: 1,
+          transform: 'EDATE($1,$2)',
+        },
+        {
+          pattern: '(.+) cộng (\\d+) tháng',
+          language: 'vi',
+          priority: 1,
+          transform: 'EDATE($1,$2)',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -1755,15 +1994,28 @@ export class FunctionLibrary {
       syntax: 'EOMONTH(start_date, months)',
       parameters: [
         { name: 'start_date', type: 'date', required: true, description: 'Start date' },
-        { name: 'months', type: 'number', required: true, description: 'Months to add (can be negative)' },
+        {
+          name: 'months',
+          type: 'number',
+          required: true,
+          description: 'Months to add (can be negative)',
+        },
       ],
       returnType: 'date',
-      examples: [
-        { formula: '=EOMONTH(A1,0)', description: 'End of current month', result: null },
-      ],
+      examples: [{ formula: '=EOMONTH(A1,0)', description: 'End of current month', result: null }],
       nlPatterns: [
-        { pattern: 'end of month (?:of )?(.+)', language: 'en', priority: 1, transform: 'EOMONTH($1,0)' },
-        { pattern: 'cuối tháng (?:của )?(.+)', language: 'vi', priority: 1, transform: 'EOMONTH($1,0)' },
+        {
+          pattern: 'end of month (?:of )?(.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'EOMONTH($1,0)',
+        },
+        {
+          pattern: 'cuối tháng (?:của )?(.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'EOMONTH($1,0)',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -1777,12 +2029,15 @@ export class FunctionLibrary {
       syntax: 'WEEKDAY(serial_number, [return_type])',
       parameters: [
         { name: 'serial_number', type: 'date', required: true, description: 'Date' },
-        { name: 'return_type', type: 'number', required: false, description: '1=Sun-Sat, 2=Mon-Sun, 3=0-6' },
+        {
+          name: 'return_type',
+          type: 'number',
+          required: false,
+          description: '1=Sun-Sat, 2=Mon-Sun, 3=0-6',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=WEEKDAY(A1)', description: 'Day of week for A1', result: null },
-      ],
+      examples: [{ formula: '=WEEKDAY(A1)', description: 'Day of week for A1', result: null }],
       nlPatterns: [
         { pattern: 'weekday of (.+)', language: 'en', priority: 1, transform: 'WEEKDAY($1)' },
         { pattern: 'thứ trong tuần (.+)', language: 'vi', priority: 1, transform: 'WEEKDAY($1)' },
@@ -1802,9 +2057,7 @@ export class FunctionLibrary {
         { name: 'return_type', type: 'number', required: false, description: 'Week type' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=WEEKNUM(A1)', description: 'Week number for A1', result: null },
-      ],
+      examples: [{ formula: '=WEEKNUM(A1)', description: 'Week number for A1', result: null }],
       nlPatterns: [
         { pattern: 'week number of (.+)', language: 'en', priority: 1, transform: 'WEEKNUM($1)' },
         { pattern: 'tuần thứ mấy (.+)', language: 'vi', priority: 1, transform: 'WEEKNUM($1)' },
@@ -1829,8 +2082,18 @@ export class FunctionLibrary {
         { formula: '=NETWORKDAYS(A1,B1)', description: 'Workdays between A1 and B1', result: null },
       ],
       nlPatterns: [
-        { pattern: 'workdays between (.+) and (.+)', language: 'en', priority: 1, transform: 'NETWORKDAYS($1,$2)' },
-        { pattern: 'ngày làm việc từ (.+) đến (.+)', language: 'vi', priority: 1, transform: 'NETWORKDAYS($1,$2)' },
+        {
+          pattern: 'workdays between (.+) and (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'NETWORKDAYS($1,$2)',
+        },
+        {
+          pattern: 'ngày làm việc từ (.+) đến (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'NETWORKDAYS($1,$2)',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -1852,8 +2115,18 @@ export class FunctionLibrary {
         { formula: '=WORKDAY(A1,10)', description: 'Add 10 workdays to A1', result: null },
       ],
       nlPatterns: [
-        { pattern: '(.+) plus (\\d+) workdays', language: 'en', priority: 1, transform: 'WORKDAY($1,$2)' },
-        { pattern: '(.+) cộng (\\d+) ngày làm việc', language: 'vi', priority: 1, transform: 'WORKDAY($1,$2)' },
+        {
+          pattern: '(.+) plus (\\d+) workdays',
+          language: 'en',
+          priority: 1,
+          transform: 'WORKDAY($1,$2)',
+        },
+        {
+          pattern: '(.+) cộng (\\d+) ngày làm việc',
+          language: 'vi',
+          priority: 1,
+          transform: 'WORKDAY($1,$2)',
+        },
       ],
       excelVersion: '2007',
       googleSheets: true,
@@ -1866,12 +2139,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trích xuất giờ từ thời gian',
       syntax: 'HOUR(serial_number)',
       parameters: [
-        { name: 'serial_number', type: 'datetime', required: true, description: 'Time to extract hour from' },
+        {
+          name: 'serial_number',
+          type: 'datetime',
+          required: true,
+          description: 'Time to extract hour from',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=HOUR(A1)', description: 'Hour of time in A1', result: null },
-      ],
+      examples: [{ formula: '=HOUR(A1)', description: 'Hour of time in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1884,12 +2160,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trích xuất phút từ thời gian',
       syntax: 'MINUTE(serial_number)',
       parameters: [
-        { name: 'serial_number', type: 'datetime', required: true, description: 'Time to extract minute from' },
+        {
+          name: 'serial_number',
+          type: 'datetime',
+          required: true,
+          description: 'Time to extract minute from',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MINUTE(A1)', description: 'Minute of time in A1', result: null },
-      ],
+      examples: [{ formula: '=MINUTE(A1)', description: 'Minute of time in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1902,12 +2181,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trích xuất giây từ thời gian',
       syntax: 'SECOND(serial_number)',
       parameters: [
-        { name: 'serial_number', type: 'datetime', required: true, description: 'Time to extract second from' },
+        {
+          name: 'serial_number',
+          type: 'datetime',
+          required: true,
+          description: 'Time to extract second from',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=SECOND(A1)', description: 'Second of time in A1', result: null },
-      ],
+      examples: [{ formula: '=SECOND(A1)', description: 'Second of time in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -1923,12 +2205,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trả về giá trị trung vị',
       syntax: 'MEDIAN(number1, [number2], ...)',
       parameters: [
-        { name: 'number1', type: 'number|range', required: true, description: 'First number or range' },
+        {
+          name: 'number1',
+          type: 'number|range',
+          required: true,
+          description: 'First number or range',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MEDIAN(A1:A10)', description: 'Median of A1:A10', result: null },
-      ],
+      examples: [{ formula: '=MEDIAN(A1:A10)', description: 'Median of A1:A10', result: null }],
       nlPatterns: [
         { pattern: 'median of (.+)', language: 'en', priority: 1, transform: 'MEDIAN($1)' },
         { pattern: 'trung vị của (.+)', language: 'vi', priority: 1, transform: 'MEDIAN($1)' },
@@ -1944,12 +2229,15 @@ export class FunctionLibrary {
       descriptionVi: 'Trả về giá trị xuất hiện nhiều nhất',
       syntax: 'MODE(number1, [number2], ...)',
       parameters: [
-        { name: 'number1', type: 'number|range', required: true, description: 'First number or range' },
+        {
+          name: 'number1',
+          type: 'number|range',
+          required: true,
+          description: 'First number or range',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=MODE(A1:A10)', description: 'Mode of A1:A10', result: null },
-      ],
+      examples: [{ formula: '=MODE(A1:A10)', description: 'Mode of A1:A10', result: null }],
       nlPatterns: [
         { pattern: 'mode of (.+)', language: 'en', priority: 1, transform: 'MODE($1)' },
         { pattern: 'yếu vị của (.+)', language: 'vi', priority: 1, transform: 'MODE($1)' },
@@ -1965,14 +2253,24 @@ export class FunctionLibrary {
       descriptionVi: 'Tính độ lệch chuẩn dựa trên mẫu',
       syntax: 'STDEV(number1, [number2], ...)',
       parameters: [
-        { name: 'number1', type: 'number|range', required: true, description: 'First number or range' },
+        {
+          name: 'number1',
+          type: 'number|range',
+          required: true,
+          description: 'First number or range',
+        },
       ],
       returnType: 'number',
       examples: [
         { formula: '=STDEV(A1:A10)', description: 'Standard deviation of A1:A10', result: null },
       ],
       nlPatterns: [
-        { pattern: 'standard deviation of (.+)', language: 'en', priority: 1, transform: 'STDEV($1)' },
+        {
+          pattern: 'standard deviation of (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'STDEV($1)',
+        },
         { pattern: 'độ lệch chuẩn của (.+)', language: 'vi', priority: 1, transform: 'STDEV($1)' },
       ],
       excelVersion: '1.0',
@@ -1986,12 +2284,15 @@ export class FunctionLibrary {
       descriptionVi: 'Tính phương sai dựa trên mẫu',
       syntax: 'VAR(number1, [number2], ...)',
       parameters: [
-        { name: 'number1', type: 'number|range', required: true, description: 'First number or range' },
+        {
+          name: 'number1',
+          type: 'number|range',
+          required: true,
+          description: 'First number or range',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=VAR(A1:A10)', description: 'Variance of A1:A10', result: null },
-      ],
+      examples: [{ formula: '=VAR(A1:A10)', description: 'Variance of A1:A10', result: null }],
       nlPatterns: [
         { pattern: 'variance of (.+)', language: 'en', priority: 1, transform: 'VAR($1)' },
         { pattern: 'phương sai của (.+)', language: 'vi', priority: 1, transform: 'VAR($1)' },
@@ -2015,8 +2316,18 @@ export class FunctionLibrary {
         { formula: '=PERCENTILE(A1:A10,0.9)', description: '90th percentile', result: null },
       ],
       nlPatterns: [
-        { pattern: '(\\d+)(?:th|st|nd|rd) percentile of (.+)', language: 'en', priority: 1, transform: 'PERCENTILE($2,$1/100)' },
-        { pattern: 'phân vị (\\d+) của (.+)', language: 'vi', priority: 1, transform: 'PERCENTILE($2,$1/100)' },
+        {
+          pattern: '(\\d+)(?:th|st|nd|rd) percentile of (.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'PERCENTILE($2,$1/100)',
+        },
+        {
+          pattern: 'phân vị (\\d+) của (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'PERCENTILE($2,$1/100)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2033,9 +2344,7 @@ export class FunctionLibrary {
         { name: 'quart', type: 'number', required: true, description: 'Quartile (0-4)' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=QUARTILE(A1:A10,1)', description: 'First quartile', result: null },
-      ],
+      examples: [{ formula: '=QUARTILE(A1:A10,1)', description: 'First quartile', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2050,15 +2359,23 @@ export class FunctionLibrary {
       parameters: [
         { name: 'number', type: 'number', required: true, description: 'Number to rank' },
         { name: 'ref', type: 'range', required: true, description: 'Range of numbers' },
-        { name: 'order', type: 'number', required: false, description: '0=descending, 1=ascending' },
+        {
+          name: 'order',
+          type: 'number',
+          required: false,
+          description: '0=descending, 1=ascending',
+        },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=RANK(A1,A:A)', description: 'Rank of A1 in column A', result: null },
-      ],
+      examples: [{ formula: '=RANK(A1,A:A)', description: 'Rank of A1 in column A', result: null }],
       nlPatterns: [
         { pattern: 'rank of (.+) in (.+)', language: 'en', priority: 1, transform: 'RANK($1,$2)' },
-        { pattern: 'xếp hạng (.+) trong (.+)', language: 'vi', priority: 1, transform: 'RANK($1,$2)' },
+        {
+          pattern: 'xếp hạng (.+) trong (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'RANK($1,$2)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2079,8 +2396,18 @@ export class FunctionLibrary {
         { formula: '=LARGE(A1:A10,2)', description: 'Second largest value', result: null },
       ],
       nlPatterns: [
-        { pattern: '(\\d+)(?:st|nd|rd|th) largest (?:in |of )?(.+)', language: 'en', priority: 1, transform: 'LARGE($2,$1)' },
-        { pattern: 'lớn thứ (\\d+) (?:trong|của) (.+)', language: 'vi', priority: 1, transform: 'LARGE($2,$1)' },
+        {
+          pattern: '(\\d+)(?:st|nd|rd|th) largest (?:in |of )?(.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'LARGE($2,$1)',
+        },
+        {
+          pattern: 'lớn thứ (\\d+) (?:trong|của) (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'LARGE($2,$1)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2101,8 +2428,18 @@ export class FunctionLibrary {
         { formula: '=SMALL(A1:A10,2)', description: 'Second smallest value', result: null },
       ],
       nlPatterns: [
-        { pattern: '(\\d+)(?:st|nd|rd|th) smallest (?:in |of )?(.+)', language: 'en', priority: 1, transform: 'SMALL($2,$1)' },
-        { pattern: 'nhỏ thứ (\\d+) (?:trong|của) (.+)', language: 'vi', priority: 1, transform: 'SMALL($2,$1)' },
+        {
+          pattern: '(\\d+)(?:st|nd|rd|th) smallest (?:in |of )?(.+)',
+          language: 'en',
+          priority: 1,
+          transform: 'SMALL($2,$1)',
+        },
+        {
+          pattern: 'nhỏ thứ (\\d+) (?:trong|của) (.+)',
+          language: 'vi',
+          priority: 1,
+          transform: 'SMALL($2,$1)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2114,7 +2451,8 @@ export class FunctionLibrary {
     this.addFunction({
       name: 'PMT',
       category: 'financial',
-      description: 'Calculates the payment for a loan based on constant payments and constant interest rate',
+      description:
+        'Calculates the payment for a loan based on constant payments and constant interest rate',
       descriptionVi: 'Tính số tiền thanh toán định kỳ cho khoản vay',
       syntax: 'PMT(rate, nper, pv, [fv], [type])',
       parameters: [
@@ -2126,11 +2464,25 @@ export class FunctionLibrary {
       ],
       returnType: 'number',
       examples: [
-        { formula: '=PMT(0.05/12,60,100000)', description: 'Monthly payment for $100k loan', result: null },
+        {
+          formula: '=PMT(0.05/12,60,100000)',
+          description: 'Monthly payment for $100k loan',
+          result: null,
+        },
       ],
       nlPatterns: [
-        { pattern: 'monthly payment for (.+) at (.+)% for (\\d+) (?:months|years)', language: 'en', priority: 1, transform: 'PMT($2/100/12,$3,$1)' },
-        { pattern: 'thanh toán hàng tháng cho (.+) với lãi (.+)% trong (\\d+) tháng', language: 'vi', priority: 1, transform: 'PMT($2/100/12,$3,$1)' },
+        {
+          pattern: 'monthly payment for (.+) at (.+)% for (\\d+) (?:months|years)',
+          language: 'en',
+          priority: 1,
+          transform: 'PMT($2/100/12,$3,$1)',
+        },
+        {
+          pattern: 'thanh toán hàng tháng cho (.+) với lãi (.+)% trong (\\d+) tháng',
+          language: 'vi',
+          priority: 1,
+          transform: 'PMT($2/100/12,$3,$1)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2151,11 +2503,25 @@ export class FunctionLibrary {
       ],
       returnType: 'number',
       examples: [
-        { formula: '=FV(0.05/12,120,-500)', description: 'Future value of $500/month savings', result: null },
+        {
+          formula: '=FV(0.05/12,120,-500)',
+          description: 'Future value of $500/month savings',
+          result: null,
+        },
       ],
       nlPatterns: [
-        { pattern: 'future value of (.+) at (.+)% for (\\d+) periods', language: 'en', priority: 1, transform: 'FV($2/100,$3,$1)' },
-        { pattern: 'giá trị tương lai (.+) với lãi (.+)% trong (\\d+) kỳ', language: 'vi', priority: 1, transform: 'FV($2/100,$3,$1)' },
+        {
+          pattern: 'future value of (.+) at (.+)% for (\\d+) periods',
+          language: 'en',
+          priority: 1,
+          transform: 'FV($2/100,$3,$1)',
+        },
+        {
+          pattern: 'giá trị tương lai (.+) với lãi (.+)% trong (\\d+) kỳ',
+          language: 'vi',
+          priority: 1,
+          transform: 'FV($2/100,$3,$1)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2176,7 +2542,11 @@ export class FunctionLibrary {
       ],
       returnType: 'number',
       examples: [
-        { formula: '=PV(0.05/12,60,-500)', description: 'Present value of $500/month', result: null },
+        {
+          formula: '=PV(0.05/12,60,-500)',
+          description: 'Present value of $500/month',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '1.0',
@@ -2213,9 +2583,7 @@ export class FunctionLibrary {
         { name: 'guess', type: 'number', required: false, description: 'Initial guess for rate' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=IRR(A1:A10)', description: 'IRR of cash flows', result: null },
-      ],
+      examples: [{ formula: '=IRR(A1:A10)', description: 'IRR of cash flows', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2253,15 +2621,16 @@ export class FunctionLibrary {
       description: 'Returns TRUE if the cell is empty',
       descriptionVi: 'Trả về TRUE nếu ô trống',
       syntax: 'ISBLANK(value)',
-      parameters: [
-        { name: 'value', type: 'any', required: true, description: 'Cell to check' },
-      ],
+      parameters: [{ name: 'value', type: 'any', required: true, description: 'Cell to check' }],
       returnType: 'boolean',
-      examples: [
-        { formula: '=ISBLANK(A1)', description: 'Check if A1 is empty', result: null },
-      ],
+      examples: [{ formula: '=ISBLANK(A1)', description: 'Check if A1 is empty', result: null }],
       nlPatterns: [
-        { pattern: 'is (.+) (?:empty|blank)', language: 'en', priority: 1, transform: 'ISBLANK($1)' },
+        {
+          pattern: 'is (.+) (?:empty|blank)',
+          language: 'en',
+          priority: 1,
+          transform: 'ISBLANK($1)',
+        },
         { pattern: '(.+) có trống không', language: 'vi', priority: 1, transform: 'ISBLANK($1)' },
       ],
       excelVersion: '1.0',
@@ -2274,16 +2643,19 @@ export class FunctionLibrary {
       description: 'Returns TRUE if the value is a number',
       descriptionVi: 'Trả về TRUE nếu giá trị là số',
       syntax: 'ISNUMBER(value)',
-      parameters: [
-        { name: 'value', type: 'any', required: true, description: 'Value to check' },
-      ],
+      parameters: [{ name: 'value', type: 'any', required: true, description: 'Value to check' }],
       returnType: 'boolean',
       examples: [
         { formula: '=ISNUMBER(A1)', description: 'Check if A1 is a number', result: null },
       ],
       nlPatterns: [
         { pattern: 'is (.+) a number', language: 'en', priority: 1, transform: 'ISNUMBER($1)' },
-        { pattern: '(.+) có phải số không', language: 'vi', priority: 1, transform: 'ISNUMBER($1)' },
+        {
+          pattern: '(.+) có phải số không',
+          language: 'vi',
+          priority: 1,
+          transform: 'ISNUMBER($1)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2295,16 +2667,17 @@ export class FunctionLibrary {
       description: 'Returns TRUE if the value is text',
       descriptionVi: 'Trả về TRUE nếu giá trị là văn bản',
       syntax: 'ISTEXT(value)',
-      parameters: [
-        { name: 'value', type: 'any', required: true, description: 'Value to check' },
-      ],
+      parameters: [{ name: 'value', type: 'any', required: true, description: 'Value to check' }],
       returnType: 'boolean',
-      examples: [
-        { formula: '=ISTEXT(A1)', description: 'Check if A1 is text', result: null },
-      ],
+      examples: [{ formula: '=ISTEXT(A1)', description: 'Check if A1 is text', result: null }],
       nlPatterns: [
         { pattern: 'is (.+) text', language: 'en', priority: 1, transform: 'ISTEXT($1)' },
-        { pattern: '(.+) có phải văn bản không', language: 'vi', priority: 1, transform: 'ISTEXT($1)' },
+        {
+          pattern: '(.+) có phải văn bản không',
+          language: 'vi',
+          priority: 1,
+          transform: 'ISTEXT($1)',
+        },
       ],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2316,9 +2689,7 @@ export class FunctionLibrary {
       description: 'Returns TRUE if the value is an error',
       descriptionVi: 'Trả về TRUE nếu giá trị là lỗi',
       syntax: 'ISERROR(value)',
-      parameters: [
-        { name: 'value', type: 'any', required: true, description: 'Value to check' },
-      ],
+      parameters: [{ name: 'value', type: 'any', required: true, description: 'Value to check' }],
       returnType: 'boolean',
       examples: [
         { formula: '=ISERROR(A1)', description: 'Check if A1 has an error', result: null },
@@ -2334,12 +2705,14 @@ export class FunctionLibrary {
       description: 'Returns TRUE if the value is #N/A error',
       descriptionVi: 'Trả về TRUE nếu giá trị là lỗi #N/A',
       syntax: 'ISNA(value)',
-      parameters: [
-        { name: 'value', type: 'any', required: true, description: 'Value to check' },
-      ],
+      parameters: [{ name: 'value', type: 'any', required: true, description: 'Value to check' }],
       returnType: 'boolean',
       examples: [
-        { formula: '=ISNA(VLOOKUP("x",A:B,2,0))', description: 'Check if VLOOKUP returns N/A', result: null },
+        {
+          formula: '=ISNA(VLOOKUP("x",A:B,2,0))',
+          description: 'Check if VLOOKUP returns N/A',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '1.0',
@@ -2354,11 +2727,20 @@ export class FunctionLibrary {
       syntax: 'IFNA(value, value_if_na)',
       parameters: [
         { name: 'value', type: 'any', required: true, description: 'Value to check' },
-        { name: 'value_if_na', type: 'any', required: true, description: 'Value to return on #N/A' },
+        {
+          name: 'value_if_na',
+          type: 'any',
+          required: true,
+          description: 'Value to return on #N/A',
+        },
       ],
       returnType: 'any',
       examples: [
-        { formula: '=IFNA(VLOOKUP("x",A:B,2,0),"Not found")', description: 'Return "Not found" if N/A', result: null },
+        {
+          formula: '=IFNA(VLOOKUP("x",A:B,2,0),"Not found")',
+          description: 'Return "Not found" if N/A',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '2013',
@@ -2371,13 +2753,9 @@ export class FunctionLibrary {
       description: 'Returns a number indicating the data type',
       descriptionVi: 'Trả về số chỉ loại dữ liệu',
       syntax: 'TYPE(value)',
-      parameters: [
-        { name: 'value', type: 'any', required: true, description: 'Value to check' },
-      ],
+      parameters: [{ name: 'value', type: 'any', required: true, description: 'Value to check' }],
       returnType: 'number',
-      examples: [
-        { formula: '=TYPE(A1)', description: 'Type of value in A1', result: null },
-      ],
+      examples: [{ formula: '=TYPE(A1)', description: 'Type of value in A1', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2397,9 +2775,7 @@ export class FunctionLibrary {
         { name: 'a1', type: 'boolean', required: false, description: 'TRUE for A1 style' },
       ],
       returnType: 'any',
-      examples: [
-        { formula: '=INDIRECT("A"&B1)', description: 'Dynamic reference', result: null },
-      ],
+      examples: [{ formula: '=INDIRECT("A"&B1)', description: 'Dynamic reference', result: null }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2464,7 +2840,12 @@ export class FunctionLibrary {
         { formula: '=COLUMN(C1)', description: 'Column of C1', result: 3 },
       ],
       nlPatterns: [
-        { pattern: 'column number (?:of )?(.+)?', language: 'en', priority: 1, transform: 'COLUMN($1)' },
+        {
+          pattern: 'column number (?:of )?(.+)?',
+          language: 'en',
+          priority: 1,
+          transform: 'COLUMN($1)',
+        },
         { pattern: 'số cột (?:của )?(.+)?', language: 'vi', priority: 1, transform: 'COLUMN($1)' },
       ],
       excelVersion: '1.0',
@@ -2481,9 +2862,7 @@ export class FunctionLibrary {
         { name: 'array', type: 'range', required: true, description: 'Range to count rows' },
       ],
       returnType: 'number',
-      examples: [
-        { formula: '=ROWS(A1:A10)', description: 'Number of rows in A1:A10', result: 10 },
-      ],
+      examples: [{ formula: '=ROWS(A1:A10)', description: 'Number of rows in A1:A10', result: 10 }],
       nlPatterns: [],
       excelVersion: '1.0',
       googleSheets: true,
@@ -2516,12 +2895,26 @@ export class FunctionLibrary {
       parameters: [
         { name: 'lookup_value', type: 'any', required: true, description: 'Value to search for' },
         { name: 'table_array', type: 'range', required: true, description: 'Table to search in' },
-        { name: 'row_index_num', type: 'number', required: true, description: 'Row number to return' },
-        { name: 'range_lookup', type: 'boolean', required: false, description: 'FALSE for exact match' },
+        {
+          name: 'row_index_num',
+          type: 'number',
+          required: true,
+          description: 'Row number to return',
+        },
+        {
+          name: 'range_lookup',
+          type: 'boolean',
+          required: false,
+          description: 'FALSE for exact match',
+        },
       ],
       returnType: 'any',
       examples: [
-        { formula: '=HLOOKUP("Q1",A1:D5,3,FALSE)', description: 'Find Q1 and return row 3', result: null },
+        {
+          formula: '=HLOOKUP("Q1",A1:D5,3,FALSE)',
+          description: 'Find Q1 and return row 3',
+          result: null,
+        },
       ],
       nlPatterns: [],
       excelVersion: '1.0',

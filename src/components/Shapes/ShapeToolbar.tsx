@@ -3,16 +3,7 @@
 // ============================================================
 
 import React, { useState } from 'react';
-import {
-  Palette,
-  PenLine,
-  Trash2,
-  Copy,
-  ArrowUp,
-  ArrowDown,
-  Lock,
-  Unlock,
-} from 'lucide-react';
+import { Palette, PenLine, Trash2, Copy, ArrowUp, ArrowDown, Lock, Unlock } from 'lucide-react';
 import { useShapesStore } from '../../stores/shapesStore';
 import { SHAPE_FILL_PRESETS, SHAPE_STROKE_PRESETS } from '../../data/shapeDefinitions';
 import './Shapes.css';
@@ -61,7 +52,8 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
     <div className="shape-toolbar">
       {/* Fill Color */}
       <div className="toolbar-group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-btn"
           onClick={() => {
             setShowFillPicker(!showFillPicker);
@@ -70,17 +62,15 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
           title="Fill Color"
         >
           <Palette size={18} />
-          <span
-            className="color-indicator"
-            style={{ background: selectedShape.style.fill }}
-          />
+          <span className="color-indicator" style={{ background: selectedShape.style.fill }} />
         </button>
         {showFillPicker && (
           <div className="color-picker">
             <div className="color-picker-title">Fill Color</div>
             <div className="color-grid">
-              {SHAPE_FILL_PRESETS.map(color => (
-                <button type="button"
+              {SHAPE_FILL_PRESETS.map((color) => (
+                <button
+                  type="button"
                   key={color}
                   className={`color-swatch ${selectedShape.style.fill === color ? 'active' : ''}`}
                   style={{ background: color }}
@@ -88,7 +78,8 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
                 />
               ))}
             </div>
-            <button type="button"
+            <button
+              type="button"
               className="no-fill-btn"
               onClick={() => updateShapeStyle(sheetId, selectedShape.id, { fillOpacity: 0 })}
             >
@@ -100,7 +91,8 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
 
       {/* Stroke Color */}
       <div className="toolbar-group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-btn"
           onClick={() => {
             setShowStrokePicker(!showStrokePicker);
@@ -109,17 +101,15 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
           title="Outline Color"
         >
           <PenLine size={18} />
-          <span
-            className="color-indicator"
-            style={{ background: selectedShape.style.stroke }}
-          />
+          <span className="color-indicator" style={{ background: selectedShape.style.stroke }} />
         </button>
         {showStrokePicker && (
           <div className="color-picker">
             <div className="color-picker-title">Outline Color</div>
             <div className="color-grid">
-              {SHAPE_STROKE_PRESETS.map(color => (
-                <button type="button"
+              {SHAPE_STROKE_PRESETS.map((color) => (
+                <button
+                  type="button"
                   key={color}
                   className={`color-swatch ${selectedShape.style.stroke === color ? 'active' : ''}`}
                   style={{ background: color }}
@@ -145,14 +135,16 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
       <div className="toolbar-divider" />
 
       {/* Actions */}
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-btn"
         onClick={() => bringToFront(sheetId, selectedShape.id)}
         title="Bring to Front"
       >
         <ArrowUp size={18} />
       </button>
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-btn"
         onClick={() => sendToBack(sheetId, selectedShape.id)}
         title="Send to Back"
@@ -162,21 +154,24 @@ export const ShapeToolbar: React.FC<ShapeToolbarProps> = ({ sheetId }) => {
 
       <div className="toolbar-divider" />
 
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-btn"
         onClick={() => duplicateShape(sheetId, selectedShape.id)}
         title="Duplicate"
       >
         <Copy size={18} />
       </button>
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-btn"
         onClick={toggleLock}
         title={selectedShape.locked ? 'Unlock' : 'Lock'}
       >
         {selectedShape.locked ? <Lock size={18} /> : <Unlock size={18} />}
       </button>
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-btn delete"
         onClick={() => deleteShape(sheetId, selectedShape.id)}
         title="Delete"

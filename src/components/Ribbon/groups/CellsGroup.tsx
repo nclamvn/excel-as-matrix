@@ -9,11 +9,24 @@ import { DeleteCellsDialog } from '../../Dialogs/DeleteCellsDialog';
 
 export const CellsGroup: React.FC = () => {
   const {
-    insertRow, insertColumn, deleteRow, deleteColumn,
-    addSheet, deleteSheet, activeSheetId, sheetOrder,
-    hideRow, unhideRow, hideColumn, unhideColumn,
-    autoFitRow, autoFitColumn, setRowHeight, setColumnWidth,
-    selectedCell, selectionRange
+    insertRow,
+    insertColumn,
+    deleteRow,
+    deleteColumn,
+    addSheet,
+    deleteSheet,
+    activeSheetId,
+    sheetOrder,
+    hideRow,
+    unhideRow,
+    hideColumn,
+    unhideColumn,
+    autoFitRow,
+    autoFitColumn,
+    setRowHeight,
+    setColumnWidth,
+    selectedCell,
+    selectionRange,
   } = useWorkbookStore();
   const { showToast } = useUIStore();
   const [showInsertCellsDialog, setShowInsertCellsDialog] = useState(false);
@@ -137,9 +150,19 @@ export const CellsGroup: React.FC = () => {
           label="Insert"
           size="large"
           options={[
-            { id: 'insert-cells', label: 'Insert Cells...', icon: Grid3X3, onClick: () => setShowInsertCellsDialog(true) },
+            {
+              id: 'insert-cells',
+              label: 'Insert Cells...',
+              icon: Grid3X3,
+              onClick: () => setShowInsertCellsDialog(true),
+            },
             { id: 'insert-rows', label: 'Insert Sheet Rows', icon: Rows, onClick: handleInsertRow },
-            { id: 'insert-cols', label: 'Insert Sheet Columns', icon: Columns, onClick: handleInsertColumn },
+            {
+              id: 'insert-cols',
+              label: 'Insert Sheet Columns',
+              icon: Columns,
+              onClick: handleInsertColumn,
+            },
             { id: 'insert-sheet', label: 'Insert Sheet', icon: Sheet, onClick: handleInsertSheet },
           ]}
         />
@@ -148,9 +171,19 @@ export const CellsGroup: React.FC = () => {
           label="Delete"
           size="large"
           options={[
-            { id: 'delete-cells', label: 'Delete Cells...', icon: Grid3X3, onClick: () => setShowDeleteCellsDialog(true) },
+            {
+              id: 'delete-cells',
+              label: 'Delete Cells...',
+              icon: Grid3X3,
+              onClick: () => setShowDeleteCellsDialog(true),
+            },
             { id: 'delete-rows', label: 'Delete Sheet Rows', icon: Rows, onClick: handleDeleteRow },
-            { id: 'delete-cols', label: 'Delete Sheet Columns', icon: Columns, onClick: handleDeleteColumn },
+            {
+              id: 'delete-cols',
+              label: 'Delete Sheet Columns',
+              icon: Columns,
+              onClick: handleDeleteColumn,
+            },
             { id: 'delete-sheet', label: 'Delete Sheet', icon: Sheet, onClick: handleDeleteSheet },
           ]}
         />
@@ -160,9 +193,24 @@ export const CellsGroup: React.FC = () => {
           size="large"
           options={[
             { id: 'row-height', label: 'Row Height...', icon: Rows, onClick: handleRowHeight },
-            { id: 'autofit-row', label: 'AutoFit Row Height', icon: Rows, onClick: handleAutoFitRow },
-            { id: 'col-width', label: 'Column Width...', icon: Columns, onClick: handleColumnWidth },
-            { id: 'autofit-col', label: 'AutoFit Column Width', icon: Columns, onClick: handleAutoFitColumn },
+            {
+              id: 'autofit-row',
+              label: 'AutoFit Row Height',
+              icon: Rows,
+              onClick: handleAutoFitRow,
+            },
+            {
+              id: 'col-width',
+              label: 'Column Width...',
+              icon: Columns,
+              onClick: handleColumnWidth,
+            },
+            {
+              id: 'autofit-col',
+              label: 'AutoFit Column Width',
+              icon: Columns,
+              onClick: handleAutoFitColumn,
+            },
             { id: 'divider1', label: '', onClick: () => {}, divider: true },
             { id: 'hide-rows', label: 'Hide Rows', icon: EyeOff, onClick: handleHideRows },
             { id: 'hide-cols', label: 'Hide Columns', icon: EyeOff, onClick: handleHideColumns },

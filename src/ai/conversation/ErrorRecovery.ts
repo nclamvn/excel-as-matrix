@@ -77,11 +77,7 @@ export class ErrorRecovery {
   /**
    * Create an error from exception
    */
-  createError(
-    type: ErrorType,
-    error: Error | string,
-    stepId?: string
-  ): ConversationError {
+  createError(type: ErrorType, error: Error | string, stepId?: string): ConversationError {
     const strategy = RECOVERY_STRATEGIES[type];
     const message = error instanceof Error ? error.message : error;
 
@@ -134,10 +130,7 @@ export class ErrorRecovery {
   /**
    * Check if recovery is possible
    */
-  canRecover(
-    conversationId: string,
-    error: ConversationError
-  ): boolean {
+  canRecover(conversationId: string, error: ConversationError): boolean {
     if (!error.recoverable) {
       return false;
     }
@@ -185,10 +178,7 @@ export class ErrorRecovery {
   /**
    * Get recovery message for user
    */
-  getRecoveryMessage(
-    _error: ConversationError,
-    action: RecoveryAction
-  ): string {
+  getRecoveryMessage(_error: ConversationError, action: RecoveryAction): string {
     switch (action) {
       case 'retry':
         return 'Let me try that again...';
@@ -232,10 +222,7 @@ export class ErrorRecovery {
    * Determine if error is transient (might succeed on retry)
    */
   isTransient(error: ConversationError): boolean {
-    const transientTypes: ErrorType[] = [
-      'timeout_error',
-      'execution_error',
-    ];
+    const transientTypes: ErrorType[] = ['timeout_error', 'execution_error'];
     return transientTypes.includes(error.type);
   }
 

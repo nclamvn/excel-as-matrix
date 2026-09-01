@@ -15,9 +15,7 @@ export const FormulaBar2026: React.FC<FormulaBar2026Props> = ({ sheetId }) => {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const cellRef = selectedCell
-    ? `${colToLetter(selectedCell.col)}${selectedCell.row + 1}`
-    : '';
+  const cellRef = selectedCell ? `${colToLetter(selectedCell.col)}${selectedCell.row + 1}` : '';
 
   useEffect(() => {
     if (selectedCell && sheetId) {

@@ -51,6 +51,12 @@ export interface CommentFilter {
 }
 
 export const AUTHOR_COLORS = [
-  '#4285F4', '#EA4335', '#FBBC04', '#34A853',
-  '#9334E6', '#FF6D01', '#46BDC6', '#7BAAF7',
+  '#4285F4',
+  '#EA4335',
+  '#FBBC04',
+  '#34A853',
+  '#9334E6',
+  '#FF6D01',
+  '#46BDC6',
+  '#7BAAF7',
 ];

@@ -1,0 +1,99 @@
+generated_by: adapter_csv.py
+source: product_claims.csv
+facts:
+- id: CLAIM.PRODUCTION_READY
+  key: Project is production ready
+  unit: ''
+  status: FLAG
+  evidence: P0 stabilization and trusted single-range AI write gates pass but configured
+    AI realtime and backend security/persistence production paths remain unverified;
+    reviewed 2026-09-01
+  source:
+    file: source_canonical/product_claims.csv
+    row: 2
+  claim: Production Ready
+  verified_value: null
+  provenance_level: flagged
+- id: CLAIM.BUILD_PASSING
+  key: Frontend and server builds pass
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: 'local commands: npm run build and npm run build:server; both exit 0;
+    2026-09-01'
+  source:
+    file: source_canonical/product_claims.csv
+    row: 3
+  provenance_level: verified_primary
+- id: CLAIM.E2E.PASSING
+  key: E2E tests passing
+  unit: ''
+  status: FLAG
+  evidence: old static README badge removed; verified evidence is 5 critical Chromium
+    and 16 legacy regression scenarios not a blanket 22-test production claim; reviewed
+    2026-09-01
+  source:
+    file: source_canonical/product_claims.csv
+    row: 4
+  claim: 22 passing
+  verified_value: null
+  provenance_level: flagged
+- id: CLAIM.REALTIME
+  key: Real-time collaboration works
+  unit: ''
+  status: CLAIM
+  evidence: README.md feature list; code exists but production backend/Supabase behavior
+    not independently verified; 2026-08-27
+  source:
+    file: source_canonical/product_claims.csv
+    row: 5
+  claim: Multi-cursor presence avatars and cell locking
+  verified_value: null
+  provenance_level: claim
+- id: CLAIM.AI_COPILOT
+  key: AI Copilot works
+  unit: ''
+  status: CLAIM
+  evidence: README.md feature list; runtime code exists but real configured model
+    path not integration-tested in this baseline; 2026-08-27
+  source:
+    file: source_canonical/product_claims.csv
+    row: 6
+  claim: Natural language formulas and data insights
+  verified_value: null
+  provenance_level: claim
+- id: CLAIM.MOBILE
+  key: Mobile responsive works
+  unit: ''
+  status: CLAIM
+  evidence: README.md feature list; components exist but no current mobile E2E evidence;
+    2026-08-27
+  source:
+    file: source_canonical/product_claims.csv
+    row: 7
+  claim: Touch-friendly with bottom toolbar
+  verified_value: null
+  provenance_level: claim
+- id: CLAIM.OFFLINE
+  key: Offline single-user mode works
+  unit: ''
+  status: CLAIM
+  evidence: README.md configuration section; PWA and IndexedDB code exist but offline
+    journey not independently E2E-tested; 2026-08-27
+  source:
+    file: source_canonical/product_claims.csv
+    row: 8
+  claim: All features except real-time sync
+  verified_value: null
+  provenance_level: claim
+- id: CLAIM.AI.TRUSTED_WRITE
+  key: Single-range AI write approval and rollback works
+  value: PASS
+  unit: ''
+  status: VERIFIED
+  evidence: focused unit integration and critical Chromium journey prove exact preview
+    approval captured-sheet mutation durable action audit and one-time rollback; 2026-09-01
+  source:
+    file: source_canonical/product_claims.csv
+    row: 9
+  provenance_level: verified_primary

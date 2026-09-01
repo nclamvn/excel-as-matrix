@@ -19,10 +19,7 @@ interface ProactiveSettingsProps {
 // Proactive Settings Component
 // -----------------------------------------------------------------------------
 
-export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({ isOpen, onClose }) => {
   const [config, setConfig] = useState<ScanConfig>(proactiveEngine.getConfig());
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -35,7 +32,7 @@ export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({
   }, [isOpen]);
 
   const handleChange = <K extends keyof ScanConfig>(key: K, value: ScanConfig[K]) => {
-    setConfig(prev => ({ ...prev, [key]: value }));
+    setConfig((prev) => ({ ...prev, [key]: value }));
     setHasChanges(true);
   };
 
@@ -61,7 +58,8 @@ export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({
             <SettingsIcon />
             Proactive AI Settings
           </h3>
-          <button type="button"
+          <button
+            type="button"
             className="proactive-settings__close"
             onClick={onClose}
             title="Close"
@@ -191,20 +189,23 @@ export const ProactiveSettings: React.FC<ProactiveSettingsProps> = ({
         </div>
 
         <div className="proactive-settings__footer">
-          <button type="button"
+          <button
+            type="button"
             className="proactive-settings__button proactive-settings__button--secondary"
             onClick={handleReset}
           >
             Reset to Default
           </button>
           <div className="proactive-settings__footer-right">
-            <button type="button"
+            <button
+              type="button"
               className="proactive-settings__button proactive-settings__button--secondary"
               onClick={onClose}
             >
               Cancel
             </button>
-            <button type="button"
+            <button
+              type="button"
               className="proactive-settings__button proactive-settings__button--primary"
               onClick={handleSave}
               disabled={!hasChanges}
@@ -261,7 +262,8 @@ const ToggleSetting: React.FC<ToggleSettingProps> = ({
         <span className="setting-row__description">{description}</span>
       </div>
     </div>
-    <button type="button"
+    <button
+      type="button"
       className={`toggle-switch ${value ? 'toggle-switch--on' : ''}`}
       onClick={() => onChange(!value)}
       role="switch"

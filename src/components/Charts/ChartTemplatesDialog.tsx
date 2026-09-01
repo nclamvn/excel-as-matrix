@@ -104,7 +104,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       result = result.filter(
-        t =>
+        (t) =>
           t.name.toLowerCase().includes(lowerQuery) ||
           t.description.toLowerCase().includes(lowerQuery)
       );
@@ -163,11 +163,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
         </div>
         <div className="preview-color-bar">
           {template.colorScheme.slice(0, 5).map((color, i) => (
-            <div
-              key={i}
-              className="color-sample"
-              style={{ backgroundColor: color }}
-            />
+            <div key={i} className="color-sample" style={{ backgroundColor: color }} />
           ))}
         </div>
       </div>
@@ -178,7 +174,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
 
   return (
     <div className="chart-templates-overlay" onClick={onClose}>
-      <div className="chart-templates-dialog" onClick={e => e.stopPropagation()}>
+      <div className="chart-templates-dialog" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="templates-header">
           <h2>Chart Templates</h2>
@@ -192,28 +188,32 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
           <div className="templates-sidebar">
             {/* Tabs */}
             <div className="sidebar-tabs">
-              <button type="button"
+              <button
+                type="button"
                 className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
                 onClick={() => setActiveTab('all')}
               >
                 <Grid3X3 size={14} />
                 <span>All Templates</span>
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className={`tab-btn ${activeTab === 'favorites' ? 'active' : ''}`}
                 onClick={() => setActiveTab('favorites')}
               >
                 <Star size={14} />
                 <span>Favorites</span>
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className={`tab-btn ${activeTab === 'recent' ? 'active' : ''}`}
                 onClick={() => setActiveTab('recent')}
               >
                 <Clock size={14} />
                 <span>Recent</span>
               </button>
-              <button type="button"
+              <button
+                type="button"
                 className={`tab-btn ${activeTab === 'custom' ? 'active' : ''}`}
                 onClick={() => setActiveTab('custom')}
               >
@@ -226,14 +226,16 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
             {activeTab === 'all' && (
               <div className="category-list">
                 <h4>Categories</h4>
-                <button type="button"
+                <button
+                  type="button"
                   className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
                   onClick={() => setSelectedCategory('all')}
                 >
                   All Categories
                 </button>
-                {(Object.keys(CATEGORY_CONFIG) as ChartTemplateCategory[]).map(category => (
-                  <button type="button"
+                {(Object.keys(CATEGORY_CONFIG) as ChartTemplateCategory[]).map((category) => (
+                  <button
+                    type="button"
                     key={category}
                     className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
                     onClick={() => setSelectedCategory(category)}
@@ -255,7 +257,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                 type="text"
                 placeholder="Search templates..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
@@ -266,7 +268,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                   <p>No templates found</p>
                 </div>
               ) : (
-                templates.map(template => (
+                templates.map((template) => (
                   <div
                     key={template.id}
                     className={`template-card ${selectedTemplate?.id === template.id ? 'selected' : ''}`}
@@ -278,9 +280,10 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                       <p>{template.description}</p>
                     </div>
                     <div className="template-actions">
-                      <button type="button"
+                      <button
+                        type="button"
                         className={`action-btn ${isFavorite(template.id) ? 'favorited' : ''}`}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           toggleFavorite(template.id);
                         }}
@@ -288,9 +291,10 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                       >
                         <Star size={14} fill={isFavorite(template.id) ? 'currentColor' : 'none'} />
                       </button>
-                      <button type="button"
+                      <button
+                        type="button"
                         className="action-btn"
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           handleDuplicate(template);
                         }}
@@ -299,9 +303,10 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
                         <Copy size={14} />
                       </button>
                       {!template.isBuiltIn && (
-                        <button type="button"
+                        <button
+                          type="button"
                           className="action-btn danger"
-                          onClick={e => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             handleDelete(template);
                           }}
@@ -322,9 +327,7 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
             {selectedTemplate ? (
               <>
                 <h3>Preview</h3>
-                <div className="preview-large">
-                  {renderTemplatePreview(selectedTemplate)}
-                </div>
+                <div className="preview-large">{renderTemplatePreview(selectedTemplate)}</div>
                 <div className="preview-details">
                   <h4>{selectedTemplate.name}</h4>
                   <p>{selectedTemplate.description}</p>
@@ -340,7 +343,8 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
 
                 {/* Color Scheme Selector */}
                 <div className="color-scheme-section">
-                  <button type="button"
+                  <button
+                    type="button"
                     className="color-scheme-toggle"
                     onClick={() => setShowColorPicker(!showColorPicker)}
                   >
@@ -350,8 +354,9 @@ export const ChartTemplatesDialog: React.FC<ChartTemplatesDialogProps> = ({
 
                   {showColorPicker && (
                     <div className="color-schemes-grid">
-                      {colorSchemes.map(scheme => (
-                        <button type="button"
+                      {colorSchemes.map((scheme) => (
+                        <button
+                          type="button"
                           key={scheme.id}
                           className={`color-scheme-option ${selectedColorScheme?.id === scheme.id ? 'selected' : ''}`}
                           onClick={() => setSelectedColorScheme(scheme)}

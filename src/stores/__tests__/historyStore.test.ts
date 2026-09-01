@@ -105,7 +105,7 @@ describe('historyStore', () => {
 
       const state = useHistoryStore.getState();
       expect(state.entries.length).toBe(3);
-      expect(state.entries.map(e => e.eventId)).toEqual(['1', '2', '3']);
+      expect(state.entries.map((e) => e.eventId)).toEqual(['1', '2', '3']);
     });
 
     it('should clear redo stack when adding after undo', () => {
@@ -124,7 +124,7 @@ describe('historyStore', () => {
 
       const state = useHistoryStore.getState();
       expect(state.entries.length).toBe(2);
-      expect(state.entries.map(e => e.eventId)).toEqual(['1', '4']);
+      expect(state.entries.map((e) => e.eventId)).toEqual(['1', '4']);
     });
 
     it('should handle canUndo false', () => {
@@ -478,10 +478,10 @@ describe('historyStore', () => {
       const { addEntry } = useHistoryStore.getState();
 
       const ids = ['a', 'b', 'c', 'd', 'e'];
-      ids.forEach(id => addEntry({ eventId: id, description: id, canUndo: true }));
+      ids.forEach((id) => addEntry({ eventId: id, description: id, canUndo: true }));
 
       const state = useHistoryStore.getState();
-      expect(state.entries.map(e => e.eventId)).toEqual(ids);
+      expect(state.entries.map((e) => e.eventId)).toEqual(ids);
     });
 
     it('should handle add after full undo', () => {

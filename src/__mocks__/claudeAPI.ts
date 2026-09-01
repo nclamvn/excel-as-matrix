@@ -147,7 +147,12 @@ export const mockToolExecutor = {
   execute: vi.fn().mockImplementation(async (toolCall: MockToolCall) => {
     switch (toolCall.tool) {
       case 'read_range':
-        return { values: [[1, 2], [3, 4]] };
+        return {
+          values: [
+            [1, 2],
+            [3, 4],
+          ],
+        };
       case 'write_range':
         return { success: true, cellsWritten: 4 };
       case 'insert_formula':

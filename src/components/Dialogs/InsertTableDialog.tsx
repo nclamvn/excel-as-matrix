@@ -31,7 +31,9 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
     if (!selectionRange) return 'A1:D10';
     const start = `${colToLetter(selectionRange.start.col)}${selectionRange.start.row + 1}`;
     const end = `${colToLetter(selectionRange.end.col)}${selectionRange.end.row + 1}`;
-    return start === end ? `${start}:${colToLetter(selectionRange.start.col + 3)}${selectionRange.start.row + 10}` : `${start}:${end}`;
+    return start === end
+      ? `${start}:${colToLetter(selectionRange.start.col + 3)}${selectionRange.start.row + 10}`
+      : `${start}:${end}`;
   };
 
   const handleCreate = () => {
@@ -111,7 +113,7 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
       applyFormatToRange(
         {
           start: { row: selectionRange.start.row, col: selectionRange.start.col },
-          end: { row: selectionRange.start.row, col: selectionRange.end.col }
+          end: { row: selectionRange.start.row, col: selectionRange.end.col },
         },
         {
           bold: true,
@@ -128,20 +130,23 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
         applyFormatToRange(
           {
             start: { row, col: selectionRange.start.col },
-            end: { row, col: selectionRange.end.col }
+            end: { row, col: selectionRange.end.col },
           },
           { backgroundColor: style.alternateRowColor }
         );
       }
     }
 
-    showToast(`Table "${tableName}" created with ${columns.length} columns and ${dataRows} data rows`, 'success');
+    showToast(
+      `Table "${tableName}" created with ${columns.length} columns and ${dataRows} data rows`,
+      'success'
+    );
     onClose();
   };
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 380 }}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()} style={{ width: 380 }}>
         <div className="dialog-header">
           <h2>Create Table</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -153,12 +158,7 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
           {/* Data Range */}
           <div className="dialog-field">
             <label>Data Range</label>
-            <input
-              type="text"
-              value={getRangeString()}
-              readOnly
-              className="dialog-input"
-            />
+            <input type="text" value={getRangeString()} readOnly className="dialog-input" />
           </div>
 
           {/* Table Name */}
@@ -167,7 +167,7 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
             <input
               type="text"
               value={tableName}
-              onChange={e => setTableName(e.target.value)}
+              onChange={(e) => setTableName(e.target.value)}
               placeholder="Enter table name"
               className="dialog-input"
             />
@@ -178,7 +178,7 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({ onClose })
             <input
               type="checkbox"
               checked={hasHeaders}
-              onChange={e => setHasHeaders(e.target.checked)}
+              onChange={(e) => setHasHeaders(e.target.checked)}
             />
             My table has headers
           </label>

@@ -190,9 +190,7 @@ export const usePageLayoutStore = create<PageLayoutStore>()(
         const newBreak: PageBreak = { type, position, sheetId: id };
         set((state) => {
           const current = state.sheetSettings[id] || DEFAULT_SETTINGS;
-          const exists = current.pageBreaks.some(
-            (b) => b.type === type && b.position === position
-          );
+          const exists = current.pageBreaks.some((b) => b.type === type && b.position === position);
           if (exists) return state;
 
           return {

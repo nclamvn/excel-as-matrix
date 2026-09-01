@@ -193,7 +193,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Footer */
@@ -524,10 +526,22 @@
   position: relative;
 }
 
-.issue-alert--critical { background: #fef2f2; border-color: #fecaca; }
-.issue-alert--high { background: #fff7ed; border-color: #fed7aa; }
-.issue-alert--medium { background: #fefce8; border-color: #fef08a; }
-.issue-alert--low { background: #f0fdf4; border-color: #bbf7d0; }
+.issue-alert--critical {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.issue-alert--high {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+.issue-alert--medium {
+  background: #fefce8;
+  border-color: #fef08a;
+}
+.issue-alert--low {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
 
 .issue-alert__icon {
   flex-shrink: 0;
@@ -738,9 +752,15 @@
   font-weight: 600;
 }
 
-.trend-indicator--up { color: #22c55e; }
-.trend-indicator--down { color: #ef4444; }
-.trend-indicator--stable { color: #6b7280; }
+.trend-indicator--up {
+  color: #22c55e;
+}
+.trend-indicator--down {
+  color: #ef4444;
+}
+.trend-indicator--stable {
+  color: #6b7280;
+}
 
 .insight-card__trend-details {
   display: flex;
@@ -795,8 +815,12 @@
   transition: all 0.3s ease;
 }
 
-.correlation-bar__fill--positive { background: #22c55e; }
-.correlation-bar__fill--negative { background: #ef4444; }
+.correlation-bar__fill--positive {
+  background: #22c55e;
+}
+.correlation-bar__fill--negative {
+  background: #ef4444;
+}
 
 .correlation-bar__label {
   display: flex;
@@ -1363,8 +1387,13 @@
 }
 
 @keyframes pulse-badge {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .suggestion-badge:hover {
@@ -1410,10 +1439,18 @@
   color: white;
 }
 
-.multi-badge__item--issue { background: var(--proactive-issue); }
-.multi-badge__item--insight { background: var(--proactive-insight); }
-.multi-badge__item--optimization { background: var(--proactive-optimization); }
-.multi-badge__item--pattern { background: var(--proactive-pattern); }
+.multi-badge__item--issue {
+  background: var(--proactive-issue);
+}
+.multi-badge__item--insight {
+  background: var(--proactive-insight);
+}
+.multi-badge__item--optimization {
+  background: var(--proactive-optimization);
+}
+.multi-badge__item--pattern {
+  background: var(--proactive-pattern);
+}
 
 .inline-badge {
   display: inline-flex;
@@ -1432,17 +1469,31 @@
   border-radius: 50%;
 }
 
-.dot-indicator--small { width: 6px; height: 6px; }
-.dot-indicator--medium { width: 8px; height: 8px; }
-.dot-indicator--large { width: 10px; height: 10px; }
+.dot-indicator--small {
+  width: 6px;
+  height: 6px;
+}
+.dot-indicator--medium {
+  width: 8px;
+  height: 8px;
+}
+.dot-indicator--large {
+  width: 10px;
+  height: 10px;
+}
 
 .dot-indicator--pulse {
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* -----------------------------------------------------------------------------
@@ -1688,7 +1739,7 @@
    Dark Mode Support
    ----------------------------------------------------------------------------- */
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --proactive-bg: var(--surface-1, #1e1e1e);
   --proactive-bg-secondary: var(--surface-2, #2a2a2a);
   --proactive-border: var(--surface-3, #404040);
@@ -1696,18 +1747,18 @@
   --proactive-text-secondary: var(--text-2, #a3a3a3);
 }
 
-[data-theme="dark"] .proactive-panel {
+[data-theme='dark'] .proactive-panel {
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
 }
 
-[data-theme="dark"] .toggle-switch {
+[data-theme='dark'] .toggle-switch {
   background: var(--surface-3, #404040);
 }
 
-[data-theme="dark"] .toggle-switch__thumb {
+[data-theme='dark'] .toggle-switch__thumb {
   background: var(--text-1, #e5e5e5);
 }
 
-[data-theme="dark"] .proactive-settings__button--primary:hover:not(:disabled) {
+[data-theme='dark'] .proactive-settings__button--primary:hover:not(:disabled) {
   background: #3b82f6;
 }

@@ -3,8 +3,16 @@ import { RibbonGroup } from '../RibbonGroup';
 import { RibbonDropdown } from '../RibbonDropdown';
 import { RibbonButton } from '../RibbonButton';
 import {
-  Calculator, PaintBucket, ArrowDownAZ, ArrowUpZA,
-  Filter, Search, Replace, Eraser, Navigation, Target
+  Calculator,
+  PaintBucket,
+  ArrowDownAZ,
+  ArrowUpZA,
+  Filter,
+  Search,
+  Replace,
+  Eraser,
+  Navigation,
+  Target,
 } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
@@ -14,7 +22,19 @@ import { GoToSpecialDialog } from '../../Dialogs/GoToSpecialDialog';
 import { CustomSortDialog } from '../../Dialogs/CustomSortDialog';
 
 export const EditingGroup: React.FC = () => {
-  const { setCellValue, activeSheetId, selectedCell, selectionRange, sort, toggleFilter, clearFormat, fillDown, fillRight, fillUp, fillLeft } = useWorkbookStore();
+  const {
+    setCellValue,
+    activeSheetId,
+    selectedCell,
+    selectionRange,
+    sort,
+    toggleFilter,
+    clearFormat,
+    fillDown,
+    fillRight,
+    fillUp,
+    fillLeft,
+  } = useWorkbookStore();
   const { showToast, openDialog } = useUIStore();
   const [showFillSeriesDialog, setShowFillSeriesDialog] = useState(false);
   const [showGoToDialog, setShowGoToDialog] = useState(false);
@@ -146,34 +166,69 @@ export const EditingGroup: React.FC = () => {
           options={[
             { id: 'sort-az', label: 'Sort A to Z', icon: ArrowDownAZ, onClick: handleSortAZ },
             { id: 'sort-za', label: 'Sort Z to A', icon: ArrowUpZA, onClick: handleSortZA },
-            { id: 'custom-sort', label: 'Custom Sort...', onClick: () => setShowCustomSortDialog(true) },
+            {
+              id: 'custom-sort',
+              label: 'Custom Sort...',
+              onClick: () => setShowCustomSortDialog(true),
+            },
             { id: 'divider', label: '', onClick: () => {}, divider: true },
-            { id: 'filter', label: 'Filter', icon: Filter, onClick: () => { toggleFilter(); showToast('Filter toggled', 'info'); } },
-            { id: 'clear-filter', label: 'Clear', onClick: () => { toggleFilter(); showToast('Filter cleared', 'info'); } },
+            {
+              id: 'filter',
+              label: 'Filter',
+              icon: Filter,
+              onClick: () => {
+                toggleFilter();
+                showToast('Filter toggled', 'info');
+              },
+            },
+            {
+              id: 'clear-filter',
+              label: 'Clear',
+              onClick: () => {
+                toggleFilter();
+                showToast('Filter cleared', 'info');
+              },
+            },
           ]}
         />
         <RibbonDropdown
           icon={Search}
           label="Find & Select"
           options={[
-            { id: 'find', label: 'Find... (Ctrl+F)', icon: Search, onClick: () => openDialog('findReplace') },
-            { id: 'replace', label: 'Replace... (Ctrl+H)', icon: Replace, onClick: () => openDialog('findReplace') },
+            {
+              id: 'find',
+              label: 'Find... (Ctrl+F)',
+              icon: Search,
+              onClick: () => openDialog('findReplace'),
+            },
+            {
+              id: 'replace',
+              label: 'Replace... (Ctrl+H)',
+              icon: Replace,
+              onClick: () => openDialog('findReplace'),
+            },
             { id: 'divider', label: '', onClick: () => {}, divider: true },
-            { id: 'goto', label: 'Go To... (Ctrl+G)', icon: Navigation, onClick: () => setShowGoToDialog(true) },
-            { id: 'goto-special', label: 'Go To Special...', icon: Target, onClick: () => setShowGoToSpecialDialog(true) },
+            {
+              id: 'goto',
+              label: 'Go To... (Ctrl+G)',
+              icon: Navigation,
+              onClick: () => setShowGoToDialog(true),
+            },
+            {
+              id: 'goto-special',
+              label: 'Go To Special...',
+              icon: Target,
+              onClick: () => setShowGoToSpecialDialog(true),
+            },
           ]}
         />
       </div>
 
       {/* Fill Series Dialog */}
-      {showFillSeriesDialog && (
-        <FillSeriesDialog onClose={() => setShowFillSeriesDialog(false)} />
-      )}
+      {showFillSeriesDialog && <FillSeriesDialog onClose={() => setShowFillSeriesDialog(false)} />}
 
       {/* Go To Dialog */}
-      {showGoToDialog && (
-        <GoToDialog onClose={() => setShowGoToDialog(false)} />
-      )}
+      {showGoToDialog && <GoToDialog onClose={() => setShowGoToDialog(false)} />}
 
       {/* Go To Special Dialog */}
       {showGoToSpecialDialog && (
@@ -181,9 +236,7 @@ export const EditingGroup: React.FC = () => {
       )}
 
       {/* Custom Sort Dialog */}
-      {showCustomSortDialog && (
-        <CustomSortDialog onClose={() => setShowCustomSortDialog(false)} />
-      )}
+      {showCustomSortDialog && <CustomSortDialog onClose={() => setShowCustomSortDialog(false)} />}
     </RibbonGroup>
   );
 };

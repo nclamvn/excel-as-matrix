@@ -17,7 +17,7 @@ import { getShapeById } from '../data/shapeDefinitions';
 
 interface ShapesStore {
   // State
-  shapes: Record<string, ShapeObject[]>;  // sheetId -> shapes
+  shapes: Record<string, ShapeObject[]>; // sheetId -> shapes
   selection: ShapeSelection;
   recentShapeIds: string[];
   clipboard: ShapeObject | null;
@@ -82,9 +82,7 @@ export const useShapesStore = create<ShapesStore>()(
 
         const id = nanoid(8);
         const shapes = get().shapes[sheetId] || [];
-        const maxZ = shapes.length > 0
-          ? Math.max(...shapes.map(s => s.zIndex))
-          : 0;
+        const maxZ = shapes.length > 0 ? Math.max(...shapes.map((s) => s.zIndex)) : 0;
 
         const newShape: ShapeObject = {
           id,
@@ -105,9 +103,12 @@ export const useShapesStore = create<ShapesStore>()(
         };
 
         // Update recent shapes
-        const recentIds = [shapeId, ...get().recentShapeIds.filter(rid => rid !== shapeId)].slice(0, 8);
+        const recentIds = [shapeId, ...get().recentShapeIds.filter((rid) => rid !== shapeId)].slice(
+          0,
+          8
+        );
 
-        set(state => ({
+        set((state) => ({
           shapes: {
             ...state.shapes,
             [sheetId]: [...(state.shapes[sheetId] || []), newShape],
@@ -120,27 +121,26 @@ export const useShapesStore = create<ShapesStore>()(
       },
 
       updateShape: (sheetId, id, updates) => {
-        set(state => ({
+        set((state) => ({
           shapes: {
             ...state.shapes,
-            [sheetId]: (state.shapes[sheetId] || []).map(shape =>
-              shape.id === id
-                ? { ...shape, ...updates, updatedAt: Date.now() }
-                : shape
+            [sheetId]: (state.shapes[sheetId] || []).map((shape) =>
+              shape.id === id ? { ...shape, ...updates, updatedAt: Date.now() } : shape
             ),
           },
         }));
       },
 
       deleteShape: (sheetId, id) => {
-        set(state => ({
+        set((state) => ({
           shapes: {
             ...state.shapes,
-            [sheetId]: (state.shapes[sheetId] || []).filter(s => s.id !== id),
+            [sheetId]: (state.shapes[sheetId] || []).filter((s) => s.id !== id),
           },
-          selection: state.selection.shapeId === id
-            ? { ...state.selection, shapeId: null }
-            : state.selection,
+          selection:
+            state.selection.shapeId === id
+              ? { ...state.selection, shapeId: null }
+              : state.selection,
         }));
       },
 
@@ -150,7 +150,7 @@ export const useShapesStore = create<ShapesStore>()(
 
         const newId = nanoid(8);
         const shapes = get().shapes[sheetId] || [];
-        const maxZ = Math.max(...shapes.map(s => s.zIndex), 0);
+        const maxZ = Math.max(...shapes.map((s) => s.zIndex), 0);
 
         const newShape: ShapeObject = {
           ...shape,
@@ -162,7 +162,7 @@ export const useShapesStore = create<ShapesStore>()(
           updatedAt: Date.now(),
         };
 
-        set(state => ({
+        set((state) => ({
           shapes: {
             ...state.shapes,
             [sheetId]: [...(state.shapes[sheetId] || []), newShape],
@@ -178,13 +178,13 @@ export const useShapesStore = create<ShapesStore>()(
       // ─────────────────────────────────────────────────────────
 
       selectShape: (id) => {
-        set(state => ({
+        set((state) => ({
           selection: { ...state.selection, shapeId: id },
         }));
       },
 
       clearSelection: () => {
-        set(state => ({
+        set((state) => ({
           selection: {
             ...state.selection,
             shapeId: null,
@@ -197,7 +197,7 @@ export const useShapesStore = create<ShapesStore>()(
       },
 
       setSelectionState: (updates) => {
-        set(state => ({
+        set((state) => ({
           selection: { ...state.selection, ...updates },
         }));
       },
@@ -249,13 +249,13 @@ export const useShapesStore = create<ShapesStore>()(
 
       bringToFront: (sheetId, id) => {
         const shapes = get().shapes[sheetId] || [];
-        const maxZ = Math.max(...shapes.map(s => s.zIndex), 0);
+        const maxZ = Math.max(...shapes.map((s) => s.zIndex), 0);
         get().updateShape(sheetId, id, { zIndex: maxZ + 1 });
       },
 
       sendToBack: (sheetId, id) => {
         const shapes = get().shapes[sheetId] || [];
-        const minZ = Math.min(...shapes.map(s => s.zIndex), 0);
+        const minZ = Math.min(...shapes.map((s) => s.zIndex), 0);
         get().updateShape(sheetId, id, { zIndex: minZ - 1 });
       },
 
@@ -290,7 +290,7 @@ export const useShapesStore = create<ShapesStore>()(
 
         const id = nanoid(8);
         const shapes = get().shapes[sheetId] || [];
-        const maxZ = Math.max(...shapes.map(s => s.zIndex), 0);
+        const maxZ = Math.max(...shapes.map((s) => s.zIndex), 0);
 
         const newShape: ShapeObject = {
           ...clipboard,
@@ -303,7 +303,7 @@ export const useShapesStore = create<ShapesStore>()(
           updatedAt: Date.now(),
         };
 
-        set(state => ({
+        set((state) => ({
           shapes: {
             ...state.shapes,
             [sheetId]: [...(state.shapes[sheetId] || []), newShape],
@@ -320,12 +320,12 @@ export const useShapesStore = create<ShapesStore>()(
 
       getShapesForSheet: (sheetId) => {
         return (get().shapes[sheetId] || [])
-          .filter(s => !s.hidden)
+          .filter((s) => !s.hidden)
           .sort((a, b) => a.zIndex - b.zIndex);
       },
 
       getShapeById: (sheetId, id) => {
-        return (get().shapes[sheetId] || []).find(s => s.id === id);
+        return (get().shapes[sheetId] || []).find((s) => s.id === id);
       },
 
       getSelectedShape: (sheetId) => {

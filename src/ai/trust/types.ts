@@ -10,11 +10,11 @@
  * Confidence factors with individual scores (0-1)
  */
 export interface ConfidenceBreakdown {
-  dataQuality: number;        // How reliable is the source data
-  intentClarity: number;      // How clear is the user's intent
-  taskComplexity: number;     // Inverse of complexity (simple = high)
+  dataQuality: number; // How reliable is the source data
+  intentClarity: number; // How clear is the user's intent
+  taskComplexity: number; // Inverse of complexity (simple = high)
   historicalAccuracy: number; // Past performance on similar tasks
-  groundingStrength: number;  // How well grounded in spreadsheet context
+  groundingStrength: number; // How well grounded in spreadsheet context
 }
 
 /**
@@ -37,10 +37,10 @@ export type ConfidenceLevel = 'very_high' | 'high' | 'medium' | 'low' | 'very_lo
  * Full confidence score with breakdown
  */
 export interface ConfidenceScore {
-  overall: number;            // 0-1 weighted average
-  level: ConfidenceLevel;     // Categorical level
+  overall: number; // 0-1 weighted average
+  level: ConfidenceLevel; // Categorical level
   breakdown: ConfidenceBreakdown;
-  explanation: string;        // Human-readable explanation
+  explanation: string; // Human-readable explanation
   assessedAt: Date;
 }
 
@@ -52,13 +52,13 @@ export interface ConfidenceScore {
  * Types of uncertainty the AI can have
  */
 export type UncertaintyType =
-  | 'ambiguous_intent'      // User request is unclear
-  | 'incomplete_data'       // Missing information in spreadsheet
-  | 'conflicting_data'      // Data inconsistencies detected
-  | 'complex_formula'       // Formula too complex to fully validate
-  | 'external_dependency'   // Depends on external data
-  | 'edge_case'            // Unusual situation
-  | 'limited_context'      // Not enough context available
+  | 'ambiguous_intent' // User request is unclear
+  | 'incomplete_data' // Missing information in spreadsheet
+  | 'conflicting_data' // Data inconsistencies detected
+  | 'complex_formula' // Formula too complex to fully validate
+  | 'external_dependency' // Depends on external data
+  | 'edge_case' // Unusual situation
+  | 'limited_context' // Not enough context available
   | 'multiple_interpretations'; // Request could mean different things
 
 /**
@@ -74,8 +74,8 @@ export interface UncertaintyItem {
   type: UncertaintyType;
   severity: UncertaintySeverity;
   description: string;
-  suggestion?: string;        // How to resolve
-  affectedCells?: string[];   // Which cells are affected
+  suggestion?: string; // How to resolve
+  affectedCells?: string[]; // Which cells are affected
   resolvedAt?: Date;
 }
 
@@ -84,7 +84,7 @@ export interface UncertaintyItem {
  */
 export interface UncertaintyInfo {
   items: UncertaintyItem[];
-  hasBlockingUncertainty: boolean;  // Should prevent auto-apply
+  hasBlockingUncertainty: boolean; // Should prevent auto-apply
   totalCount: number;
   criticalCount: number;
   summary: string;
@@ -98,13 +98,13 @@ export interface UncertaintyInfo {
  * Types of sources the AI can reference
  */
 export type SourceType =
-  | 'cell_reference'     // Direct cell value
-  | 'range_reference'    // Range of cells
-  | 'formula_analysis'   // Derived from formula inspection
-  | 'pattern_detection'  // Detected pattern in data
-  | 'user_history'       // Previous user interactions
-  | 'domain_knowledge'   // Built-in knowledge
-  | 'external_data';     // External reference
+  | 'cell_reference' // Direct cell value
+  | 'range_reference' // Range of cells
+  | 'formula_analysis' // Derived from formula inspection
+  | 'pattern_detection' // Detected pattern in data
+  | 'user_history' // Previous user interactions
+  | 'domain_knowledge' // Built-in knowledge
+  | 'external_data'; // External reference
 
 /**
  * Individual source attribution
@@ -112,10 +112,10 @@ export type SourceType =
 export interface SourceAttribution {
   id: string;
   type: SourceType;
-  reference: string;          // Cell ref, range, or description
-  confidence: number;         // How confident in this source (0-1)
-  snippet?: string;           // Preview of the data
-  relevance: string;          // Why this source matters
+  reference: string; // Cell ref, range, or description
+  confidence: number; // How confident in this source (0-1)
+  snippet?: string; // Preview of the data
+  relevance: string; // Why this source matters
 }
 
 /**
@@ -124,7 +124,7 @@ export interface SourceAttribution {
 export interface SourceInfo {
   sources: SourceAttribution[];
   primarySource?: SourceAttribution;
-  groundedInData: boolean;    // Is response grounded in actual data
+  groundedInData: boolean; // Is response grounded in actual data
   citationCount: number;
 }
 
@@ -142,10 +142,10 @@ export type PredictionOutcome = 'correct' | 'incorrect' | 'partial' | 'unknown';
  */
 export interface CalibrationRecord {
   id: string;
-  taskType: string;           // Type of task (formula, formatting, etc.)
+  taskType: string; // Type of task (formula, formatting, etc.)
   predictedConfidence: number; // What AI said confidence was
   actualOutcome: PredictionOutcome;
-  outcomeScore: number;       // 0-1 score of actual outcome
+  outcomeScore: number; // 0-1 score of actual outcome
   timestamp: Date;
   metadata?: Record<string, unknown>;
 }
@@ -154,22 +154,22 @@ export interface CalibrationRecord {
  * Calibration statistics for a confidence bucket
  */
 export interface CalibrationBucket {
-  range: [number, number];    // e.g., [0.8, 0.9]
-  predictedAccuracy: number;  // Average predicted confidence
-  actualAccuracy: number;     // Actual success rate
-  sampleCount: number;        // Number of samples
-  isCalibrated: boolean;      // Is predicted close to actual?
+  range: [number, number]; // e.g., [0.8, 0.9]
+  predictedAccuracy: number; // Average predicted confidence
+  actualAccuracy: number; // Actual success rate
+  sampleCount: number; // Number of samples
+  isCalibrated: boolean; // Is predicted close to actual?
 }
 
 /**
  * Overall calibration metrics
  */
 export interface CalibrationMetrics {
-  overallCalibration: number;  // 0-1, how well calibrated (1 = perfect)
-  brier: number;               // Brier score (lower = better)
+  overallCalibration: number; // 0-1, how well calibrated (1 = perfect)
+  brier: number; // Brier score (lower = better)
   buckets: CalibrationBucket[];
   totalPredictions: number;
-  recentAccuracy: number;      // Last N predictions accuracy
+  recentAccuracy: number; // Last N predictions accuracy
   trend: 'improving' | 'stable' | 'declining';
   lastUpdated: Date;
 }
@@ -182,7 +182,7 @@ export interface CalibrationMetrics {
  * Overall trust score combining multiple factors
  */
 export interface TrustScore {
-  overall: number;            // 0-100
+  overall: number; // 0-100
   confidence: ConfidenceScore;
   uncertainty: UncertaintyInfo;
   sources: SourceInfo;
@@ -210,7 +210,7 @@ export const DEFAULT_CONFIDENCE_WEIGHTS: ConfidenceWeights = {
   dataQuality: 0.25,
   intentClarity: 0.25,
   taskComplexity: 0.15,
-  historicalAccuracy: 0.20,
+  historicalAccuracy: 0.2,
   groundingStrength: 0.15,
 };
 
@@ -231,8 +231,8 @@ export const CONFIDENCE_THRESHOLDS = {
 export interface TrustConfig {
   weights: ConfidenceWeights;
   thresholds: typeof CONFIDENCE_THRESHOLDS;
-  calibrationWindowSize: number;  // How many records to keep
-  autoApplyThreshold: number;     // Minimum confidence for auto-apply
+  calibrationWindowSize: number; // How many records to keep
+  autoApplyThreshold: number; // Minimum confidence for auto-apply
   requireReviewThreshold: number; // Below this, review required
 }
 

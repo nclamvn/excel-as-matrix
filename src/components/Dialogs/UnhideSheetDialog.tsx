@@ -60,7 +60,8 @@ export const UnhideSheetDialog: React.FC<UnhideSheetDialogProps> = ({ onClose })
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="btn btn-primary"
             onClick={handleUnhide}
             disabled={!selectedSheetId}

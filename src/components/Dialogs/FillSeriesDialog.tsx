@@ -44,7 +44,11 @@ export const FillSeriesDialog: React.FC<FillSeriesDialogProps> = ({ onClose }) =
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog fill-series-dialog" onClick={(e) => e.stopPropagation()} style={{ width: 380 }}>
+      <div
+        className="dialog fill-series-dialog"
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: 380 }}
+      >
         <div className="dialog-header">
           <h2>Series</h2>
           <button type="button" className="dialog-close" onClick={onClose}>

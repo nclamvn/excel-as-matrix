@@ -2,12 +2,7 @@
 // DUPLICATE DETECTOR — Detect exact and fuzzy duplicates
 // =============================================================================
 
-import type {
-  CleanerSheetData,
-  DuplicateGroup,
-  DuplicateRow,
-  DuplicateConfig,
-} from './types';
+import type { CleanerSheetData, DuplicateGroup, DuplicateRow, DuplicateConfig } from './types';
 import { DEFAULT_DUPLICATE_CONFIG } from './types';
 
 /**
@@ -60,7 +55,7 @@ export class DuplicateDetector {
       if (rows.length > 1) {
         const duplicateRows: DuplicateRow[] = rows.map((rowIndex, i) => ({
           rowIndex,
-          values: columns.map(col => data.cells[rowIndex]?.[col]?.value),
+          values: columns.map((col) => data.cells[rowIndex]?.[col]?.value),
           isOriginal: i === 0,
         }));
 
@@ -81,15 +76,12 @@ export class DuplicateDetector {
   /**
    * Detect fuzzy duplicates
    */
-  private detectFuzzy(
-    data: CleanerSheetData,
-    exactGroups: DuplicateGroup[]
-  ): DuplicateGroup[] {
+  private detectFuzzy(data: CleanerSheetData, exactGroups: DuplicateGroup[]): DuplicateGroup[] {
     const groups: DuplicateGroup[] = [];
     const columns = this.getColumnsToCheck(data);
 
     // Get rows not already in exact duplicate groups
-    const exactRows = new Set(exactGroups.flatMap(g => g.rows.map(r => r.rowIndex)));
+    const exactRows = new Set(exactGroups.flatMap((g) => g.rows.map((r) => r.rowIndex)));
     const candidateRows: number[] = [];
 
     for (let row = 0; row < data.rowCount; row++) {
@@ -121,8 +113,8 @@ export class DuplicateDetector {
 
       if (similarRows.length > 1) {
         // Check if any row in this group is already in another fuzzy group
-        const alreadyGrouped = similarRows.some(r =>
-          groups.some(g => g.rows.some(dr => dr.rowIndex === r))
+        const alreadyGrouped = similarRows.some((r) =>
+          groups.some((g) => g.rows.some((dr) => dr.rowIndex === r))
         );
 
         if (!alreadyGrouped) {
@@ -130,7 +122,7 @@ export class DuplicateDetector {
 
           const duplicateRows: DuplicateRow[] = similarRows.map((rowIndex, idx) => ({
             rowIndex,
-            values: columns.map(col => data.cells[rowIndex]?.[col]?.value),
+            values: columns.map((col) => data.cells[rowIndex]?.[col]?.value),
             isOriginal: idx === 0,
           }));
 
@@ -153,7 +145,7 @@ export class DuplicateDetector {
    * Hash a row for exact comparison
    */
   private hashRow(data: CleanerSheetData, row: number, columns: number[]): string {
-    const values = columns.map(col => {
+    const values = columns.map((col) => {
       const cell = data.cells[row]?.[col];
       if (!cell || cell.isEmpty) return '';
 
@@ -267,7 +259,9 @@ export class DuplicateDetector {
     const m = str1.length;
     const n = str2.length;
 
-    const dp: number[][] = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    const dp: number[][] = Array(m + 1)
+      .fill(null)
+      .map(() => Array(n + 1).fill(0));
 
     for (let i = 0; i <= m; i++) dp[i][0] = i;
     for (let j = 0; j <= n; j++) dp[0][j] = j;
@@ -277,11 +271,13 @@ export class DuplicateDetector {
         if (str1[i - 1] === str2[j - 1]) {
           dp[i][j] = dp[i - 1][j - 1];
         } else {
-          dp[i][j] = 1 + Math.min(
-            dp[i - 1][j],     // deletion
-            dp[i][j - 1],     // insertion
-            dp[i - 1][j - 1]  // substitution
-          );
+          dp[i][j] =
+            1 +
+            Math.min(
+              dp[i - 1][j], // deletion
+              dp[i][j - 1], // insertion
+              dp[i - 1][j - 1] // substitution
+            );
         }
       }
     }
@@ -302,14 +298,11 @@ export class DuplicateDetector {
   /**
    * Remove duplicates from data (returns rows to delete)
    */
-  removeDuplicates(
-    groups: DuplicateGroup[],
-    keepStrategy: 'first' | 'last' = 'first'
-  ): number[] {
+  removeDuplicates(groups: DuplicateGroup[], keepStrategy: 'first' | 'last' = 'first'): number[] {
     const rowsToDelete: number[] = [];
 
     for (const group of groups) {
-      const rows = group.rows.map(r => r.rowIndex);
+      const rows = group.rows.map((r) => r.rowIndex);
       const keepIndex = keepStrategy === 'first' ? 0 : rows.length - 1;
 
       for (let i = 0; i < rows.length; i++) {

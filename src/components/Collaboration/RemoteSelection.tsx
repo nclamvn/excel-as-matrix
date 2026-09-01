@@ -3,7 +3,10 @@
 // =============================================================================
 
 import React from 'react';
-import type { RemoteSelection as RemoteSelectionType, CollaborationUser } from '../../collaboration/types';
+import type {
+  RemoteSelection as RemoteSelectionType,
+  CollaborationUser,
+} from '../../collaboration/types';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -58,28 +61,24 @@ export const RemoteSelection: React.FC<RemoteSelectionProps> = ({
   return (
     <div
       className="remote-selection"
-      style={{
-        left,
-        top,
-        width,
-        height,
-        '--selection-color': user.color,
-        backgroundColor: `${user.color}20`,
-        borderColor: user.color,
-      } as React.CSSProperties}
+      style={
+        {
+          left,
+          top,
+          width,
+          height,
+          '--selection-color': user.color,
+          backgroundColor: `${user.color}20`,
+          borderColor: user.color,
+        } as React.CSSProperties
+      }
     >
       {/* Selection border */}
-      <div
-        className="remote-selection__border"
-        style={{ borderColor: user.color }}
-      />
+      <div className="remote-selection__border" style={{ borderColor: user.color }} />
 
       {/* User label */}
       {showLabel && (
-        <div
-          className="remote-selection__label"
-          style={{ backgroundColor: user.color }}
-        >
+        <div className="remote-selection__label" style={{ backgroundColor: user.color }}>
           <span className="remote-selection__name">{user.name}</span>
           {cellCount > 1 && (
             <span className="remote-selection__count">
@@ -171,10 +170,7 @@ export const SelectionInfo: React.FC<SelectionInfoProps> = ({ user, range }) => 
 
   return (
     <div className="selection-info" style={{ borderColor: user.color }}>
-      <span
-        className="selection-info__dot"
-        style={{ backgroundColor: user.color }}
-      />
+      <span className="selection-info__dot" style={{ backgroundColor: user.color }} />
       <span className="selection-info__name">{user.name}</span>
       <span className="selection-info__range">{rangeText}</span>
     </div>

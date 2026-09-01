@@ -2,7 +2,7 @@
 // UNIT PARSER — Parse values with units (Blueprint §3.2)
 // =============================================================================
 
-import { findUnit, type Unit } from './UnitSystem';
+import { findUnit, UNITS, type Unit } from './UnitSystem';
 
 // -----------------------------------------------------------------------------
 // Parse Result
@@ -177,9 +177,6 @@ export class UnitParser {
     if (!query) return [];
 
     const matches: Unit[] = [];
-
-    // Import all units
-    const { UNITS } = require('./UnitSystem');
 
     for (const dimension of Object.keys(UNITS)) {
       for (const unit of Object.values(UNITS[dimension]) as Unit[]) {

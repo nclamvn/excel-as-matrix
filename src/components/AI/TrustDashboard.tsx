@@ -51,15 +51,14 @@ export const TrustDashboard: React.FC<TrustDashboardProps> = ({
       {/* Header */}
       <div className="trust-dashboard__header">
         <h2 className="trust-dashboard__title">AI Trust Dashboard</h2>
-        {trustScore && (
-          <TrustScoreBadge score={trustScore.overall} />
-        )}
+        {trustScore && <TrustScoreBadge score={trustScore.overall} />}
       </div>
 
       {/* Tabs */}
       <div className="trust-dashboard__tabs">
         {tabs.map((tab) => (
-          <button type="button"
+          <button
+            type="button"
             key={tab.id}
             className={`trust-dashboard__tab ${activeTab === tab.id ? 'trust-dashboard__tab--active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
@@ -81,12 +80,8 @@ export const TrustDashboard: React.FC<TrustDashboardProps> = ({
         {activeTab === 'uncertainty' && trustScore && (
           <UncertaintyTab uncertainty={trustScore.uncertainty} />
         )}
-        {activeTab === 'sources' && trustScore && (
-          <SourcesTab sources={trustScore.sources} />
-        )}
-        {activeTab === 'calibration' && calibration && (
-          <CalibrationTab calibration={calibration} />
-        )}
+        {activeTab === 'sources' && trustScore && <SourcesTab sources={trustScore.sources} />}
+        {activeTab === 'calibration' && calibration && <CalibrationTab calibration={calibration} />}
       </div>
     </div>
   );
@@ -180,9 +175,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ trustScore, calibration }) =>
         <h4>Summary</h4>
         <p>{trustScore.confidence.explanation}</p>
         {trustScore.uncertainty.totalCount > 0 && (
-          <p className="trust-overview__warning">
-            {trustScore.uncertainty.summary}
-          </p>
+          <p className="trust-overview__warning">{trustScore.uncertainty.summary}</p>
         )}
       </div>
     </div>
@@ -201,13 +194,7 @@ interface MetricCardProps {
   color: string;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({
-  icon,
-  label,
-  value,
-  sublabel,
-  color,
-}) => {
+const MetricCard: React.FC<MetricCardProps> = ({ icon, label, value, sublabel, color }) => {
   return (
     <div className="metric-card">
       <span className="metric-card__icon">{icon}</span>
@@ -228,9 +215,7 @@ interface RecommendationCardProps {
   recommendation: TrustScore['recommendation'];
 }
 
-const RecommendationCard: React.FC<RecommendationCardProps> = ({
-  recommendation,
-}) => {
+const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation }) => {
   const actionInfo = getActionInfo(recommendation.action);
 
   return (
@@ -269,12 +254,7 @@ const ConfidenceTab: React.FC<ConfidenceTabProps> = ({ confidence }) => {
   return (
     <div className="trust-confidence-tab">
       <div className="trust-confidence-tab__meter">
-        <ConfidenceMeter
-          score={confidence}
-          size="lg"
-          showLabel
-          showBreakdown
-        />
+        <ConfidenceMeter score={confidence} size="lg" showLabel showBreakdown />
       </div>
 
       <div className="trust-confidence-tab__details">
@@ -306,15 +286,11 @@ const UncertaintyTab: React.FC<UncertaintyTabProps> = ({ uncertainty }) => {
           {uncertainty.totalCount} uncertaint{uncertainty.totalCount !== 1 ? 'ies' : 'y'}
         </span>
         {uncertainty.hasBlockingUncertainty && (
-          <span className="trust-uncertainty-tab__blocking">
-            Review Required
-          </span>
+          <span className="trust-uncertainty-tab__blocking">Review Required</span>
         )}
       </div>
 
-      <div className="trust-uncertainty-tab__summary">
-        {uncertainty.summary}
-      </div>
+      <div className="trust-uncertainty-tab__summary">{uncertainty.summary}</div>
 
       <UncertaintyList items={uncertainty.items} />
     </div>
@@ -371,9 +347,7 @@ const CalibrationTab: React.FC<CalibrationTabProps> = ({ calibration }) => {
     <div className="trust-calibration-tab">
       <div className="trust-calibration-tab__metrics">
         <div className="trust-calibration-tab__metric">
-          <span className="trust-calibration-tab__metric-label">
-            Overall Calibration
-          </span>
+          <span className="trust-calibration-tab__metric-label">Overall Calibration</span>
           <span
             className="trust-calibration-tab__metric-value"
             style={{ color: getCalibrationColor(calibration.overallCalibration) }}
@@ -382,25 +356,19 @@ const CalibrationTab: React.FC<CalibrationTabProps> = ({ calibration }) => {
           </span>
         </div>
         <div className="trust-calibration-tab__metric">
-          <span className="trust-calibration-tab__metric-label">
-            Brier Score
-          </span>
+          <span className="trust-calibration-tab__metric-label">Brier Score</span>
           <span className="trust-calibration-tab__metric-value">
             {calibration.brier.toFixed(3)}
           </span>
         </div>
         <div className="trust-calibration-tab__metric">
-          <span className="trust-calibration-tab__metric-label">
-            Recent Accuracy
-          </span>
+          <span className="trust-calibration-tab__metric-label">Recent Accuracy</span>
           <span className="trust-calibration-tab__metric-value">
             {Math.round(calibration.recentAccuracy * 100)}%
           </span>
         </div>
         <div className="trust-calibration-tab__metric">
-          <span className="trust-calibration-tab__metric-label">
-            Trend
-          </span>
+          <span className="trust-calibration-tab__metric-label">Trend</span>
           <span className="trust-calibration-tab__metric-value">
             {formatTrend(calibration.trend)}
           </span>
@@ -413,9 +381,7 @@ const CalibrationTab: React.FC<CalibrationTabProps> = ({ calibration }) => {
       </div>
 
       <div className="trust-calibration-tab__stats">
-        <p>
-          Based on {calibration.totalPredictions} predictions
-        </p>
+        <p>Based on {calibration.totalPredictions} predictions</p>
         <p className="trust-calibration-tab__updated">
           Last updated: {calibration.lastUpdated.toLocaleString()}
         </p>

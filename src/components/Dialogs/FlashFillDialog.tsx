@@ -10,7 +10,8 @@ interface FlashFillDialogProps {
 }
 
 export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => {
-  const { activeSheetId, sheets, selectionRange, selectedCell, batchUpdateCells } = useWorkbookStore();
+  const { activeSheetId, sheets, selectionRange, selectedCell, batchUpdateCells } =
+    useWorkbookStore();
   const { showToast } = useUIStore();
 
   const sheet = activeSheetId ? sheets[activeSheetId] : null;
@@ -171,8 +172,8 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
           <div className="flash-fill-intro">
             <Lightbulb className="w-4 h-4" />
             <p>
-              Flash Fill detects patterns from your examples and applies them automatically.
-              Enter a few examples in the target column, then click Preview.
+              Flash Fill detects patterns from your examples and applies them automatically. Enter a
+              few examples in the target column, then click Preview.
             </p>
           </div>
 
@@ -288,7 +289,8 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
             Cancel
           </button>
           {!flashFillResult ? (
-            <button type="button"
+            <button
+              type="button"
               className="btn btn-primary"
               onClick={handlePreview}
               disabled={exampleCount === 0}
@@ -296,7 +298,8 @@ export const FlashFillDialog: React.FC<FlashFillDialogProps> = ({ onClose }) => 
               Preview
             </button>
           ) : (
-            <button type="button"
+            <button
+              type="button"
               className="btn btn-primary"
               onClick={handleApply}
               disabled={!flashFillResult.success}

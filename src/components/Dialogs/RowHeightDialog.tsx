@@ -42,7 +42,7 @@ export const RowHeightDialog: React.FC<RowHeightDialogProps> = ({ onClose }) => 
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 300 }}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()} style={{ width: 300 }}>
         <div className="dialog-header">
           <h2>Row Height</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -52,7 +52,10 @@ export const RowHeightDialog: React.FC<RowHeightDialogProps> = ({ onClose }) => 
 
         <div className="dialog-body">
           <p className="dialog-info">
-            Set height for {affectedRows.length > 1 ? `rows ${affectedRows[0] + 1} to ${affectedRows[affectedRows.length - 1] + 1}` : `row ${(affectedRows[0] ?? 0) + 1}`}
+            Set height for{' '}
+            {affectedRows.length > 1
+              ? `rows ${affectedRows[0] + 1} to ${affectedRows[affectedRows.length - 1] + 1}`
+              : `row ${(affectedRows[0] ?? 0) + 1}`}
           </p>
 
           <div className="dialog-field">
@@ -60,7 +63,7 @@ export const RowHeightDialog: React.FC<RowHeightDialogProps> = ({ onClose }) => 
             <input
               type="number"
               value={height}
-              onChange={e => setHeight(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) => setHeight(Math.max(1, parseInt(e.target.value) || 1))}
               min={1}
               max={500}
               className="dialog-input"
@@ -69,28 +72,16 @@ export const RowHeightDialog: React.FC<RowHeightDialogProps> = ({ onClose }) => 
           </div>
 
           <div className="dialog-preset-buttons">
-            <button type="button"
-              className="dialog-preset-btn"
-              onClick={() => setHeight(15)}
-            >
+            <button type="button" className="dialog-preset-btn" onClick={() => setHeight(15)}>
               Small (15)
             </button>
-            <button type="button"
-              className="dialog-preset-btn"
-              onClick={() => setHeight(20)}
-            >
+            <button type="button" className="dialog-preset-btn" onClick={() => setHeight(20)}>
               Default (20)
             </button>
-            <button type="button"
-              className="dialog-preset-btn"
-              onClick={() => setHeight(30)}
-            >
+            <button type="button" className="dialog-preset-btn" onClick={() => setHeight(30)}>
               Medium (30)
             </button>
-            <button type="button"
-              className="dialog-preset-btn"
-              onClick={() => setHeight(50)}
-            >
+            <button type="button" className="dialog-preset-btn" onClick={() => setHeight(50)}>
               Large (50)
             </button>
           </div>

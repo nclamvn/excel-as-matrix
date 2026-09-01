@@ -162,11 +162,8 @@ class RegionManager {
       if (tz.startsWith('Europe/') || tz.startsWith('Africa/')) return 'eu';
 
       // APAC timezones
-      if (
-        tz.startsWith('Asia/') ||
-        tz.startsWith('Australia/') ||
-        tz.startsWith('Pacific/')
-      ) return 'apac';
+      if (tz.startsWith('Asia/') || tz.startsWith('Australia/') || tz.startsWith('Pacific/'))
+        return 'apac';
 
       // Default to US
       return 'us';
@@ -208,7 +205,9 @@ class RegionManager {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) return JSON.parse(stored);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
     // Default: auto-detect
     return {
@@ -221,15 +220,20 @@ class RegionManager {
   private saveConfig(): void {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.config));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
   private detectRegionStatic(): DataRegion {
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (tz.startsWith('Europe/') || tz.startsWith('Africa/')) return 'eu';
-      if (tz.startsWith('Asia/') || tz.startsWith('Australia/') || tz.startsWith('Pacific/')) return 'apac';
-    } catch { /* ignore */ }
+      if (tz.startsWith('Asia/') || tz.startsWith('Australia/') || tz.startsWith('Pacific/'))
+        return 'apac';
+    } catch {
+      /* ignore */
+    }
     return 'us';
   }
 }

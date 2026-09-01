@@ -24,7 +24,11 @@ export interface ImportedChart {
  * into row/col coordinates (0-based).
  */
 export function parseRangeRef(ref: string): {
-  sheetName?: string; startRow: number; startCol: number; endRow: number; endCol: number;
+  sheetName?: string;
+  startRow: number;
+  startCol: number;
+  endRow: number;
+  endCol: number;
 } | null {
   // Strip sheet name if present
   let sheetName: string | undefined;
@@ -61,7 +65,7 @@ export function parseRangeRef(ref: string): {
  */
 export function populateChartDataFromCells(
   chart: ImportedChart,
-  cells: Record<string, CellData>,
+  cells: Record<string, CellData>
 ): {
   categories: string[];
   series: Array<{ name: string; values: number[] }>;
@@ -78,7 +82,8 @@ export function populateChartDataFromCells(
   // Check if first row is headers
   const firstRowKey = getCellKey(range.startRow, range.startCol + 1);
   const firstRowCell = cells[firstRowKey];
-  const hasHeaders = firstRowCell && typeof firstRowCell.value === 'string' && isNaN(Number(firstRowCell.value));
+  const hasHeaders =
+    firstRowCell && typeof firstRowCell.value === 'string' && isNaN(Number(firstRowCell.value));
 
   const dataStartRow = hasHeaders ? range.startRow + 1 : range.startRow;
 
@@ -169,13 +174,17 @@ function applyTint(hex: string, tint: number): string {
   const ng = Math.min(255, Math.max(0, apply(g)));
   const nb = Math.min(255, Math.max(0, apply(b)));
 
-  return nr.toString(16).padStart(2, '0') +
-         ng.toString(16).padStart(2, '0') +
-         nb.toString(16).padStart(2, '0');
+  return (
+    nr.toString(16).padStart(2, '0') +
+    ng.toString(16).padStart(2, '0') +
+    nb.toString(16).padStart(2, '0')
+  );
 }
 
 // Resolve ExcelJS color object to CSS hex (handles argb, theme+tint, indexed)
-function resolveColor(color: { argb?: string; theme?: number; tint?: number } | undefined): string | undefined {
+function resolveColor(
+  color: { argb?: string; theme?: number; tint?: number } | undefined
+): string | undefined {
   if (!color) return undefined;
 
   // Direct ARGB
@@ -225,7 +234,11 @@ function excelJSCellToFormat(cell: ExcelJS.Cell): CellFormat | undefined {
   // Alignment
   const alignment = cell.alignment;
   if (alignment) {
-    if (alignment.horizontal === 'left' || alignment.horizontal === 'center' || alignment.horizontal === 'right') {
+    if (
+      alignment.horizontal === 'left' ||
+      alignment.horizontal === 'center' ||
+      alignment.horizontal === 'right'
+    ) {
       format.align = alignment.horizontal;
     }
     if (alignment.textRotation && typeof alignment.textRotation === 'number') {
@@ -369,17 +382,27 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
             }
             // Hyperlink: { text, hyperlink }
             else if ('hyperlink' in cellValue) {
-              value = (cellValue as { text?: string; hyperlink?: string }).text || (cellValue as { hyperlink?: string }).hyperlink || '';
-            }
-            else {
-              try { value = String(cellValue); } catch { value = ''; }
+              value =
+                (cellValue as { text?: string; hyperlink?: string }).text ||
+                (cellValue as { hyperlink?: string }).hyperlink ||
+                '';
+            } else {
+              try {
+                value = String(cellValue);
+              } catch {
+                value = '';
+              }
             }
           } else if (typeof cellValue === 'number') {
             value = cellValue;
           } else if (typeof cellValue === 'boolean') {
             value = cellValue;
           } else {
-            try { value = String(cellValue); } catch { value = ''; }
+            try {
+              value = String(cellValue);
+            } catch {
+              value = '';
+            }
           }
         }
 
@@ -457,10 +480,12 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
         const match = key.match(/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/);
         if (match) {
           let startCol = 0;
-          for (let i = 0; i < match[1].length; i++) startCol = startCol * 26 + (match[1].charCodeAt(i) - 64);
+          for (let i = 0; i < match[1].length; i++)
+            startCol = startCol * 26 + (match[1].charCodeAt(i) - 64);
           startCol -= 1;
           let endCol = 0;
-          for (let i = 0; i < match[3].length; i++) endCol = endCol * 26 + (match[3].charCodeAt(i) - 64);
+          for (let i = 0; i < match[3].length; i++)
+            endCol = endCol * 26 + (match[3].charCodeAt(i) - 64);
           endCol -= 1;
           merges.push({
             startRow: parseInt(match[2]) - 1,
@@ -477,8 +502,9 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
     // ExcelJS stores drawings/charts in the worksheet model
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wsModel = (worksheet as any).model || worksheet;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const drawings = wsModel?.drawing?.anchors || wsModel?.drawings || (worksheet as any)._media || [];
+
+    const drawings =
+      wsModel?.drawing?.anchors || wsModel?.drawings || (worksheet as any)._media || [];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const charts2 = wsModel?.charts || (worksheet as any)._charts || [];
 
@@ -506,7 +532,8 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
       if (anchor) {
         const anchorCol = anchor.col ?? anchor.nativeCol ?? 0;
         const anchorRow = anchor.row ?? anchor.nativeRow ?? 0;
-        let w = 500, h = 300;
+        let w = 500,
+          h = 300;
         if (anchorTo) {
           const toCol = anchorTo.col ?? anchorTo.nativeCol ?? anchorCol + 5;
           const toRow = anchorTo.row ?? anchorTo.nativeRow ?? anchorRow + 15;
@@ -547,8 +574,13 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
             const valRange = parseRangeRef(lastVal);
             if (catRange && valRange) {
               const colToLetter = (c: number) => {
-                let r = ''; let n = c + 1;
-                while (n > 0) { n--; r = String.fromCharCode(65 + (n % 26)) + r; n = Math.floor(n / 26); }
+                let r = '';
+                let n = c + 1;
+                while (n > 0) {
+                  n--;
+                  r = String.fromCharCode(65 + (n % 26)) + r;
+                  n = Math.floor(n / 26);
+                }
                 return r;
               };
               const startCol = Math.min(catRange.startCol, valRange.startCol);
@@ -564,7 +596,8 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
       // If still no dataRange, try to infer from surrounding data
       if (!chartInfo.dataRange && Object.keys(cells).length > 0) {
         // Find the data extent of the sheet
-        let maxRow = 0, maxCol = 0;
+        let maxRow = 0,
+          maxCol = 0;
         for (const key of Object.keys(cells)) {
           const [r, c] = key.split(':').map(Number);
           if (r > maxRow) maxRow = r;
@@ -572,8 +605,13 @@ export const importExcelFile = async (file: File): Promise<ImportResult> => {
         }
         if (maxRow > 0 && maxCol > 0) {
           const colToLetter = (c: number) => {
-            let r = ''; let n = c + 1;
-            while (n > 0) { n--; r = String.fromCharCode(65 + (n % 26)) + r; n = Math.floor(n / 26); }
+            let r = '';
+            let n = c + 1;
+            while (n > 0) {
+              n--;
+              r = String.fromCharCode(65 + (n % 26)) + r;
+              n = Math.floor(n / 26);
+            }
             return r;
           };
           chartInfo.dataRange = `A1:${colToLetter(maxCol)}${maxRow + 1}`;
@@ -738,11 +776,13 @@ export const exportToExcel = async (
 
     // Set freeze pane
     if (sheet.freezePane) {
-      ws.views = [{
-        state: 'frozen',
-        xSplit: sheet.freezePane.col,
-        ySplit: sheet.freezePane.row,
-      }];
+      ws.views = [
+        {
+          state: 'frozen',
+          xSplit: sheet.freezePane.col,
+          ySplit: sheet.freezePane.row,
+        },
+      ];
     }
 
     // Write cells with formatting
@@ -755,7 +795,10 @@ export const exportToExcel = async (
 
       // Value
       if (cellData.formula) {
-        cell.value = { formula: cellData.formula.replace(/^=/, ''), result: cellData.value } as ExcelJS.CellFormulaValue;
+        cell.value = {
+          formula: cellData.formula.replace(/^=/, ''),
+          result: cellData.value,
+        } as ExcelJS.CellFormulaValue;
       } else {
         cell.value = cellData.value;
       }
@@ -781,7 +824,9 @@ export const exportToExcel = async (
 
   // Generate buffer and download
   const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -794,10 +839,7 @@ export const exportToExcel = async (
 // EXPORT CSV
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const exportToCSV = (
-  sheet: Sheet,
-  fileName: string = 'spreadsheet.csv'
-): void => {
+export const exportToCSV = (sheet: Sheet, fileName: string = 'spreadsheet.csv'): void => {
   // Find bounds
   let maxRow = 0;
   let maxCol = 0;

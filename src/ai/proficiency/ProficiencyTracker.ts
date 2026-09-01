@@ -55,10 +55,25 @@ export interface ProficiencyAdaptation {
 const STORAGE_KEY = 'excelai-proficiency';
 
 const COMPLEX_FORMULAS = [
-  'VLOOKUP', 'HLOOKUP', 'INDEX', 'MATCH', 'INDIRECT',
-  'OFFSET', 'SUMPRODUCT', 'ARRAYFORMULA', 'LAMBDA',
-  'LET', 'MAP', 'FILTER', 'SORT', 'UNIQUE', 'SEQUENCE',
-  'XLOOKUP', 'XMATCH', 'IFS', 'SWITCH',
+  'VLOOKUP',
+  'HLOOKUP',
+  'INDEX',
+  'MATCH',
+  'INDIRECT',
+  'OFFSET',
+  'SUMPRODUCT',
+  'ARRAYFORMULA',
+  'LAMBDA',
+  'LET',
+  'MAP',
+  'FILTER',
+  'SORT',
+  'UNIQUE',
+  'SEQUENCE',
+  'XLOOKUP',
+  'XMATCH',
+  'IFS',
+  'SWITCH',
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -112,12 +127,22 @@ export class ProficiencyTracker {
     this.recalculate();
   }
 
-  recordFeatureUse(feature: 'dataCleaner' | 'pivotTable' | 'namedRange' | 'conditionalFormat'): void {
+  recordFeatureUse(
+    feature: 'dataCleaner' | 'pivotTable' | 'namedRange' | 'conditionalFormat'
+  ): void {
     switch (feature) {
-      case 'dataCleaner': this.profile.signals.dataCleanerUsed++; break;
-      case 'pivotTable': this.profile.signals.pivotTablesUsed++; break;
-      case 'namedRange': this.profile.signals.namedRangesUsed++; break;
-      case 'conditionalFormat': this.profile.signals.conditionalFormatsUsed++; break;
+      case 'dataCleaner':
+        this.profile.signals.dataCleanerUsed++;
+        break;
+      case 'pivotTable':
+        this.profile.signals.pivotTablesUsed++;
+        break;
+      case 'namedRange':
+        this.profile.signals.namedRangesUsed++;
+        break;
+      case 'conditionalFormat':
+        this.profile.signals.conditionalFormatsUsed++;
+        break;
     }
     this.recalculate();
   }
@@ -255,9 +280,15 @@ export class ProficiencyTracker {
   setLevel(level: ProficiencyLevel): void {
     this.profile.level = level;
     switch (level) {
-      case 'beginner': this.profile.score = 10; break;
-      case 'intermediate': this.profile.score = 40; break;
-      case 'expert': this.profile.score = 80; break;
+      case 'beginner':
+        this.profile.score = 10;
+        break;
+      case 'intermediate':
+        this.profile.score = 40;
+        break;
+      case 'expert':
+        this.profile.score = 80;
+        break;
     }
     this.saveProfile();
   }

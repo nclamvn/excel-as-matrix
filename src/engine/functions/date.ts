@@ -23,7 +23,8 @@ export const dateFunctions: FunctionDef[] = [
       const now = new Date();
       const serial = dateToSerial(now);
       // Add fractional day for time
-      const timeDecimal = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400;
+      const timeDecimal =
+        (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400;
       return serial + timeDecimal;
     },
   },
@@ -225,7 +226,11 @@ export const dateFunctions: FunctionDef[] = [
       const months = toNumber(args[1]);
       if (isError(months)) return months;
 
-      const result = new Date(date.getFullYear(), date.getMonth() + (months as number), date.getDate());
+      const result = new Date(
+        date.getFullYear(),
+        date.getMonth() + (months as number),
+        date.getDate()
+      );
       return dateToSerial(result);
     },
   },
@@ -255,18 +260,27 @@ export const dateFunctions: FunctionDef[] = [
         case 'D':
           return diffDays;
         case 'M':
-          return (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+          return (
+            (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+            (endDate.getMonth() - startDate.getMonth())
+          );
         case 'Y':
           return endDate.getFullYear() - startDate.getFullYear();
         case 'MD':
           return endDate.getDate() - startDate.getDate();
-        case 'YM':
+        case 'YM': {
           let months = endDate.getMonth() - startDate.getMonth();
           if (months < 0) months += 12;
           return months;
-        case 'YD':
-          const startOfYear = new Date(endDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        }
+        case 'YD': {
+          const startOfYear = new Date(
+            endDate.getFullYear(),
+            startDate.getMonth(),
+            startDate.getDate()
+          );
           return Math.floor((endDate.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
+        }
         default:
           return new FormulaError('#VALUE!', 'Invalid unit');
       }
@@ -397,8 +411,8 @@ export const dateFunctions: FunctionDef[] = [
       const method = args[2] === true || args[2] === 1; // false = US/NASD, true = European
 
       let startDay = startDate.getDate();
-      let startMonth = startDate.getMonth() + 1;
-      let startYear = startDate.getFullYear();
+      const startMonth = startDate.getMonth() + 1;
+      const startYear = startDate.getFullYear();
 
       let endDay = endDate.getDate();
       let endMonth = endDate.getMonth() + 1;
@@ -451,17 +465,19 @@ export const dateFunctions: FunctionDef[] = [
       switch (basis) {
         case 0: // US (NASD) 30/360
           return days / 360;
-        case 1: { // Actual/actual
+        case 1: {
+          // Actual/actual
           const startYear = startDate.getFullYear();
           const endYear = endDate.getFullYear();
           if (startYear === endYear) {
-            const daysInYear = (startYear % 4 === 0 && (startYear % 100 !== 0 || startYear % 400 === 0)) ? 366 : 365;
+            const daysInYear =
+              startYear % 4 === 0 && (startYear % 100 !== 0 || startYear % 400 === 0) ? 366 : 365;
             return days / daysInYear;
           }
           // Average days per year for multi-year spans
           let totalDays = 0;
           for (let y = startYear; y <= endYear; y++) {
-            totalDays += (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 366 : 365;
+            totalDays += y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0) ? 366 : 365;
           }
           return days / (totalDays / (endYear - startYear + 1));
         }
@@ -492,7 +508,7 @@ export const dateFunctions: FunctionDef[] = [
       const thursday = new Date(date.getTime());
       thursday.setDate(date.getDate() + 4 - (date.getDay() || 7));
       const yearStart = new Date(thursday.getFullYear(), 0, 1);
-      const weekNum = Math.ceil((((thursday.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+      const weekNum = Math.ceil(((thursday.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 
       return weekNum;
     },

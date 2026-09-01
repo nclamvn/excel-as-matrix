@@ -56,8 +56,8 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
     if (!isOpen || !sheet) return;
 
     // Get row heights and column widths from sheet data
-    const rowHeights = Array(100).fill(25);  // Default row height
-    const colWidths = Array(26).fill(100);   // Default column width
+    const rowHeights = Array(100).fill(25); // Default row height
+    const colWidths = Array(26).fill(100); // Default column width
 
     calculatePages(sheetId, 100, 26, rowHeights, colWidths);
   }, [isOpen, sheetId, settings, sheet, calculatePages]);
@@ -71,8 +71,8 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
     window.print();
   };
 
-  const handleZoomIn = () => setZoom(z => Math.min(200, z + 25));
-  const handleZoomOut = () => setZoom(z => Math.max(25, z - 25));
+  const handleZoomIn = () => setZoom((z) => Math.min(200, z + 25));
+  const handleZoomOut = () => setZoom((z) => Math.max(25, z - 25));
 
   const handlePrevPage = () => setCurrentPage(currentPage - 1);
   const handleNextPage = () => setCurrentPage(currentPage + 1);
@@ -95,7 +95,8 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
 
           <div className="print-header-center">
             {/* Page Navigation */}
-            <button type="button"
+            <button
+              type="button"
               onClick={handlePrevPage}
               disabled={currentPage <= 1}
               className="nav-btn"
@@ -105,7 +106,8 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
             <span className="page-info">
               Page {currentPage} of {pages.length || 1}
             </span>
-            <button type="button"
+            <button
+              type="button"
               onClick={handleNextPage}
               disabled={currentPage >= pages.length}
               className="nav-btn"
@@ -126,10 +128,7 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
           </div>
 
           <div className="print-header-right">
-            <button type="button"
-              className="setup-btn"
-              onClick={() => setShowPageSetup(true)}
-            >
+            <button type="button" className="setup-btn" onClick={() => setShowPageSetup(true)}>
               <Settings size={16} />
               Page Setup
             </button>
@@ -149,14 +148,16 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
               <div className="setting-item">
                 <label>Orientation</label>
                 <div className="orientation-btns">
-                  <button type="button"
+                  <button
+                    type="button"
                     className={settings.orientation === 'portrait' ? 'active' : ''}
                     onClick={() => setOrientation(sheetId, 'portrait')}
                   >
                     <FileText size={20} />
                     Portrait
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     className={settings.orientation === 'landscape' ? 'active' : ''}
                     onClick={() => setOrientation(sheetId, 'landscape')}
                   >
@@ -173,7 +174,9 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
                   onChange={(e) => setPaperSize(sheetId, e.target.value as PaperSize)}
                 >
                   {Object.entries(PAPER_SIZES).map(([key, val]) => (
-                    <option key={key} value={key}>{val.label}</option>
+                    <option key={key} value={key}>
+                      {val.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -182,7 +185,12 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
                 <label>Scaling</label>
                 <select
                   value={settings.scalingMode}
-                  onChange={(e) => setScaling(sheetId, e.target.value as 'actual' | 'fitToPage' | 'fitToWidth' | 'custom')}
+                  onChange={(e) =>
+                    setScaling(
+                      sheetId,
+                      e.target.value as 'actual' | 'fitToPage' | 'fitToWidth' | 'custom'
+                    )
+                  }
                 >
                   <option value="actual">Actual Size (100%)</option>
                   <option value="fitToPage">Fit to Page</option>
@@ -219,7 +227,9 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
                   <input
                     type="checkbox"
                     checked={settings.printRowColHeaders}
-                    onChange={(e) => updateSettings(sheetId, { printRowColHeaders: e.target.checked })}
+                    onChange={(e) =>
+                      updateSettings(sheetId, { printRowColHeaders: e.target.checked })
+                    }
                   />
                   Print Row & Column Headers
                 </label>
@@ -267,10 +277,7 @@ export const PrintPreviewDialog: React.FC<PrintPreviewDialogProps> = ({
 
         {/* Page Setup Dialog */}
         {showPageSetup && (
-          <PageSetupDialog
-            sheetId={sheetId}
-            onClose={() => setShowPageSetup(false)}
-          />
+          <PageSetupDialog sheetId={sheetId} onClose={() => setShowPageSetup(false)} />
         )}
       </div>
     </div>

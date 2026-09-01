@@ -4,10 +4,12 @@
 
 import { Hono } from 'hono';
 import { streamText } from 'hono/streaming';
-import { ServerPIIRedactor } from '../security/PIIRedactor';
+import { serverConfig } from '../config/env.js';
+import { toProxyErrorStatus } from '../http/upstreamStatus.js';
+import { ServerPIIRedactor } from '../security/PIIRedactor.js';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+const ANTHROPIC_API_KEY = serverConfig.anthropicApiKey;
 
 export const aiRouter = new Hono();
 
@@ -17,7 +19,7 @@ export const aiRouter = new Hono();
 
 aiRouter.post('/chat', async (c) => {
   if (!ANTHROPIC_API_KEY) {
-    return c.json({ error: 'ANTHROPIC_API_KEY not configured on server' }, 500);
+    return c.json({ error: 'AI service is not configured on this server' }, 503);
   }
 
   const body = await c.req.json();
@@ -59,7 +61,10 @@ aiRouter.post('/chat', async (c) => {
 
     if (!response.ok) {
       const error = await response.json();
-      return c.json({ error: error.error?.message || 'Anthropic API error' }, response.status);
+      return c.json(
+        { error: error.error?.message || 'Anthropic API error' },
+        toProxyErrorStatus(response.status)
+      );
     }
 
     const data = await response.json();
@@ -86,7 +91,7 @@ aiRouter.post('/chat', async (c) => {
 
 aiRouter.post('/stream', async (c) => {
   if (!ANTHROPIC_API_KEY) {
-    return c.json({ error: 'ANTHROPIC_API_KEY not configured on server' }, 500);
+    return c.json({ error: 'AI service is not configured on this server' }, 503);
   }
 
   const body = await c.req.json();
@@ -128,7 +133,10 @@ aiRouter.post('/stream', async (c) => {
 
     if (!response.ok) {
       const error = await response.json();
-      return c.json({ error: error.error?.message || 'Anthropic API error' }, response.status);
+      return c.json(
+        { error: error.error?.message || 'Anthropic API error' },
+        toProxyErrorStatus(response.status)
+      );
     }
 
     // Pipe the SSE stream directly to the client

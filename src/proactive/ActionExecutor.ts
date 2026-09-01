@@ -2,10 +2,7 @@
 // ACTION EXECUTOR — Execute suggestion actions
 // =============================================================================
 
-import type {
-  ProactiveSuggestion,
-  SuggestionAction,
-} from './types';
+import type { ProactiveSuggestion, SuggestionAction } from './types';
 
 /**
  * Executes actions from suggestions
@@ -35,10 +32,7 @@ export class ActionExecutor {
   /**
    * Execute an action from a suggestion
    */
-  async execute(
-    suggestion: ProactiveSuggestion,
-    action: SuggestionAction
-  ): Promise<ActionResult> {
+  async execute(suggestion: ProactiveSuggestion, action: SuggestionAction): Promise<ActionResult> {
     try {
       switch (action.action) {
         case 'apply_fix':
@@ -118,7 +112,7 @@ export class ActionExecutor {
       return {
         success: true,
         message: `Deleted ${params.rows.length} rows`,
-        affectedCells: params.rows.map(r => `Row ${r + 1}`),
+        affectedCells: params.rows.map((r) => `Row ${r + 1}`),
       };
     }
 
@@ -155,7 +149,7 @@ export class ActionExecutor {
     return {
       success: true,
       message: `Removed ${rowsToDelete.length} duplicate rows`,
-      affectedCells: rowsToDelete.map(r => `Row ${r + 1}`),
+      affectedCells: rowsToDelete.map((r) => `Row ${r + 1}`),
     };
   }
 
@@ -321,9 +315,7 @@ export class ActionExecutor {
   /**
    * Dismiss suggestion
    */
-  private async executeDismiss(
-    suggestion: ProactiveSuggestion
-  ): Promise<ActionResult> {
+  private async executeDismiss(suggestion: ProactiveSuggestion): Promise<ActionResult> {
     suggestion.status = 'dismissed';
 
     return {

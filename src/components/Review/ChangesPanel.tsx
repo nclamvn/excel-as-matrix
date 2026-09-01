@@ -32,20 +32,29 @@ export const ChangesPanel: React.FC<ChangesPanelProps> = ({ sheetId }) => {
 
   const getChangeIcon = (type: string) => {
     switch (type) {
-      case 'cellEdit': return <Pencil size={16} />;
-      case 'rowInsert': return <Plus size={16} />;
-      case 'rowDelete': return <Minus size={16} />;
-      case 'colInsert': return <Plus size={16} />;
-      case 'colDelete': return <Minus size={16} />;
-      default: return <Pencil size={16} />;
+      case 'cellEdit':
+        return <Pencil size={16} />;
+      case 'rowInsert':
+        return <Plus size={16} />;
+      case 'rowDelete':
+        return <Minus size={16} />;
+      case 'colInsert':
+        return <Plus size={16} />;
+      case 'colDelete':
+        return <Minus size={16} />;
+      default:
+        return <Pencil size={16} />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'accepted': return '#10b981';
-      case 'rejected': return '#ef4444';
-      default: return '#f59e0b';
+      case 'accepted':
+        return '#10b981';
+      case 'rejected':
+        return '#ef4444';
+      default:
+        return '#f59e0b';
     }
   };
 
@@ -66,7 +75,7 @@ export const ChangesPanel: React.FC<ChangesPanelProps> = ({ sheetId }) => {
             <span>Enable "Track Changes" to start recording</span>
           </div>
         ) : (
-          changes.map(change => (
+          changes.map((change) => (
             <div
               key={change.id}
               className={`change-item ${selectedChangeId === change.id ? 'selected' : ''}`}
@@ -96,15 +105,23 @@ export const ChangesPanel: React.FC<ChangesPanelProps> = ({ sheetId }) => {
                 </span>
                 {change.status === 'pending' && (
                   <div className="change-actions">
-                    <button type="button"
-                      onClick={(e) => { e.stopPropagation(); acceptChange(change.id, sheetId); }}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        acceptChange(change.id, sheetId);
+                      }}
                       title="Accept"
                       className="accept-btn"
                     >
                       <Check size={14} />
                     </button>
-                    <button type="button"
-                      onClick={(e) => { e.stopPropagation(); rejectChange(change.id, sheetId); }}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        rejectChange(change.id, sheetId);
+                      }}
                       title="Reject"
                       className="reject-btn"
                     >

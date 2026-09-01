@@ -15,7 +15,7 @@ import {
 
 interface SparklineStore {
   // State
-  sparklines: Record<string, Sparkline[]>;  // sheetId -> sparklines
+  sparklines: Record<string, Sparkline[]>; // sheetId -> sparklines
   groups: Record<string, SparklineGroup>;
 
   // CRUD
@@ -78,7 +78,7 @@ export const useSparklineStore = create<SparklineStore>()(
           dateAxis: false,
         };
 
-        set(state => ({
+        set((state) => ({
           sparklines: {
             ...state.sparklines,
             [sheetId]: [...(state.sparklines[sheetId] || []), newSparkline],
@@ -89,10 +89,10 @@ export const useSparklineStore = create<SparklineStore>()(
       },
 
       updateSparkline: (sheetId, id, updates) => {
-        set(state => ({
+        set((state) => ({
           sparklines: {
             ...state.sparklines,
-            [sheetId]: (state.sparklines[sheetId] || []).map(sp =>
+            [sheetId]: (state.sparklines[sheetId] || []).map((sp) =>
               sp.id === id ? { ...sp, ...updates } : sp
             ),
           },
@@ -100,10 +100,10 @@ export const useSparklineStore = create<SparklineStore>()(
       },
 
       deleteSparkline: (sheetId, id) => {
-        set(state => ({
+        set((state) => ({
           sparklines: {
             ...state.sparklines,
-            [sheetId]: (state.sparklines[sheetId] || []).filter(sp => sp.id !== id),
+            [sheetId]: (state.sparklines[sheetId] || []).filter((sp) => sp.id !== id),
           },
         }));
       },
@@ -131,7 +131,7 @@ export const useSparklineStore = create<SparklineStore>()(
           };
         });
 
-        set(state => ({
+        set((state) => ({
           sparklines: {
             ...state.sparklines,
             [sheetId]: [...(state.sparklines[sheetId] || []), ...newSparklines],
@@ -150,12 +150,10 @@ export const useSparklineStore = create<SparklineStore>()(
       },
 
       deleteSparklineRange: (sheetId, ids) => {
-        set(state => ({
+        set((state) => ({
           sparklines: {
             ...state.sparklines,
-            [sheetId]: (state.sparklines[sheetId] || []).filter(
-              sp => !ids.includes(sp.id)
-            ),
+            [sheetId]: (state.sparklines[sheetId] || []).filter((sp) => !ids.includes(sp.id)),
           },
         }));
       },
@@ -175,7 +173,7 @@ export const useSparklineStore = create<SparklineStore>()(
 
         // Find all sparklines in group and update their styles
         Object.entries(get().sparklines).forEach(([sheetId, sparklines]) => {
-          sparklines.forEach(sp => {
+          sparklines.forEach((sp) => {
             if (sp.groupId === groupId) {
               get().updateSparklineStyle(sheetId, sp.id, style);
             }
@@ -186,7 +184,7 @@ export const useSparklineStore = create<SparklineStore>()(
       createGroup: (sparklineIds) => {
         const groupId = nanoid(8);
 
-        set(state => ({
+        set((state) => ({
           groups: {
             ...state.groups,
             [groupId]: {
@@ -199,7 +197,7 @@ export const useSparklineStore = create<SparklineStore>()(
 
         // Update sparklines with group ID
         Object.entries(get().sparklines).forEach(([sheetId, sparklines]) => {
-          sparklines.forEach(sp => {
+          sparklines.forEach((sp) => {
             if (sparklineIds.includes(sp.id)) {
               get().updateSparkline(sheetId, sp.id, { groupId });
             }
@@ -215,7 +213,7 @@ export const useSparklineStore = create<SparklineStore>()(
 
         // Remove group ID from sparklines
         Object.entries(get().sparklines).forEach(([sheetId, sparklines]) => {
-          sparklines.forEach(sp => {
+          sparklines.forEach((sp) => {
             if (sp.groupId === groupId) {
               get().updateSparkline(sheetId, sp.id, { groupId: undefined });
             }
@@ -223,7 +221,7 @@ export const useSparklineStore = create<SparklineStore>()(
         });
 
         // Remove group
-        set(state => {
+        set((state) => {
           const { [groupId]: _, ...rest } = state.groups;
           return { groups: rest };
         });
@@ -235,16 +233,16 @@ export const useSparklineStore = create<SparklineStore>()(
 
       getSparklineAtCell: (sheetId, row, col) => {
         return (get().sparklines[sheetId] || []).find(
-          sp => sp.locationRow === row && sp.locationCol === col
+          (sp) => sp.locationRow === row && sp.locationCol === col
         );
       },
 
       getSparklineById: (sheetId, id) => {
-        return (get().sparklines[sheetId] || []).find(sp => sp.id === id);
+        return (get().sparklines[sheetId] || []).find((sp) => sp.id === id);
       },
 
       clearSparklinesForSheet: (sheetId) => {
-        set(state => ({
+        set((state) => ({
           sparklines: {
             ...state.sparklines,
             [sheetId]: [],

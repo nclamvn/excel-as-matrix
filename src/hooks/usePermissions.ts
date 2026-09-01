@@ -34,10 +34,7 @@ interface UsePermissionsReturn {
     granteeId: string | undefined,
     role: WorkbookRole
   ) => Promise<void>;
-  revokePermission: (
-    granteeType: 'User' | 'Team' | 'Anyone',
-    granteeId?: string
-  ) => Promise<void>;
+  revokePermission: (granteeType: 'User' | 'Team' | 'Anyone', granteeId?: string) => Promise<void>;
 }
 
 export const usePermissions = (options: UsePermissionsOptions): UsePermissionsReturn => {
@@ -82,10 +79,13 @@ export const usePermissions = (options: UsePermissionsOptions): UsePermissionsRe
     return checkPermission(workbookId, user.id, userTeamIds);
   }, [workbookId, user, userTeamIds, checkPermission]);
 
-  const canEditCell = useCallback((sheetId: string, row: number, col: number) => {
-    if (!user) return false;
-    return storeCanEditCell(workbookId, sheetId, row, col, user.id, userTeamIds);
-  }, [workbookId, user, userTeamIds, storeCanEditCell]);
+  const canEditCell = useCallback(
+    (sheetId: string, row: number, col: number) => {
+      if (!user) return false;
+      return storeCanEditCell(workbookId, sheetId, row, col, user.id, userTeamIds);
+    },
+    [workbookId, user, userTeamIds, storeCanEditCell]
+  );
 
   const refresh = useCallback(async () => {
     if (user && workbookId) {
@@ -93,20 +93,23 @@ export const usePermissions = (options: UsePermissionsOptions): UsePermissionsRe
     }
   }, [user?.id, workbookId, fetchWorkbookPermissions]);
 
-  const grantPermission = useCallback(async (
-    granteeType: 'User' | 'Team' | 'Anyone',
-    granteeId: string | undefined,
-    role: WorkbookRole
-  ) => {
-    await storeGrantPermission(workbookId, granteeType, granteeId, role);
-  }, [workbookId, storeGrantPermission]);
+  const grantPermission = useCallback(
+    async (
+      granteeType: 'User' | 'Team' | 'Anyone',
+      granteeId: string | undefined,
+      role: WorkbookRole
+    ) => {
+      await storeGrantPermission(workbookId, granteeType, granteeId, role);
+    },
+    [workbookId, storeGrantPermission]
+  );
 
-  const revokePermission = useCallback(async (
-    granteeType: 'User' | 'Team' | 'Anyone',
-    granteeId?: string
-  ) => {
-    await storeRevokePermission(workbookId, granteeType, granteeId);
-  }, [workbookId, storeRevokePermission]);
+  const revokePermission = useCallback(
+    async (granteeType: 'User' | 'Team' | 'Anyone', granteeId?: string) => {
+      await storeRevokePermission(workbookId, granteeType, granteeId);
+    },
+    [workbookId, storeRevokePermission]
+  );
 
   return {
     ...permissions,

@@ -88,10 +88,7 @@ export class IntentParser {
   /**
    * Parse user message into structured intent
    */
-  async parse(
-    message: string,
-    _conversationHistory: string[] = []
-  ): Promise<ParsedIntent> {
+  async parse(message: string, _conversationHistory: string[] = []): Promise<ParsedIntent> {
     // Detect action type
     const action = this.detectAction(message);
 
@@ -306,10 +303,7 @@ export class IntentParser {
   /**
    * Calculate overall confidence
    */
-  private calculateConfidence(
-    action: IntentAction,
-    entities: IntentEntity[]
-  ): number {
+  private calculateConfidence(action: IntentAction, entities: IntentEntity[]): number {
     let confidence = 0.5; // Base confidence
 
     // Action clarity
@@ -338,18 +332,13 @@ export class IntentParser {
   /**
    * Find ambiguities in the intent
    */
-  private findAmbiguities(
-    message: string,
-    entities: IntentEntity[]
-  ): string[] {
+  private findAmbiguities(message: string, entities: IntentEntity[]): string[] {
     const ambiguities: string[] = [];
 
     // Check for unresolved entities
     const unresolved = entities.filter((e) => !e.resolved);
     if (unresolved.length > 0) {
-      ambiguities.push(
-        `Could not find: ${unresolved.map((e) => e.reference).join(', ')}`
-      );
+      ambiguities.push(`Could not find: ${unresolved.map((e) => e.reference).join(', ')}`);
     }
 
     // Check for vague references

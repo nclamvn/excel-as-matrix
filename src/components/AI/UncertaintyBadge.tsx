@@ -40,21 +40,18 @@ export const UncertaintyBadge: React.FC<UncertaintyBadgeProps> = ({
 
   return (
     <div className={`uncertainty-badge ${className}`}>
-      <button type="button"
+      <button
+        type="button"
         className="uncertainty-badge__trigger"
         onClick={() => setExpanded(!expanded)}
         style={{ '--severity-color': color } as React.CSSProperties}
       >
-        <span className="uncertainty-badge__icon">
-          {getSeverityIcon(highestSeverity)}
-        </span>
+        <span className="uncertainty-badge__icon">{getSeverityIcon(highestSeverity)}</span>
         <span className="uncertainty-badge__count">{info.totalCount}</span>
         <span className="uncertainty-badge__label">
           {info.totalCount === 1 ? 'Uncertainty' : 'Uncertainties'}
         </span>
-        <span className="uncertainty-badge__arrow">
-          {expanded ? '▲' : '▼'}
-        </span>
+        <span className="uncertainty-badge__arrow">{expanded ? '▲' : '▼'}</span>
       </button>
 
       {expanded && (
@@ -62,19 +59,13 @@ export const UncertaintyBadge: React.FC<UncertaintyBadgeProps> = ({
           <div className="uncertainty-badge__header">
             <span>{info.summary}</span>
             {info.hasBlockingUncertainty && (
-              <span className="uncertainty-badge__blocking">
-                Review Required
-              </span>
+              <span className="uncertainty-badge__blocking">Review Required</span>
             )}
           </div>
 
           <div className="uncertainty-badge__list">
             {info.items.map((item) => (
-              <UncertaintyItemRow
-                key={item.id}
-                item={item}
-                onResolve={onResolve}
-              />
+              <UncertaintyItemRow key={item.id} item={item} onResolve={onResolve} />
             ))}
           </div>
         </div>
@@ -92,10 +83,7 @@ interface UncertaintyItemRowProps {
   onResolve?: (id: string) => void;
 }
 
-const UncertaintyItemRow: React.FC<UncertaintyItemRowProps> = ({
-  item,
-  onResolve,
-}) => {
+const UncertaintyItemRow: React.FC<UncertaintyItemRowProps> = ({ item, onResolve }) => {
   const color = getSeverityColor(item.severity);
   const isResolved = !!item.resolvedAt;
 
@@ -105,16 +93,9 @@ const UncertaintyItemRow: React.FC<UncertaintyItemRowProps> = ({
       style={{ '--item-color': color } as React.CSSProperties}
     >
       <div className="uncertainty-item__header">
-        <span className="uncertainty-item__icon">
-          {getSeverityIcon(item.severity)}
-        </span>
-        <span className="uncertainty-item__type">
-          {formatUncertaintyType(item.type)}
-        </span>
-        <span
-          className="uncertainty-item__severity"
-          style={{ color }}
-        >
+        <span className="uncertainty-item__icon">{getSeverityIcon(item.severity)}</span>
+        <span className="uncertainty-item__type">{formatUncertaintyType(item.type)}</span>
+        <span className="uncertainty-item__severity" style={{ color }}>
           {item.severity}
         </span>
       </div>
@@ -136,15 +117,14 @@ const UncertaintyItemRow: React.FC<UncertaintyItemRowProps> = ({
             </span>
           ))}
           {item.affectedCells.length > 5 && (
-            <span className="uncertainty-item__more">
-              +{item.affectedCells.length - 5} more
-            </span>
+            <span className="uncertainty-item__more">+{item.affectedCells.length - 5} more</span>
           )}
         </div>
       )}
 
       {!isResolved && onResolve && (
-        <button type="button"
+        <button
+          type="button"
           className="uncertainty-item__resolve"
           onClick={() => onResolve(item.id)}
         >
@@ -152,11 +132,7 @@ const UncertaintyItemRow: React.FC<UncertaintyItemRowProps> = ({
         </button>
       )}
 
-      {isResolved && (
-        <span className="uncertainty-item__resolved-label">
-          ✓ Resolved
-        </span>
-      )}
+      {isResolved && <span className="uncertainty-item__resolved-label">✓ Resolved</span>}
     </div>
   );
 };
@@ -184,19 +160,16 @@ export const UncertaintyIndicator: React.FC<UncertaintyIndicatorProps> = ({
   const color = getSeverityColor(severity);
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`uncertainty-indicator ${className}`}
       onClick={onClick}
       style={{ '--indicator-color': color } as React.CSSProperties}
       title={info.summary}
     >
-      <span className="uncertainty-indicator__icon">
-        {getSeverityIcon(severity)}
-      </span>
+      <span className="uncertainty-indicator__icon">{getSeverityIcon(severity)}</span>
       {info.criticalCount > 0 && (
-        <span className="uncertainty-indicator__critical">
-          {info.criticalCount}
-        </span>
+        <span className="uncertainty-indicator__critical">{info.criticalCount}</span>
       )}
     </button>
   );
@@ -221,9 +194,7 @@ export const UncertaintyList: React.FC<UncertaintyListProps> = ({
     return (
       <div className={`uncertainty-list uncertainty-list--empty ${className}`}>
         <span className="uncertainty-list__empty-icon">✓</span>
-        <span className="uncertainty-list__empty-text">
-          No uncertainties detected
-        </span>
+        <span className="uncertainty-list__empty-text">No uncertainties detected</span>
       </div>
     );
   }
@@ -237,32 +208,16 @@ export const UncertaintyList: React.FC<UncertaintyListProps> = ({
   return (
     <div className={`uncertainty-list ${className}`}>
       {critical.length > 0 && (
-        <UncertaintySeverityGroup
-          severity="critical"
-          items={critical}
-          onResolve={onResolve}
-        />
+        <UncertaintySeverityGroup severity="critical" items={critical} onResolve={onResolve} />
       )}
       {high.length > 0 && (
-        <UncertaintySeverityGroup
-          severity="high"
-          items={high}
-          onResolve={onResolve}
-        />
+        <UncertaintySeverityGroup severity="high" items={high} onResolve={onResolve} />
       )}
       {medium.length > 0 && (
-        <UncertaintySeverityGroup
-          severity="medium"
-          items={medium}
-          onResolve={onResolve}
-        />
+        <UncertaintySeverityGroup severity="medium" items={medium} onResolve={onResolve} />
       )}
       {low.length > 0 && (
-        <UncertaintySeverityGroup
-          severity="low"
-          items={low}
-          onResolve={onResolve}
-        />
+        <UncertaintySeverityGroup severity="low" items={low} onResolve={onResolve} />
       )}
     </div>
   );
@@ -287,25 +242,14 @@ const UncertaintySeverityGroup: React.FC<UncertaintySeverityGroupProps> = ({
 
   return (
     <div className="uncertainty-group">
-      <div
-        className="uncertainty-group__header"
-        style={{ borderLeftColor: color }}
-      >
-        <span className="uncertainty-group__icon">
-          {getSeverityIcon(severity)}
-        </span>
-        <span className="uncertainty-group__title">
-          {formatSeverity(severity)}
-        </span>
+      <div className="uncertainty-group__header" style={{ borderLeftColor: color }}>
+        <span className="uncertainty-group__icon">{getSeverityIcon(severity)}</span>
+        <span className="uncertainty-group__title">{formatSeverity(severity)}</span>
         <span className="uncertainty-group__count">{items.length}</span>
       </div>
       <div className="uncertainty-group__items">
         {items.map((item) => (
-          <UncertaintyItemRow
-            key={item.id}
-            item={item}
-            onResolve={onResolve}
-          />
+          <UncertaintyItemRow key={item.id} item={item} onResolve={onResolve} />
         ))}
       </div>
     </div>

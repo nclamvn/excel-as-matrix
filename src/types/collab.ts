@@ -100,7 +100,12 @@ export interface ConflictResolution {
 }
 
 // Connection state
-export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting' | 'error';
+export type ConnectionStatus =
+  | 'connecting'
+  | 'connected'
+  | 'disconnected'
+  | 'reconnecting'
+  | 'error';
 
 export interface ConnectionState {
   status: ConnectionStatus;
@@ -126,7 +131,7 @@ export const USER_COLORS = [
 export const getColorForUser = (userId: string): string => {
   let hash = 0;
   for (let i = 0; i < userId.length; i++) {
-    hash = ((hash << 5) - hash) + userId.charCodeAt(i);
+    hash = (hash << 5) - hash + userId.charCodeAt(i);
     hash = hash & hash;
   }
   return USER_COLORS[Math.abs(hash) % USER_COLORS.length];

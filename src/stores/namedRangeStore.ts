@@ -125,7 +125,10 @@ export const useNamedRangeStore = create<NamedRangeState>()((set, get) => ({
       }
     } else {
       const sheetId = range.scope.sheet;
-      if (state.sheetScoped[sheetId]?.[newName] && state.sheetScoped[sheetId][newName] !== rangeId) {
+      if (
+        state.sheetScoped[sheetId]?.[newName] &&
+        state.sheetScoped[sheetId][newName] !== rangeId
+      ) {
         loggers.store.warn('Named range already exists in sheet:', newName);
         return;
       }
@@ -207,7 +210,7 @@ export const useNamedRangeStore = create<NamedRangeState>()((set, get) => ({
   getWorkbookScoped: () => {
     const state = get();
     return Object.values(state.workbookScoped)
-      .map(id => state.ranges[id])
+      .map((id) => state.ranges[id])
       .filter(Boolean);
   },
 
@@ -215,7 +218,7 @@ export const useNamedRangeStore = create<NamedRangeState>()((set, get) => ({
     const state = get();
     if (!state.sheetScoped[sheetId]) return [];
     return Object.values(state.sheetScoped[sheetId])
-      .map(id => state.ranges[id])
+      .map((id) => state.ranges[id])
       .filter(Boolean);
   },
 
@@ -224,7 +227,7 @@ export const useNamedRangeStore = create<NamedRangeState>()((set, get) => ({
   },
 
   listVisible: () => {
-    return Object.values(get().ranges).filter(r => !r.hidden);
+    return Object.values(get().ranges).filter((r) => !r.hidden);
   },
 
   reset: () => {

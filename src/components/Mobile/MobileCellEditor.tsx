@@ -41,9 +41,7 @@ export const MobileCellEditor: React.FC<MobileCellEditorProps> = ({ isOpen, onCl
     }
   }, [isOpen, selectedCell, activeSheetId, sheets]);
 
-  const cellAddress = selectedCell
-    ? `${colToLetter(selectedCell.col)}${selectedCell.row + 1}`
-    : '';
+  const cellAddress = selectedCell ? `${colToLetter(selectedCell.col)}${selectedCell.row + 1}` : '';
 
   const handleConfirm = useCallback(() => {
     if (selectedCell && activeSheetId) {
@@ -88,10 +86,7 @@ export const MobileCellEditor: React.FC<MobileCellEditorProps> = ({ isOpen, onCl
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[60] flex flex-col"
-      data-testid="mobile-cell-editor"
-    >
+    <div className="fixed inset-0 z-[60] flex flex-col" data-testid="mobile-cell-editor">
       {/* Backdrop */}
       <div
         className={`absolute inset-0 ${isDark ? 'bg-neutral-950/90' : 'bg-black/50'}`}
@@ -115,7 +110,8 @@ export const MobileCellEditor: React.FC<MobileCellEditorProps> = ({ isOpen, onCl
             ${isDark ? 'border-neutral-700' : 'border-neutral-200'}
           `}
         >
-          <button type="button"
+          <button
+            type="button"
             onClick={handleCancel}
             className={`
               flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium
@@ -135,7 +131,8 @@ export const MobileCellEditor: React.FC<MobileCellEditorProps> = ({ isOpen, onCl
             {cellAddress}
           </span>
 
-          <button type="button"
+          <button
+            type="button"
             onClick={handleConfirm}
             className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700"
           >
@@ -157,9 +154,10 @@ export const MobileCellEditor: React.FC<MobileCellEditorProps> = ({ isOpen, onCl
               w-full px-3 py-2.5 rounded-lg text-base
               border outline-none resize-none
               transition-colors
-              ${isDark
-                ? 'bg-neutral-800 border-neutral-600 text-neutral-100 placeholder-neutral-500 focus:border-emerald-500'
-                : 'bg-neutral-50 border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-emerald-500'
+              ${
+                isDark
+                  ? 'bg-neutral-800 border-neutral-600 text-neutral-100 placeholder-neutral-500 focus:border-emerald-500'
+                  : 'bg-neutral-50 border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-emerald-500'
               }
             `}
             style={{ fontSize: '16px' }} // Prevent iOS auto-zoom
@@ -174,14 +172,16 @@ export const MobileCellEditor: React.FC<MobileCellEditorProps> = ({ isOpen, onCl
           `}
         >
           {quickInserts.map((item) => (
-            <button type="button"
+            <button
+              type="button"
               key={item.label}
               onClick={() => handleQuickInsert(item.insert)}
               className={`
                 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium
-                ${isDark
-                  ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700 active:bg-neutral-600'
-                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 active:bg-neutral-300'
+                ${
+                  isDark
+                    ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700 active:bg-neutral-600'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 active:bg-neutral-300'
                 }
               `}
             >

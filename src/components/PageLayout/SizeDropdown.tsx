@@ -27,14 +27,11 @@ export const SizeDropdown: React.FC<SizeDropdownProps> = ({ sheetId }) => {
     setIsOpen(false);
   };
 
-  const currentSize = PAGE_SIZES.find(s => s.id === settings.paperSize) || PAGE_SIZES[0];
+  const currentSize = PAGE_SIZES.find((s) => s.id === settings.paperSize) || PAGE_SIZES[0];
 
   return (
     <div className="size-dropdown" ref={dropdownRef}>
-      <button type="button"
-        className="toolbar-2026__btn"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <button type="button" className="toolbar-2026__btn" onClick={() => setIsOpen(!isOpen)}>
         <div className="size-icon">
           <div className="size-page" />
         </div>
@@ -45,8 +42,9 @@ export const SizeDropdown: React.FC<SizeDropdownProps> = ({ sheetId }) => {
       {isOpen && (
         <div className="size-menu">
           <div className="menu-title">Paper Size</div>
-          {PAGE_SIZES.map(size => (
-            <button type="button"
+          {PAGE_SIZES.map((size) => (
+            <button
+              type="button"
               key={size.id}
               className={`size-item ${currentSize.id === size.id ? 'active' : ''}`}
               onClick={() => handleSelectSize(size)}

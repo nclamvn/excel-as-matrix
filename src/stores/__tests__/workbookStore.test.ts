@@ -363,7 +363,12 @@ describe('workbookStore', () => {
   describe('duplicateSheet', () => {
     it('should duplicate a sheet', () => {
       const store = useWorkbookStore.getState();
-      store.addSheet({ id: 'sheet-1', name: 'Sheet1', index: 0, cells: { '0:0': { value: 'test', displayValue: 'test' } } });
+      store.addSheet({
+        id: 'sheet-1',
+        name: 'Sheet1',
+        index: 0,
+        cells: { '0:0': { value: 'test', displayValue: 'test' } },
+      });
       store.duplicateSheet('sheet-1');
 
       const state = useWorkbookStore.getState();
@@ -727,7 +732,11 @@ describe('workbookStore', () => {
     it('should clear formatting', () => {
       const store = useWorkbookStore.getState();
       store.addSheet({ id: 'sheet-1', name: 'Sheet1', index: 0, cells: {} });
-      store.updateCell('sheet-1', 0, 0, { value: 'test', displayValue: 'test', format: { bold: true } });
+      store.updateCell('sheet-1', 0, 0, {
+        value: 'test',
+        displayValue: 'test',
+        format: { bold: true },
+      });
       store.setSelectionRange({ start: { row: 0, col: 0 }, end: { row: 0, col: 0 } });
       store.clearFormat();
 
@@ -1121,10 +1130,7 @@ describe('workbookStore', () => {
 
     it('should support selector subscriptions', () => {
       const listener = vi.fn();
-      const unsubscribe = useWorkbookStore.subscribe(
-        (state) => state.zoom,
-        listener
-      );
+      const unsubscribe = useWorkbookStore.subscribe((state) => state.zoom, listener);
 
       useWorkbookStore.getState().setZoom(150);
       expect(listener).toHaveBeenCalledWith(150, 100);

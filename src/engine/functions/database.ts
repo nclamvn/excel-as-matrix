@@ -38,17 +38,27 @@ function matchesCriteriaValue(cellValue: FormulaValue, criteriaValue: FormulaVal
 
       if (!isNaN(numCompare) && !isNaN(numValue)) {
         switch (op) {
-          case '>': return numValue > numCompare;
-          case '<': return numValue < numCompare;
-          case '>=': return numValue >= numCompare;
-          case '<=': return numValue <= numCompare;
-          case '<>': case '!=': return numValue !== numCompare;
-          case '=': return numValue === numCompare;
+          case '>':
+            return numValue > numCompare;
+          case '<':
+            return numValue < numCompare;
+          case '>=':
+            return numValue >= numCompare;
+          case '<=':
+            return numValue <= numCompare;
+          case '<>':
+          case '!=':
+            return numValue !== numCompare;
+          case '=':
+            return numValue === numCompare;
         }
       } else {
         switch (op) {
-          case '<>': case '!=': return String(cellValue).toLowerCase() !== compareStr.toLowerCase();
-          case '=': return String(cellValue).toLowerCase() === compareStr.toLowerCase();
+          case '<>':
+          case '!=':
+            return String(cellValue).toLowerCase() !== compareStr.toLowerCase();
+          case '=':
+            return String(cellValue).toLowerCase() === compareStr.toLowerCase();
         }
       }
     }
@@ -113,13 +123,18 @@ function getMatchingRows(database: FormulaValue[][], criteria: FormulaValue[][])
   return matchingRows;
 }
 
-function parseDatabaseArgs(args: FormulaValue[]): { database: FormulaValue[][]; fieldIdx: number; criteria: FormulaValue[][] } | FormulaError {
+function parseDatabaseArgs(
+  args: FormulaValue[]
+): { database: FormulaValue[][]; fieldIdx: number; criteria: FormulaValue[][] } | FormulaError {
   const database = args[0] as FormulaValue[][];
   const field = args[1];
   const criteria = args[2] as FormulaValue[][];
 
   if (!Array.isArray(database) || database.length < 2) {
-    return new FormulaError('#VALUE!', 'Database must be a 2D array with at least a header row and one data row');
+    return new FormulaError(
+      '#VALUE!',
+      'Database must be a 2D array with at least a header row and one data row'
+    );
   }
   if (!Array.isArray(criteria) || criteria.length < 1) {
     return new FormulaError('#VALUE!', 'Criteria must be a 2D array with at least a header row');
@@ -131,8 +146,12 @@ function parseDatabaseArgs(args: FormulaValue[]): { database: FormulaValue[][]; 
   return { database, fieldIdx, criteria };
 }
 
-function getMatchingFieldValues(database: FormulaValue[][], fieldIdx: number, matchingRows: number[]): FormulaValue[] {
-  return matchingRows.map(r => database[r][fieldIdx]);
+function getMatchingFieldValues(
+  database: FormulaValue[][],
+  fieldIdx: number,
+  matchingRows: number[]
+): FormulaValue[] {
+  return matchingRows.map((r) => database[r][fieldIdx]);
 }
 
 export const databaseFunctions: FunctionDef[] = [
@@ -183,7 +202,7 @@ export const databaseFunctions: FunctionDef[] = [
       const { database, fieldIdx, criteria } = parsed;
       const rows = getMatchingRows(database, criteria);
       const values = getMatchingFieldValues(database, fieldIdx, rows);
-      return values.filter(v => typeof v === 'number').length;
+      return values.filter((v) => typeof v === 'number').length;
     },
   },
 
@@ -198,7 +217,7 @@ export const databaseFunctions: FunctionDef[] = [
       const { database, fieldIdx, criteria } = parsed;
       const rows = getMatchingRows(database, criteria);
       const values = getMatchingFieldValues(database, fieldIdx, rows);
-      return values.filter(v => v !== null && v !== undefined && v !== '').length;
+      return values.filter((v) => v !== null && v !== undefined && v !== '').length;
     },
   },
 
@@ -369,49 +388,61 @@ export const databaseFunctions: FunctionDef[] = [
       const flat = flattenValues(dataArgs);
 
       switch (normalizedId) {
-        case 1: { // AVERAGE
+        case 1: {
+          // AVERAGE
           if (numbers.length === 0) return new FormulaError('#DIV/0!');
           return numbers.reduce((a, b) => a + b, 0) / numbers.length;
         }
-        case 2: { // COUNT
+        case 2: {
+          // COUNT
           return numbers.length;
         }
-        case 3: { // COUNTA
-          return flat.filter(v => v !== null && v !== undefined).length;
+        case 3: {
+          // COUNTA
+          return flat.filter((v) => v !== null && v !== undefined).length;
         }
-        case 4: { // MAX
+        case 4: {
+          // MAX
           if (numbers.length === 0) return 0;
           return Math.max(...numbers);
         }
-        case 5: { // MIN
+        case 5: {
+          // MIN
           if (numbers.length === 0) return 0;
           return Math.min(...numbers);
         }
-        case 6: { // PRODUCT
+        case 6: {
+          // PRODUCT
           if (numbers.length === 0) return 0;
           return numbers.reduce((a, b) => a * b, 1);
         }
-        case 7: { // STDEV
+        case 7: {
+          // STDEV
           if (numbers.length < 2) return new FormulaError('#DIV/0!');
           const mean7 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-          const var7 = numbers.reduce((s, v) => s + Math.pow(v - mean7, 2), 0) / (numbers.length - 1);
+          const var7 =
+            numbers.reduce((s, v) => s + Math.pow(v - mean7, 2), 0) / (numbers.length - 1);
           return Math.sqrt(var7);
         }
-        case 8: { // STDEVP
+        case 8: {
+          // STDEVP
           if (numbers.length === 0) return new FormulaError('#DIV/0!');
           const mean8 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
           const var8 = numbers.reduce((s, v) => s + Math.pow(v - mean8, 2), 0) / numbers.length;
           return Math.sqrt(var8);
         }
-        case 9: { // SUM
+        case 9: {
+          // SUM
           return numbers.reduce((a, b) => a + b, 0);
         }
-        case 10: { // VAR
+        case 10: {
+          // VAR
           if (numbers.length < 2) return new FormulaError('#DIV/0!');
           const mean10 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
           return numbers.reduce((s, v) => s + Math.pow(v - mean10, 2), 0) / (numbers.length - 1);
         }
-        case 11: { // VARP
+        case 11: {
+          // VARP
           if (numbers.length === 0) return new FormulaError('#DIV/0!');
           const mean11 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
           return numbers.reduce((s, v) => s + Math.pow(v - mean11, 2), 0) / numbers.length;
@@ -447,7 +478,7 @@ export const databaseFunctions: FunctionDef[] = [
 
       // Filter out errors if requested
       if (ignoreErrors) {
-        flat = flat.filter(v => !(v instanceof FormulaError));
+        flat = flat.filter((v) => !(v instanceof FormulaError));
       } else {
         // If not ignoring errors, check for errors
         for (const v of flat) {
@@ -465,54 +496,67 @@ export const databaseFunctions: FunctionDef[] = [
       }
 
       switch (funcId) {
-        case 1: { // AVERAGE
+        case 1: {
+          // AVERAGE
           if (numbers.length === 0) return new FormulaError('#DIV/0!');
           return numbers.reduce((a, b) => a + b, 0) / numbers.length;
         }
-        case 2: { // COUNT
+        case 2: {
+          // COUNT
           return numbers.length;
         }
-        case 3: { // COUNTA
-          return flat.filter(v => v !== null && v !== undefined).length;
+        case 3: {
+          // COUNTA
+          return flat.filter((v) => v !== null && v !== undefined).length;
         }
-        case 4: { // MAX
+        case 4: {
+          // MAX
           if (numbers.length === 0) return 0;
           return Math.max(...numbers);
         }
-        case 5: { // MIN
+        case 5: {
+          // MIN
           if (numbers.length === 0) return 0;
           return Math.min(...numbers);
         }
-        case 6: { // PRODUCT
+        case 6: {
+          // PRODUCT
           if (numbers.length === 0) return 0;
           return numbers.reduce((a, b) => a * b, 1);
         }
-        case 7: { // STDEV.S
+        case 7: {
+          // STDEV.S
           if (numbers.length < 2) return new FormulaError('#DIV/0!');
           const mean7 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-          const var7 = numbers.reduce((s, v) => s + Math.pow(v - mean7, 2), 0) / (numbers.length - 1);
+          const var7 =
+            numbers.reduce((s, v) => s + Math.pow(v - mean7, 2), 0) / (numbers.length - 1);
           return Math.sqrt(var7);
         }
-        case 8: { // STDEV.P
+        case 8: {
+          // STDEV.P
           if (numbers.length === 0) return new FormulaError('#DIV/0!');
           const mean8 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
           const var8 = numbers.reduce((s, v) => s + Math.pow(v - mean8, 2), 0) / numbers.length;
           return Math.sqrt(var8);
         }
-        case 9: { // SUM
+        case 9: {
+          // SUM
           return numbers.reduce((a, b) => a + b, 0);
         }
-        case 10: { // VAR.S
+        case 10: {
+          // VAR.S
           if (numbers.length < 2) return new FormulaError('#DIV/0!');
           const mean10 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
           return numbers.reduce((s, v) => s + Math.pow(v - mean10, 2), 0) / (numbers.length - 1);
         }
-        case 11: { // VAR.P
+        case 11: {
+          // VAR.P
           if (numbers.length === 0) return new FormulaError('#DIV/0!');
           const mean11 = numbers.reduce((a, b) => a + b, 0) / numbers.length;
           return numbers.reduce((s, v) => s + Math.pow(v - mean11, 2), 0) / numbers.length;
         }
-        case 12: { // MEDIAN
+        case 12: {
+          // MEDIAN
           if (numbers.length === 0) return new FormulaError('#NUM!');
           numbers.sort((a, b) => a - b);
           const mid = Math.floor(numbers.length / 2);
@@ -521,7 +565,8 @@ export const databaseFunctions: FunctionDef[] = [
           }
           return numbers[mid];
         }
-        case 13: { // MODE.SNGL
+        case 13: {
+          // MODE.SNGL
           if (numbers.length === 0) return new FormulaError('#N/A');
           const counts = new Map<number, number>();
           for (const n of numbers) {

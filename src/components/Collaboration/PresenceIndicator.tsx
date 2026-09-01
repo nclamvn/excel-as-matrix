@@ -65,23 +65,14 @@ export const ConnectionStatusBar: React.FC<ConnectionStatusProps> = ({
 
   return (
     <div className={`connection-status connection-status--${status}`}>
-      <span
-        className={`connection-status__dot connection-status__dot--${status}`}
-      />
-      <span className="connection-status__text">
-        {statusInfo.message}
-      </span>
+      <span className={`connection-status__dot connection-status__dot--${status}`} />
+      <span className="connection-status__text">{statusInfo.message}</span>
       {status === 'disconnected' && onReconnect && (
-        <button type="button"
-          className="connection-status__reconnect"
-          onClick={onReconnect}
-        >
+        <button type="button" className="connection-status__reconnect" onClick={onReconnect}>
           Reconnect
         </button>
       )}
-      {status === 'connecting' && (
-        <span className="connection-status__spinner" />
-      )}
+      {status === 'connecting' && <span className="connection-status__spinner" />}
     </div>
   );
 };
@@ -113,7 +104,8 @@ export const OnlineUsersIndicator: React.FC<OnlineUsersIndicatorProps> = ({
   }
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className="online-users-indicator"
       onClick={onClick}
       title={`${users.length} user${users.length !== 1 ? 's' : ''} online`}
@@ -142,14 +134,10 @@ export const OnlineUsersIndicator: React.FC<OnlineUsersIndicatorProps> = ({
           </div>
         ))}
         {overflowCount > 0 && (
-          <div className="online-users-indicator__overflow">
-            +{overflowCount}
-          </div>
+          <div className="online-users-indicator__overflow">+{overflowCount}</div>
         )}
       </div>
-      <span className="online-users-indicator__count">
-        {users.length} online
-      </span>
+      <span className="online-users-indicator__count">{users.length} online</span>
     </button>
   );
 };
@@ -193,10 +181,7 @@ interface LiveIndicatorProps {
   label?: string;
 }
 
-export const LiveIndicator: React.FC<LiveIndicatorProps> = ({
-  isLive,
-  label = 'Live',
-}) => {
+export const LiveIndicator: React.FC<LiveIndicatorProps> = ({ isLive, label = 'Live' }) => {
   return (
     <div className={`live-indicator ${isLive ? 'live-indicator--active' : ''}`}>
       <span className="live-indicator__dot" />

@@ -1,7 +1,14 @@
 // Phase 11: Authentication Provider
 // React context for auth state management with Supabase SSO support
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { supabase } from '../lib/supabase';
 
 // Types
@@ -57,37 +64,41 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     if (!supabase) return;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session && !state.isAuthenticated) {
-          // User signed in via Supabase (SSO) — set auth state
-          const supaUser = session.user;
-          setState({
-            user: {
-              id: supaUser.id,
-              email: supaUser.email || '',
-              name: supaUser.user_metadata?.full_name || supaUser.user_metadata?.name || supaUser.email?.split('@')[0] || '',
-              roles: ['Member'],
-              permissions: ['workbooks:*'],
-              orgId: supaUser.user_metadata?.org_id,
-              picture: supaUser.user_metadata?.avatar_url,
-            },
-            isAuthenticated: true,
-            isLoading: false,
-            accessToken: session.access_token,
-            error: null,
-          });
-        } else if (event === 'SIGNED_OUT' && !localStorage.getItem('accessToken')) {
-          setState({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-            accessToken: null,
-            error: null,
-          });
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session && !state.isAuthenticated) {
+        // User signed in via Supabase (SSO) — set auth state
+        const supaUser = session.user;
+        setState({
+          user: {
+            id: supaUser.id,
+            email: supaUser.email || '',
+            name:
+              supaUser.user_metadata?.full_name ||
+              supaUser.user_metadata?.name ||
+              supaUser.email?.split('@')[0] ||
+              '',
+            roles: ['Member'],
+            permissions: ['workbooks:*'],
+            orgId: supaUser.user_metadata?.org_id,
+            picture: supaUser.user_metadata?.avatar_url,
+          },
+          isAuthenticated: true,
+          isLoading: false,
+          accessToken: session.access_token,
+          error: null,
+        });
+      } else if (event === 'SIGNED_OUT' && !localStorage.getItem('accessToken')) {
+        setState({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          accessToken: null,
+          error: null,
+        });
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, [state.isAuthenticated]);
@@ -95,9 +106,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Token refresh interval
   useEffect(() => {
     if (state.isAuthenticated) {
-      const interval = setInterval(() => {
-        refreshToken();
-      }, 14 * 60 * 1000); // Refresh 1 minute before 15min expiry
+      const interval = setInterval(
+        () => {
+          refreshToken();
+        },
+        14 * 60 * 1000
+      ); // Refresh 1 minute before 15min expiry
 
       return () => clearInterval(interval);
     }
@@ -130,14 +144,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       // 2. Check Supabase session (SSO)
       if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (session) {
           const supaUser = session.user;
           setState({
             user: {
               id: supaUser.id,
               email: supaUser.email || '',
-              name: supaUser.user_metadata?.full_name || supaUser.user_metadata?.name || supaUser.email?.split('@')[0] || '',
+              name:
+                supaUser.user_metadata?.full_name ||
+                supaUser.user_metadata?.name ||
+                supaUser.email?.split('@')[0] ||
+                '',
               roles: ['Member'],
               permissions: ['workbooks:*'],
               orgId: supaUser.user_metadata?.org_id,
@@ -153,7 +173,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // 3. No auth found
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
     } catch {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
@@ -168,7 +188,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const login = async (email: string, password: string) => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const response = await fetch('/api/auth/login', {
@@ -187,7 +207,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (requiresMfa) {
         // Store temp token for MFA verification
         sessionStorage.setItem('mfaTempToken', accessToken);
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           isLoading: false,
           error: 'MFA_REQUIRED',
@@ -206,7 +226,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         error: null,
       });
     } catch (err) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         error: err instanceof Error ? err.message : 'Login failed',
@@ -216,7 +236,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const loginWithSSO = async (provider: 'google' | 'microsoft' | 'saml') => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const response = await fetch(`/api/auth/sso/${provider}/init`);
@@ -227,7 +247,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const { redirectUrl } = await response.json();
       window.location.href = redirectUrl;
     } catch (err) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         error: err instanceof Error ? err.message : 'SSO initialization failed',
@@ -265,7 +285,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const refreshToken = useCallback(async () => {
     const refresh = localStorage.getItem('refreshToken');
     if (!refresh) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isAuthenticated: false,
         isLoading: false,
@@ -285,7 +305,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (response.ok) {
         const { accessToken, user } = await response.json();
         localStorage.setItem('accessToken', accessToken);
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           user,
           isAuthenticated: true,
@@ -346,7 +366,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const hasPermission = (permission: string): boolean => {
     if (!state.user) return false;
 
-    return state.user.permissions.some(p => {
+    return state.user.permissions.some((p) => {
       if (p === '*:*') return true;
       if (p === permission) return true;
 
@@ -365,7 +385,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const clearError = () => {
-    setState(prev => ({ ...prev, error: null }));
+    setState((prev) => ({ ...prev, error: null }));
   };
 
   return (

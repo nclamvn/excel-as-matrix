@@ -88,7 +88,11 @@ const VALIDATORS: Record<string, ValidatorFn> = {
       return { type: 'isTime', message: 'Must be a time string', severity: 'error' };
     }
     if (!/^\d{1,2}:\d{2}(:\d{2})?$/.test(value)) {
-      return { type: 'isTime', message: 'Invalid time format (HH:MM or HH:MM:SS)', severity: 'error' };
+      return {
+        type: 'isTime',
+        message: 'Invalid time format (HH:MM or HH:MM:SS)',
+        severity: 'error',
+      };
     }
     return null;
   },
@@ -146,7 +150,11 @@ const VALIDATORS: Record<string, ValidatorFn> = {
   // String Validators
   // ═══════════════════════════════════════════════════════════════
   minLength: (value, spec) => {
-    if (typeof value === 'string' && spec.value !== undefined && value.length < (spec.value as number)) {
+    if (
+      typeof value === 'string' &&
+      spec.value !== undefined &&
+      value.length < (spec.value as number)
+    ) {
       return {
         type: 'minLength',
         message: spec.message || `Must be at least ${spec.value} characters`,
@@ -157,7 +165,11 @@ const VALIDATORS: Record<string, ValidatorFn> = {
   },
 
   maxLength: (value, spec) => {
-    if (typeof value === 'string' && spec.value !== undefined && value.length > (spec.value as number)) {
+    if (
+      typeof value === 'string' &&
+      spec.value !== undefined &&
+      value.length > (spec.value as number)
+    ) {
       return {
         type: 'maxLength',
         message: spec.message || `Must be at most ${spec.value} characters`,

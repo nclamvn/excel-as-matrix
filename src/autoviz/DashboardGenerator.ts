@@ -227,9 +227,7 @@ export class DashboardGenerator {
     );
 
     // Generate filters if requested
-    const filters = options.includeFilters !== false
-      ? this.generateFilters(characteristics)
-      : [];
+    const filters = options.includeFilters !== false ? this.generateFilters(characteristics) : [];
 
     return {
       id: `dashboard-${++this.idCounter}-${Date.now()}`,
@@ -282,15 +280,10 @@ export class DashboardGenerator {
 
     for (const chartDef of chartConfigs) {
       // Generate chart config
-      let config = this.chartGenerator.generate(
-        chartDef.type,
-        data,
-        characteristics,
-        {
-          colorScheme: theme,
-          title: chartDef.title,
-        }
-      );
+      let config = this.chartGenerator.generate(chartDef.type, data, characteristics, {
+        colorScheme: theme,
+        title: chartDef.title,
+      });
 
       // Beautify chart
       config = this.chartBeautifier.beautify(config, {
@@ -326,9 +319,7 @@ export class DashboardGenerator {
     }
 
     // Add filter for category columns
-    const categoryCols = characteristics.columns.filter(
-      (c) => c.suggestedRole === 'category'
-    );
+    const categoryCols = characteristics.columns.filter((c) => c.suggestedRole === 'category');
 
     for (const col of categoryCols.slice(0, 2)) {
       filters.push({
@@ -374,11 +365,7 @@ export class DashboardGenerator {
   /**
    * Add chart to existing dashboard
    */
-  addChart(
-    dashboard: Dashboard,
-    chartConfig: ChartConfig,
-    position?: GridPosition
-  ): Dashboard {
+  addChart(dashboard: Dashboard, chartConfig: ChartConfig, position?: GridPosition): Dashboard {
     const newPosition = position || this.findEmptyPosition(dashboard);
 
     const newChart: DashboardChart = {
@@ -408,16 +395,10 @@ export class DashboardGenerator {
   /**
    * Update chart in dashboard
    */
-  updateChart(
-    dashboard: Dashboard,
-    chartId: string,
-    updates: Partial<DashboardChart>
-  ): Dashboard {
+  updateChart(dashboard: Dashboard, chartId: string, updates: Partial<DashboardChart>): Dashboard {
     return {
       ...dashboard,
-      charts: dashboard.charts.map((c) =>
-        c.id === chartId ? { ...c, ...updates } : c
-      ),
+      charts: dashboard.charts.map((c) => (c.id === chartId ? { ...c, ...updates } : c)),
       updatedAt: Date.now(),
     };
   }
@@ -425,12 +406,7 @@ export class DashboardGenerator {
   /**
    * Resize chart in dashboard
    */
-  resizeChart(
-    dashboard: Dashboard,
-    chartId: string,
-    width: number,
-    height: number
-  ): Dashboard {
+  resizeChart(dashboard: Dashboard, chartId: string, width: number, height: number): Dashboard {
     return this.updateChart(dashboard, chartId, {
       position: {
         ...dashboard.charts.find((c) => c.id === chartId)!.position,
@@ -443,12 +419,7 @@ export class DashboardGenerator {
   /**
    * Move chart in dashboard
    */
-  moveChart(
-    dashboard: Dashboard,
-    chartId: string,
-    x: number,
-    y: number
-  ): Dashboard {
+  moveChart(dashboard: Dashboard, chartId: string, x: number, y: number): Dashboard {
     return this.updateChart(dashboard, chartId, {
       position: {
         ...dashboard.charts.find((c) => c.id === chartId)!.position,

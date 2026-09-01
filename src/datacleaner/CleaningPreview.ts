@@ -2,11 +2,7 @@
 // CLEANING PREVIEW — Preview changes before applying
 // =============================================================================
 
-import type {
-  CleanerSheetData,
-  CellChange,
-  ChangeType,
-} from './types';
+import type { CleanerSheetData, CellChange, ChangeType } from './types';
 
 /**
  * Generates previews for cleaning changes
@@ -15,17 +11,14 @@ export class CleaningPreview {
   /**
    * Generate preview data for changes
    */
-  generatePreview(
-    data: CleanerSheetData,
-    changes: CellChange[]
-  ): PreviewData {
+  generatePreview(data: CleanerSheetData, changes: CellChange[]): PreviewData {
     const beforeData: PreviewRow[] = [];
     const afterData: PreviewRow[] = [];
 
     // Get affected rows
-    const affectedRows = new Set(changes.map(c => c.row));
+    const affectedRows = new Set(changes.map((c) => c.row));
     const deletedRows = new Set(
-      changes.filter(c => c.changeType === 'deleted').map(c => c.row)
+      changes.filter((c) => c.changeType === 'deleted').map((c) => c.row)
     );
 
     // Group changes by row
@@ -47,7 +40,7 @@ export class CleaningPreview {
       const beforeCells: PreviewCell[] = [];
       for (let col = 0; col < data.colCount; col++) {
         const cell = data.cells[row]?.[col];
-        const change = rowChanges.find(c => c.col === col);
+        const change = rowChanges.find((c) => c.col === col);
 
         beforeCells.push({
           col,
@@ -70,13 +63,13 @@ export class CleaningPreview {
         const afterCells: PreviewCell[] = [];
         for (let col = 0; col < data.colCount; col++) {
           const cell = data.cells[row]?.[col];
-          const change = rowChanges.find(c => c.col === col);
+          const change = rowChanges.find((c) => c.col === col);
 
           afterCells.push({
             col,
             ref: `${this.colToLetter(col)}${row + 1}`,
-            value: change ? change.after : cell?.value ?? null,
-            displayValue: change ? String(change.after) : cell?.displayValue ?? '',
+            value: change ? change.after : (cell?.value ?? null),
+            displayValue: change ? String(change.after) : (cell?.displayValue ?? ''),
             isChanged: !!change,
             changeType: change?.changeType,
           });
@@ -226,11 +219,8 @@ export class CleaningPreview {
   /**
    * Filter changes by type
    */
-  filterChanges(
-    changes: CellChange[],
-    types: ChangeType[]
-  ): CellChange[] {
-    return changes.filter(c => types.includes(c.changeType));
+  filterChanges(changes: CellChange[], types: ChangeType[]): CellChange[] {
+    return changes.filter((c) => types.includes(c.changeType));
   }
 
   /**

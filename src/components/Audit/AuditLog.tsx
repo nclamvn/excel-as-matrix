@@ -34,45 +34,48 @@ export const AuditLog: React.FC<AuditLogProps> = ({
     end: '',
   });
 
-  const fetchAuditLog = useCallback(async (reset = false) => {
-    setIsLoading(true);
-    setError(null);
+  const fetchAuditLog = useCallback(
+    async (reset = false) => {
+      setIsLoading(true);
+      setError(null);
 
-    const query: AuditQuery = {
-      workbookId,
-      userId,
-      eventType: eventTypeFilter || undefined,
-      action: actionFilter || undefined,
-      startDate: dateRange.start || undefined,
-      endDate: dateRange.end || undefined,
-      limit: maxItems,
-      offset: reset ? 0 : offset,
-    };
+      const query: AuditQuery = {
+        workbookId,
+        userId,
+        eventType: eventTypeFilter || undefined,
+        action: actionFilter || undefined,
+        startDate: dateRange.start || undefined,
+        endDate: dateRange.end || undefined,
+        limit: maxItems,
+        offset: reset ? 0 : offset,
+      };
 
-    const params = new URLSearchParams();
-    Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined) params.append(key, String(value));
-    });
-
-    try {
-      const response = await fetch(`${API_BASE}/audit?${params}`, {
-        headers: getAuthHeaders(),
+      const params = new URLSearchParams();
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== undefined) params.append(key, String(value));
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch audit log');
-      }
+      try {
+        const response = await fetch(`${API_BASE}/audit?${params}`, {
+          headers: getAuthHeaders(),
+        });
 
-      const data = await response.json();
-      setEvents(reset ? data.events : [...events, ...data.events]);
-      setHasMore(data.hasMore);
-      setOffset(reset ? data.events.length : offset + data.events.length);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load audit log');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [workbookId, userId, eventTypeFilter, actionFilter, dateRange, maxItems, offset, events]);
+        if (!response.ok) {
+          throw new Error('Failed to fetch audit log');
+        }
+
+        const data = await response.json();
+        setEvents(reset ? data.events : [...events, ...data.events]);
+        setHasMore(data.hasMore);
+        setOffset(reset ? data.events.length : offset + data.events.length);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to load audit log');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [workbookId, userId, eventTypeFilter, actionFilter, dateRange, maxItems, offset, events]
+  );
 
   useEffect(() => {
     fetchAuditLog(true);
@@ -169,15 +172,11 @@ export const AuditLog: React.FC<AuditLogProps> = ({
             <p style={{ marginTop: 12, color: '#6b7280' }}>No activity yet</p>
           </div>
         ) : (
-          events.map((event) => (
-            <AuditEventItem key={event.id} event={event} compact={compact} />
-          ))
+          events.map((event) => <AuditEventItem key={event.id} event={event} compact={compact} />)
         )}
 
         {isLoading && (
-          <div style={{ textAlign: 'center', padding: 20, color: '#6b7280' }}>
-            Loading...
-          </div>
+          <div style={{ textAlign: 'center', padding: 20, color: '#6b7280' }}>Loading...</div>
         )}
 
         {hasMore && !isLoading && (
@@ -200,17 +199,23 @@ const AuditEventItem: React.FC<AuditEventItemProps> = ({ event, compact }) => {
     if (type.includes('Login') || type.includes('Logout')) return <AuthIcon />;
     if (type.includes('Permission')) return <PermissionIcon />;
     if (type.includes('Share')) return <ShareIcon />;
-    if (type.includes('Cell') || type.includes('Workbook') || type.includes('Sheet')) return <DataIcon />;
+    if (type.includes('Cell') || type.includes('Workbook') || type.includes('Sheet'))
+      return <DataIcon />;
     return <EventIcon />;
   };
 
   const getActionColor = (action: AuditAction) => {
     switch (action) {
-      case 'Success': return { bg: '#f0fdf4', color: '#16a34a' };
-      case 'Failure': return { bg: '#fef2f2', color: '#dc2626' };
-      case 'Denied': return { bg: '#fff7ed', color: '#ea580c' };
-      case 'Warning': return { bg: '#fefce8', color: '#ca8a04' };
-      default: return { bg: '#f3f4f6', color: '#6b7280' };
+      case 'Success':
+        return { bg: '#f0fdf4', color: '#16a34a' };
+      case 'Failure':
+        return { bg: '#fef2f2', color: '#dc2626' };
+      case 'Denied':
+        return { bg: '#fff7ed', color: '#ea580c' };
+      case 'Warning':
+        return { bg: '#fefce8', color: '#ca8a04' };
+      default:
+        return { bg: '#f3f4f6', color: '#6b7280' };
     }
   };
 
@@ -240,20 +245,20 @@ const AuditEventItem: React.FC<AuditEventItemProps> = ({ event, compact }) => {
 
   return (
     <div style={eventItemStyle}>
-      <div style={eventIconStyle}>
-        {getEventIcon(event.eventType)}
-      </div>
+      <div style={eventIconStyle}>{getEventIcon(event.eventType)}</div>
 
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>
             {event.description}
           </span>
-          <span style={{
-            ...actionBadgeStyle,
-            backgroundColor: actionColors.bg,
-            color: actionColors.color,
-          }}>
+          <span
+            style={{
+              ...actionBadgeStyle,
+              backgroundColor: actionColors.bg,
+              color: actionColors.color,
+            }}
+          >
             {event.action}
           </span>
         </div>
@@ -285,7 +290,13 @@ const AuditEventItem: React.FC<AuditEventItemProps> = ({ event, compact }) => {
 // Icons
 const HistoryIcon: React.FC<{ size: number; color: string }> = ({ size, color }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
-    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="2" fill="none" strokeLinecap="round" />
+    <path
+      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+      stroke={color}
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+    />
   </svg>
 );
 

@@ -52,12 +52,21 @@ export function ProtectedRangeDialog({
     <div className="pr-overlay" onClick={onClose}>
       <div className="pr-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="pr-header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
           <h2>Protected Ranges</h2>
-          <button type="button" className="pr-close" onClick={onClose}>&times;</button>
+          <button type="button" className="pr-close" onClick={onClose}>
+            &times;
+          </button>
         </div>
 
         <div className="pr-content">
@@ -93,7 +102,9 @@ export function ProtectedRangeDialog({
           )}
 
           {!selection && (
-            <div className="pr-hint">Select cells first, then open this dialog to protect them.</div>
+            <div className="pr-hint">
+              Select cells first, then open this dialog to protect them.
+            </div>
           )}
 
           {/* Existing ranges */}
@@ -120,11 +131,26 @@ export function ProtectedRangeDialog({
   );
 }
 
-function RangeItem({ range, isOwner, onDelete }: { range: ProtectedRange; isOwner: boolean; onDelete: () => void }) {
+function RangeItem({
+  range,
+  isOwner,
+  onDelete,
+}: {
+  range: ProtectedRange;
+  isOwner: boolean;
+  onDelete: () => void;
+}) {
   return (
     <div className="pr-range-item">
       <div className="pr-range-info">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
@@ -136,7 +162,12 @@ function RangeItem({ range, isOwner, onDelete }: { range: ProtectedRange; isOwne
         <span>by {range.ownerName}</span>
         {range.editors.length > 0 && <span>+{range.editors.length} editors</span>}
         {isOwner && (
-          <button type="button" className="pr-btn-delete" onClick={onDelete} title="Remove protection">
+          <button
+            type="button"
+            className="pr-btn-delete"
+            onClick={onDelete}
+            title="Remove protection"
+          >
             &times;
           </button>
         )}
@@ -145,7 +176,12 @@ function RangeItem({ range, isOwner, onDelete }: { range: ProtectedRange; isOwne
   );
 }
 
-function formatRange(r: { startRow: number; endRow: number; startCol: number; endCol: number }): string {
+function formatRange(r: {
+  startRow: number;
+  endRow: number;
+  startCol: number;
+  endCol: number;
+}): string {
   return `${colLetter(r.startCol)}${r.startRow + 1}:${colLetter(r.endCol)}${r.endRow + 1}`;
 }
 

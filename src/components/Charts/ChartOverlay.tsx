@@ -69,9 +69,10 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
   const initialPos = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
   // Convert chart data to ChartRenderer format
-  const extraSeriesKeys = data && data.series.length > 1
-    ? data.series.slice(1).map(s => s.name || `series${data.series.indexOf(s)}`)
-    : undefined;
+  const extraSeriesKeys =
+    data && data.series.length > 1
+      ? data.series.slice(1).map((s) => s.name || `series${data.series.indexOf(s)}`)
+      : undefined;
   const chartConfig: ChartConfig = {
     id: chart.id,
     type: mapChartType(chart.chartType),
@@ -84,69 +85,72 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
   };
 
   // Handle drag start
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onSelect();
-    setIsDragging(true);
-    dragStart.current = { x: e.clientX, y: e.clientY };
-    initialPos.current = {
-      x: chart.position.x,
-      y: chart.position.y,
-      width: chart.position.width,
-      height: chart.position.height,
-    };
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onSelect();
+      setIsDragging(true);
+      dragStart.current = { x: e.clientX, y: e.clientY };
+      initialPos.current = {
+        x: chart.position.x,
+        y: chart.position.y,
+        width: chart.position.width,
+        height: chart.position.height,
+      };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-      onMove(
-        Math.max(0, initialPos.current.x + dx),
-        Math.max(0, initialPos.current.y + dy)
-      );
-    };
+      const handleMouseMove = (e: MouseEvent) => {
+        const dx = e.clientX - dragStart.current.x;
+        const dy = e.clientY - dragStart.current.y;
+        onMove(Math.max(0, initialPos.current.x + dx), Math.max(0, initialPos.current.y + dy));
+      };
 
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+      const handleMouseUp = () => {
+        setIsDragging(false);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [chart.position, onMove, onSelect]);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    },
+    [chart.position, onMove, onSelect]
+  );
 
   // Handle resize start
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(true);
-    dragStart.current = { x: e.clientX, y: e.clientY };
-    initialPos.current = {
-      x: chart.position.x,
-      y: chart.position.y,
-      width: chart.position.width,
-      height: chart.position.height,
-    };
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
+      dragStart.current = { x: e.clientX, y: e.clientY };
+      initialPos.current = {
+        x: chart.position.x,
+        y: chart.position.y,
+        width: chart.position.width,
+        height: chart.position.height,
+      };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-      onResize(
-        Math.max(200, initialPos.current.width + dx),
-        Math.max(150, initialPos.current.height + dy)
-      );
-    };
+      const handleMouseMove = (e: MouseEvent) => {
+        const dx = e.clientX - dragStart.current.x;
+        const dy = e.clientY - dragStart.current.y;
+        onResize(
+          Math.max(200, initialPos.current.width + dx),
+          Math.max(150, initialPos.current.height + dy)
+        );
+      };
 
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+      const handleMouseUp = () => {
+        setIsResizing(false);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [chart.position, onResize]);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    },
+    [chart.position, onResize]
+  );
 
   return (
     <div
@@ -166,13 +170,11 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
       }}
     >
       {/* Chart Header (drag handle) */}
-      <div
-        className="chart-overlay__header"
-        onMouseDown={handleDragStart}
-      >
+      <div className="chart-overlay__header" onMouseDown={handleDragStart}>
         <Move size={14} className="chart-overlay__drag-icon" />
         <span className="chart-overlay__title">{chart.name}</span>
-        <button type="button"
+        <button
+          type="button"
           className="chart-overlay__close"
           onClick={(e) => {
             e.stopPropagation();
@@ -194,10 +196,7 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
 
       {/* Resize Handle */}
       {isSelected && (
-        <div
-          className="chart-overlay__resize"
-          onMouseDown={handleResizeStart}
-        >
+        <div className="chart-overlay__resize" onMouseDown={handleResizeStart}>
           <Maximize2 size={12} />
         </div>
       )}
@@ -214,15 +213,21 @@ const DraggableChart: React.FC<DraggableChartProps> = ({
 
 function mapChartType(type: ChartType['chartType']): ChartConfig['type'] {
   switch (type) {
-    case 'Line': return 'line';
-    case 'Bar': return 'bar';
+    case 'Line':
+      return 'line';
+    case 'Bar':
+      return 'bar';
     case 'ColumnStacked':
-    case 'ColumnClustered': return 'column';
+    case 'ColumnClustered':
+      return 'column';
     case 'Pie':
-    case 'Doughnut': return 'pie';
+    case 'Doughnut':
+      return 'pie';
     case 'Area':
-    case 'AreaStacked': return 'area';
-    default: return 'bar';
+    case 'AreaStacked':
+      return 'area';
+    default:
+      return 'bar';
   }
 }
 

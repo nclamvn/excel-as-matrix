@@ -23,8 +23,8 @@ import { useUIStore } from '../../stores/uiStore';
 // Cost Constants (Claude API pricing approximation)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const COST_PER_INPUT_TOKEN = 3 / 1_000_000;   // $3/MTok (Sonnet)
-const COST_PER_OUTPUT_TOKEN = 15 / 1_000_000;  // $15/MTok (Sonnet)
+const COST_PER_INPUT_TOKEN = 3 / 1_000_000; // $3/MTok (Sonnet)
+const COST_PER_OUTPUT_TOKEN = 15 / 1_000_000; // $15/MTok (Sonnet)
 // Approximate input/output ratio: 60% input, 40% output
 const ESTIMATED_COST_PER_TOKEN = COST_PER_INPUT_TOKEN * 0.6 + COST_PER_OUTPUT_TOKEN * 0.4;
 
@@ -50,9 +50,8 @@ export const CostAnalyticsDashboard: React.FC = () => {
   if (!stats) return null;
 
   const estimatedCost = stats.totalTokens * ESTIMATED_COST_PER_TOKEN;
-  const errorRate = stats.totalRequests > 0
-    ? ((stats.totalErrors / stats.totalRequests) * 100).toFixed(1)
-    : '0';
+  const errorRate =
+    stats.totalRequests > 0 ? ((stats.totalErrors / stats.totalRequests) * 100).toFixed(1) : '0';
 
   // Action breakdown
   const actionEntries = Object.entries(stats.byAction).sort(([, a], [, b]) => b - a);
@@ -68,7 +67,8 @@ export const CostAnalyticsDashboard: React.FC = () => {
           <BarChart3 size={16} className="text-emerald-500" />
           AI Usage Analytics
         </h3>
-        <button type="button"
+        <button
+          type="button"
           onClick={refreshStats}
           className={`p-1.5 rounded-md transition-colors ${isDark ? 'hover:bg-neutral-700' : 'hover:bg-neutral-100'}`}
           aria-label="Refresh stats"
@@ -114,7 +114,9 @@ export const CostAnalyticsDashboard: React.FC = () => {
         <div className="space-y-2">
           <MetricRow
             label="Avg tokens/request"
-            value={stats.totalRequests > 0 ? Math.round(stats.averageTokensPerRequest).toString() : '—'}
+            value={
+              stats.totalRequests > 0 ? Math.round(stats.averageTokensPerRequest).toString() : '—'
+            }
             isDark={isDark}
           />
           <MetricRow
@@ -140,18 +142,22 @@ export const CostAnalyticsDashboard: React.FC = () => {
           </h4>
           <div className="space-y-1.5">
             {actionEntries.map(([action, count]) => {
-              const percentage = stats.totalRequests > 0
-                ? Math.round((count / stats.totalRequests) * 100)
-                : 0;
+              const percentage =
+                stats.totalRequests > 0 ? Math.round((count / stats.totalRequests) * 100) : 0;
 
               return (
                 <div key={action} className="flex items-center gap-2">
                   <ActionIcon action={action} />
-                  <span className={`flex-1 text-xs truncate ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                  <span
+                    className={`flex-1 text-xs truncate ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}
+                  >
                     {formatActionName(action)}
                   </span>
                   <span className="text-xs font-mono">{count}</span>
-                  <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: isDark ? '#374151' : '#e5e7eb' }}>
+                  <div
+                    className="w-16 h-1.5 rounded-full overflow-hidden"
+                    style={{ backgroundColor: isDark ? '#374151' : '#e5e7eb' }}
+                  >
                     <div
                       className="h-full rounded-full bg-emerald-500"
                       style={{ width: `${percentage}%` }}
@@ -166,14 +172,17 @@ export const CostAnalyticsDashboard: React.FC = () => {
 
       {/* Cost Projection */}
       {stats.totalRequests > 0 && (
-        <div className={`p-3 rounded-lg border ${isDark ? 'border-amber-800 bg-amber-900/10' : 'border-amber-200 bg-amber-50'}`}>
+        <div
+          className={`p-3 rounded-lg border ${isDark ? 'border-amber-800 bg-amber-900/10' : 'border-amber-200 bg-amber-50'}`}
+        >
           <h4 className="text-xs font-medium mb-1 flex items-center gap-1.5">
             <Brain size={14} className="text-amber-500" />
             Session Projection
           </h4>
           <p className={`text-xs ${isDark ? 'text-amber-300/70' : 'text-amber-700'}`}>
-            At current rate: ~{formatNumber(Math.round(stats.averageTokensPerRequest * 100))} tokens/100 requests
-            = ~${(stats.averageTokensPerRequest * 100 * ESTIMATED_COST_PER_TOKEN).toFixed(3)}
+            At current rate: ~{formatNumber(Math.round(stats.averageTokensPerRequest * 100))}{' '}
+            tokens/100 requests = ~$
+            {(stats.averageTokensPerRequest * 100 * ESTIMATED_COST_PER_TOKEN).toFixed(3)}
           </p>
         </div>
       )}
@@ -202,7 +211,9 @@ const StatCard: React.FC<{
   <div className={`p-3 rounded-lg ${isDark ? 'bg-neutral-800' : 'bg-neutral-50'}`}>
     <div className="flex items-center gap-1.5 mb-1">
       {icon}
-      <span className={`text-[10px] uppercase tracking-wider ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+      <span
+        className={`text-[10px] uppercase tracking-wider ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}
+      >
         {label}
       </span>
     </div>

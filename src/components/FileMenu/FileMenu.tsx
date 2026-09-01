@@ -26,7 +26,7 @@ import {
   Shield,
   Database,
   History,
-  Upload
+  Upload,
 } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { getCellKey } from '../../types/cell';
@@ -74,10 +74,12 @@ const useRecentFiles = () => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setRecentFiles(parsed.map((f: RecentFile) => ({
-          ...f,
-          lastOpened: new Date(f.lastOpened)
-        })));
+        setRecentFiles(
+          parsed.map((f: RecentFile) => ({
+            ...f,
+            lastOpened: new Date(f.lastOpened),
+          }))
+        );
       } catch (e) {
         loggers.ui.error('Failed to parse recent files:', e);
       }
@@ -88,41 +90,41 @@ const useRecentFiles = () => {
           id: '1',
           name: 'Sales Report Q4.xlsx',
           path: '/Documents/Reports/',
-          lastOpened: new Date()
+          lastOpened: new Date(),
         },
         {
           id: '2',
           name: 'Budget 2026.xlsx',
           path: '/Documents/Finance/',
-          lastOpened: new Date(Date.now() - 86400000)
+          lastOpened: new Date(Date.now() - 86400000),
         },
         {
           id: '3',
           name: 'Customer Data.csv',
           path: '/Downloads/',
-          lastOpened: new Date(Date.now() - 172800000)
-        }
+          lastOpened: new Date(Date.now() - 172800000),
+        },
       ]);
     }
   }, []);
 
   const addRecentFile = useCallback((file: Omit<RecentFile, 'id' | 'lastOpened'>) => {
-    setRecentFiles(prev => {
+    setRecentFiles((prev) => {
       const newFile: RecentFile = {
         ...file,
         id: Date.now().toString(),
-        lastOpened: new Date()
+        lastOpened: new Date(),
       };
       // Remove any existing entry with the same name and add the new one
-      const updated = [newFile, ...prev.filter(f => f.name !== file.name)].slice(0, 10);
+      const updated = [newFile, ...prev.filter((f) => f.name !== file.name)].slice(0, 10);
       // Store in localStorage (limit data size to prevent quota issues)
       try {
         localStorage.setItem('excelai-recent-files', JSON.stringify(updated));
       } catch (e) {
         // If localStorage is full, remove oldest files and try again
-        const reducedFiles = updated.slice(0, 5).map(f => ({
+        const reducedFiles = updated.slice(0, 5).map((f) => ({
           ...f,
-          workbookData: undefined // Remove data to save space
+          workbookData: undefined, // Remove data to save space
         }));
         localStorage.setItem('excelai-recent-files', JSON.stringify(reducedFiles));
       }
@@ -149,18 +151,15 @@ const MenuItemComponent: React.FC<{
 }> = ({ item, isActive, onClick }) => (
   <>
     {item.divider && <div className="file-menu__divider" />}
-    <button type="button"
+    <button
+      type="button"
       className={`file-menu__item ${isActive ? 'file-menu__item--active' : ''}`}
       onClick={onClick}
     >
       <span className="file-menu__item-icon">{item.icon}</span>
       <span className="file-menu__item-label">{item.label}</span>
-      {item.shortcut && (
-        <span className="file-menu__item-shortcut">{item.shortcut}</span>
-      )}
-      {item.hasSubmenu && (
-        <ChevronRight className="file-menu__item-arrow" size={14} />
-      )}
+      {item.shortcut && <span className="file-menu__item-shortcut">{item.shortcut}</span>}
+      {item.hasSubmenu && <ChevronRight className="file-menu__item-arrow" size={14} />}
     </button>
   </>
 );
@@ -188,9 +187,7 @@ const RecentFileItem: React.FC<{
 
   return (
     <button type="button" className="recent-file" onClick={onClick}>
-      <div className="recent-file__icon">
-        {getFileIcon(file.name)}
-      </div>
+      <div className="recent-file__icon">{getFileIcon(file.name)}</div>
       <div className="recent-file__info">
         <span className="recent-file__name">{file.name}</span>
         <span className="recent-file__path">{file.path}</span>
@@ -388,7 +385,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     activeSheetId,
     setWorkbook,
     addSheet,
-    batchUpdateCells
+    batchUpdateCells,
   } = useWorkbookStore();
 
   // Menu items configuration
@@ -396,14 +393,39 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     { id: 'new', label: 'New', shortcut: 'N', icon: <FilePlus size={18} />, hasSubmenu: true },
     { id: 'open', label: 'Open', shortcut: 'O', icon: <FolderOpen size={18} />, hasSubmenu: true },
     { id: 'save', label: 'Save', shortcut: 'S', icon: <Save size={18} /> },
-    { id: 'saveas', label: 'Save As', shortcut: 'A', icon: <SaveAll size={18} />, hasSubmenu: true },
-    { id: 'pdf', label: 'Export to PDF', shortcut: 'F', icon: <FileDown size={18} />, divider: true },
+    {
+      id: 'saveas',
+      label: 'Save As',
+      shortcut: 'A',
+      icon: <SaveAll size={18} />,
+      hasSubmenu: true,
+    },
+    {
+      id: 'pdf',
+      label: 'Export to PDF',
+      shortcut: 'F',
+      icon: <FileDown size={18} />,
+      divider: true,
+    },
     { id: 'picture', label: 'Export to Picture', shortcut: 'G', icon: <FileImage size={18} /> },
     { id: 'print', label: 'Print', shortcut: 'P', icon: <Printer size={18} />, hasSubmenu: true },
     { id: 'email', label: 'Send E-mail', shortcut: 'M', icon: <Mail size={18} />, divider: true },
     { id: 'encrypt', label: 'Encrypt', shortcut: 'E', icon: <Lock size={18} />, hasSubmenu: true },
-    { id: 'backup', label: 'Backup and Recovery', shortcut: 'K', icon: <RotateCcw size={18} />, hasSubmenu: true },
-    { id: 'help', label: 'Help', shortcut: 'H', icon: <HelpCircle size={18} />, hasSubmenu: true, divider: true },
+    {
+      id: 'backup',
+      label: 'Backup and Recovery',
+      shortcut: 'K',
+      icon: <RotateCcw size={18} />,
+      hasSubmenu: true,
+    },
+    {
+      id: 'help',
+      label: 'Help',
+      shortcut: 'H',
+      icon: <HelpCircle size={18} />,
+      hasSubmenu: true,
+      divider: true,
+    },
     { id: 'options', label: 'Options', shortcut: 'L', icon: <Settings size={18} /> },
   ];
 
@@ -418,7 +440,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       }
 
       const menuItem = menuItems.find(
-        item => item.shortcut?.toLowerCase() === e.key.toLowerCase()
+        (item) => item.shortcut?.toLowerCase() === e.key.toLowerCase()
       );
       if (menuItem) {
         e.preventDefault();
@@ -472,50 +494,53 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     }
   }, []);
 
-  const handleExport = useCallback((format: string) => {
-    // Build export data from current state
-    const exportData = {
-      name: workbookName,
-      sheets: sheetOrder.map(id => {
-        const sheet = sheets[id];
-        return {
-          id: sheet.id,
-          name: sheet.name,
-          cells: sheet.cells
-        };
-      })
-    };
+  const handleExport = useCallback(
+    (format: string) => {
+      // Build export data from current state
+      const exportData = {
+        name: workbookName,
+        sheets: sheetOrder.map((id) => {
+          const sheet = sheets[id];
+          return {
+            id: sheet.id,
+            name: sheet.name,
+            cells: sheet.cells,
+          };
+        }),
+      };
 
-    let content: string;
-    let mimeType: string;
-    let extension: string;
+      let content: string;
+      let mimeType: string;
+      let extension: string;
 
-    switch (format) {
-      case 'csv':
-        content = convertToCSV(exportData);
-        mimeType = 'text/csv';
-        extension = 'csv';
-        break;
-      case 'json':
-        content = JSON.stringify(exportData, null, 2);
-        mimeType = 'application/json';
-        extension = 'json';
-        break;
-      default:
-        content = JSON.stringify(exportData, null, 2);
-        mimeType = 'application/json';
-        extension = 'xlsx.json';
-    }
+      switch (format) {
+        case 'csv':
+          content = convertToCSV(exportData);
+          mimeType = 'text/csv';
+          extension = 'csv';
+          break;
+        case 'json':
+          content = JSON.stringify(exportData, null, 2);
+          mimeType = 'application/json';
+          extension = 'json';
+          break;
+        default:
+          content = JSON.stringify(exportData, null, 2);
+          mimeType = 'application/json';
+          extension = 'xlsx.json';
+      }
 
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${workbookName || 'Untitled'}.${extension}`;
-    a.click();
-    URL.revokeObjectURL(url);
-    onClose();
-  }, [workbookName, sheets, sheetOrder, onClose]);
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${workbookName || 'Untitled'}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      onClose();
+    },
+    [workbookName, sheets, sheetOrder, onClose]
+  );
 
   const handleExportPDF = useCallback(() => {
     // Use browser print to PDF
@@ -543,8 +568,9 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
       html += `<h2>${sheet.name}</h2><table>`;
 
       // Find dimensions
-      let maxRow = 0, maxCol = 0;
-      Object.keys(sheet.cells).forEach(key => {
+      let maxRow = 0,
+        maxCol = 0;
+      Object.keys(sheet.cells).forEach((key) => {
         const [row, col] = key.split(':').map(Number);
         maxRow = Math.max(maxRow, row);
         maxCol = Math.max(maxCol, col);
@@ -574,7 +600,9 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     const grid = document.querySelector('.grid-container');
     if (grid) {
       // For now, show instructions
-      alert('To export as picture:\n1. Press Cmd+Shift+4 (Mac) or Win+Shift+S (Windows)\n2. Select the spreadsheet area\n\nFull screenshot export coming soon!');
+      alert(
+        'To export as picture:\n1. Press Cmd+Shift+4 (Mac) or Win+Shift+S (Windows)\n2. Select the spreadsheet area\n\nFull screenshot export coming soon!'
+      );
     }
     onClose();
   }, [onClose]);
@@ -586,151 +614,184 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     onClose();
   }, [workbookName, onClose]);
 
-  const handleFileOpen = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      onClose();
-      return;
-    }
+  const handleFileOpen = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) {
+        onClose();
+        return;
+      }
 
-    const fileName = file.name.toLowerCase();
-    loggers.ui.debug('[FileMenu] handleFileOpen called:', fileName, file.size, 'bytes');
+      const fileName = file.name.toLowerCase();
+      loggers.ui.debug('[FileMenu] handleFileOpen called:', fileName, file.size, 'bytes');
 
-    try {
-      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-        // Parse XLSX/XLS using SheetJS (binary format — must use ArrayBuffer)
-        loggers.ui.debug('[FileMenu] XLSX branch — using importExcelFile');
-        const { importExcelFile } = await import('../../utils/excelIO');
-        const result = await importExcelFile(file);
-        loggers.ui.debug('[FileMenu] Parsed:', result.sheets.length, 'sheets, first sheet cells:', Object.keys(result.sheets[0]?.cells || {}).length);
+      try {
+        if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+          // Parse XLSX/XLS using SheetJS (binary format — must use ArrayBuffer)
+          loggers.ui.debug('[FileMenu] XLSX branch — using importExcelFile');
+          const { importExcelFile } = await import('../../utils/excelIO');
+          const result = await importExcelFile(file);
+          loggers.ui.debug(
+            '[FileMenu] Parsed:',
+            result.sheets.length,
+            'sheets, first sheet cells:',
+            Object.keys(result.sheets[0]?.cells || {}).length
+          );
 
-        const workbookId = `local-${Date.now()}`;
-        const name = file.name.replace(/\.[^/.]+$/, '');
-        setWorkbook(workbookId, name);
+          const workbookId = `local-${Date.now()}`;
+          const name = file.name.replace(/\.[^/.]+$/, '');
+          setWorkbook(workbookId, name);
 
-        const importedSheetIds: string[] = [];
-        for (let i = 0; i < result.sheets.length; i++) {
-          const sheetData = result.sheets[i];
-          const sheetId = `sheet-${Date.now()}-${i}`;
-          importedSheetIds.push(sheetId);
+          const importedSheetIds: string[] = [];
+          for (let i = 0; i < result.sheets.length; i++) {
+            const sheetData = result.sheets[i];
+            const sheetId = `sheet-${Date.now()}-${i}`;
+            importedSheetIds.push(sheetId);
 
-          addSheet({
-            id: sheetId,
-            name: sheetData.name || `Sheet${i + 1}`,
-            index: i,
-            cells: {},
-            columnWidths: sheetData.columnWidths,
-            rowHeights: sheetData.rowHeights,
-            freezePane: sheetData.freezePane,
-          });
-
-          const updates: Array<{ row: number; col: number; data: Partial<import('../../types/cell').CellData> }> = [];
-          for (const [key, cell] of Object.entries(sheetData.cells)) {
-            const [rowStr, colStr] = key.split(':');
-            const row = parseInt(rowStr);
-            const col = parseInt(colStr);
-            updates.push({
-              row,
-              col,
-              data: {
-                value: cell.value as string | number | boolean,
-                displayValue: cell.displayValue || String(cell.value ?? ''),
-                formula: cell.formula || null,
-                ...(cell.format ? { format: cell.format } : {}),
-              },
+            addSheet({
+              id: sheetId,
+              name: sheetData.name || `Sheet${i + 1}`,
+              index: i,
+              cells: {},
+              columnWidths: sheetData.columnWidths,
+              rowHeights: sheetData.rowHeights,
+              freezePane: sheetData.freezePane,
             });
+
+            const updates: Array<{
+              row: number;
+              col: number;
+              data: Partial<import('../../types/cell').CellData>;
+            }> = [];
+            for (const [key, cell] of Object.entries(sheetData.cells)) {
+              const [rowStr, colStr] = key.split(':');
+              const row = parseInt(rowStr);
+              const col = parseInt(colStr);
+              updates.push({
+                row,
+                col,
+                data: {
+                  value: cell.value as string | number | boolean,
+                  displayValue: cell.displayValue || String(cell.value ?? ''),
+                  formula: cell.formula || null,
+                  ...(cell.format ? { format: cell.format } : {}),
+                },
+              });
+            }
+
+            if (updates.length > 0) {
+              batchUpdateCells(sheetId, updates);
+            }
           }
 
-          if (updates.length > 0) {
-            batchUpdateCells(sheetId, updates);
-          }
-        }
-
-        // Wire imported charts to chart store
-        if (result.charts && result.charts.length > 0) {
-          const { useChartStore } = await import('../../stores/chartStore');
-          const { populateChartDataFromCells } = await import('../../utils/excelIO');
-          const chartStore = useChartStore.getState();
-          const typeMap: Record<string, string> = {
-            bar: 'Bar', column: 'ColumnClustered', line: 'Line',
-            pie: 'Pie', area: 'Area', scatter: 'Scatter', doughnut: 'Doughnut',
-          };
-          const defaultColors = ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948'];
-          for (const ic of result.charts) {
-            const chartSheetId = importedSheetIds[ic.sheetIndex] || importedSheetIds[0];
-            const chartType = (typeMap[ic.type.toLowerCase()] || 'ColumnClustered') as import('../../types/visualization').ChartType;
-            const chart = chartStore.createChart(workbookId, chartSheetId, ic.name, chartType);
-            if (ic.position) chartStore.updatePosition(chart.id, ic.position);
-            // Populate chart data from cells
-            const sheetCells = result.sheets[ic.sheetIndex]?.cells;
-            if (sheetCells) {
-              const chartData = populateChartDataFromCells(ic, sheetCells);
-              if (chartData && chartData.categories.length > 0 && chartData.series.length > 0) {
-                const seriesData = chartData.series.map((s, idx) => {
-                  const vals = s.values;
-                  return {
-                    id: `series-${idx}`, name: s.name, values: vals,
-                    color: defaultColors[idx % defaultColors.length],
-                    statistics: {
-                      min: Math.min(...vals), max: Math.max(...vals),
-                      sum: vals.reduce((a, b) => a + b, 0),
-                      avg: vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
-                      count: vals.length,
+          // Wire imported charts to chart store
+          if (result.charts && result.charts.length > 0) {
+            const { useChartStore } = await import('../../stores/chartStore');
+            const { populateChartDataFromCells } = await import('../../utils/excelIO');
+            const chartStore = useChartStore.getState();
+            const typeMap: Record<string, string> = {
+              bar: 'Bar',
+              column: 'ColumnClustered',
+              line: 'Line',
+              pie: 'Pie',
+              area: 'Area',
+              scatter: 'Scatter',
+              doughnut: 'Doughnut',
+            };
+            const defaultColors = [
+              '#4E79A7',
+              '#F28E2B',
+              '#E15759',
+              '#76B7B2',
+              '#59A14F',
+              '#EDC948',
+            ];
+            for (const ic of result.charts) {
+              const chartSheetId = importedSheetIds[ic.sheetIndex] || importedSheetIds[0];
+              const chartType = (typeMap[ic.type.toLowerCase()] ||
+                'ColumnClustered') as import('../../types/visualization').ChartType;
+              const chart = chartStore.createChart(workbookId, chartSheetId, ic.name, chartType);
+              if (ic.position) chartStore.updatePosition(chart.id, ic.position);
+              // Populate chart data from cells
+              const sheetCells = result.sheets[ic.sheetIndex]?.cells;
+              if (sheetCells) {
+                const chartData = populateChartDataFromCells(ic, sheetCells);
+                if (chartData && chartData.categories.length > 0 && chartData.series.length > 0) {
+                  const seriesData = chartData.series.map((s, idx) => {
+                    const vals = s.values;
+                    return {
+                      id: `series-${idx}`,
+                      name: s.name,
+                      values: vals,
+                      color: defaultColors[idx % defaultColors.length],
+                      statistics: {
+                        min: Math.min(...vals),
+                        max: Math.max(...vals),
+                        sum: vals.reduce((a, b) => a + b, 0),
+                        avg: vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
+                        count: vals.length,
+                      },
+                    };
+                  });
+                  const allValues = seriesData.flatMap((s) => s.values);
+                  const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
+                  const maxVal = allValues.length > 0 ? Math.max(...allValues) : 100;
+                  chartStore.setChartData(chart.id, {
+                    chartId: chart.id,
+                    chartType,
+                    categories: chartData.categories,
+                    series: seriesData,
+                    bounds: {
+                      minValue: minVal,
+                      maxValue: maxVal,
+                      suggestedMin: minVal >= 0 ? 0 : minVal * 1.1,
+                      suggestedMax: maxVal * 1.1,
                     },
-                  };
-                });
-                const allValues = seriesData.flatMap(s => s.values);
-                const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
-                const maxVal = allValues.length > 0 ? Math.max(...allValues) : 100;
-                chartStore.setChartData(chart.id, {
-                  chartId: chart.id, chartType,
-                  categories: chartData.categories,
-                  series: seriesData,
-                  bounds: { minValue: minVal, maxValue: maxVal, suggestedMin: minVal >= 0 ? 0 : minVal * 1.1, suggestedMax: maxVal * 1.1 },
-                });
+                  });
+                }
               }
             }
           }
-        }
-      } else if (fileName.endsWith('.json')) {
-        // Parse JSON file
-        const text = await file.text();
-        const data = JSON.parse(text);
-        if (data.sheets && Array.isArray(data.sheets)) {
-          importExcelAIFormat(data, file.name);
-        } else if (Array.isArray(data)) {
-          const rows = convertArrayToRows(data);
+        } else if (fileName.endsWith('.json')) {
+          // Parse JSON file
+          const text = await file.text();
+          const data = JSON.parse(text);
+          if (data.sheets && Array.isArray(data.sheets)) {
+            importExcelAIFormat(data, file.name);
+          } else if (Array.isArray(data)) {
+            const rows = convertArrayToRows(data);
+            importDataToSheet(rows, file.name);
+          }
+        } else {
+          // CSV/TSV — read as text
+          const text = await file.text();
+          const rows = parseCSV(text);
           importDataToSheet(rows, file.name);
         }
-      } else {
-        // CSV/TSV — read as text
-        const text = await file.text();
-        const rows = parseCSV(text);
-        importDataToSheet(rows, file.name);
+
+        // Add to recent files
+        setTimeout(() => {
+          const currentSheets = useWorkbookStore.getState().sheets;
+          const sheetOrder = useWorkbookStore.getState().sheetOrder;
+          const workbookData = JSON.stringify({
+            name: file.name.replace(/\.[^/.]+$/, ''),
+            sheets: sheetOrder.map((id) => ({
+              name: currentSheets[id]?.name,
+              cells: currentSheets[id]?.cells || {},
+            })),
+          });
+          addRecentFile({ name: file.name, path: 'Local File', workbookData });
+        }, 100);
+      } catch (err) {
+        loggers.ui.error('Error parsing file:', err);
+        const msg = err instanceof Error ? err.message : 'Unknown error';
+        alert(`Import failed: ${msg}`);
       }
 
-      // Add to recent files
-      setTimeout(() => {
-        const currentSheets = useWorkbookStore.getState().sheets;
-        const sheetOrder = useWorkbookStore.getState().sheetOrder;
-        const workbookData = JSON.stringify({
-          name: file.name.replace(/\.[^/.]+$/, ''),
-          sheets: sheetOrder.map(id => ({
-            name: currentSheets[id]?.name,
-            cells: currentSheets[id]?.cells || {}
-          }))
-        });
-        addRecentFile({ name: file.name, path: 'Local File', workbookData });
-      }, 100);
-
-    } catch (err) {
-      loggers.ui.error('Error parsing file:', err);
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      alert(`Import failed: ${msg}`);
-    }
-
-    onClose();
-  }, [onClose, activeSheetId, batchUpdateCells, setWorkbook, addSheet, addRecentFile]);
+      onClose();
+    },
+    [onClose, activeSheetId, batchUpdateCells, setWorkbook, addSheet, addRecentFile]
+  );
 
   // Parse CSV content
   const parseCSV = (content: string): string[][] => {
@@ -776,7 +837,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     const rows: string[][] = [headers];
 
     for (const item of data) {
-      const row = headers.map(h => String(item[h] ?? ''));
+      const row = headers.map((h) => String(item[h] ?? ''));
       rows.push(row);
     }
 
@@ -788,7 +849,11 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     if (!activeSheetId || rows.length === 0) return;
 
     // Create updates for all cells
-    const updates: Array<{ row: number; col: number; data: { value: string; displayValue: string } }> = [];
+    const updates: Array<{
+      row: number;
+      col: number;
+      data: { value: string; displayValue: string };
+    }> = [];
 
     for (let r = 0; r < rows.length; r++) {
       const row = rows[r];
@@ -798,7 +863,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
           updates.push({
             row: r,
             col: c,
-            data: { value, displayValue: value }
+            data: { value, displayValue: value },
           });
         }
       }
@@ -811,7 +876,16 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
   };
 
   // Import ExcelAI JSON format
-  const importExcelAIFormat = (data: { name?: string; sheets: Array<{ name: string; cells: Record<string, { value?: unknown; displayValue?: string }> }> }, fileName: string) => {
+  const importExcelAIFormat = (
+    data: {
+      name?: string;
+      sheets: Array<{
+        name: string;
+        cells: Record<string, { value?: unknown; displayValue?: string }>;
+      }>;
+    },
+    fileName: string
+  ) => {
     const workbookId = `local-${Date.now()}`;
     const name = data.name || fileName.replace(/\.[^/.]+$/, '');
 
@@ -825,11 +899,15 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
         id: sheetId,
         name: sheetData.name || `Sheet${i + 1}`,
         index: i,
-        cells: {}
+        cells: {},
       });
 
       // Import cells
-      const updates: Array<{ row: number; col: number; data: { value: string; displayValue: string } }> = [];
+      const updates: Array<{
+        row: number;
+        col: number;
+        data: { value: string; displayValue: string };
+      }> = [];
 
       for (const [key, cell] of Object.entries(sheetData.cells)) {
         const [row, col] = key.split(':').map(Number);
@@ -837,7 +915,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
         updates.push({
           row,
           col,
-          data: { value, displayValue: cell.displayValue || value }
+          data: { value, displayValue: cell.displayValue || value },
         });
       }
 
@@ -845,10 +923,11 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
         batchUpdateCells(sheetId, updates);
       }
     }
-
   };
 
-  const convertToCSV = (data: { sheets?: Array<{ cells?: Record<string, { value?: unknown; displayValue?: string }> }> }): string => {
+  const convertToCSV = (data: {
+    sheets?: Array<{ cells?: Record<string, { value?: unknown; displayValue?: string }> }>;
+  }): string => {
     // Simple CSV conversion
     const sheetsData = data?.sheets || [];
     if (sheetsData.length === 0) return '';
@@ -856,8 +935,9 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
     const firstSheet = sheetsData[0];
     const cells = firstSheet.cells || {};
 
-    let maxRow = 0, maxCol = 0;
-    Object.keys(cells).forEach(key => {
+    let maxRow = 0,
+      maxCol = 0;
+    Object.keys(cells).forEach((key) => {
       const [row, col] = key.split(':').map(Number);
       maxRow = Math.max(maxRow, row);
       maxCol = Math.max(maxCol, col);
@@ -871,7 +951,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
         const value = cell?.displayValue || String(cell?.value || '');
         row.push(value);
       }
-      rows.push(row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+      rows.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','));
     }
     return rows.join('\n');
   };
@@ -892,7 +972,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
             </div>
             <div className="file-menu__recent-list">
               {recentFiles.length > 0 ? (
-                recentFiles.map(file => (
+                recentFiles.map((file) => (
                   <RecentFileItem
                     key={file.id}
                     file={file}
@@ -915,7 +995,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
                                 id: sheetId,
                                 name: sheetData.name || `Sheet${i + 1}`,
                                 index: i,
-                                cells: sheetData.cells || {}
+                                cells: sheetData.cells || {},
                               });
                             }
                           }
@@ -925,7 +1005,9 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
                         }
                       } else {
                         // Demo files or files without saved data
-                        alert('This file needs to be opened again from disk.\nClick "Browse Files" to select your file.');
+                        alert(
+                          'This file needs to be opened again from disk.\nClick "Browse Files" to select your file.'
+                        );
                       }
                       onClose();
                     }}
@@ -945,7 +1027,8 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
               style={{ display: 'none' }}
               onChange={handleFileOpen}
             />
-            <button type="button"
+            <button
+              type="button"
               className="file-menu__browse-btn"
               onClick={() => document.getElementById('file-input-open')?.click()}
             >
@@ -973,10 +1056,10 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="file-menu__overlay" onClick={onClose}>
-      <div className="file-menu" onClick={e => e.stopPropagation()}>
+      <div className="file-menu" onClick={(e) => e.stopPropagation()}>
         {/* Sidebar */}
         <div className="file-menu__sidebar">
-          {menuItems.map(item => (
+          {menuItems.map((item) => (
             <MenuItemComponent
               key={item.id}
               item={item}
@@ -992,9 +1075,7 @@ export const FileMenu: React.FC<FileMenuProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content Panel */}
-        <div className="file-menu__content">
-          {renderSubmenu()}
-        </div>
+        <div className="file-menu__content">{renderSubmenu()}</div>
       </div>
     </div>
   );

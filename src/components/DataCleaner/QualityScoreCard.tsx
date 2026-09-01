@@ -18,16 +18,16 @@ interface QualityScoreCardProps {
 // Quality Score Card Component
 // -----------------------------------------------------------------------------
 
-export const QualityScoreCard: React.FC<QualityScoreCardProps> = ({
-  score,
-  compact = false,
-}) => {
+export const QualityScoreCard: React.FC<QualityScoreCardProps> = ({ score, compact = false }) => {
   const gradeConfig = getGradeConfig(score.grade);
 
   if (compact) {
     return (
       <div className="quality-score-card quality-score-card--compact">
-        <div className="quality-score-card__grade-badge" style={{ backgroundColor: gradeConfig.color }}>
+        <div
+          className="quality-score-card__grade-badge"
+          style={{ backgroundColor: gradeConfig.color }}
+        >
           {score.grade}
         </div>
         <div className="quality-score-card__compact-info">
@@ -92,13 +92,12 @@ export const MiniScore: React.FC<MiniScoreProps> = ({ score, label }) => {
   return (
     <div className="mini-score">
       <div className="mini-score__bar">
-        <div
-          className="mini-score__fill"
-          style={{ width: `${score}%`, backgroundColor: color }}
-        />
+        <div className="mini-score__fill" style={{ width: `${score}%`, backgroundColor: color }} />
       </div>
       <div className="mini-score__info">
-        <span className="mini-score__value" style={{ color }}>{score}%</span>
+        <span className="mini-score__value" style={{ color }}>
+          {score}%
+        </span>
         {label && <span className="mini-score__label">{label}</span>}
       </div>
     </div>
@@ -114,17 +113,11 @@ interface GradeBadgeProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const GradeBadge: React.FC<GradeBadgeProps> = ({
-  grade,
-  size = 'medium',
-}) => {
+export const GradeBadge: React.FC<GradeBadgeProps> = ({ grade, size = 'medium' }) => {
   const config = getGradeConfig(grade);
 
   return (
-    <span
-      className={`grade-badge grade-badge--${size}`}
-      style={{ backgroundColor: config.color }}
-    >
+    <span className={`grade-badge grade-badge--${size}`} style={{ backgroundColor: config.color }}>
       {grade}
     </span>
   );

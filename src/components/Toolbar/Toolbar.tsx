@@ -32,12 +32,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({ workbookName }) => {
           <span className="text-amber-700">Claude Code</span>
         </div>
         <div className="w-px h-4 bg-gray-300" />
-        <span className="text-sm text-gray-600">
-          {workbookName || 'Untitled Workbook'}
-        </span>
-        {activeSheet && (
-          <span className="text-xs text-gray-500">/ {activeSheet.name}</span>
-        )}
+        <span className="text-sm text-gray-600">{workbookName || 'Untitled Workbook'}</span>
+        {activeSheet && <span className="text-xs text-gray-500">/ {activeSheet.name}</span>}
       </div>
 
       <div className="flex-1" />
@@ -48,7 +44,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({ workbookName }) => {
       <div className="w-px h-6 bg-gray-300 mx-2" />
 
       {/* Find */}
-      <button type="button"
+      <button
+        type="button"
         className="toolbar-btn"
         onClick={() => openFind(false)}
         title="Find (Ctrl+F)"
@@ -60,14 +57,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({ workbookName }) => {
 
       {/* File Operations */}
       <div className="flex items-center gap-1">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-btn"
           onClick={() => setShowImportDialog(true)}
           title="Import file"
         >
           Import
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-btn"
           onClick={() => setShowExportDialog(true)}
           title="Export workbook"
@@ -79,9 +78,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ workbookName }) => {
       <div className="w-px h-6 bg-gray-300 mx-2" />
 
       {/* Status */}
-      <div className="text-xs text-gray-500 px-2">
-        v1.0.0
-      </div>
+      <div className="text-xs text-gray-500 px-2">v1.0.0</div>
 
       {/* Import Dialog */}
       <ImportDialog

@@ -3,13 +3,7 @@
 // ============================================================
 
 import React, { useState, useMemo, useCallback } from 'react';
-import {
-  X,
-  Filter,
-  Check,
-  Trash2,
-  MoreVertical,
-} from 'lucide-react';
+import { X, Filter, Check, Trash2, MoreVertical } from 'lucide-react';
 import { useSlicerStore } from '../../stores/slicerStore';
 import { usePivotStore } from '../../stores/pivotStore';
 import { useWorkbookStore } from '../../stores/workbookStore';
@@ -22,11 +16,7 @@ interface SlicerProps {
   onPositionChange?: (x: number, y: number) => void;
 }
 
-export const Slicer: React.FC<SlicerProps> = ({
-  slicer,
-  pivot,
-  onPositionChange,
-}) => {
+export const Slicer: React.FC<SlicerProps> = ({ slicer, pivot, onPositionChange }) => {
   const {
     toggleSlicerValue,
     clearSlicerSelection,
@@ -44,7 +34,7 @@ export const Slicer: React.FC<SlicerProps> = ({
 
   // Get unique values for this field from source data
   const uniqueValues = useMemo(() => {
-    const fieldDef = pivot.fields.find(f => f.id === slicer.fieldId);
+    const fieldDef = pivot.fields.find((f) => f.id === slicer.fieldId);
     if (!fieldDef) return [];
 
     // Parse source range
@@ -79,11 +69,14 @@ export const Slicer: React.FC<SlicerProps> = ({
   }, [pivot, slicer.fieldId, slicer.sortOrder, getCellValue]);
 
   // Check if a value is selected
-  const isSelected = useCallback((value: PivotCellValue) => {
-    // If no selection, all values are "selected" (no filter)
-    if (slicer.selectedValues.length === 0) return true;
-    return slicer.selectedValues.includes(value);
-  }, [slicer.selectedValues]);
+  const isSelected = useCallback(
+    (value: PivotCellValue) => {
+      // If no selection, all values are "selected" (no filter)
+      if (slicer.selectedValues.length === 0) return true;
+      return slicer.selectedValues.includes(value);
+    },
+    [slicer.selectedValues]
+  );
 
   // Handle value click
   const handleValueClick = (value: PivotCellValue) => {
@@ -91,7 +84,7 @@ export const Slicer: React.FC<SlicerProps> = ({
 
     // Update pivot filter
     const newSelected = slicer.selectedValues.includes(value)
-      ? slicer.selectedValues.filter(v => v !== value)
+      ? slicer.selectedValues.filter((v) => v !== value)
       : [...slicer.selectedValues, value];
 
     if (newSelected.length === 0 || newSelected.length === uniqueValues.length) {
@@ -137,14 +130,17 @@ export const Slicer: React.FC<SlicerProps> = ({
     }
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (isDragging) {
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
-      updateSlicerPosition(slicer.id, { x: newX, y: newY });
-      onPositionChange?.(newX, newY);
-    }
-  }, [isDragging, dragOffset, slicer.id, updateSlicerPosition, onPositionChange]);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging) {
+        const newX = e.clientX - dragOffset.x;
+        const newY = e.clientY - dragOffset.y;
+        updateSlicerPosition(slicer.id, { x: newX, y: newY });
+        onPositionChange?.(newX, newY);
+      }
+    },
+    [isDragging, dragOffset, slicer.id, updateSlicerPosition, onPositionChange]
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -161,8 +157,8 @@ export const Slicer: React.FC<SlicerProps> = ({
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  const hasActiveFilter = slicer.selectedValues.length > 0 &&
-    slicer.selectedValues.length < uniqueValues.length;
+  const hasActiveFilter =
+    slicer.selectedValues.length > 0 && slicer.selectedValues.length < uniqueValues.length;
 
   return (
     <div
@@ -189,7 +185,8 @@ export const Slicer: React.FC<SlicerProps> = ({
           <span className="slicer-title">{slicer.name}</span>
           <div className="slicer-actions">
             {hasActiveFilter && (
-              <button type="button"
+              <button
+                type="button"
                 className="slicer-action-btn"
                 onClick={handleClearFilter}
                 title="Clear Filter"
@@ -197,7 +194,8 @@ export const Slicer: React.FC<SlicerProps> = ({
                 <Filter size={14} />
               </button>
             )}
-            <button type="button"
+            <button
+              type="button"
               className="slicer-action-btn"
               onClick={() => setShowMenu(!showMenu)}
               title="Options"
@@ -208,7 +206,7 @@ export const Slicer: React.FC<SlicerProps> = ({
 
           {/* Menu Dropdown */}
           {showMenu && (
-            <div className="slicer-menu" onClick={e => e.stopPropagation()}>
+            <div className="slicer-menu" onClick={(e) => e.stopPropagation()}>
               <button type="button" onClick={handleSelectAll}>
                 <Check size={14} />
                 Select All
@@ -236,7 +234,8 @@ export const Slicer: React.FC<SlicerProps> = ({
           }}
         >
           {uniqueValues.map((value, index) => (
-            <button type="button"
+            <button
+              type="button"
               key={index}
               className={`slicer-value ${isSelected(value) ? 'selected' : 'unselected'}`}
               style={{
@@ -251,9 +250,7 @@ export const Slicer: React.FC<SlicerProps> = ({
               onClick={() => handleValueClick(value)}
             >
               <span className="value-text">{String(value)}</span>
-              {isSelected(value) && hasActiveFilter && (
-                <Check size={12} className="check-icon" />
-              )}
+              {isSelected(value) && hasActiveFilter && <Check size={12} className="check-icon" />}
             </button>
           ))}
         </div>
@@ -264,8 +261,7 @@ export const Slicer: React.FC<SlicerProps> = ({
         <span>
           {hasActiveFilter
             ? `${slicer.selectedValues.length} of ${uniqueValues.length} selected`
-            : `${uniqueValues.length} items`
-          }
+            : `${uniqueValues.length} items`}
         </span>
       </div>
     </div>

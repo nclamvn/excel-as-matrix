@@ -50,26 +50,38 @@ export const usePresence = (options: UsePresenceOptions): UsePresenceReturn => {
     return getActiveUserCount();
   }, [enabled, getActiveUserCount]);
 
-  const updateCursor = useCallback((row: number, col: number) => {
-    if (!enabled) return;
-    storeUpdateCursor({ row, col, sheetId });
-  }, [enabled, sheetId, storeUpdateCursor]);
+  const updateCursor = useCallback(
+    (row: number, col: number) => {
+      if (!enabled) return;
+      storeUpdateCursor({ row, col, sheetId });
+    },
+    [enabled, sheetId, storeUpdateCursor]
+  );
 
-  const updateSelection = useCallback((selection: SelectionRange | null) => {
-    if (!enabled) return;
-    storeUpdateSelection(selection);
-  }, [enabled, storeUpdateSelection]);
+  const updateSelection = useCallback(
+    (selection: SelectionRange | null) => {
+      if (!enabled) return;
+      storeUpdateSelection(selection);
+    },
+    [enabled, storeUpdateSelection]
+  );
 
-  const getUsersAtCell = useCallback((row: number, col: number) => {
-    if (!enabled) return [];
-    return storeGetUsersAtCell(sheetId, row, col);
-  }, [enabled, sheetId, storeGetUsersAtCell]);
+  const getUsersAtCell = useCallback(
+    (row: number, col: number) => {
+      if (!enabled) return [];
+      return storeGetUsersAtCell(sheetId, row, col);
+    },
+    [enabled, sheetId, storeGetUsersAtCell]
+  );
 
-  const getUserColor = useCallback((userId: string) => {
-    // Find user in remote users
-    const user = remoteUsers.find((u) => u.userId === userId);
-    return user?.color || '#999999';
-  }, [remoteUsers]);
+  const getUserColor = useCallback(
+    (userId: string) => {
+      // Find user in remote users
+      const user = remoteUsers.find((u) => u.userId === userId);
+      return user?.color || '#999999';
+    },
+    [remoteUsers]
+  );
 
   return {
     localUser,

@@ -60,7 +60,8 @@ export const SSOButtons: React.FC<SSOButtonsProps> = ({
   return (
     <div className="space-y-3">
       {/* Google */}
-      <button type="button"
+      <button
+        type="button"
         onClick={() => handleSSOLogin('google')}
         disabled={isLoading}
         className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -70,7 +71,8 @@ export const SSOButtons: React.FC<SSOButtonsProps> = ({
       </button>
 
       {/* Microsoft */}
-      <button type="button"
+      <button
+        type="button"
         onClick={() => handleSSOLogin('microsoft')}
         disabled={isLoading}
         className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -81,7 +83,8 @@ export const SSOButtons: React.FC<SSOButtonsProps> = ({
 
       {/* SAML SSO */}
       {showSaml && (
-        <button type="button"
+        <button
+          type="button"
           onClick={() => handleSSOLogin('saml')}
           disabled={isLoading}
           className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -100,7 +103,8 @@ export const SSOButtonsCompact: React.FC = () => {
 
   return (
     <div className="flex gap-3">
-      <button type="button"
+      <button
+        type="button"
         onClick={() => loginWithSSO('google')}
         disabled={isLoading}
         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
@@ -110,7 +114,8 @@ export const SSOButtonsCompact: React.FC = () => {
         <span className="text-sm text-gray-600">Google</span>
       </button>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={() => loginWithSSO('microsoft')}
         disabled={isLoading}
         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
@@ -120,7 +125,8 @@ export const SSOButtonsCompact: React.FC = () => {
         <span className="text-sm text-gray-600">Microsoft</span>
       </button>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={() => loginWithSSO('saml')}
         disabled={isLoading}
         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"

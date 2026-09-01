@@ -38,9 +38,7 @@ export const useNotificationStore = create<NotificationStore>()(
         const n = get().notifications.find((n) => n.id === id);
         if (!n || n.read) return;
         set((state) => ({
-          notifications: state.notifications.map((n) =>
-            n.id === id ? { ...n, read: true } : n
-          ),
+          notifications: state.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
           unreadCount: Math.max(0, state.unreadCount - 1),
         }));
       },

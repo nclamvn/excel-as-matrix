@@ -3,14 +3,7 @@
 // ============================================================
 
 import React, { useState, useRef, useCallback } from 'react';
-import {
-  Upload,
-  Link,
-  Image as ImageIcon,
-  X,
-  AlertCircle,
-  Loader2,
-} from 'lucide-react';
+import { Upload, Link, Image as ImageIcon, X, AlertCircle, Loader2 } from 'lucide-react';
 import { usePicturesStore } from '../../stores/picturesStore';
 import { SUPPORTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from '../../types/pictures';
 import './Pictures.css';
@@ -136,23 +129,26 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      processFile(file);
-    } else {
-      setError('Please drop an image file.');
-    }
-  }, [sheetId]);
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        processFile(file);
+      } else {
+        setError('Please drop an image file.');
+      }
+    },
+    [sheetId]
+  );
 
   if (!isOpen) return null;
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog picture-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog picture-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Insert Picture</h3>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -163,16 +159,24 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
         <div className="dialog-content">
           {/* Mode Tabs */}
           <div className="mode-tabs">
-            <button type="button"
+            <button
+              type="button"
               className={`mode-tab ${mode === 'upload' ? 'active' : ''}`}
-              onClick={() => { setMode('upload'); setError(null); }}
+              onClick={() => {
+                setMode('upload');
+                setError(null);
+              }}
             >
               <Upload size={16} />
               From Device
             </button>
-            <button type="button"
+            <button
+              type="button"
               className={`mode-tab ${mode === 'url' ? 'active' : ''}`}
-              onClick={() => { setMode('url'); setError(null); }}
+              onClick={() => {
+                setMode('url');
+                setError(null);
+              }}
             >
               <Link size={16} />
               From URL
@@ -205,12 +209,8 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
                 <>
                   <ImageIcon size={48} className="upload-icon" />
                   <div className="upload-text">
-                    <span className="primary-text">
-                      Drag & drop an image here
-                    </span>
-                    <span className="secondary-text">
-                      or click to browse
-                    </span>
+                    <span className="primary-text">Drag & drop an image here</span>
+                    <span className="secondary-text">or click to browse</span>
                   </div>
                   <div className="upload-hint">
                     Supports: PNG, JPEG, GIF, WebP, SVG, BMP (max 10MB)
@@ -232,9 +232,7 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
                 placeholder="https://example.com/image.png"
                 disabled={isLoading}
               />
-              <div className="url-hint">
-                Enter a direct link to an image file
-              </div>
+              <div className="url-hint">Enter a direct link to an image file</div>
             </div>
           )}
 
@@ -252,7 +250,8 @@ export const PictureInsertDialog: React.FC<PictureInsertDialogProps> = ({
             Cancel
           </button>
           {mode === 'url' && (
-            <button type="button"
+            <button
+              type="button"
               className="btn-primary"
               onClick={handleUrlInsert}
               disabled={isLoading || !url.trim()}

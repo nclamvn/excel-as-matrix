@@ -99,18 +99,17 @@ export const ThemesDropdown: React.FC<ThemesDropdownProps> = ({ sheetId: _sheetI
     setIsOpen(false);
   };
 
-  const currentTheme = THEMES.find(t => t.id === selectedTheme) || THEMES[0];
+  const currentTheme = THEMES.find((t) => t.id === selectedTheme) || THEMES[0];
 
   return (
     <div className="themes-dropdown" ref={dropdownRef}>
-      <button type="button"
-        className="toolbar-2026__btn"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <button type="button" className="toolbar-2026__btn" onClick={() => setIsOpen(!isOpen)}>
         <div className="theme-preview-mini">
-          {Object.values(currentTheme.colors).slice(0, 4).map((color, i) => (
-            <div key={i} className="color-dot" style={{ backgroundColor: color }} />
-          ))}
+          {Object.values(currentTheme.colors)
+            .slice(0, 4)
+            .map((color, i) => (
+              <div key={i} className="color-dot" style={{ backgroundColor: color }} />
+            ))}
         </div>
         <span>Themes</span>
         <ChevronDown size={12} />
@@ -120,8 +119,9 @@ export const ThemesDropdown: React.FC<ThemesDropdownProps> = ({ sheetId: _sheetI
         <div className="themes-menu">
           <div className="menu-title">Office Themes</div>
           <div className="themes-grid">
-            {THEMES.map(theme => (
-              <button type="button"
+            {THEMES.map((theme) => (
+              <button
+                type="button"
                 key={theme.id}
                 className={`theme-item ${selectedTheme === theme.id ? 'active' : ''}`}
                 onClick={() => handleSelectTheme(theme.id)}

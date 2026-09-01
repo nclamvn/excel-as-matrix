@@ -103,19 +103,28 @@ const ShareLinkItem: React.FC<ShareLinkItemProps> = ({
 
   const getStatusBadge = () => {
     if (!link.isValid) {
-      return <span style={{ ...badgeStyle, backgroundColor: '#fef2f2', color: '#dc2626' }}>Expired</span>;
+      return (
+        <span style={{ ...badgeStyle, backgroundColor: '#fef2f2', color: '#dc2626' }}>Expired</span>
+      );
     }
     if (!link.isActive) {
-      return <span style={{ ...badgeStyle, backgroundColor: '#fef2f2', color: '#dc2626' }}>Revoked</span>;
+      return (
+        <span style={{ ...badgeStyle, backgroundColor: '#fef2f2', color: '#dc2626' }}>Revoked</span>
+      );
     }
-    return <span style={{ ...badgeStyle, backgroundColor: '#f0fdf4', color: '#16a34a' }}>Active</span>;
+    return (
+      <span style={{ ...badgeStyle, backgroundColor: '#f0fdf4', color: '#16a34a' }}>Active</span>
+    );
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'Edit': return '#dc2626';
-      case 'Comment': return '#f59e0b';
-      default: return '#3b82f6';
+      case 'Edit':
+        return '#dc2626';
+      case 'Comment':
+        return '#f59e0b';
+      default:
+        return '#3b82f6';
     }
   };
 
@@ -123,7 +132,13 @@ const ShareLinkItem: React.FC<ShareLinkItemProps> = ({
     <div style={linkItemStyle}>
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-          <span style={{ ...typeBadgeStyle, backgroundColor: `${getTypeColor(link.linkType)}15`, color: getTypeColor(link.linkType) }}>
+          <span
+            style={{
+              ...typeBadgeStyle,
+              backgroundColor: `${getTypeColor(link.linkType)}15`,
+              color: getTypeColor(link.linkType),
+            }}
+          >
             {link.linkType}
           </span>
           {getStatusBadge()}
@@ -153,13 +168,18 @@ const ShareLinkItem: React.FC<ShareLinkItemProps> = ({
           <>
             {showConfirmRevoke ? (
               <div style={{ display: 'flex', gap: 4 }}>
-                <button type="button"
-                  onClick={() => { onRevoke(); setShowConfirmRevoke(false); }}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onRevoke();
+                    setShowConfirmRevoke(false);
+                  }}
                   style={{ ...actionButtonStyle, backgroundColor: '#fef2f2', color: '#dc2626' }}
                 >
                   Confirm
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => setShowConfirmRevoke(false)}
                   style={actionButtonStyle}
                 >
@@ -167,7 +187,8 @@ const ShareLinkItem: React.FC<ShareLinkItemProps> = ({
                 </button>
               </div>
             ) : (
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setShowConfirmRevoke(true)}
                 style={actionButtonStyle}
                 title="Revoke link"
@@ -316,7 +337,13 @@ const PlusIcon = () => (
 
 const LinkIcon: React.FC<{ size: number; color: string }> = ({ size, color }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
-    <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" stroke={color} strokeWidth="2" fill="none" strokeLinecap="round" />
+    <path
+      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+      stroke={color}
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+    />
   </svg>
 );
 

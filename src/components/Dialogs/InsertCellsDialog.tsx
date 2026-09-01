@@ -47,7 +47,7 @@ export const InsertCellsDialog: React.FC<InsertCellsDialogProps> = ({ onClose })
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={e => e.stopPropagation()} style={{ width: 320 }}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()} style={{ width: 320 }}>
         <div className="dialog-header">
           <h2>Insert Cells</h2>
           <button type="button" className="dialog-close" onClick={onClose}>

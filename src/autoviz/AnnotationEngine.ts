@@ -119,9 +119,7 @@ export class AnnotationEngine {
   /**
    * Create line annotation (horizontal or vertical)
    */
-  createLineAnnotation(
-    options: ReferenceLineOptions
-  ): Annotation {
+  createLineAnnotation(options: ReferenceLineOptions): Annotation {
     const { value, axis, label, style } = options;
 
     return {
@@ -138,9 +136,7 @@ export class AnnotationEngine {
   /**
    * Create region/band annotation
    */
-  createRegionAnnotation(
-    options: ReferenceBandOptions
-  ): Annotation {
+  createRegionAnnotation(options: ReferenceBandOptions): Annotation {
     const { from, to, axis, label, style } = options;
 
     return {
@@ -228,10 +224,7 @@ export class AnnotationEngine {
   /**
    * Add annotations from insights
    */
-  addInsightAnnotations(
-    config: ChartConfig,
-    insights: ChartInsight[]
-  ): ChartConfig {
+  addInsightAnnotations(config: ChartConfig, insights: ChartInsight[]): ChartConfig {
     const annotations: Annotation[] = [];
 
     for (const insight of insights) {
@@ -262,7 +255,8 @@ export class AnnotationEngine {
     const annotation = this.createLineAnnotation({
       value: average,
       axis: 'y',
-      label: options?.label || `Avg: ${average.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
+      label:
+        options?.label || `Avg: ${average.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
       style: options?.style || {
         color: '#f59e0b',
         borderColor: '#f59e0b',
@@ -296,10 +290,7 @@ export class AnnotationEngine {
   /**
    * Add min/max annotations
    */
-  addMinMaxAnnotations(
-    config: ChartConfig,
-    seriesIndex: number = 0
-  ): ChartConfig {
+  addMinMaxAnnotations(config: ChartConfig, seriesIndex: number = 0): ChartConfig {
     const dataset = config.data.datasets[seriesIndex];
     if (!dataset) return config;
 
@@ -377,8 +368,7 @@ export class AnnotationEngine {
       label: options?.label,
       style: options?.style || {
         color: type === 'above' ? '#fef2f2' : '#f0fdf4',
-        backgroundColor:
-          type === 'above' ? 'rgba(254, 202, 202, 0.2)' : 'rgba(187, 247, 208, 0.2)',
+        backgroundColor: type === 'above' ? 'rgba(254, 202, 202, 0.2)' : 'rgba(187, 247, 208, 0.2)',
         borderColor: type === 'above' ? '#fca5a5' : '#86efac',
       },
     });
@@ -405,9 +395,7 @@ export class AnnotationEngine {
       const value = dataset.data[index];
       if (typeof value !== 'number') continue;
 
-      const label = options?.label
-        ? options.label(index, value)
-        : value.toLocaleString();
+      const label = options?.label ? options.label(index, value) : value.toLocaleString();
 
       annotations.push(
         this.createPointAnnotation(labels[index] || index, value, label, {

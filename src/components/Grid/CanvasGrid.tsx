@@ -19,7 +19,13 @@ import { useRealtime } from '../../providers/RealtimeProvider';
 import { useScreenReaderAnnounce } from '../../hooks/useScreenReaderAnnounce';
 import { MAX_COLS, MAX_ROWS } from '../../constants/grid';
 import { useConditionalFormattingStore } from '../../stores/conditionalFormattingStore';
-import { evaluateRule, calculateRangeStats, calculateDataBarWidth, calculateColorScaleColor, calculateIconSetIcon } from '../../utils/conditionalFormatting/evaluator';
+import {
+  evaluateRule,
+  calculateRangeStats,
+  calculateDataBarWidth,
+  calculateColorScaleColor,
+  calculateIconSetIcon,
+} from '../../utils/conditionalFormatting/evaluator';
 import { ICON_SET_DEFINITIONS } from '../../types/conditionalFormatting';
 
 // Theme colors
@@ -68,9 +74,19 @@ const BASE_HEADER_HEIGHT = 24;
 
 // Format number for display with thousand separators
 // TIP-010: Also supports VND format when numberFormat indicates currency
-const formatNumberDisplay = (value: number, displayValue: string, numberFormat?: string): string => {
+const formatNumberDisplay = (
+  value: number,
+  displayValue: string,
+  numberFormat?: string
+): string => {
   // If displayValue already looks formatted (has separators or special chars), use it
-  if (displayValue && (displayValue.includes(',') || displayValue.includes('₫') || displayValue.includes('%') || displayValue.includes('$'))) {
+  if (
+    displayValue &&
+    (displayValue.includes(',') ||
+      displayValue.includes('₫') ||
+      displayValue.includes('%') ||
+      displayValue.includes('$'))
+  ) {
     return displayValue;
   }
 
@@ -123,10 +139,17 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [showGoToCell, setShowGoToCell] = useState(false);
   const [goToCellValue, setGoToCellValue] = useState('');
-  const [hoverTooltip, setHoverTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const [hoverTooltip, setHoverTooltip] = useState<{ text: string; x: number; y: number } | null>(
+    null
+  );
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [dropdownState, setDropdownState] = useState<{
-    row: number; col: number; options: string[]; x: number; y: number; w: number;
+    row: number;
+    col: number;
+    options: string[];
+    x: number;
+    y: number;
+    w: number;
   } | null>(null);
 
   // Drag state - local for performance
@@ -200,11 +223,14 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   }, [sheet?.columnWidths, DEFAULT_CELL_WIDTH, zoomFactor, activeColCount]);
 
   // Get width for a column (falls back to default for columns beyond activeColCount)
-  const getColWidth = useCallback((col: number): number => {
-    if (col < colWidths.length) return colWidths[col];
-    const customWidth = sheet?.columnWidths?.[col];
-    return customWidth ? Math.round(customWidth * zoomFactor) : DEFAULT_CELL_WIDTH;
-  }, [colWidths, sheet?.columnWidths, zoomFactor, DEFAULT_CELL_WIDTH]);
+  const getColWidth = useCallback(
+    (col: number): number => {
+      if (col < colWidths.length) return colWidths[col];
+      const customWidth = sheet?.columnWidths?.[col];
+      return customWidth ? Math.round(customWidth * zoomFactor) : DEFAULT_CELL_WIDTH;
+    },
+    [colWidths, sheet?.columnWidths, zoomFactor, DEFAULT_CELL_WIDTH]
+  );
 
   // Prefix-sum offsets for fast column position lookup
   const colOffsets = useMemo(() => {
@@ -216,15 +242,18 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   }, [colWidths, activeColCount]);
 
   // Get offset for a column (computes on-the-fly for columns beyond activeColCount)
-  const getColOffset = useCallback((col: number): number => {
-    if (col < colOffsets.length) return colOffsets[col];
-    // Compute from the last known offset
-    let offset = colOffsets[colOffsets.length - 1];
-    for (let c = colOffsets.length - 1; c < col; c++) {
-      offset += getColWidth(c);
-    }
-    return offset;
-  }, [colOffsets, getColWidth]);
+  const getColOffset = useCallback(
+    (col: number): number => {
+      if (col < colOffsets.length) return colOffsets[col];
+      // Compute from the last known offset
+      let offset = colOffsets[colOffsets.length - 1];
+      for (let c = colOffsets.length - 1; c < col; c++) {
+        offset += getColWidth(c);
+      }
+      return offset;
+    },
+    [colOffsets, getColWidth]
+  );
 
   const totalWidth = useMemo(() => {
     // Total width = offset of last active column + remaining columns at default width
@@ -234,27 +263,33 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   }, [colOffsets, activeColCount, DEFAULT_CELL_WIDTH]);
 
   // Find column index from x position (pixel coordinate in scrollable area)
-  const getColFromX = useCallback((x: number): number => {
-    // Binary search through known offsets first
-    if (x < 0) return 0;
-    const knownCount = colOffsets.length - 1; // activeColCount
-    // Check within pre-computed offsets
-    for (let c = 0; c < knownCount; c++) {
-      if (x < colOffsets[c + 1]) return c;
-    }
-    // Beyond pre-computed: compute from last known offset
-    let offset = colOffsets[knownCount];
-    for (let c = knownCount; c < MAX_COLS; c++) {
-      offset += getColWidth(c);
-      if (x < offset) return c;
-    }
-    return MAX_COLS - 1;
-  }, [colOffsets, getColWidth]);
+  const getColFromX = useCallback(
+    (x: number): number => {
+      // Binary search through known offsets first
+      if (x < 0) return 0;
+      const knownCount = colOffsets.length - 1; // activeColCount
+      // Check within pre-computed offsets
+      for (let c = 0; c < knownCount; c++) {
+        if (x < colOffsets[c + 1]) return c;
+      }
+      // Beyond pre-computed: compute from last known offset
+      let offset = colOffsets[knownCount];
+      for (let c = knownCount; c < MAX_COLS; c++) {
+        offset += getColWidth(c);
+        if (x < offset) return c;
+      }
+      return MAX_COLS - 1;
+    },
+    [colOffsets, getColWidth]
+  );
 
   // Find first visible column from scroll position
-  const getFirstVisibleCol = useCallback((scrollX: number): number => {
-    return getColFromX(scrollX);
-  }, [getColFromX]);
+  const getFirstVisibleCol = useCallback(
+    (scrollX: number): number => {
+      return getColFromX(scrollX);
+    },
+    [getColFromX]
+  );
 
   const selectedCell = useSelectionStore((state) => state.selectedCell);
   const { announceCell } = useScreenReaderAnnounce();
@@ -272,16 +307,19 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   const getLockedCellInfo = usePresenceStore((s) => s.getLockedCellInfo);
 
   // Get cell position from mouse coordinates
-  const getCellFromMouse = useCallback((clientX: number, clientY: number) => {
-    if (!containerRef.current) return null;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = clientX - rect.left + scrollLeft;
-    const y = clientY - rect.top + scrollTop;
-    const col = getColFromX(x);
-    const row = Math.floor(y / CELL_HEIGHT);
-    if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) return null;
-    return { row, col };
-  }, [scrollLeft, scrollTop, getColFromX, CELL_HEIGHT]);
+  const getCellFromMouse = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!containerRef.current) return null;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = clientX - rect.left + scrollLeft;
+      const y = clientY - rect.top + scrollTop;
+      const col = getColFromX(x);
+      const row = Math.floor(y / CELL_HEIGHT);
+      if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) return null;
+      return { row, col };
+    },
+    [scrollLeft, scrollTop, getColFromX, CELL_HEIGHT]
+  );
 
   // Announce selected cell to screen readers
   useEffect(() => {
@@ -293,13 +331,17 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   }, [selectedCell?.row, selectedCell?.col]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get cell pixel position for overlays (UserCursors, etc.)
-  const getCellPosition = useCallback((row: number, col: number) => {
-    const x = getColOffset(col) - scrollLeft;
-    const y = row * CELL_HEIGHT - scrollTop;
-    const w = getColWidth(col);
-    if (x + w < 0 || x > containerSize.width || y + CELL_HEIGHT < 0 || y > containerSize.height) return null;
-    return { x, y, width: w, height: CELL_HEIGHT };
-  }, [getColOffset, getColWidth, scrollLeft, scrollTop, CELL_HEIGHT, containerSize]);
+  const getCellPosition = useCallback(
+    (row: number, col: number) => {
+      const x = getColOffset(col) - scrollLeft;
+      const y = row * CELL_HEIGHT - scrollTop;
+      const w = getColWidth(col);
+      if (x + w < 0 || x > containerSize.width || y + CELL_HEIGHT < 0 || y > containerSize.height)
+        return null;
+      return { x, y, width: w, height: CELL_HEIGHT };
+    },
+    [getColOffset, getColWidth, scrollLeft, scrollTop, CELL_HEIGHT, containerSize]
+  );
 
   // Visible range for UserCursors
   const visibleRange = useMemo(() => {
@@ -316,7 +358,15 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       rows: { start: startRow, end: endRow },
       cols: { start: startCol, end: endCol },
     };
-  }, [scrollTop, scrollLeft, containerSize, CELL_HEIGHT, getFirstVisibleCol, getColOffset, getColWidth]);
+  }, [
+    scrollTop,
+    scrollLeft,
+    containerSize,
+    CELL_HEIGHT,
+    getFirstVisibleCol,
+    getColOffset,
+    getColWidth,
+  ]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CANVAS RENDERING
@@ -389,7 +439,8 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         // Parse the rule range to collect cells for stats
         const rangeMatch = rule.range.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/);
         if (!rangeMatch) continue;
-        const colToNum = (c: string) => c.split('').reduce((acc, ch) => acc * 26 + ch.charCodeAt(0) - 64, 0) - 1;
+        const colToNum = (c: string) =>
+          c.split('').reduce((acc, ch) => acc * 26 + ch.charCodeAt(0) - 64, 0) - 1;
         const rStartCol = colToNum(rangeMatch[1]);
         const rStartRow = parseInt(rangeMatch[2]) - 1;
         const rEndCol = colToNum(rangeMatch[3]);
@@ -473,7 +524,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
               const numVal = parseFloat(String(cellData.value));
               if (!isNaN(numVal)) {
                 const bar = calculateDataBarWidth(numVal, rule.dataBar, stats);
-                cfDataBar = { ...bar, color: bar.isNegative ? rule.dataBar.negativeColor : rule.dataBar.positiveColor };
+                cfDataBar = {
+                  ...bar,
+                  color: bar.isNegative ? rule.dataBar.negativeColor : rule.dataBar.positiveColor,
+                };
               }
             }
 
@@ -489,7 +543,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             if (rule.type === 'iconSet' && rule.iconSet) {
               const numVal = parseFloat(String(cellData.value));
               if (!isNaN(numVal)) {
-                const iconDef = ICON_SET_DEFINITIONS.find(d => d.id === rule.iconSet!.iconStyle);
+                const iconDef = ICON_SET_DEFINITIONS.find((d) => d.id === rule.iconSet!.iconStyle);
                 if (iconDef) {
                   cfIcon = calculateIconSetIcon(numVal, rule.iconSet, stats, iconDef);
                 }
@@ -517,7 +571,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           ctx.save();
           ctx.globalAlpha = 0.35;
           ctx.fillStyle = cfDataBar.color;
-          const barWidth = Math.round((cw - 4) * cfDataBar.width / 100);
+          const barWidth = Math.round(((cw - 4) * cfDataBar.width) / 100);
           ctx.fillRect(x + 2, y + 2, barWidth, CELL_HEIGHT - 4);
           ctx.globalAlpha = 1;
           ctx.restore();
@@ -526,7 +580,11 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
         // Cell text — apply number formatting for readability
         let displayValue = cellData.displayValue || String(cellData.value || '');
         if (typeof cellData.value === 'number') {
-          displayValue = formatNumberDisplay(cellData.value, displayValue, cellData.format?.numberFormat);
+          displayValue = formatNumberDisplay(
+            cellData.value,
+            displayValue,
+            cellData.format?.numberFormat
+          );
         }
         if (displayValue) {
           ctx.fillStyle = cfTextColor || cellData.format?.textColor || colors.text;
@@ -541,7 +599,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           if (cellData.format?.align === 'center') {
             ctx.textAlign = 'center';
             textX = x + cw / 2 + (cfIcon ? 8 : 0);
-          } else if (cellData.format?.align === 'right' || (typeof cellData.value === 'number' && !cellData.format?.align)) {
+          } else if (
+            cellData.format?.align === 'right' ||
+            (typeof cellData.value === 'number' && !cellData.format?.align)
+          ) {
             ctx.textAlign = 'right';
             textX = x + cw - 4;
           } else {
@@ -621,8 +682,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       const ds = dragStartRef.current;
       const de = dragEndRef.current;
       const { selX, selY, selW, selH } = getSelectionRect(
-        Math.min(ds.row, de.row), Math.max(ds.row, de.row),
-        Math.min(ds.col, de.col), Math.max(ds.col, de.col)
+        Math.min(ds.row, de.row),
+        Math.max(ds.row, de.row),
+        Math.min(ds.col, de.col),
+        Math.max(ds.col, de.col)
       );
 
       ctx.fillStyle = colors.rangeSelection;
@@ -683,41 +746,64 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       }
       ctx.restore();
     }
-  }, [containerSize, scrollTop, scrollLeft, sheet?.cells, sheet?.freezePane, selectedCell, selectionRange, isEditing, getColWidth, getColOffset, getFirstVisibleCol, CELL_HEIGHT, FONT_SIZE, colors, resolvedTheme, sheetId]);
+  }, [
+    containerSize,
+    scrollTop,
+    scrollLeft,
+    sheet?.cells,
+    sheet?.freezePane,
+    selectedCell,
+    selectionRange,
+    isEditing,
+    getColWidth,
+    getColOffset,
+    getFirstVisibleCol,
+    CELL_HEIGHT,
+    FONT_SIZE,
+    colors,
+    resolvedTheme,
+    sheetId,
+  ]);
 
   // Check if column is in selection range
-  const isColInRange = useCallback((col: number) => {
-    // Check live drag selection
-    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
-      const minCol = Math.min(dragStartRef.current.col, dragEndRef.current.col);
-      const maxCol = Math.max(dragStartRef.current.col, dragEndRef.current.col);
-      return col >= minCol && col <= maxCol;
-    }
-    // Check committed selection range
-    if (selectionRange) {
-      const minCol = Math.min(selectionRange.start.col, selectionRange.end.col);
-      const maxCol = Math.max(selectionRange.start.col, selectionRange.end.col);
-      return col >= minCol && col <= maxCol;
-    }
-    return false;
-  }, [selectionRange]);
+  const isColInRange = useCallback(
+    (col: number) => {
+      // Check live drag selection
+      if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+        const minCol = Math.min(dragStartRef.current.col, dragEndRef.current.col);
+        const maxCol = Math.max(dragStartRef.current.col, dragEndRef.current.col);
+        return col >= minCol && col <= maxCol;
+      }
+      // Check committed selection range
+      if (selectionRange) {
+        const minCol = Math.min(selectionRange.start.col, selectionRange.end.col);
+        const maxCol = Math.max(selectionRange.start.col, selectionRange.end.col);
+        return col >= minCol && col <= maxCol;
+      }
+      return false;
+    },
+    [selectionRange]
+  );
 
   // Check if row is in selection range
-  const isRowInRange = useCallback((row: number) => {
-    // Check live drag selection
-    if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
-      const minRow = Math.min(dragStartRef.current.row, dragEndRef.current.row);
-      const maxRow = Math.max(dragStartRef.current.row, dragEndRef.current.row);
-      return row >= minRow && row <= maxRow;
-    }
-    // Check committed selection range
-    if (selectionRange) {
-      const minRow = Math.min(selectionRange.start.row, selectionRange.end.row);
-      const maxRow = Math.max(selectionRange.start.row, selectionRange.end.row);
-      return row >= minRow && row <= maxRow;
-    }
-    return false;
-  }, [selectionRange]);
+  const isRowInRange = useCallback(
+    (row: number) => {
+      // Check live drag selection
+      if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
+        const minRow = Math.min(dragStartRef.current.row, dragEndRef.current.row);
+        const maxRow = Math.max(dragStartRef.current.row, dragEndRef.current.row);
+        return row >= minRow && row <= maxRow;
+      }
+      // Check committed selection range
+      if (selectionRange) {
+        const minRow = Math.min(selectionRange.start.row, selectionRange.end.row);
+        const maxRow = Math.max(selectionRange.start.row, selectionRange.end.row);
+        return row >= minRow && row <= maxRow;
+      }
+      return false;
+    },
+    [selectionRange]
+  );
 
   // Render column headers
   const renderColumnHeaders = useCallback(() => {
@@ -786,7 +872,18 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.moveTo(0, height - 0.5);
     ctx.lineTo(width, height - 0.5);
     ctx.stroke();
-  }, [containerSize.width, scrollLeft, selectedCell?.col, isColInRange, getColWidth, getColOffset, getFirstVisibleCol, HEADER_HEIGHT, HEADER_FONT_SIZE, colors]);
+  }, [
+    containerSize.width,
+    scrollLeft,
+    selectedCell?.col,
+    isColInRange,
+    getColWidth,
+    getColOffset,
+    getFirstVisibleCol,
+    HEADER_HEIGHT,
+    HEADER_FONT_SIZE,
+    colors,
+  ]);
 
   // Render row headers
   const renderRowHeaders = useCallback(() => {
@@ -849,66 +946,99 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     ctx.moveTo(width - 0.5, 0);
     ctx.lineTo(width - 0.5, height);
     ctx.stroke();
-  }, [containerSize.height, scrollTop, selectedCell?.row, isRowInRange, CELL_HEIGHT, HEADER_WIDTH, HEADER_FONT_SIZE, colors]);
+  }, [
+    containerSize.height,
+    scrollTop,
+    selectedCell?.row,
+    isRowInRange,
+    CELL_HEIGHT,
+    HEADER_WIDTH,
+    HEADER_FONT_SIZE,
+    colors,
+  ]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EVENT HANDLERS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    const cell = getCellFromMouse(e.clientX, e.clientY);
-    if (!cell) return;
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      const cell = getCellFromMouse(e.clientX, e.clientY);
+      if (!cell) return;
 
-    // Check for validation dropdown
-    const valStoreState = useValidationStore.getState();
-    const dropdownOptions = valStoreState.getDropdownOptions(sheetId, cell.row, cell.col);
-    if (dropdownOptions && dropdownOptions.length > 0) {
-      // Check if click is near the dropdown arrow area (right edge of cell)
-      const cellX = getColOffset(cell.col);
-      const cellW = getColWidth(cell.col);
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        const localX = e.clientX - rect.left + scrollLeft;
-        const arrowX = cellX + cellW - 14;
-        if (localX >= arrowX) {
-          // Open dropdown
-          const screenX = cellX - scrollLeft;
-          const screenY = (cell.row + 1) * CELL_HEIGHT - scrollTop;
-          setDropdownState({
-            row: cell.row, col: cell.col,
-            options: dropdownOptions,
-            x: screenX, y: screenY, w: cellW,
-          });
-          return;
+      // Check for validation dropdown
+      const valStoreState = useValidationStore.getState();
+      const dropdownOptions = valStoreState.getDropdownOptions(sheetId, cell.row, cell.col);
+      if (dropdownOptions && dropdownOptions.length > 0) {
+        // Check if click is near the dropdown arrow area (right edge of cell)
+        const cellX = getColOffset(cell.col);
+        const cellW = getColWidth(cell.col);
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (rect) {
+          const localX = e.clientX - rect.left + scrollLeft;
+          const arrowX = cellX + cellW - 14;
+          if (localX >= arrowX) {
+            // Open dropdown
+            const screenX = cellX - scrollLeft;
+            const screenY = (cell.row + 1) * CELL_HEIGHT - scrollTop;
+            setDropdownState({
+              row: cell.row,
+              col: cell.col,
+              options: dropdownOptions,
+              x: screenX,
+              y: screenY,
+              w: cellW,
+            });
+            return;
+          }
         }
       }
-    }
-    setDropdownState(null);
+      setDropdownState(null);
 
-    if (e.shiftKey && selectedCell) {
-      selectRange(selectedCell, cell);
-    } else {
-      setSelectedCell(cell);
-      setSelectionRange(null);
-      isDraggingRef.current = true;
-      dragStartRef.current = cell;
-      dragEndRef.current = cell;
-    }
-  }, [getCellFromMouse, selectedCell, selectRange, setSelectedCell, setSelectionRange, sheetId, getColOffset, getColWidth, scrollLeft, scrollTop, CELL_HEIGHT]);
+      if (e.shiftKey && selectedCell) {
+        selectRange(selectedCell, cell);
+      } else {
+        setSelectedCell(cell);
+        setSelectionRange(null);
+        isDraggingRef.current = true;
+        dragStartRef.current = cell;
+        dragEndRef.current = cell;
+      }
+    },
+    [
+      getCellFromMouse,
+      selectedCell,
+      selectRange,
+      setSelectedCell,
+      setSelectionRange,
+      sheetId,
+      getColOffset,
+      getColWidth,
+      scrollLeft,
+      scrollTop,
+      CELL_HEIGHT,
+    ]
+  );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDraggingRef.current || e.buttons !== 1) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDraggingRef.current || e.buttons !== 1) return;
 
-    const cell = getCellFromMouse(e.clientX, e.clientY);
-    if (cell && dragEndRef.current &&
-        (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)) {
-      dragEndRef.current = cell;
-      // Re-render all canvases for instant feedback
-      renderGrid();
-      renderColumnHeaders();
-      renderRowHeaders();
-    }
-  }, [getCellFromMouse, renderGrid, renderColumnHeaders, renderRowHeaders]);
+      const cell = getCellFromMouse(e.clientX, e.clientY);
+      if (
+        cell &&
+        dragEndRef.current &&
+        (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)
+      ) {
+        dragEndRef.current = cell;
+        // Re-render all canvases for instant feedback
+        renderGrid();
+        renderColumnHeaders();
+        renderRowHeaders();
+      }
+    },
+    [getCellFromMouse, renderGrid, renderColumnHeaders, renderRowHeaders]
+  );
 
   const handleMouseUp = useCallback(() => {
     if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
@@ -926,38 +1056,54 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     renderRowHeaders();
   }, [selectRange, renderGrid, renderColumnHeaders, renderRowHeaders]);
 
-  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-    const cell = getCellFromMouse(e.clientX, e.clientY);
-    if (cell) {
-      // Protection check: prevent editing on protected sheets
-      if (!canPerformAction(sheetId, 'formatCells')) {
-        showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
-        return;
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      const cell = getCellFromMouse(e.clientX, e.clientY);
+      if (cell) {
+        // Protection check: prevent editing on protected sheets
+        if (!canPerformAction(sheetId, 'formatCells')) {
+          showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+          return;
+        }
+        // Spill cell check: cannot edit spill cells directly
+        const cellKey = getCellKey(cell.row, cell.col);
+        const cellData = sheet?.cells[cellKey];
+        if (cellData?.spillOrigin) {
+          showToast(
+            'This cell contains a spilled value. Edit the formula in the origin cell.',
+            'info'
+          );
+          return;
+        }
+        // Cell locking check
+        const lockInfo = getLockedCellInfo(sheetId, cell.row, cell.col);
+        if (lockInfo) {
+          showToast(`${lockInfo.userName} is editing this cell`, 'info');
+          return;
+        }
+        // Range protection check
+        const rangeCheck = checkCellRangeProtection(sheetId, cell.row, cell.col, 'local-user');
+        if (rangeCheck.isProtected && !rangeCheck.canEdit && !rangeCheck.range?.warningOnly) {
+          showToast(rangeCheck.message || 'This cell is protected', 'error');
+          return;
+        }
+        setSelectedCell(cell);
+        setIsEditing(true);
+        broadcastEditStart(cell.row, cell.col);
       }
-      // Spill cell check: cannot edit spill cells directly
-      const cellKey = getCellKey(cell.row, cell.col);
-      const cellData = sheet?.cells[cellKey];
-      if (cellData?.spillOrigin) {
-        showToast('This cell contains a spilled value. Edit the formula in the origin cell.', 'info');
-        return;
-      }
-      // Cell locking check
-      const lockInfo = getLockedCellInfo(sheetId, cell.row, cell.col);
-      if (lockInfo) {
-        showToast(`${lockInfo.userName} is editing this cell`, 'info');
-        return;
-      }
-      // Range protection check
-      const rangeCheck = checkCellRangeProtection(sheetId, cell.row, cell.col, 'local-user');
-      if (rangeCheck.isProtected && !rangeCheck.canEdit && !rangeCheck.range?.warningOnly) {
-        showToast(rangeCheck.message || 'This cell is protected', 'error');
-        return;
-      }
-      setSelectedCell(cell);
-      setIsEditing(true);
-      broadcastEditStart(cell.row, cell.col);
-    }
-  }, [getCellFromMouse, setSelectedCell, setIsEditing, canPerformAction, sheetId, showToast, sheet?.cells, getLockedCellInfo, broadcastEditStart]);
+    },
+    [
+      getCellFromMouse,
+      setSelectedCell,
+      setIsEditing,
+      canPerformAction,
+      sheetId,
+      showToast,
+      sheet?.cells,
+      getLockedCellInfo,
+      broadcastEditStart,
+    ]
+  );
 
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -969,31 +1115,40 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
   // TOUCH EVENT HANDLERS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    const cell = getCellFromMouse(touch.clientX, touch.clientY);
-    if (!cell) return;
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      const cell = getCellFromMouse(touch.clientX, touch.clientY);
+      if (!cell) return;
 
-    setSelectedCell(cell);
-    setSelectionRange(null);
-    isDraggingRef.current = true;
-    dragStartRef.current = cell;
-    dragEndRef.current = cell;
-  }, [getCellFromMouse, setSelectedCell, setSelectionRange]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isDraggingRef.current || e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    const cell = getCellFromMouse(touch.clientX, touch.clientY);
-    if (cell && dragEndRef.current &&
-        (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)) {
+      setSelectedCell(cell);
+      setSelectionRange(null);
+      isDraggingRef.current = true;
+      dragStartRef.current = cell;
       dragEndRef.current = cell;
-      renderGrid();
-      renderColumnHeaders();
-      renderRowHeaders();
-    }
-  }, [getCellFromMouse, renderGrid, renderColumnHeaders, renderRowHeaders]);
+    },
+    [getCellFromMouse, setSelectedCell, setSelectionRange]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDraggingRef.current || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      const cell = getCellFromMouse(touch.clientX, touch.clientY);
+      if (
+        cell &&
+        dragEndRef.current &&
+        (cell.row !== dragEndRef.current.row || cell.col !== dragEndRef.current.col)
+      ) {
+        dragEndRef.current = cell;
+        renderGrid();
+        renderColumnHeaders();
+        renderRowHeaders();
+      }
+    },
+    [getCellFromMouse, renderGrid, renderColumnHeaders, renderRowHeaders]
+  );
 
   const handleTouchEnd = useCallback(() => {
     if (isDraggingRef.current && dragStartRef.current && dragEndRef.current) {
@@ -1029,273 +1184,341 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     setIsDragOver(false);
   }, []);
 
-  const handleFileDrop = useCallback(async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
+  const handleFileDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(false);
 
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
 
-    const name = file.name.toLowerCase();
-    if (!name.endsWith('.xlsx') && !name.endsWith('.xls') && !name.endsWith('.csv')) {
-      showToast('Unsupported file format. Please drop .xlsx, .xls, or .csv files.', 'warning');
-      return;
-    }
+      const name = file.name.toLowerCase();
+      if (!name.endsWith('.xlsx') && !name.endsWith('.xls') && !name.endsWith('.csv')) {
+        showToast('Unsupported file format. Please drop .xlsx, .xls, or .csv files.', 'warning');
+        return;
+      }
 
-    try {
-      showToast(`Importing ${file.name}...`, 'info');
+      try {
+        showToast(`Importing ${file.name}...`, 'info');
 
-      if (name.endsWith('.csv')) {
-        const { importCSVFile } = await import('../../utils/excelIO');
-        const result = await importCSVFile(file);
-        const workbookId = `local-${Date.now()}`;
-        setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
-        const sid = `sheet-${Date.now()}-0`;
-        addSheet({ id: sid, name: result.sheets[0].name, index: 0, cells: {} });
-        const updates = Object.entries(result.sheets[0].cells).map(([key, cell]) => {
-          const [r, c] = key.split(':').map(Number);
-          return { row: r, col: c, data: { value: cell.value as string | number | boolean, displayValue: cell.displayValue } };
-        });
-        if (updates.length > 0) batchUpdateCells(sid, updates);
-      } else {
-        const { importExcelFile } = await import('../../utils/excelIO');
-        const result = await importExcelFile(file);
-        const workbookId = `local-${Date.now()}`;
-        setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
-        const sheetIds: string[] = [];
-        for (let i = 0; i < result.sheets.length; i++) {
-          const sd = result.sheets[i];
-          const sid = `sheet-${Date.now()}-${i}`;
-          sheetIds.push(sid);
-          addSheet({ id: sid, name: sd.name || `Sheet${i + 1}`, index: i, cells: {},
-            columnWidths: sd.columnWidths, rowHeights: sd.rowHeights, freezePane: sd.freezePane });
-          const updates = Object.entries(sd.cells).map(([key, cell]) => {
+        if (name.endsWith('.csv')) {
+          const { importCSVFile } = await import('../../utils/excelIO');
+          const result = await importCSVFile(file);
+          const workbookId = `local-${Date.now()}`;
+          setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
+          const sid = `sheet-${Date.now()}-0`;
+          addSheet({ id: sid, name: result.sheets[0].name, index: 0, cells: {} });
+          const updates = Object.entries(result.sheets[0].cells).map(([key, cell]) => {
             const [r, c] = key.split(':').map(Number);
-            return { row: r, col: c, data: {
-              value: cell.value as string | number | boolean,
-              displayValue: cell.displayValue || String(cell.value ?? ''),
-              formula: cell.formula || null,
-              ...(cell.format ? { format: cell.format } : {}),
-            }};
+            return {
+              row: r,
+              col: c,
+              data: {
+                value: cell.value as string | number | boolean,
+                displayValue: cell.displayValue,
+              },
+            };
           });
           if (updates.length > 0) batchUpdateCells(sid, updates);
-        }
-        // Wire imported charts to chart store with data population
-        if (result.charts && result.charts.length > 0) {
-          const { useChartStore } = await import('../../stores/chartStore');
-          const { populateChartDataFromCells } = await import('../../utils/excelIO');
-          const chartStoreState = useChartStore.getState();
-          const typeMap: Record<string, string> = {
-            bar: 'Bar', column: 'ColumnClustered', line: 'Line',
-            pie: 'Pie', area: 'Area', scatter: 'Scatter', doughnut: 'Doughnut',
-          };
-          const defaultColors = ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948'];
-          for (const ic of result.charts) {
-            const chartSheetId = sheetIds[ic.sheetIndex] || sheetIds[0];
-            const chartType = (typeMap[ic.type.toLowerCase()] || 'ColumnClustered') as import('../../types/visualization').ChartType;
-            const chart = chartStoreState.createChart(workbookId, chartSheetId, ic.name, chartType);
-            if (ic.position) {
-              chartStoreState.updatePosition(chart.id, ic.position);
-            }
-            // Populate chart data from cells
-            const sheetCells = result.sheets[ic.sheetIndex]?.cells;
-            if (sheetCells) {
-              const chartData = populateChartDataFromCells(ic, sheetCells);
-              if (chartData && chartData.categories.length > 0 && chartData.series.length > 0) {
-                const seriesData = chartData.series.map((s, idx) => {
-                  const vals = s.values;
-                  return {
-                    id: `series-${idx}`,
-                    name: s.name,
-                    values: vals,
-                    color: defaultColors[idx % defaultColors.length],
-                    statistics: {
-                      min: Math.min(...vals),
-                      max: Math.max(...vals),
-                      sum: vals.reduce((a, b) => a + b, 0),
-                      avg: vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
-                      count: vals.length,
+        } else {
+          const { importExcelFile } = await import('../../utils/excelIO');
+          const result = await importExcelFile(file);
+          const workbookId = `local-${Date.now()}`;
+          setWorkbook(workbookId, file.name.replace(/\.[^/.]+$/, ''));
+          const sheetIds: string[] = [];
+          for (let i = 0; i < result.sheets.length; i++) {
+            const sd = result.sheets[i];
+            const sid = `sheet-${Date.now()}-${i}`;
+            sheetIds.push(sid);
+            addSheet({
+              id: sid,
+              name: sd.name || `Sheet${i + 1}`,
+              index: i,
+              cells: {},
+              columnWidths: sd.columnWidths,
+              rowHeights: sd.rowHeights,
+              freezePane: sd.freezePane,
+            });
+            const updates = Object.entries(sd.cells).map(([key, cell]) => {
+              const [r, c] = key.split(':').map(Number);
+              return {
+                row: r,
+                col: c,
+                data: {
+                  value: cell.value as string | number | boolean,
+                  displayValue: cell.displayValue || String(cell.value ?? ''),
+                  formula: cell.formula || null,
+                  ...(cell.format ? { format: cell.format } : {}),
+                },
+              };
+            });
+            if (updates.length > 0) batchUpdateCells(sid, updates);
+          }
+          // Wire imported charts to chart store with data population
+          if (result.charts && result.charts.length > 0) {
+            const { useChartStore } = await import('../../stores/chartStore');
+            const { populateChartDataFromCells } = await import('../../utils/excelIO');
+            const chartStoreState = useChartStore.getState();
+            const typeMap: Record<string, string> = {
+              bar: 'Bar',
+              column: 'ColumnClustered',
+              line: 'Line',
+              pie: 'Pie',
+              area: 'Area',
+              scatter: 'Scatter',
+              doughnut: 'Doughnut',
+            };
+            const defaultColors = [
+              '#4E79A7',
+              '#F28E2B',
+              '#E15759',
+              '#76B7B2',
+              '#59A14F',
+              '#EDC948',
+            ];
+            for (const ic of result.charts) {
+              const chartSheetId = sheetIds[ic.sheetIndex] || sheetIds[0];
+              const chartType = (typeMap[ic.type.toLowerCase()] ||
+                'ColumnClustered') as import('../../types/visualization').ChartType;
+              const chart = chartStoreState.createChart(
+                workbookId,
+                chartSheetId,
+                ic.name,
+                chartType
+              );
+              if (ic.position) {
+                chartStoreState.updatePosition(chart.id, ic.position);
+              }
+              // Populate chart data from cells
+              const sheetCells = result.sheets[ic.sheetIndex]?.cells;
+              if (sheetCells) {
+                const chartData = populateChartDataFromCells(ic, sheetCells);
+                if (chartData && chartData.categories.length > 0 && chartData.series.length > 0) {
+                  const seriesData = chartData.series.map((s, idx) => {
+                    const vals = s.values;
+                    return {
+                      id: `series-${idx}`,
+                      name: s.name,
+                      values: vals,
+                      color: defaultColors[idx % defaultColors.length],
+                      statistics: {
+                        min: Math.min(...vals),
+                        max: Math.max(...vals),
+                        sum: vals.reduce((a, b) => a + b, 0),
+                        avg: vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
+                        count: vals.length,
+                      },
+                    };
+                  });
+                  const allValues = seriesData.flatMap((s) => s.values);
+                  const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
+                  const maxVal = allValues.length > 0 ? Math.max(...allValues) : 100;
+                  chartStoreState.setChartData(chart.id, {
+                    chartId: chart.id,
+                    chartType,
+                    categories: chartData.categories,
+                    series: seriesData,
+                    bounds: {
+                      minValue: minVal,
+                      maxValue: maxVal,
+                      suggestedMin: minVal >= 0 ? 0 : minVal * 1.1,
+                      suggestedMax: maxVal * 1.1,
                     },
-                  };
-                });
-                const allValues = seriesData.flatMap(s => s.values);
-                const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
-                const maxVal = allValues.length > 0 ? Math.max(...allValues) : 100;
-                chartStoreState.setChartData(chart.id, {
-                  chartId: chart.id,
-                  chartType,
-                  categories: chartData.categories,
-                  series: seriesData,
-                  bounds: {
-                    minValue: minVal,
-                    maxValue: maxVal,
-                    suggestedMin: minVal >= 0 ? 0 : minVal * 1.1,
-                    suggestedMax: maxVal * 1.1,
-                  },
-                });
+                  });
+                }
               }
             }
           }
         }
+        showToast(`${file.name} imported successfully`, 'info');
+      } catch (err) {
+        loggers.ui.error('Drop import error:', err);
+        showToast('Failed to import file. Please check the format.', 'warning');
       }
-      showToast(`${file.name} imported successfully`, 'info');
-    } catch (err) {
-      loggers.ui.error('Drop import error:', err);
-      showToast('Failed to import file. Please check the format.', 'warning');
-    }
-  }, [setWorkbook, addSheet, batchUpdateCells, showToast]);
+    },
+    [setWorkbook, addSheet, batchUpdateCells, showToast]
+  );
 
   // TIP-009: Navigate to cell reference
-  const goToCell = useCallback((ref: string) => {
-    const match = ref.toUpperCase().trim().match(/^([A-Z]+)(\d+)$/);
-    if (!match) {
-      showToast('Invalid cell reference. Use format like A1, B25, AA100.', 'warning');
-      return;
-    }
-    let col = 0;
-    for (let i = 0; i < match[1].length; i++) {
-      col = col * 26 + (match[1].charCodeAt(i) - 64);
-    }
-    col -= 1;
-    const row = parseInt(match[2]) - 1;
-    if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) {
-      showToast('Cell reference out of range.', 'warning');
-      return;
-    }
-    setSelectedCell({ row, col });
-    // Scroll to make cell visible
-    if (containerRef.current) {
-      const targetY = row * CELL_HEIGHT;
-      const targetX = getColOffset(col);
-      containerRef.current.scrollTop = Math.max(0, targetY - containerSize.height / 3);
-      containerRef.current.scrollLeft = Math.max(0, targetX - containerSize.width / 3);
-    }
-    setShowGoToCell(false);
-    setGoToCellValue('');
-  }, [setSelectedCell, CELL_HEIGHT, getColOffset, containerSize, showToast]);
+  const goToCell = useCallback(
+    (ref: string) => {
+      const match = ref
+        .toUpperCase()
+        .trim()
+        .match(/^([A-Z]+)(\d+)$/);
+      if (!match) {
+        showToast('Invalid cell reference. Use format like A1, B25, AA100.', 'warning');
+        return;
+      }
+      let col = 0;
+      for (let i = 0; i < match[1].length; i++) {
+        col = col * 26 + (match[1].charCodeAt(i) - 64);
+      }
+      col -= 1;
+      const row = parseInt(match[2]) - 1;
+      if (row < 0 || col < 0 || row >= MAX_ROWS || col >= MAX_COLS) {
+        showToast('Cell reference out of range.', 'warning');
+        return;
+      }
+      setSelectedCell({ row, col });
+      // Scroll to make cell visible
+      if (containerRef.current) {
+        const targetY = row * CELL_HEIGHT;
+        const targetX = getColOffset(col);
+        containerRef.current.scrollTop = Math.max(0, targetY - containerSize.height / 3);
+        containerRef.current.scrollLeft = Math.max(0, targetX - containerSize.width / 3);
+      }
+      setShowGoToCell(false);
+      setGoToCellValue('');
+    },
+    [setSelectedCell, CELL_HEIGHT, getColOffset, containerSize, showToast]
+  );
 
   // TIP-004: Hover tooltip for truncated cells
-  const handleMouseMoveTooltip = useCallback((e: React.MouseEvent) => {
-    if (isDraggingRef.current) return;
-    const cell = getCellFromMouse(e.clientX, e.clientY);
-    if (!cell || !sheet?.cells) {
-      if (hoverTooltip) setHoverTooltip(null);
-      return;
-    }
-    const key = getCellKey(cell.row, cell.col);
-    const cellData = sheet.cells[key];
-    if (!cellData) {
-      if (hoverTooltip) setHoverTooltip(null);
-      return;
-    }
-    const text = cellData.displayValue || String(cellData.value || '');
-    if (!text) {
-      if (hoverTooltip) setHoverTooltip(null);
-      return;
-    }
-    // Estimate if text is truncated (rough: 7px per char)
-    const cw = getColWidth(cell.col);
-    const estimatedWidth = text.length * 7;
-    if (estimatedWidth > cw - 8) {
-      // Clear existing timeout
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = setTimeout(() => {
-        const rect = containerRef.current?.getBoundingClientRect();
-        if (rect) {
-          setHoverTooltip({
-            text,
-            x: e.clientX - rect.left + HEADER_WIDTH,
-            y: e.clientY - rect.top + HEADER_HEIGHT - 30,
-          });
-        }
-      }, 500); // 500ms delay before showing tooltip
-    } else {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-      if (hoverTooltip) setHoverTooltip(null);
-    }
-  }, [getCellFromMouse, sheet?.cells, getColWidth, hoverTooltip, HEADER_WIDTH, HEADER_HEIGHT]);
+  const handleMouseMoveTooltip = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDraggingRef.current) return;
+      const cell = getCellFromMouse(e.clientX, e.clientY);
+      if (!cell || !sheet?.cells) {
+        if (hoverTooltip) setHoverTooltip(null);
+        return;
+      }
+      const key = getCellKey(cell.row, cell.col);
+      const cellData = sheet.cells[key];
+      if (!cellData) {
+        if (hoverTooltip) setHoverTooltip(null);
+        return;
+      }
+      const text = cellData.displayValue || String(cellData.value || '');
+      if (!text) {
+        if (hoverTooltip) setHoverTooltip(null);
+        return;
+      }
+      // Estimate if text is truncated (rough: 7px per char)
+      const cw = getColWidth(cell.col);
+      const estimatedWidth = text.length * 7;
+      if (estimatedWidth > cw - 8) {
+        // Clear existing timeout
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = setTimeout(() => {
+          const rect = containerRef.current?.getBoundingClientRect();
+          if (rect) {
+            setHoverTooltip({
+              text,
+              x: e.clientX - rect.left + HEADER_WIDTH,
+              y: e.clientY - rect.top + HEADER_HEIGHT - 30,
+            });
+          }
+        }, 500); // 500ms delay before showing tooltip
+      } else {
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        if (hoverTooltip) setHoverTooltip(null);
+      }
+    },
+    [getCellFromMouse, sheet?.cells, getColWidth, hoverTooltip, HEADER_WIDTH, HEADER_HEIGHT]
+  );
 
   // TIP-008: Column header click to sort
-  const handleColumnHeaderClick = useCallback((e: React.MouseEvent) => {
-    if (!headerCanvasRef.current || !sheet?.cells) return;
-    const rect = headerCanvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left + scrollLeft;
-    const col = getColFromX(x);
+  const handleColumnHeaderClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!headerCanvasRef.current || !sheet?.cells) return;
+      const rect = headerCanvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left + scrollLeft;
+      const col = getColFromX(x);
 
-    // Find data range: first row to last row with data in this column
-    let minRow = Infinity, maxRow = -1;
-    for (const key of Object.keys(sheet.cells)) {
-      const [rStr, cStr] = key.split(':');
-      if (parseInt(cStr) === col || true) { // need all cols in range
-        const r = parseInt(rStr);
-        if (r < minRow) minRow = r;
-        if (r > maxRow) maxRow = r;
+      // Find data range: first row to last row with data in this column
+      let minRow = Infinity,
+        maxRow = -1;
+      for (const key of Object.keys(sheet.cells)) {
+        const [rStr] = key.split(':');
+        const row = parseInt(rStr);
+        if (row < minRow) minRow = row;
+        if (row > maxRow) maxRow = row;
       }
-    }
-    if (maxRow < 0) return;
+      if (maxRow < 0) return;
 
-    // Find min/max col with data
-    let minCol = Infinity, maxCol = -1;
-    for (const key of Object.keys(sheet.cells)) {
-      const c = parseInt(key.split(':')[1]);
-      if (c < minCol) minCol = c;
-      if (c > maxCol) maxCol = c;
-    }
+      // Find min/max col with data
+      let minCol = Infinity,
+        maxCol = -1;
+      for (const key of Object.keys(sheet.cells)) {
+        const c = parseInt(key.split(':')[1]);
+        if (c < minCol) minCol = c;
+        if (c > maxCol) maxCol = c;
+      }
 
-    // Set selection range to cover all data, then sort
-    const range = { start: { row: minRow, col: minCol }, end: { row: maxRow, col: maxCol } };
-    setSelectionRange(range);
+      // Set selection range to cover all data, then sort
+      const range = { start: { row: minRow, col: minCol }, end: { row: maxRow, col: maxCol } };
+      setSelectionRange(range);
 
-    // Toggle sort direction
-    const newDir = (sortConfig?.column === col && sortConfig?.direction === 'asc') ? 'desc' : 'asc';
+      // Toggle sort direction
+      const newDir = sortConfig?.column === col && sortConfig?.direction === 'asc' ? 'desc' : 'asc';
 
-    // Use setTimeout to let selection range update in store first
-    setTimeout(() => {
-      sortStore({ column: col, direction: newDir });
-      showToast(`Sorted by column ${getColLetter(col)} (${newDir === 'asc' ? 'A→Z' : 'Z→A'})`, 'info');
-    }, 0);
-  }, [sheet?.cells, scrollLeft, getColFromX, setSelectionRange, sortStore, sortConfig, showToast]);
+      // Use setTimeout to let selection range update in store first
+      setTimeout(() => {
+        sortStore({ column: col, direction: newDir });
+        showToast(
+          `Sorted by column ${getColLetter(col)} (${newDir === 'asc' ? 'A→Z' : 'Z→A'})`,
+          'info'
+        );
+      }, 0);
+    },
+    [sheet?.cells, scrollLeft, getColFromX, setSelectionRange, sortStore, sortConfig, showToast]
+  );
 
   // Check if grid is empty for empty state overlay
   const isEmpty = !sheet?.cells || Object.keys(sheet.cells).length === 0;
 
   // Cell edit handlers
-  const handleCellSubmit = useCallback((value: string) => {
-    if (!selectedCell || !sheetId) return;
+  const handleCellSubmit = useCallback(
+    (value: string) => {
+      if (!selectedCell || !sheetId) return;
 
-    // Protection check
-    if (!canPerformAction(sheetId, 'formatCells')) {
-      showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
-      setIsEditing(false);
-      return;
-    }
-
-    // Validation check
-    const result = validateCell(sheetId, selectedCell.row, selectedCell.col, value);
-    if (!result.isValid) {
-      const rule = getRuleForCell(sheetId, selectedCell.row, selectedCell.col);
-      const errorStyle = rule?.errorAlert?.style ?? 'stop';
-
-      if (errorStyle === 'stop') {
-        // Stop: reject the value, keep editor open
-        setValidationError(result.message || 'Invalid value');
+      // Protection check
+      if (!canPerformAction(sheetId, 'formatCells')) {
+        showToast('This sheet is protected. Unprotect it to make changes.', 'warning');
+        setIsEditing(false);
         return;
       }
-      // Warning/Information: show toast but allow the value through
-      showToast(result.message || 'Invalid value', errorStyle === 'warning' ? 'warning' : 'info');
-    }
 
-    setValidationError(null);
-    setIsEditing(false);
-    broadcastEditEnd(selectedCell.row, selectedCell.col);
-    const isFormula = typeof value === 'string' && value.startsWith('=');
-    updateCell(sheetId, selectedCell.row, selectedCell.col, {
-      value,
-      formula: isFormula ? value : null,
-    });
-    moveSelection('down');
-  }, [selectedCell, sheetId, setIsEditing, updateCell, moveSelection, canPerformAction, validateCell, getRuleForCell, showToast, broadcastEditEnd]);
+      // Validation check
+      const result = validateCell(sheetId, selectedCell.row, selectedCell.col, value);
+      if (!result.isValid) {
+        const rule = getRuleForCell(sheetId, selectedCell.row, selectedCell.col);
+        const errorStyle = rule?.errorAlert?.style ?? 'stop';
+
+        if (errorStyle === 'stop') {
+          // Stop: reject the value, keep editor open
+          setValidationError(result.message || 'Invalid value');
+          return;
+        }
+        // Warning/Information: show toast but allow the value through
+        showToast(result.message || 'Invalid value', errorStyle === 'warning' ? 'warning' : 'info');
+      }
+
+      setValidationError(null);
+      setIsEditing(false);
+      broadcastEditEnd(selectedCell.row, selectedCell.col);
+      const isFormula = typeof value === 'string' && value.startsWith('=');
+      updateCell(sheetId, selectedCell.row, selectedCell.col, {
+        value,
+        formula: isFormula ? value : null,
+      });
+      moveSelection('down');
+    },
+    [
+      selectedCell,
+      sheetId,
+      setIsEditing,
+      updateCell,
+      moveSelection,
+      canPerformAction,
+      validateCell,
+      getRuleForCell,
+      showToast,
+      broadcastEditEnd,
+    ]
+  );
 
   // Helper: try to start editing with lock check + range protection
   const tryStartEditing = useCallback(() => {
@@ -1307,7 +1530,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       return false;
     }
     // Range protection check
-    const rangeCheck = checkCellRangeProtection(sheetId, selectedCell.row, selectedCell.col, 'local-user');
+    const rangeCheck = checkCellRangeProtection(
+      sheetId,
+      selectedCell.row,
+      selectedCell.col,
+      'local-user'
+    );
     if (rangeCheck.isProtected && !rangeCheck.canEdit) {
       if (rangeCheck.range?.warningOnly) {
         showToast(rangeCheck.message || 'This cell is in a protected range', 'warning');
@@ -1319,7 +1547,15 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
     setIsEditing(true);
     broadcastEditStart(selectedCell.row, selectedCell.col);
     return true;
-  }, [selectedCell, sheetId, getLockedCellInfo, checkCellRangeProtection, setIsEditing, broadcastEditStart, showToast]);
+  }, [
+    selectedCell,
+    sheetId,
+    getLockedCellInfo,
+    checkCellRangeProtection,
+    setIsEditing,
+    broadcastEditStart,
+    showToast,
+  ]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // KEYBOARD HANDLING
@@ -1335,23 +1571,28 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       switch (e.key) {
         case 'ArrowUp':
           e.preventDefault();
-          e.shiftKey ? expandSelection('up') : moveSelection('up');
+          if (e.shiftKey) expandSelection('up');
+          else moveSelection('up');
           break;
         case 'ArrowDown':
           e.preventDefault();
-          e.shiftKey ? expandSelection('down') : moveSelection('down');
+          if (e.shiftKey) expandSelection('down');
+          else moveSelection('down');
           break;
         case 'ArrowLeft':
           e.preventDefault();
-          e.shiftKey ? expandSelection('left') : moveSelection('left');
+          if (e.shiftKey) expandSelection('left');
+          else moveSelection('left');
           break;
         case 'ArrowRight':
           e.preventDefault();
-          e.shiftKey ? expandSelection('right') : moveSelection('right');
+          if (e.shiftKey) expandSelection('right');
+          else moveSelection('right');
           break;
         case 'Tab':
           e.preventDefault();
-          e.shiftKey ? moveSelection('left') : moveSelection('right');
+          if (e.shiftKey) moveSelection('left');
+          else moveSelection('right');
           break;
         case 'Enter':
           e.preventDefault();
@@ -1405,7 +1646,18 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCell, isEditing, moveSelection, expandSelection, setIsEditing, setSelectionRange, handleCellSubmit, canPerformAction, sheetId, showToast]);
+  }, [
+    selectedCell,
+    isEditing,
+    moveSelection,
+    expandSelection,
+    setIsEditing,
+    setSelectionRange,
+    handleCellSubmit,
+    canPerformAction,
+    sheetId,
+    showToast,
+  ]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EFFECTS
@@ -1513,6 +1765,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
       {/* Main grid */}
       <div
         ref={containerRef}
+        data-testid="grid-viewport"
         style={{
           position: 'absolute',
           left: HEADER_WIDTH,
@@ -1522,11 +1775,20 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           overflow: 'auto',
         }}
         onScroll={handleScroll}
-        onMouseDown={(e) => { setHoverTooltip(null); handleMouseDown(e); }}
-        onMouseMove={(e) => { handleMouseMove(e); handleMouseMoveTooltip(e); }}
+        onMouseDown={(e) => {
+          setHoverTooltip(null);
+          handleMouseDown(e);
+        }}
+        onMouseMove={(e) => {
+          handleMouseMove(e);
+          handleMouseMoveTooltip(e);
+        }}
         onMouseUp={handleMouseUp}
         onDoubleClick={handleDoubleClick}
-        onMouseLeave={() => { setHoverTooltip(null); if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current); }}
+        onMouseLeave={() => {
+          setHoverTooltip(null);
+          if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -1539,7 +1801,7 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
               position: 'absolute',
               left: scrollLeft,
               top: scrollTop,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
             }}
           />
         </div>
@@ -1568,7 +1830,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             headerHeight={-scrollTop}
             colOffset={getColOffset(selectedCell.col)}
             onSubmit={handleCellSubmit}
-            onCancel={() => { setValidationError(null); setIsEditing(false); }}
+            onCancel={() => {
+              setValidationError(null);
+              setIsEditing(false);
+            }}
             validationError={validationError}
             inputMessage={getInputMessage(sheetId, selectedCell.row, selectedCell.col)}
           />
@@ -1622,7 +1887,8 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
                   background: 'transparent',
                 }}
                 onMouseEnter={(e) => {
-                  (e.target as HTMLElement).style.background = resolvedTheme === 'dark' ? '#404040' : '#f0f0f0';
+                  (e.target as HTMLElement).style.background =
+                    resolvedTheme === 'dark' ? '#404040' : '#f0f0f0';
                 }}
                 onMouseLeave={(e) => {
                   (e.target as HTMLElement).style.background = 'transparent';
@@ -1662,34 +1928,49 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             zIndex: 5,
           }}
         >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 12,
-            padding: '40px 32px',
-            borderRadius: 12,
-            background: resolvedTheme === 'dark' ? 'rgba(38,38,38,0.9)' : 'rgba(255,255,255,0.9)',
-            border: `2px dashed ${resolvedTheme === 'dark' ? '#525252' : '#d4d4d4'}`,
-            pointerEvents: 'auto',
-          }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={resolvedTheme === 'dark' ? '#6ee7b7' : '#059669'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 12,
+              padding: '40px 32px',
+              borderRadius: 12,
+              background: resolvedTheme === 'dark' ? 'rgba(38,38,38,0.9)' : 'rgba(255,255,255,0.9)',
+              border: `2px dashed ${resolvedTheme === 'dark' ? '#525252' : '#d4d4d4'}`,
+              pointerEvents: 'auto',
+            }}
+          >
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={resolvedTheme === 'dark' ? '#6ee7b7' : '#059669'}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
               <polyline points="14 2 14 8 20 8" />
               <line x1="12" y1="18" x2="12" y2="12" />
               <line x1="9" y1="15" x2="15" y2="15" />
             </svg>
-            <div style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: resolvedTheme === 'dark' ? '#e5e5e5' : '#171717',
-            }}>
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 600,
+                color: resolvedTheme === 'dark' ? '#e5e5e5' : '#171717',
+              }}
+            >
               Drop XLSX, XLS, or CSV file here
             </div>
-            <div style={{
-              fontSize: 13,
-              color: resolvedTheme === 'dark' ? '#a3a3a3' : '#737373',
-            }}>
+            <div
+              style={{
+                fontSize: 13,
+                color: resolvedTheme === 'dark' ? '#a3a3a3' : '#737373',
+              }}
+            >
               or use File &gt; Open to browse
             </div>
             <input
@@ -1710,11 +1991,19 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
                     wbStore.setWorkbook(wbId, file.name.replace(/\.[^/.]+$/, ''));
                     const sid = `sheet-${Date.now()}`;
                     wbStore.addSheet({ id: sid, name: 'Sheet1', index: 0, cells: {} });
-                    const updates: Array<{ row: number; col: number; data: { value: string | number | boolean; displayValue: string } }> = [];
+                    const updates: Array<{
+                      row: number;
+                      col: number;
+                      data: { value: string | number | boolean; displayValue: string };
+                    }> = [];
                     for (const [key, cell] of Object.entries(result.sheets[0].cells)) {
                       const [r, c] = key.split(':').map(Number);
                       const v = cell.value ?? '';
-                      updates.push({ row: r, col: c, data: { value: v as string | number | boolean, displayValue: String(v) } });
+                      updates.push({
+                        row: r,
+                        col: c,
+                        data: { value: v as string | number | boolean, displayValue: String(v) },
+                      });
                     }
                     wbStore.batchUpdateCells(sid, updates);
                   } else {
@@ -1726,27 +2015,58 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
                     for (let i = 0; i < result.sheets.length; i++) {
                       const sd = result.sheets[i];
                       const sid = `sheet-${Date.now()}-${i}`;
-                      wbStore.addSheet({ id: sid, name: sd.name || `Sheet${i + 1}`, index: i, cells: {}, columnWidths: sd.columnWidths, rowHeights: sd.rowHeights, freezePane: sd.freezePane });
-                      const updates: Array<{ row: number; col: number; data: { value: string | number | boolean; displayValue: string; formula?: string | null } }> = [];
+                      wbStore.addSheet({
+                        id: sid,
+                        name: sd.name || `Sheet${i + 1}`,
+                        index: i,
+                        cells: {},
+                        columnWidths: sd.columnWidths,
+                        rowHeights: sd.rowHeights,
+                        freezePane: sd.freezePane,
+                      });
+                      const updates: Array<{
+                        row: number;
+                        col: number;
+                        data: {
+                          value: string | number | boolean;
+                          displayValue: string;
+                          formula?: string | null;
+                        };
+                      }> = [];
                       for (const [key, cell] of Object.entries(sd.cells)) {
                         if (!cell) continue;
                         const [r, c] = key.split(':').map(Number);
                         if (isNaN(r) || isNaN(c)) continue;
                         const v = cell.value != null ? cell.value : '';
-                        const dv = cell.displayValue != null ? cell.displayValue : String(v != null ? v : '');
-                        updates.push({ row: r, col: c, data: { value: v as string | number | boolean, displayValue: dv, formula: cell.formula || null } });
+                        const dv =
+                          cell.displayValue != null
+                            ? cell.displayValue
+                            : String(v != null ? v : '');
+                        updates.push({
+                          row: r,
+                          col: c,
+                          data: {
+                            value: v as string | number | boolean,
+                            displayValue: dv,
+                            formula: cell.formula || null,
+                          },
+                        });
                       }
                       if (updates.length > 0) wbStore.batchUpdateCells(sid, updates);
                     }
                   }
                   showToast('File imported successfully', 'success');
                 } catch (err) {
-                  showToast(`Import failed: ${err instanceof Error ? err.message : 'Unknown error'}`, 'error');
+                  showToast(
+                    `Import failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
+                    'error'
+                  );
                 }
                 e.target.value = '';
               }}
             />
-            <button type="button"
+            <button
+              type="button"
               onClick={() => document.getElementById('empty-state-file-input')?.click()}
               style={{
                 marginTop: 4,
@@ -1815,7 +2135,10 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             onChange={(e) => setGoToCellValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') goToCell(goToCellValue);
-              if (e.key === 'Escape') { setShowGoToCell(false); setGoToCellValue(''); }
+              if (e.key === 'Escape') {
+                setShowGoToCell(false);
+                setGoToCellValue('');
+              }
             }}
             style={{
               width: 140,
@@ -1828,7 +2151,8 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
               outline: 'none',
             }}
           />
-          <button type="button"
+          <button
+            type="button"
             onClick={() => goToCell(goToCellValue)}
             style={{
               padding: '4px 10px',
@@ -1842,8 +2166,12 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
           >
             Go
           </button>
-          <button type="button"
-            onClick={() => { setShowGoToCell(false); setGoToCellValue(''); }}
+          <button
+            type="button"
+            onClick={() => {
+              setShowGoToCell(false);
+              setGoToCellValue('');
+            }}
             style={{
               padding: '4px 8px',
               background: 'transparent',
@@ -1874,24 +2202,33 @@ export const CanvasGrid: React.FC<CanvasGridProps> = ({ sheetId }) => {
             pointerEvents: 'none',
           }}
         >
-          <div style={{
-            padding: '24px 40px',
-            background: resolvedTheme === 'dark' ? '#1a1a1a' : 'white',
-            borderRadius: 12,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 8,
-          }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div
+            style={{
+              padding: '24px 40px',
+              background: resolvedTheme === 'dark' ? '#1a1a1a' : 'white',
+              borderRadius: 12,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#059669"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            <span style={{ fontSize: 16, fontWeight: 600, color: '#059669' }}>
-              Drop to import
-            </span>
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#059669' }}>Drop to import</span>
           </div>
         </div>
       )}

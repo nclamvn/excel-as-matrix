@@ -12,8 +12,8 @@ function createTestSheetData(cells: unknown[][], columnTypes?: string[]): Cleane
     sheetName: 'Test Sheet',
     rowCount: rows,
     colCount: cols,
-    cells: cells.map(row =>
-      row.map(value => ({
+    cells: cells.map((row) =>
+      row.map((value) => ({
         value,
         isEmpty: value === null || value === undefined || value === '',
       }))
@@ -167,7 +167,7 @@ describe('DuplicateDetector', () => {
         const groups = strictDetector.detect(data);
 
         // Very strict threshold should not match
-        expect(groups.every(g => g.type !== 'fuzzy' || g.similarity >= 0.99)).toBe(true);
+        expect(groups.every((g) => g.type !== 'fuzzy' || g.similarity >= 0.99)).toBe(true);
       });
 
       it('calculates similarity score for fuzzy groups', () => {
@@ -180,7 +180,7 @@ describe('DuplicateDetector', () => {
         ]);
         const groups = fuzzyDetector.detect(data);
 
-        const fuzzyGroup = groups.find(g => g.type === 'fuzzy');
+        const fuzzyGroup = groups.find((g) => g.type === 'fuzzy');
         if (fuzzyGroup) {
           expect(fuzzyGroup.similarity).toBeGreaterThan(0);
           expect(fuzzyGroup.similarity).toBeLessThanOrEqual(1);
@@ -258,17 +258,19 @@ describe('DuplicateDetector', () => {
 
   describe('removeDuplicates', () => {
     it('returns rows to delete', () => {
-      const groups = [{
-        id: 'dup-1',
-        type: 'exact' as const,
-        similarity: 1,
-        rows: [
-          { rowIndex: 0, values: ['A', 1], isOriginal: true },
-          { rowIndex: 2, values: ['A', 1], isOriginal: false },
-        ],
-        columns: [0, 1],
-        keepRow: 0,
-      }];
+      const groups = [
+        {
+          id: 'dup-1',
+          type: 'exact' as const,
+          similarity: 1,
+          rows: [
+            { rowIndex: 0, values: ['A', 1], isOriginal: true },
+            { rowIndex: 2, values: ['A', 1], isOriginal: false },
+          ],
+          columns: [0, 1],
+          keepRow: 0,
+        },
+      ];
 
       const rowsToDelete = detector.removeDuplicates(groups);
       expect(rowsToDelete).toContain(2);
@@ -276,18 +278,20 @@ describe('DuplicateDetector', () => {
     });
 
     it('keeps first row by default', () => {
-      const groups = [{
-        id: 'dup-1',
-        type: 'exact' as const,
-        similarity: 1,
-        rows: [
-          { rowIndex: 0, values: ['A'], isOriginal: true },
-          { rowIndex: 1, values: ['A'], isOriginal: false },
-          { rowIndex: 2, values: ['A'], isOriginal: false },
-        ],
-        columns: [0],
-        keepRow: 0,
-      }];
+      const groups = [
+        {
+          id: 'dup-1',
+          type: 'exact' as const,
+          similarity: 1,
+          rows: [
+            { rowIndex: 0, values: ['A'], isOriginal: true },
+            { rowIndex: 1, values: ['A'], isOriginal: false },
+            { rowIndex: 2, values: ['A'], isOriginal: false },
+          ],
+          columns: [0],
+          keepRow: 0,
+        },
+      ];
 
       const rowsToDelete = detector.removeDuplicates(groups, 'first');
       expect(rowsToDelete).toEqual([2, 1]); // Descending order
@@ -295,18 +299,20 @@ describe('DuplicateDetector', () => {
     });
 
     it('keeps last row when specified', () => {
-      const groups = [{
-        id: 'dup-1',
-        type: 'exact' as const,
-        similarity: 1,
-        rows: [
-          { rowIndex: 0, values: ['A'], isOriginal: true },
-          { rowIndex: 1, values: ['A'], isOriginal: false },
-          { rowIndex: 2, values: ['A'], isOriginal: false },
-        ],
-        columns: [0],
-        keepRow: 2,
-      }];
+      const groups = [
+        {
+          id: 'dup-1',
+          type: 'exact' as const,
+          similarity: 1,
+          rows: [
+            { rowIndex: 0, values: ['A'], isOriginal: true },
+            { rowIndex: 1, values: ['A'], isOriginal: false },
+            { rowIndex: 2, values: ['A'], isOriginal: false },
+          ],
+          columns: [0],
+          keepRow: 2,
+        },
+      ];
 
       const rowsToDelete = detector.removeDuplicates(groups, 'last');
       expect(rowsToDelete).not.toContain(2); // Keep last
@@ -346,18 +352,20 @@ describe('DuplicateDetector', () => {
     });
 
     it('sorts rows in descending order', () => {
-      const groups = [{
-        id: 'dup-1',
-        type: 'exact' as const,
-        similarity: 1,
-        rows: [
-          { rowIndex: 0, values: ['A'], isOriginal: true },
-          { rowIndex: 5, values: ['A'], isOriginal: false },
-          { rowIndex: 2, values: ['A'], isOriginal: false },
-        ],
-        columns: [0],
-        keepRow: 0,
-      }];
+      const groups = [
+        {
+          id: 'dup-1',
+          type: 'exact' as const,
+          similarity: 1,
+          rows: [
+            { rowIndex: 0, values: ['A'], isOriginal: true },
+            { rowIndex: 5, values: ['A'], isOriginal: false },
+            { rowIndex: 2, values: ['A'], isOriginal: false },
+          ],
+          columns: [0],
+          keepRow: 0,
+        },
+      ];
 
       const rowsToDelete = detector.removeDuplicates(groups);
       expect(rowsToDelete[0]).toBe(5);
@@ -409,10 +417,7 @@ describe('DuplicateDetector', () => {
 
   describe('performance', () => {
     it('handles large dataset', () => {
-      const rows = Array.from({ length: 1000 }, (_, i) => [
-        `Name ${i % 100}`,
-        i % 100,
-      ]);
+      const rows = Array.from({ length: 1000 }, (_, i) => [`Name ${i % 100}`, i % 100]);
       const data = createTestSheetData(rows);
 
       const start = performance.now();

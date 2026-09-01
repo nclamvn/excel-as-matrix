@@ -71,14 +71,10 @@ export class NLParser {
       ],
 
       // Logical
-      if: [
-        /^if\s+(.+?)\s+(?:then|,)\s+(.+?)(?:\s+(?:else|otherwise)\s+(.+))?$/i,
-      ],
+      if: [/^if\s+(.+?)\s+(?:then|,)\s+(.+?)(?:\s+(?:else|otherwise)\s+(.+))?$/i],
 
       // Text
-      concat: [
-        /^(?:combine|concat(?:enate)?|join)\s+(.+?)\s+(?:and|with|,)\s+(.+)$/i,
-      ],
+      concat: [/^(?:combine|concat(?:enate)?|join)\s+(.+?)\s+(?:and|with|,)\s+(.+)$/i],
 
       // Date
       today: [/^today$/i, /^(?:today(?:'s)?\s+date|current\s+date)$/i],
@@ -93,9 +89,7 @@ export class NLParser {
         /^percentage\s+(?:of\s+)?(.+?)\s+(?:of|from|in)\s+(.+)$/i,
         /^(.+?)\s+as\s+(?:a\s+)?percent(?:age)?\s+of\s+(.+)$/i,
       ],
-      round: [
-        /^round\s+(.+?)(?:\s+to\s+(\d+)\s+(?:decimal\s+)?places?)?$/i,
-      ],
+      round: [/^round\s+(.+?)(?:\s+to\s+(\d+)\s+(?:decimal\s+)?places?)?$/i],
     },
 
     // =========================================================================
@@ -125,10 +119,7 @@ export class NLParser {
         /^cộng\s+(?:cột\s+)?(.+)$/i,
         /^tính\s+tổng\s+(.+)$/i,
       ],
-      average: [
-        /^trung\s+bình\s+(?:của\s+)?(?:cột\s+)?(.+)$/i,
-        /^tb\s+(?:cột\s+)?(.+)$/i,
-      ],
+      average: [/^trung\s+bình\s+(?:của\s+)?(?:cột\s+)?(.+)$/i, /^tb\s+(?:cột\s+)?(.+)$/i],
       count: [
         /^đếm\s+(?:số\s+)?(?:cột\s+)?(.+)$/i,
         /^số\s+lượng\s+(?:trong\s+)?(.+)$/i,
@@ -155,24 +146,16 @@ export class NLParser {
       // =======================================================================
       // LOGICAL
       // =======================================================================
-      if: [
-        /^nếu\s+(.+?)\s+(?:thì|,)\s+(.+?)(?:\s+(?:ngược\s+lại|còn\s+không)\s+(.+))?$/i,
-      ],
+      if: [/^nếu\s+(.+?)\s+(?:thì|,)\s+(.+?)(?:\s+(?:ngược\s+lại|còn\s+không)\s+(.+))?$/i],
 
       // =======================================================================
       // DATE
       // =======================================================================
       today: [/^hôm\s*nay$/i, /^(?:ngày\s+)?hôm\s+nay$/i],
       now: [/^bây\s*giờ$/i, /^(?:thời\s+gian\s+)?hiện\s+tại$/i],
-      datediff: [
-        /^(?:số\s+)?(?:ngày|tháng|năm)\s+(?:giữa|từ)\s+(.+?)\s+(?:đến|và)\s+(.+)$/i,
-      ],
-      percentage: [
-        /^(?:phần\s+trăm|%)\s+(?:của\s+)?(.+?)\s+(?:trong|trên)\s+(.+)$/i,
-      ],
-      round: [
-        /^làm\s+tròn\s+(.+?)(?:\s+(?:đến|còn)\s+(\d+)\s+(?:chữ\s+số)?)?$/i,
-      ],
+      datediff: [/^(?:số\s+)?(?:ngày|tháng|năm)\s+(?:giữa|từ)\s+(.+?)\s+(?:đến|và)\s+(.+)$/i],
+      percentage: [/^(?:phần\s+trăm|%)\s+(?:của\s+)?(.+?)\s+(?:trong|trên)\s+(.+)$/i],
+      round: [/^làm\s+tròn\s+(.+?)(?:\s+(?:đến|còn)\s+(\d+)\s+(?:chữ\s+số)?)?$/i],
     },
   };
 
@@ -353,9 +336,7 @@ export class NLParser {
     for (const [intent, words] of Object.entries(keywords)) {
       if (words.some((w) => lower.includes(w))) {
         // Extract anything that looks like a column reference
-        const colMatch = text.match(
-          /(?:column\s+)?([A-Z](?::[A-Z])?|\w+(?:\s+\w+)?)/i
-        );
+        const colMatch = text.match(/(?:column\s+)?([A-Z](?::[A-Z])?|\w+(?:\s+\w+)?)/i);
 
         return {
           intent,

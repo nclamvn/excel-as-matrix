@@ -11,7 +11,12 @@ interface FilterViewSelectorProps {
   userName: string;
 }
 
-export function FilterViewSelector({ workbookId, sheetId, userId, userName }: FilterViewSelectorProps) {
+export function FilterViewSelector({
+  workbookId,
+  sheetId,
+  userId,
+  userName,
+}: FilterViewSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [newName, setNewName] = useState('');
@@ -56,12 +61,26 @@ export function FilterViewSelector({ workbookId, sheetId, userId, userName }: Fi
         className={`fv-trigger ${activeView ? 'fv-trigger--active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
           <circle cx="12" cy="12" r="3" />
         </svg>
         <span>{activeView?.name || 'Filter Views'}</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
@@ -71,7 +90,10 @@ export function FilterViewSelector({ workbookId, sheetId, userId, userName }: Fi
           {/* Default (no filter) */}
           <div
             className={`fv-item ${!activeView ? 'fv-item--active' : ''}`}
-            onClick={() => { setActiveView(sheetId, null); setIsOpen(false); }}
+            onClick={() => {
+              setActiveView(sheetId, null);
+              setIsOpen(false);
+            }}
           >
             <span className="fv-item-name">Default view</span>
           </div>
@@ -81,13 +103,14 @@ export function FilterViewSelector({ workbookId, sheetId, userId, userName }: Fi
             <div
               key={view.id}
               className={`fv-item ${activeView?.id === view.id ? 'fv-item--active' : ''}`}
-              onClick={() => { setActiveView(sheetId, view.id); setIsOpen(false); }}
+              onClick={() => {
+                setActiveView(sheetId, view.id);
+                setIsOpen(false);
+              }}
             >
               <span className="fv-item-name">
                 {view.name}
-                {view.filters.length > 0 && (
-                  <span className="fv-count">{view.filters.length}</span>
-                )}
+                {view.filters.length > 0 && <span className="fv-count">{view.filters.length}</span>}
               </span>
               {view.isPersonal && <span className="fv-badge">Personal</span>}
               <button
@@ -123,7 +146,14 @@ export function FilterViewSelector({ workbookId, sheetId, userId, userName }: Fi
             </div>
           ) : (
             <div className="fv-item fv-item--create" onClick={() => setIsCreating(true)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>

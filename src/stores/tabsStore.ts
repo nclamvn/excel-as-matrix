@@ -161,9 +161,7 @@ export const useTabsStore = create<TabsStore>()(
 
       updateTab: (tabId, updates) => {
         set((state) => ({
-          tabs: state.tabs.map((tab) =>
-            tab.id === tabId ? { ...tab, ...updates } : tab
-          ),
+          tabs: state.tabs.map((tab) => (tab.id === tabId ? { ...tab, ...updates } : tab)),
         }));
       },
 
@@ -194,9 +192,7 @@ export const useTabsStore = create<TabsStore>()(
 
       closeAllTabs: async () => {
         const state = get();
-        const tabsToClose = state.tabs.filter(
-          (t) => t.type !== 'home' && !t.isPinned
-        );
+        const tabsToClose = state.tabs.filter((t) => t.type !== 'home' && !t.isPinned);
 
         for (const tab of tabsToClose) {
           await state.removeTab(tab.id);
@@ -240,10 +236,7 @@ export const useTabsStore = create<TabsStore>()(
         const tab = state.tabs.find((t) => t.id === tabId);
         if (!tab || tab.type === 'home') return;
 
-        const lastPinnedIndex = state.tabs.reduce(
-          (acc, t, i) => (t.isPinned ? i : acc),
-          0
-        );
+        const lastPinnedIndex = state.tabs.reduce((acc, t, i) => (t.isPinned ? i : acc), 0);
 
         state.updateTab(tabId, { isPinned: true });
         state.moveTab(tabId, lastPinnedIndex + 1);
@@ -279,16 +272,9 @@ export const useTabsStore = create<TabsStore>()(
       endDrag: () => {
         const { dragState, moveTab, tabs } = get();
 
-        if (
-          dragState.draggedTabId &&
-          dragState.dropTargetId &&
-          dragState.dropPosition
-        ) {
-          const targetIndex = tabs.findIndex(
-            (t) => t.id === dragState.dropTargetId
-          );
-          const newIndex =
-            dragState.dropPosition === 'after' ? targetIndex + 1 : targetIndex;
+        if (dragState.draggedTabId && dragState.dropTargetId && dragState.dropPosition) {
+          const targetIndex = tabs.findIndex((t) => t.id === dragState.dropTargetId);
+          const newIndex = dragState.dropPosition === 'after' ? targetIndex + 1 : targetIndex;
           moveTab(dragState.draggedTabId, newIndex);
         }
 
@@ -306,20 +292,15 @@ export const useTabsStore = create<TabsStore>()(
 
       goToNextTab: () => {
         const state = get();
-        const currentIndex = state.tabs.findIndex(
-          (t) => t.id === state.activeTabId
-        );
+        const currentIndex = state.tabs.findIndex((t) => t.id === state.activeTabId);
         const nextIndex = (currentIndex + 1) % state.tabs.length;
         state.setActiveTab(state.tabs[nextIndex].id);
       },
 
       goToPrevTab: () => {
         const state = get();
-        const currentIndex = state.tabs.findIndex(
-          (t) => t.id === state.activeTabId
-        );
-        const prevIndex =
-          (currentIndex - 1 + state.tabs.length) % state.tabs.length;
+        const currentIndex = state.tabs.findIndex((t) => t.id === state.activeTabId);
+        const prevIndex = (currentIndex - 1 + state.tabs.length) % state.tabs.length;
         state.setActiveTab(state.tabs[prevIndex].id);
       },
 

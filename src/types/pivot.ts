@@ -15,12 +15,7 @@ export type AggregateFunction =
 
 export type SortOrder = 'asc' | 'desc' | 'none';
 
-export type DateGrouping =
-  | 'years'
-  | 'quarters'
-  | 'months'
-  | 'days'
-  | 'hours';
+export type DateGrouping = 'years' | 'quarters' | 'months' | 'days' | 'hours';
 
 export interface PivotField {
   id: string;
@@ -51,14 +46,14 @@ export interface PivotFilter {
 export interface PivotTable {
   id: string;
   name: string;
-  sheetId: string;           // Sheet where pivot is placed
+  sheetId: string; // Sheet where pivot is placed
 
   // Source
   sourceSheetId: string;
-  sourceRange: string;       // e.g., "A1:H100"
+  sourceRange: string; // e.g., "A1:H100"
 
   // Location
-  targetCell: string;        // e.g., "A1"
+  targetCell: string; // e.g., "A1"
   targetRow: number;
   targetCol: number;
 
@@ -87,13 +82,13 @@ export interface PivotTable {
 
   // State
   lastRefreshed: number;
-  isExpanded: Record<string, boolean>;  // Row expansion state
+  isExpanded: Record<string, boolean>; // Row expansion state
 }
 
 export interface CalculatedField {
   id: string;
   name: string;
-  formula: string;           // e.g., "=[Sales] / [Quantity]"
+  formula: string; // e.g., "=[Sales] / [Quantity]"
 }
 
 export interface PivotCellData {
@@ -160,7 +155,7 @@ export interface Slicer {
   multiSelect: boolean;
 
   // Display options
-  columns: number;        // Number of columns in the slicer
+  columns: number; // Number of columns in the slicer
   showHeader: boolean;
   sortOrder: SortOrder;
 

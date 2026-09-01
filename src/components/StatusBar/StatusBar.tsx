@@ -54,7 +54,9 @@ export const StatusBar: React.FC<StatusBarProps> = memo(({ selection, onZoomChan
 
   const cellCount = useMemo(() => {
     if (!selection) return 0;
-    return (selection.endRow - selection.startRow + 1) * (selection.endCol - selection.startCol + 1);
+    return (
+      (selection.endRow - selection.startRow + 1) * (selection.endCol - selection.startCol + 1)
+    );
   }, [selection]);
 
   const handleZoomChange = (newZoom: number) => {
@@ -111,14 +113,16 @@ interface ZoomControlProps {
 const ZoomControl = memo<ZoomControlProps>(({ zoom, onZoomChange }) => {
   return (
     <div className="flex items-center gap-2">
-      <button type="button"
+      <button
+        type="button"
         onClick={() => onZoomChange(Math.max(25, zoom - 10))}
         className="px-1 hover:bg-gray-200 rounded"
       >
         −
       </button>
       <span className="w-12 text-center">{zoom}%</span>
-      <button type="button"
+      <button
+        type="button"
         onClick={() => onZoomChange(Math.min(400, zoom + 10))}
         className="px-1 hover:bg-gray-200 rounded"
       >

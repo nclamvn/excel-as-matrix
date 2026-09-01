@@ -2,12 +2,7 @@
 // TASK PLANNER — Break complex tasks into steps (Blueprint §5.6)
 // =============================================================================
 
-import type {
-  TaskPlan,
-  TaskStep,
-  StepStatus,
-  ParsedIntent,
-} from './types';
+import type { TaskPlan, TaskStep, StepStatus, ParsedIntent } from './types';
 
 // -----------------------------------------------------------------------------
 // Task Templates
@@ -220,10 +215,7 @@ export class TaskPlanner {
   /**
    * Create plan from template
    */
-  private createFromTemplate(
-    template: TaskTemplate,
-    intent: ParsedIntent
-  ): TaskPlan {
+  private createFromTemplate(template: TaskTemplate, intent: ParsedIntent): TaskPlan {
     const steps: TaskStep[] = template.steps.map((step, index) => ({
       ...step,
       id: crypto.randomUUID(),
@@ -310,9 +302,7 @@ export class TaskPlanner {
   /**
    * Estimate task complexity
    */
-  private estimateComplexity(
-    steps: TaskStep[]
-  ): 'simple' | 'medium' | 'complex' {
+  private estimateComplexity(steps: TaskStep[]): 'simple' | 'medium' | 'complex' {
     const requiredSteps = steps.filter((s) => !s.optional).length;
 
     if (requiredSteps <= 2) return 'simple';
@@ -335,10 +325,7 @@ export class TaskPlanner {
         ...step,
         id: crypto.randomUUID(),
         index: lastIndex + step.index,
-        dependencies:
-          step.index === 0 && lastStepId
-            ? [lastStepId]
-            : step.dependencies,
+        dependencies: step.index === 0 && lastStepId ? [lastStepId] : step.dependencies,
       };
       mergedSteps.push(newStep);
     }
@@ -375,9 +362,7 @@ export class TaskPlanner {
    * Remove step from plan
    */
   removeStep(plan: TaskPlan, stepId: string): TaskPlan {
-    const steps = plan.steps
-      .filter((s) => s.id !== stepId)
-      .map((s, i) => ({ ...s, index: i }));
+    const steps = plan.steps.filter((s) => s.id !== stepId).map((s, i) => ({ ...s, index: i }));
 
     // Update dependencies
     for (const step of steps) {

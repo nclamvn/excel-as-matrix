@@ -65,20 +65,34 @@ type TransformFn = (data: DataTable, params: Record<string, unknown>) => DataTab
 
 const transforms: Record<TransformType, TransformFn> = {
   filter: (data, params) => {
-    const { column, operator, value } = params as { column: string; operator: string; value: CellValue };
+    const { column, operator, value } = params as {
+      column: string;
+      operator: string;
+      value: CellValue;
+    };
     return data.filter((row) => {
       const cellVal = row[column];
       switch (operator) {
-        case 'equals': return cellVal === value;
-        case 'notEquals': return cellVal !== value;
-        case 'contains': return String(cellVal ?? '').includes(String(value));
-        case 'startsWith': return String(cellVal ?? '').startsWith(String(value));
-        case 'endsWith': return String(cellVal ?? '').endsWith(String(value));
-        case 'greaterThan': return Number(cellVal) > Number(value);
-        case 'lessThan': return Number(cellVal) < Number(value);
-        case 'isNull': return cellVal === null || cellVal === '';
-        case 'isNotNull': return cellVal !== null && cellVal !== '';
-        default: return true;
+        case 'equals':
+          return cellVal === value;
+        case 'notEquals':
+          return cellVal !== value;
+        case 'contains':
+          return String(cellVal ?? '').includes(String(value));
+        case 'startsWith':
+          return String(cellVal ?? '').startsWith(String(value));
+        case 'endsWith':
+          return String(cellVal ?? '').endsWith(String(value));
+        case 'greaterThan':
+          return Number(cellVal) > Number(value);
+        case 'lessThan':
+          return Number(cellVal) < Number(value);
+        case 'isNull':
+          return cellVal === null || cellVal === '';
+        case 'isNotNull':
+          return cellVal !== null && cellVal !== '';
+        default:
+          return true;
       }
     });
   },
@@ -139,13 +153,19 @@ const transforms: Record<TransformType, TransformFn> = {
           return typeof v === 'string' ? `"${v}"` : String(v ?? 0);
         });
         value = new Function(`return ${expr}`)();
-      } catch { /* leave null */ }
+      } catch {
+        /* leave null */
+      }
       return { ...row, [name]: value };
     });
   },
 
   splitColumn: (data, params) => {
-    const { column, delimiter, newNames } = params as { column: string; delimiter: string; newNames?: string[] };
+    const { column, delimiter, newNames } = params as {
+      column: string;
+      delimiter: string;
+      newNames?: string[];
+    };
     return data.map((row) => {
       const parts = String(row[column] ?? '').split(delimiter);
       const newRow: DataRow = { ...row };
@@ -159,7 +179,11 @@ const transforms: Record<TransformType, TransformFn> = {
   },
 
   mergeColumns: (data, params) => {
-    const { columns, separator, newName } = params as { columns: string[]; separator: string; newName: string };
+    const { columns, separator, newName } = params as {
+      columns: string[];
+      separator: string;
+      newName: string;
+    };
     return data.map((row) => {
       const merged = columns.map((c) => String(row[c] ?? '')).join(separator);
       const newRow: DataRow = { ...row, [newName]: merged };
@@ -172,19 +196,30 @@ const transforms: Record<TransformType, TransformFn> = {
     const { column, find, replace } = params as { column: string; find: string; replace: string };
     return data.map((row) => ({
       ...row,
-      [column]: String(row[column] ?? '').split(find).join(replace),
+      [column]: String(row[column] ?? '')
+        .split(find)
+        .join(replace),
     }));
   },
 
   changeType: (data, params) => {
-    const { column, targetType } = params as { column: string; targetType: 'text' | 'number' | 'boolean' };
+    const { column, targetType } = params as {
+      column: string;
+      targetType: 'text' | 'number' | 'boolean';
+    };
     return data.map((row) => {
       const v = row[column];
       let converted: CellValue = v;
       switch (targetType) {
-        case 'number': converted = Number(v) || 0; break;
-        case 'text': converted = String(v ?? ''); break;
-        case 'boolean': converted = Boolean(v); break;
+        case 'number':
+          converted = Number(v) || 0;
+          break;
+        case 'text':
+          converted = String(v ?? '');
+          break;
+        case 'boolean':
+          converted = Boolean(v);
+          break;
       }
       return { ...row, [column]: converted };
     });
@@ -192,7 +227,10 @@ const transforms: Record<TransformType, TransformFn> = {
 
   pivot: (data, params) => {
     const { rowColumn, pivotColumn, valueColumn, aggregation } = params as {
-      rowColumn: string; pivotColumn: string; valueColumn: string; aggregation: 'sum' | 'count' | 'avg' | 'min' | 'max';
+      rowColumn: string;
+      pivotColumn: string;
+      valueColumn: string;
+      aggregation: 'sum' | 'count' | 'avg' | 'min' | 'max';
     };
     const groups = new Map<string, Map<string, number[]>>();
 
@@ -215,11 +253,21 @@ const transforms: Record<TransformType, TransformFn> = {
       for (const pk of allPivotKeys) {
         const vals = pivots.get(pk) || [];
         switch (aggregation) {
-          case 'sum': row[pk] = vals.reduce((a, b) => a + b, 0); break;
-          case 'count': row[pk] = vals.length; break;
-          case 'avg': row[pk] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0; break;
-          case 'min': row[pk] = vals.length ? Math.min(...vals) : 0; break;
-          case 'max': row[pk] = vals.length ? Math.max(...vals) : 0; break;
+          case 'sum':
+            row[pk] = vals.reduce((a, b) => a + b, 0);
+            break;
+          case 'count':
+            row[pk] = vals.length;
+            break;
+          case 'avg':
+            row[pk] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+            break;
+          case 'min':
+            row[pk] = vals.length ? Math.min(...vals) : 0;
+            break;
+          case 'max':
+            row[pk] = vals.length ? Math.max(...vals) : 0;
+            break;
         }
       }
       result.push(row);
@@ -229,7 +277,9 @@ const transforms: Record<TransformType, TransformFn> = {
 
   unpivot: (data, params) => {
     const { idColumns, valueColumnName, attributeColumnName } = params as {
-      idColumns: string[]; valueColumnName: string; attributeColumnName: string;
+      idColumns: string[];
+      valueColumnName: string;
+      attributeColumnName: string;
     };
     const result: DataTable = [];
     for (const row of data) {
@@ -249,7 +299,11 @@ const transforms: Record<TransformType, TransformFn> = {
   groupBy: (data, params) => {
     const { columns, aggregations } = params as {
       columns: string[];
-      aggregations: Array<{ column: string; operation: 'sum' | 'count' | 'avg' | 'min' | 'max'; as: string }>;
+      aggregations: Array<{
+        column: string;
+        operation: 'sum' | 'count' | 'avg' | 'min' | 'max';
+        as: string;
+      }>;
     };
     const groups = new Map<string, DataRow[]>();
 
@@ -267,11 +321,21 @@ const transforms: Record<TransformType, TransformFn> = {
       for (const agg of aggregations) {
         const vals = rows.map((r) => Number(r[agg.column]) || 0);
         switch (agg.operation) {
-          case 'sum': newRow[agg.as] = vals.reduce((a, b) => a + b, 0); break;
-          case 'count': newRow[agg.as] = vals.length; break;
-          case 'avg': newRow[agg.as] = vals.reduce((a, b) => a + b, 0) / vals.length; break;
-          case 'min': newRow[agg.as] = Math.min(...vals); break;
-          case 'max': newRow[agg.as] = Math.max(...vals); break;
+          case 'sum':
+            newRow[agg.as] = vals.reduce((a, b) => a + b, 0);
+            break;
+          case 'count':
+            newRow[agg.as] = vals.length;
+            break;
+          case 'avg':
+            newRow[agg.as] = vals.reduce((a, b) => a + b, 0) / vals.length;
+            break;
+          case 'min':
+            newRow[agg.as] = Math.min(...vals);
+            break;
+          case 'max':
+            newRow[agg.as] = Math.max(...vals);
+            break;
         }
       }
       result.push(newRow);
@@ -306,7 +370,11 @@ const transforms: Record<TransformType, TransformFn> = {
     const { column } = params as { column: string };
     const result = [...data];
     for (let i = result.length - 2; i >= 0; i--) {
-      if (result[i][column] === null || result[i][column] === '' || result[i][column] === undefined) {
+      if (
+        result[i][column] === null ||
+        result[i][column] === '' ||
+        result[i][column] === undefined
+      ) {
         result[i] = { ...result[i], [column]: result[i + 1][column] };
       }
     }
@@ -319,7 +387,9 @@ const transforms: Record<TransformType, TransformFn> = {
     const result: DataTable = [];
     for (const col of cols) {
       const row: DataRow = { _column: col };
-      data.forEach((r, i) => { row[`row_${i + 1}`] = r[col]; });
+      data.forEach((r, i) => {
+        row[`row_${i + 1}`] = r[col];
+      });
       result.push(row);
     }
     return result;
@@ -370,7 +440,9 @@ export function executePipeline(sourceData: DataTable, steps: TransformStep[]): 
     try {
       data = transformFn(data, step.params);
     } catch (e) {
-      errors.push(`Step "${step.label || step.type}" failed: ${e instanceof Error ? e.message : String(e)}`);
+      errors.push(
+        `Step "${step.label || step.type}" failed: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   }
 
@@ -419,7 +491,11 @@ export function sheetToDataTable(
 }
 
 /** Create a new transform step */
-export function createStep(type: TransformType, params: Record<string, unknown>, label?: string): TransformStep {
+export function createStep(
+  type: TransformType,
+  params: Record<string, unknown>,
+  label?: string
+): TransformStep {
   return {
     id: `step-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type,

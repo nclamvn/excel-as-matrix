@@ -18,25 +18,33 @@ vi.mock('../../../stores/chartStore', () => ({
 // Mock chart components
 vi.mock('../LineChart', () => ({
   LineChart: vi.fn(({ width, height }) => (
-    <div data-testid="line-chart" data-width={width} data-height={height}>LineChart</div>
+    <div data-testid="line-chart" data-width={width} data-height={height}>
+      LineChart
+    </div>
   )),
 }));
 
 vi.mock('../BarChart', () => ({
   BarChart: vi.fn(({ stacked }) => (
-    <div data-testid="bar-chart" data-stacked={stacked}>BarChart</div>
+    <div data-testid="bar-chart" data-stacked={stacked}>
+      BarChart
+    </div>
   )),
 }));
 
 vi.mock('../PieChart', () => ({
   PieChart: vi.fn(({ isDoughnut }) => (
-    <div data-testid="pie-chart" data-doughnut={isDoughnut}>PieChart</div>
+    <div data-testid="pie-chart" data-doughnut={isDoughnut}>
+      PieChart
+    </div>
   )),
 }));
 
 vi.mock('../AreaChart', () => ({
   AreaChart: vi.fn(({ stacked }) => (
-    <div data-testid="area-chart" data-stacked={stacked}>AreaChart</div>
+    <div data-testid="area-chart" data-stacked={stacked}>
+      AreaChart
+    </div>
   )),
 }));
 

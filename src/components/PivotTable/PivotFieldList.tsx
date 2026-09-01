@@ -41,17 +41,9 @@ const AREA_LABELS: Record<AreaType, string> = {
   value: 'Values',
 };
 
-export const PivotFieldList: React.FC<PivotFieldListProps> = ({
-  pivot,
-  onFieldsChange,
-}) => {
-  const {
-    addFieldToArea,
-    removeFieldFromArea,
-    moveField,
-    setAggregateFunction,
-    setSortOrder,
-  } = usePivotStore();
+export const PivotFieldList: React.FC<PivotFieldListProps> = ({ pivot, onFieldsChange }) => {
+  const { addFieldToArea, removeFieldFromArea, moveField, setAggregateFunction, setSortOrder } =
+    usePivotStore();
 
   const [draggedField, setDraggedField] = useState<{
     fieldId: string;
@@ -61,24 +53,25 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
 
   // Dialog states
   const [showCalculatedFieldDialog, setShowCalculatedFieldDialog] = useState(false);
-  const [editingCalculatedField, setEditingCalculatedField] = useState<CalculatedField | undefined>(undefined);
+  const [editingCalculatedField, setEditingCalculatedField] = useState<CalculatedField | undefined>(
+    undefined
+  );
   const [showGroupingDialog, setShowGroupingDialog] = useState(false);
-  const [groupingField, setGroupingField] = useState<{ field: PivotAreaField; area: 'row' | 'column' } | null>(null);
+  const [groupingField, setGroupingField] = useState<{
+    field: PivotAreaField;
+    area: 'row' | 'column';
+  } | null>(null);
 
   // Get fields not yet added to any area
-  const availableFields = pivot.fields.filter(field => {
-    const inRow = pivot.rowFields.some(f => f.fieldId === field.id);
-    const inCol = pivot.columnFields.some(f => f.fieldId === field.id);
-    const inVal = pivot.valueFields.some(f => f.fieldId === field.id);
-    const inFilter = pivot.filterFields.some(f => f.fieldId === field.id);
+  const availableFields = pivot.fields.filter((field) => {
+    const inRow = pivot.rowFields.some((f) => f.fieldId === field.id);
+    const inCol = pivot.columnFields.some((f) => f.fieldId === field.id);
+    const inVal = pivot.valueFields.some((f) => f.fieldId === field.id);
+    const inFilter = pivot.filterFields.some((f) => f.fieldId === field.id);
     return !inRow && !inCol && !inVal && !inFilter;
   });
 
-  const handleDragStart = (
-    e: React.DragEvent,
-    fieldId: string,
-    fromArea?: AreaType
-  ) => {
+  const handleDragStart = (e: React.DragEvent, fieldId: string, fromArea?: AreaType) => {
     setDraggedField({ fieldId, fromArea });
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', fieldId);
@@ -101,7 +94,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
       moveField(pivot.id, fieldId, fromArea, toArea, 0);
     } else {
       // Adding from available fields
-      const field = pivot.fields.find(f => f.id === fieldId);
+      const field = pivot.fields.find((f) => f.id === fieldId);
       if (field) {
         const areaField: PivotAreaField = {
           fieldId: field.id,
@@ -139,7 +132,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
   };
 
   const getFieldName = (fieldId: string): string => {
-    const field = pivot.fields.find(f => f.id === fieldId);
+    const field = pivot.fields.find((f) => f.id === fieldId);
     return field?.name || fieldId;
   };
 
@@ -148,7 +141,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
       key={field.id}
       className="pivot-field-item available"
       draggable
-      onDragStart={e => handleDragStart(e, field.id)}
+      onDragStart={(e) => handleDragStart(e, field.id)}
     >
       <GripVertical size={14} className="grip-icon" />
       <span className="field-name">{field.name}</span>
@@ -158,10 +151,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
     </div>
   );
 
-  const renderAreaField = (
-    areaField: PivotAreaField,
-    area: AreaType
-  ) => {
+  const renderAreaField = (areaField: PivotAreaField, area: AreaType) => {
     const fieldName = getFieldName(areaField.fieldId);
     const dropdownId = `${area}-${areaField.fieldId}`;
     const isDropdownOpen = activeDropdown === dropdownId;
@@ -171,7 +161,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         key={areaField.fieldId}
         className="pivot-field-item in-area"
         draggable
-        onDragStart={e => handleDragStart(e, areaField.fieldId, area)}
+        onDragStart={(e) => handleDragStart(e, areaField.fieldId, area)}
       >
         <GripVertical size={14} className="grip-icon" />
         <span className="field-name">
@@ -181,13 +171,15 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         </span>
 
         <div className="field-actions">
-          <button type="button"
+          <button
+            type="button"
             className="field-action-btn"
             onClick={() => setActiveDropdown(isDropdownOpen ? null : dropdownId)}
           >
             <ChevronDown size={14} />
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="field-action-btn remove"
             onClick={() => handleRemoveField(area, areaField.fieldId)}
           >
@@ -196,7 +188,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         </div>
 
         {isDropdownOpen && (
-          <div className="field-dropdown" onClick={e => e.stopPropagation()}>
+          <div className="field-dropdown" onClick={(e) => e.stopPropagation()}>
             {area === 'value' && (
               <>
                 <div className="dropdown-section">
@@ -204,8 +196,9 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     <Calculator size={12} />
                     Summarize by
                   </span>
-                  {(Object.keys(AGGREGATE_LABELS) as AggregateFunction[]).map(func => (
-                    <button type="button"
+                  {(Object.keys(AGGREGATE_LABELS) as AggregateFunction[]).map((func) => (
+                    <button
+                      type="button"
                       key={func}
                       className={`dropdown-item ${areaField.aggregateFunction === func ? 'active' : ''}`}
                       onClick={() => handleAggregateChange(areaField.fieldId, func)}
@@ -224,19 +217,22 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     <ArrowUpDown size={12} />
                     Sort
                   </span>
-                  <button type="button"
+                  <button
+                    type="button"
                     className={`dropdown-item ${areaField.sortOrder === 'asc' ? 'active' : ''}`}
                     onClick={() => handleSortChange(areaField.fieldId, area, 'asc')}
                   >
                     A to Z
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     className={`dropdown-item ${areaField.sortOrder === 'desc' ? 'active' : ''}`}
                     onClick={() => handleSortChange(areaField.fieldId, area, 'desc')}
                   >
                     Z to A
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     className={`dropdown-item ${areaField.sortOrder === 'none' ? 'active' : ''}`}
                     onClick={() => handleSortChange(areaField.fieldId, area, 'none')}
                   >
@@ -248,7 +244,8 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
                     <Layers size={12} />
                     Grouping
                   </span>
-                  <button type="button"
+                  <button
+                    type="button"
                     className="dropdown-item"
                     onClick={() => {
                       setGroupingField({ field: areaField, area });
@@ -291,7 +288,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
       <div
         className={`pivot-area ${draggedField ? 'droppable' : ''}`}
         onDragOver={handleDragOver}
-        onDrop={e => handleDrop(e, area)}
+        onDrop={(e) => handleDrop(e, area)}
       >
         <div className="pivot-area-header">
           <span>{AREA_LABELS[area]}</span>
@@ -299,11 +296,9 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         </div>
         <div className="pivot-area-content">
           {fields.length === 0 ? (
-            <div className="pivot-area-placeholder">
-              Drag fields here
-            </div>
+            <div className="pivot-area-placeholder">Drag fields here</div>
           ) : (
-            fields.map(f => renderAreaField(f, area))
+            fields.map((f) => renderAreaField(f, area))
           )}
         </div>
       </div>
@@ -312,14 +307,12 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
 
   // Render calculated field item
   const renderCalculatedField = (calcField: CalculatedField) => (
-    <div
-      key={calcField.id}
-      className="pivot-field-item calculated"
-    >
+    <div key={calcField.id} className="pivot-field-item calculated">
       <Calculator size={14} className="calc-icon" />
       <span className="field-name">{calcField.name}</span>
       <div className="field-actions">
-        <button type="button"
+        <button
+          type="button"
           className="field-action-btn"
           onClick={() => {
             setEditingCalculatedField(calcField);
@@ -337,14 +330,10 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
     <div className="pivot-field-list">
       <div className="pivot-fields-section">
         <h3>PivotTable Fields</h3>
-        <p className="pivot-fields-hint">
-          Drag fields to the areas below
-        </p>
+        <p className="pivot-fields-hint">Drag fields to the areas below</p>
         <div className="pivot-available-fields">
           {availableFields.length === 0 ? (
-            <div className="no-fields-message">
-              All fields have been added
-            </div>
+            <div className="no-fields-message">All fields have been added</div>
           ) : (
             availableFields.map(renderAvailableField)
           )}
@@ -358,7 +347,8 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
             <Calculator size={14} />
             Calculated Fields
           </h3>
-          <button type="button"
+          <button
+            type="button"
             className="add-calc-field-btn"
             onClick={() => {
               setEditingCalculatedField(undefined);
@@ -371,9 +361,7 @@ export const PivotFieldList: React.FC<PivotFieldListProps> = ({
         </div>
         <div className="calculated-fields-list">
           {pivot.calculatedFields.length === 0 ? (
-            <div className="no-calc-fields-message">
-              No calculated fields
-            </div>
+            <div className="no-calc-fields-message">No calculated fields</div>
           ) : (
             pivot.calculatedFields.map(renderCalculatedField)
           )}

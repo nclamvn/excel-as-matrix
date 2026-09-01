@@ -64,10 +64,7 @@ export const AttributionBadge: React.FC<AttributionBadgeProps> = ({
         className="attribution-badge attribution-badge--compact"
         title={`Last edited by ${lastEditedBy.name}`}
       >
-        <span
-          className="attribution-badge__dot"
-          style={{ backgroundColor: lastEditedBy.color }}
-        />
+        <span className="attribution-badge__dot" style={{ backgroundColor: lastEditedBy.color }} />
       </div>
     );
   }
@@ -78,9 +75,7 @@ export const AttributionBadge: React.FC<AttributionBadgeProps> = ({
       <div className="attribution-badge__info">
         <span className="attribution-badge__name">{lastEditedBy.name}</span>
         {showTime && (
-          <span className="attribution-badge__time">
-            {formatRelativeTime(lastEditedAt)}
-          </span>
+          <span className="attribution-badge__time">{formatRelativeTime(lastEditedAt)}</span>
         )}
       </div>
     </div>
@@ -98,9 +93,7 @@ export const AttributionTooltip: React.FC<AttributionTooltipProps> = ({
   const { lastEditedBy, lastEditedAt, editHistory } = attribution;
   const recentHistory = editHistory.slice(-5).reverse();
 
-  const style = position
-    ? { left: position.x, top: position.y }
-    : {};
+  const style = position ? { left: position.x, top: position.y } : {};
 
   return (
     <div className="attribution-tooltip" style={style}>
@@ -112,9 +105,7 @@ export const AttributionTooltip: React.FC<AttributionTooltipProps> = ({
         <UserAvatar user={lastEditedBy} size="md" />
         <div className="attribution-tooltip__info">
           <span className="attribution-tooltip__name">{lastEditedBy.name}</span>
-          <span className="attribution-tooltip__time">
-            {formatDateTime(lastEditedAt)}
-          </span>
+          <span className="attribution-tooltip__time">{formatDateTime(lastEditedAt)}</span>
         </div>
       </div>
 
@@ -128,9 +119,7 @@ export const AttributionTooltip: React.FC<AttributionTooltipProps> = ({
                   className="attribution-tooltip__history-dot"
                   style={{ backgroundColor: record.user.color }}
                 />
-                <span className="attribution-tooltip__history-name">
-                  {record.user.name}
-                </span>
+                <span className="attribution-tooltip__history-name">{record.user.name}</span>
                 <span className="attribution-tooltip__history-type">
                   {formatChangeType(record.changeType)}
                 </span>
@@ -161,18 +150,15 @@ export const EditHistoryPanel: React.FC<EditHistoryPanelProps> = ({
   history,
   onClose,
 }) => {
-  const sortedHistory = [...history].sort(
-    (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
-  );
+  const sortedHistory = [...history].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
   return (
     <div className="edit-history-panel">
       <div className="edit-history-panel__header">
-        <h3 className="edit-history-panel__title">
-          Edit History: {cellRef}
-        </h3>
+        <h3 className="edit-history-panel__title">Edit History: {cellRef}</h3>
         {onClose && (
-          <button type="button"
+          <button
+            type="button"
             className="edit-history-panel__close"
             onClick={onClose}
             title="Close"
@@ -192,16 +178,12 @@ export const EditHistoryPanel: React.FC<EditHistoryPanelProps> = ({
             <li key={`${record.eventId}-${index}`} className="edit-history-panel__item">
               <UserAvatar user={record.user} size="sm" />
               <div className="edit-history-panel__info">
-                <span className="edit-history-panel__name">
-                  {record.user.name}
-                </span>
+                <span className="edit-history-panel__name">{record.user.name}</span>
                 <span className="edit-history-panel__action">
                   {formatChangeType(record.changeType)}
                 </span>
               </div>
-              <span className="edit-history-panel__time">
-                {formatDateTime(record.timestamp)}
-              </span>
+              <span className="edit-history-panel__time">{formatDateTime(record.timestamp)}</span>
             </li>
           ))}
         </ul>
@@ -218,9 +200,7 @@ interface AttributionSummaryProps {
   attribution: CellAttribution | null;
 }
 
-export const AttributionSummary: React.FC<AttributionSummaryProps> = ({
-  attribution,
-}) => {
+export const AttributionSummary: React.FC<AttributionSummaryProps> = ({ attribution }) => {
   if (!attribution) {
     return (
       <div className="attribution-summary attribution-summary--empty">

@@ -2,18 +2,13 @@
 // ACTIONS PANEL — Pending AI Actions
 // ═══════════════════════════════════════════════════════════════════════════
 
-import React, { useCallback } from 'react';
-import {
-  Check,
-  X,
-  AlertTriangle,
-  Shield,
-  Zap,
-  FileEdit,
-  Trash2,
-} from 'lucide-react';
+import React, { useCallback, useState } from 'react';
+import { Check, X, AlertTriangle, Shield, Zap, FileEdit, Trash2 } from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
 import type { AIProposedAction } from '../../ai/types';
+
+const renderSnapshot = (values: AIProposedAction['preview']['before']['values']) =>
+  JSON.stringify(values);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Action Card Component
@@ -25,6 +20,7 @@ interface ActionCardProps {
   onSelect: () => void;
   onApprove: () => void;
   onReject: () => void;
+  disabled: boolean;
 }
 
 const ActionCard: React.FC<ActionCardProps> = ({
@@ -33,6 +29,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
   onSelect,
   onApprove,
   onReject,
+  disabled,
 }) => {
   const getRiskIcon = () => {
     switch (action.riskLevel) {
@@ -81,8 +78,10 @@ const ActionCard: React.FC<ActionCardProps> = ({
 
       {action.status === 'pending' && (
         <div className="ai-action-card-actions">
-          <button type="button"
+          <button
+            type="button"
             className="ai-action-btn ai-action-btn--approve"
+            disabled={disabled}
             onClick={(e) => {
               e.stopPropagation();
               onApprove();
@@ -91,8 +90,10 @@ const ActionCard: React.FC<ActionCardProps> = ({
             <Check size={14} />
             <span>Approve</span>
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="ai-action-btn ai-action-btn--reject"
+            disabled={disabled}
             onClick={(e) => {
               e.stopPropagation();
               onReject();
@@ -117,6 +118,9 @@ export const ActionsPanel: React.FC = () => {
   const selectAction = useAIStore((state) => state.selectAction);
   const approveAction = useAIStore((state) => state.approveAction);
   const rejectAction = useAIStore((state) => state.rejectAction);
+  const error = useAIStore((state) => state.error);
+  const clearError = useAIStore((state) => state.clearError);
+  const [processingActionId, setProcessingActionId] = useState<string | null>(null);
 
   const handleSelect = useCallback(
     (action: AIProposedAction) => {
@@ -126,17 +130,31 @@ export const ActionsPanel: React.FC = () => {
   );
 
   const handleApprove = useCallback(
-    (actionId: string) => {
-      approveAction(actionId);
+    async (actionId: string) => {
+      if (processingActionId) return;
+      setProcessingActionId(actionId);
+      clearError();
+      try {
+        await approveAction(actionId);
+      } finally {
+        setProcessingActionId(null);
+      }
     },
-    [approveAction]
+    [approveAction, clearError, processingActionId]
   );
 
   const handleReject = useCallback(
-    (actionId: string) => {
-      rejectAction(actionId);
+    async (actionId: string) => {
+      if (processingActionId) return;
+      setProcessingActionId(actionId);
+      clearError();
+      try {
+        await rejectAction(actionId);
+      } finally {
+        setProcessingActionId(null);
+      }
     },
-    [rejectAction]
+    [clearError, processingActionId, rejectAction]
   );
 
   return (
@@ -146,13 +164,20 @@ export const ActionsPanel: React.FC = () => {
         <span className="ai-actions-count">{pendingActions.length}</span>
       </div>
 
+      {error && (
+        <div className="ai-chat-error" role="alert">
+          <span>{error}</span>
+          <button type="button" onClick={clearError}>
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {pendingActions.length === 0 ? (
         <div className="ai-actions-empty">
           <Zap size={48} className="ai-actions-empty-icon" />
           <h4>No pending actions</h4>
-          <p>
-            Actions proposed by AI that require your approval will appear here.
-          </p>
+          <p>Actions proposed by AI that require your approval will appear here.</p>
         </div>
       ) : (
         <div className="ai-actions-list">
@@ -164,6 +189,7 @@ export const ActionsPanel: React.FC = () => {
               onSelect={() => handleSelect(action)}
               onApprove={() => handleApprove(action.id)}
               onReject={() => handleReject(action.id)}
+              disabled={processingActionId !== null}
             />
           ))}
         </div>
@@ -180,13 +206,25 @@ export const ActionsPanel: React.FC = () => {
             </div>
             <div className="ai-action-preview-section">
               <span className="label">Risk:</span>
-              <span className={`risk-${selectedAction.riskLevel}`}>
-                {selectedAction.riskLevel}
-              </span>
+              <span className={`risk-${selectedAction.riskLevel}`}>{selectedAction.riskLevel}</span>
             </div>
             <div className="ai-action-preview-section">
               <span className="label">Cells:</span>
               <span>{selectedAction.affectedCells}</span>
+            </div>
+            <div className="ai-action-preview-section">
+              <span className="label">Sheet:</span>
+              <span>{selectedAction.sheetId ?? 'Unavailable'}</span>
+            </div>
+            <div className="ai-action-preview-diff" data-testid="ai-action-preview-diff">
+              <div>
+                <span className="label">Before</span>
+                <code>{renderSnapshot(selectedAction.preview.before.values)}</code>
+              </div>
+              <div>
+                <span className="label">After</span>
+                <code>{renderSnapshot(selectedAction.preview.after.values)}</code>
+              </div>
             </div>
           </div>
         </div>

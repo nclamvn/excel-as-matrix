@@ -25,11 +25,7 @@ export type {
 } from './types';
 
 // Constants
-export {
-  DEFAULT_CONFIDENCE_WEIGHTS,
-  CONFIDENCE_THRESHOLDS,
-  DEFAULT_TRUST_CONFIG,
-} from './types';
+export { DEFAULT_CONFIDENCE_WEIGHTS, CONFIDENCE_THRESHOLDS, DEFAULT_TRUST_CONFIG } from './types';
 
 // Engines
 export { ConfidenceEngine, confidenceEngine } from './ConfidenceEngine';

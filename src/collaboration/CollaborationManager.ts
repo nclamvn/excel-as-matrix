@@ -281,13 +281,7 @@ export class CollaborationManager {
     eventId: string,
     changeType: 'value' | 'formula' | 'format' | 'clear'
   ): void {
-    this.attributionTracker.recordEdit(
-      sheetId,
-      cellRef,
-      this.currentUser,
-      eventId,
-      changeType
-    );
+    this.attributionTracker.recordEdit(sheetId, cellRef, this.currentUser, eventId, changeType);
   }
 
   /**
@@ -356,9 +350,7 @@ export class CollaborationManager {
 
 let instance: CollaborationManager | null = null;
 
-export function createCollaborationManager(
-  config: CollaborationConfig
-): CollaborationManager {
+export function createCollaborationManager(config: CollaborationConfig): CollaborationManager {
   return new CollaborationManager(config);
 }
 

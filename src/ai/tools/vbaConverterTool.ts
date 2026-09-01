@@ -83,13 +83,17 @@ const VBA_PATTERNS: Array<{
     pattern: /Cells\((\d+),\s*(\d+)\)\.Value\s*=\s*(.+)/m,
     convert: (m) => ({
       type: 'setCellValue',
-      params: { row: parseInt(m[1]) - 1, col: parseInt(m[2]) - 1, value: m[3].trim().replace(/^"|"$/g, '') },
+      params: {
+        row: parseInt(m[1]) - 1,
+        col: parseInt(m[2]) - 1,
+        value: m[3].trim().replace(/^"|"$/g, ''),
+      },
       description: `Set cell (${m[1]},${m[2]}) = ${m[3].trim()}`,
     }),
   },
   // Range("A1:B10").Font.Bold = True
   {
-    pattern: /Range\("([^"]+)"\)\.Font\.Bold\s*=\s*(True|False)/mi,
+    pattern: /Range\("([^"]+)"\)\.Font\.Bold\s*=\s*(True|False)/im,
     convert: (m) => ({
       type: 'formatCells',
       params: { range: m[1], format: { bold: m[2].toLowerCase() === 'true' } },
@@ -209,13 +213,17 @@ export function convertVBALocally(vbaCode: string): ConvertedMacro {
   const lines = vbaCode
     .split('\n')
     .map((l) => l.trim())
-    .filter((l) => l && !l.startsWith("'") && !l.startsWith('Sub ') && !l.startsWith('End Sub') && l !== 'Dim');
+    .filter(
+      (l) =>
+        l && !l.startsWith("'") && !l.startsWith('Sub ') && !l.startsWith('End Sub') && l !== 'Dim'
+    );
 
   for (const line of lines) {
     // Skip Dim declarations
     if (line.startsWith('Dim ')) continue;
     if (line === 'Next' || line.match(/^Next \w+$/)) continue;
-    if (line.startsWith('End If') || line.startsWith('Else') || line === 'Wend' || line === 'Loop') continue;
+    if (line.startsWith('End If') || line.startsWith('Else') || line === 'Wend' || line === 'Loop')
+      continue;
 
     let matched = false;
     for (const { pattern, convert } of VBA_PATTERNS) {

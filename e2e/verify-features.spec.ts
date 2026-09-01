@@ -1,28 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { openLocalWorkbook } from './utils/app';
 
 // Helper: enter app from landing page
 async function enterApp(page: import('@playwright/test').Page) {
-  await page.goto('/');
-
-  // Skip landing page
-  await page.evaluate(() => localStorage.setItem('ai-suite-entered', 'true'));
-
-  // Click CTA if landing page is showing
-  const enterButton = page.locator('text=Start Free').or(page.locator('text=Try Free'));
-  if (await enterButton.first().isVisible({ timeout: 2000 }).catch(() => false)) {
-    await enterButton.first().click();
-  }
-
-  // Wait for grid
-  await page.waitForSelector('canvas', { timeout: 15000 });
-
-  // Wait for lazy components, then force-remove onboarding overlay
-  await page.waitForTimeout(1500);
-  await page.evaluate(() => {
-    document.querySelectorAll('[data-testid="onboarding-tour"]').forEach(el => el.remove());
-    // Prevent re-render by setting flag
-    try { (window as any).__onboardingDismissed = true; } catch {}
-  });
+  await openLocalWorkbook(page);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -227,13 +208,7 @@ test.describe('Mobile Responsive', () => {
   test.use({ viewport: { width: 375, height: 812 } }); // iPhone X
 
   test('M1: Mobile layout renders without crash', async ({ page }) => {
-    await page.goto('/');
-    const enterButton = page.locator('text=Enter App').or(page.locator('text=Get Started'));
-    if (await enterButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await enterButton.click();
-    }
-    // Should render canvas grid
-    await page.waitForSelector('canvas', { timeout: 10000 });
+    await openLocalWorkbook(page);
     await expect(page.locator('canvas').first()).toBeVisible();
   });
 
@@ -241,12 +216,7 @@ test.describe('Mobile Responsive', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/');
-    const enterButton = page.locator('text=Enter App').or(page.locator('text=Get Started'));
-    if (await enterButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await enterButton.click();
-    }
-    await page.waitForSelector('canvas', { timeout: 10000 });
+    await openLocalWorkbook(page);
     await page.waitForTimeout(2000);
 
     // Filter out known non-critical errors

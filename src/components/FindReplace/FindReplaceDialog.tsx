@@ -63,16 +63,36 @@ export const FindReplaceDialog: React.FC = () => {
     <div className="fixed top-16 right-4 z-50 bg-white rounded-lg shadow-xl border w-96">
       <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            className="w-4 h-4 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
           <span className="text-sm font-medium text-gray-700">
             {isReplaceMode ? 'Find and Replace' : 'Find'}
           </span>
         </div>
         <button type="button" onClick={close} className="p-1 hover:bg-gray-200 rounded">
-          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-4 h-4 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
@@ -95,7 +115,8 @@ export const FindReplaceDialog: React.FC = () => {
               </span>
             )}
           </div>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => search()}
             disabled={isSearching || !searchText.trim()}
             className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
@@ -119,38 +140,52 @@ export const FindReplaceDialog: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <div className="flex gap-1">
-            <button type="button"
+            <button
+              type="button"
               onClick={findPrevious}
               disabled={matches.length === 0}
               className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
               title="Find previous (Shift+F3)"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 15l7-7 7 7"
+                />
               </svg>
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={findNext}
               disabled={matches.length === 0}
               className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
               title="Find next (F3)"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
           </div>
 
           {isReplaceMode && (
             <div className="flex gap-2">
-              <button type="button"
+              <button
+                type="button"
                 onClick={replaceCurrent}
                 disabled={currentMatchIndex < 0}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
               >
                 Replace
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={replaceAll}
                 disabled={matches.length === 0}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
@@ -160,13 +195,24 @@ export const FindReplaceDialog: React.FC = () => {
             </div>
           )}
 
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setShowOptions(!showOptions)}
             className={`p-2 rounded ${showOptions ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
           </button>
         </div>
@@ -204,7 +250,9 @@ export const FindReplaceDialog: React.FC = () => {
               <span>Search in:</span>
               <select
                 value={options.searchIn}
-                onChange={(e) => setOptions({ searchIn: e.target.value as 'values' | 'formulas' | 'both' })}
+                onChange={(e) =>
+                  setOptions({ searchIn: e.target.value as 'values' | 'formulas' | 'both' })
+                }
                 className="border rounded px-2 py-1 text-sm"
               >
                 <option value="values">Values</option>
@@ -216,7 +264,9 @@ export const FindReplaceDialog: React.FC = () => {
               <span>Scope:</span>
               <select
                 value={options.searchScope}
-                onChange={(e) => setOptions({ searchScope: e.target.value as 'sheet' | 'workbook' })}
+                onChange={(e) =>
+                  setOptions({ searchScope: e.target.value as 'sheet' | 'workbook' })
+                }
                 className="border rounded px-2 py-1 text-sm"
               >
                 <option value="sheet">Current Sheet</option>

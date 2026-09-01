@@ -18,26 +18,22 @@ interface QuickActionsProps {
 // Quick Actions Component
 // -----------------------------------------------------------------------------
 
-export const QuickActions: React.FC<QuickActionsProps> = ({
-  issues,
-  onAction,
-}) => {
+export const QuickActions: React.FC<QuickActionsProps> = ({ issues, onAction }) => {
   if (issues.length === 0) return null;
 
   // Group issues by category
-  const duplicates = issues.filter(i => i.category === 'duplicates');
-  const missingValues = issues.filter(i => i.category === 'missing_values');
-  const formatIssues = issues.filter(i => i.category === 'invalid_format' || i.category === 'trailing_spaces');
+  const duplicates = issues.filter((i) => i.category === 'duplicates');
+  const missingValues = issues.filter((i) => i.category === 'missing_values');
+  const formatIssues = issues.filter(
+    (i) => i.category === 'invalid_format' || i.category === 'trailing_spaces'
+  );
 
   // Get total affected cells
-  const totalAffected = issues.reduce(
-    (sum, issue) => sum + (issue.impact?.cellCount || 0),
-    0
-  );
+  const totalAffected = issues.reduce((sum, issue) => sum + (issue.impact?.cellCount || 0), 0);
 
   const handleFixAll = (issueList: ProactiveSuggestion[]) => {
     for (const issue of issueList) {
-      const primaryAction = issue.actions.find(a => a.type === 'primary');
+      const primaryAction = issue.actions.find((a) => a.type === 'primary');
       if (primaryAction) {
         onAction(issue.id, primaryAction.id);
       }
@@ -113,7 +109,8 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = ({
   onClick,
   variant = 'default',
 }) => (
-  <button type="button"
+  <button
+    type="button"
     className={`quick-actions__button quick-actions__button--${variant}`}
     onClick={onClick}
   >

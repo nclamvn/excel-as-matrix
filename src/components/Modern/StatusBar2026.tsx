@@ -59,14 +59,16 @@ export const StatusBar2026: React.FC = () => {
 
       <div className="status-bar-2026__right">
         <div className="status-bar-2026__zoom">
-          <button type="button"
+          <button
+            type="button"
             className="status-bar-2026__zoom-btn"
             onClick={() => setZoom(Math.max(50, zoom - 10))}
           >
             <Minus />
           </button>
           <span className="status-bar-2026__zoom-value">{zoom}%</span>
-          <button type="button"
+          <button
+            type="button"
             className="status-bar-2026__zoom-btn"
             onClick={() => setZoom(Math.min(200, zoom + 10))}
           >

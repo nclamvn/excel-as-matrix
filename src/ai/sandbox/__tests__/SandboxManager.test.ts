@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock crypto.randomUUID
 vi.stubGlobal('crypto', {
-  randomUUID: vi.fn().mockReturnValue('test-sandbox-id')
+  randomUUID: vi.fn().mockReturnValue('test-sandbox-id'),
 });
 
 // Mock DiffEngine
@@ -10,24 +10,22 @@ vi.mock('../DiffEngine', () => ({
   DiffEngine: vi.fn().mockImplementation(() => ({
     calculateDiff: vi.fn().mockReturnValue({
       sandboxId: 'test-sandbox-id',
-      changes: [
-        { type: 'add', cellRef: 'A1', newValue: 'Test' }
-      ],
+      changes: [{ type: 'add', cellRef: 'A1', newValue: 'Test' }],
       summary: {
         totalChanges: 1,
         additions: 1,
         modifications: 0,
-        deletions: 0
-      }
-    })
+        deletions: 0,
+      },
+    }),
   })),
   diffEngine: {
     calculateDiff: vi.fn().mockReturnValue({
       sandboxId: 'test-sandbox-id',
       changes: [{ type: 'add', cellRef: 'A1', newValue: 'Test' }],
-      summary: { totalChanges: 1, additions: 1, modifications: 0, deletions: 0 }
-    })
-  }
+      summary: { totalChanges: 1, additions: 1, modifications: 0, deletions: 0 },
+    }),
+  },
 }));
 
 // Mock RiskAssessor
@@ -37,19 +35,19 @@ vi.mock('../RiskAssessor', () => ({
       overallRisk: 'low',
       score: 0.2,
       canAutoApply: true,
-      factors: []
+      factors: [],
     }),
-    updateConfig: vi.fn()
+    updateConfig: vi.fn(),
   })),
   riskAssessor: {
     assessRisk: vi.fn().mockReturnValue({
       overallRisk: 'low',
       score: 0.2,
       canAutoApply: true,
-      factors: []
+      factors: [],
     }),
-    updateConfig: vi.fn()
-  }
+    updateConfig: vi.fn(),
+  },
 }));
 
 // Mock MergeEngine
@@ -59,33 +57,33 @@ vi.mock('../MergeEngine', () => ({
       success: true,
       sandbox: null,
       appliedChanges: 1,
-      errors: []
+      errors: [],
     }),
     rollback: vi.fn().mockReturnValue({
       success: true,
       sandboxId: 'test-sandbox-id',
       restoredCells: 1,
-      errors: []
+      errors: [],
     }),
     canRollback: vi.fn().mockReturnValue(true),
-    cleanupExpiredRollbacks: vi.fn()
+    cleanupExpiredRollbacks: vi.fn(),
   })),
   mergeEngine: {
     merge: vi.fn().mockReturnValue({
       success: true,
       sandbox: null,
       appliedChanges: 1,
-      errors: []
+      errors: [],
     }),
     rollback: vi.fn().mockReturnValue({
       success: true,
       sandboxId: 'test-sandbox-id',
       restoredCells: 1,
-      errors: []
+      errors: [],
     }),
     canRollback: vi.fn().mockReturnValue(true),
-    cleanupExpiredRollbacks: vi.fn()
-  }
+    cleanupExpiredRollbacks: vi.fn(),
+  },
 }));
 
 import { SandboxManager, sandboxManager } from '../SandboxManager';
@@ -118,7 +116,7 @@ describe('SandboxManager', () => {
 
     it('creates instance with custom config', () => {
       const customConfig: Partial<SandboxConfig> = {
-        autoApproveThreshold: 0.5
+        autoApproveThreshold: 0.5,
       };
       const customManager = new SandboxManager(customConfig);
       const config = customManager.getConfig();
@@ -132,11 +130,7 @@ describe('SandboxManager', () => {
         const changes = new Map<string, CellState>();
         changes.set('sheet1:A1', { ref: 'A1', value: 'Test', formula: null });
 
-        const result = manager.createSandbox(
-          'Test Sandbox',
-          'A test sandbox',
-          changes
-        );
+        const result = manager.createSandbox('Test Sandbox', 'A test sandbox', changes);
 
         expect(result.sandbox).toBeDefined();
         expect(result.sandbox.name).toBe('Test Sandbox');
@@ -176,7 +170,7 @@ describe('SandboxManager', () => {
         changes.set('sheet1:A1', { ref: 'A1', value: 'Test', formula: null });
 
         const result = manager.createSandbox('Test', 'Test', changes, {
-          createdBy: 'user'
+          createdBy: 'user',
         });
         expect(result.sandbox.createdBy).toBe('user');
       });
@@ -187,7 +181,7 @@ describe('SandboxManager', () => {
 
         const result = manager.createSandbox('Test', 'Test', changes, {
           aiConversationId: 'conv-123',
-          aiMessageId: 'msg-456'
+          aiMessageId: 'msg-456',
         });
         expect(result.sandbox.aiConversationId).toBe('conv-123');
         expect(result.sandbox.aiMessageId).toBe('msg-456');
@@ -199,7 +193,7 @@ describe('SandboxManager', () => {
 
         const result = manager.createSandbox('Test', 'Test', changes, {
           intent: 'Add header',
-          reasoning: 'User requested a header row'
+          reasoning: 'User requested a header row',
         });
         expect(result.sandbox.metadata.intent).toBe('Add header');
         expect(result.sandbox.metadata.reasoning).toBe('User requested a header row');
@@ -211,7 +205,7 @@ describe('SandboxManager', () => {
         const values = [
           ['A', 'B', 'C'],
           [1, 2, 3],
-          [4, 5, 6]
+          [4, 5, 6],
         ];
 
         const result = manager.createSandboxForRangeWrite('sheet1', 'A1', values);
@@ -220,19 +214,19 @@ describe('SandboxManager', () => {
       });
 
       it('handles formula values', () => {
-        const values = [
-          ['Header'],
-          ['=SUM(A3:A10)']
-        ];
+        const values = [['Header'], ['=SUM(A3:A10)']];
 
         const result = manager.createSandboxForRangeWrite('sheet1', 'A1', values);
         const changes = Array.from(result.sandbox.proposedChanges.values());
-        const formulaCell = changes.find(c => c.formula);
+        const formulaCell = changes.find((c) => c.formula);
         expect(formulaCell?.formula).toBe('=SUM(A3:A10)');
       });
 
       it('generates descriptive name', () => {
-        const values = [[1, 2], [3, 4]];
+        const values = [
+          [1, 2],
+          [3, 4],
+        ];
         const result = manager.createSandboxForRangeWrite('sheet1', 'A1', values);
         expect(result.sandbox.name).toContain('A1');
       });
@@ -595,7 +589,7 @@ describe('SandboxManager', () => {
         changes.set('sheet1:A1', { ref: 'A1', value: 'Test', formula: null });
         manager.createSandbox('Test', 'Test', changes);
 
-        const createEvent = events.find(e => e.type === 'sandbox_created');
+        const createEvent = events.find((e) => e.type === 'sandbox_created');
         expect(createEvent).toBeDefined();
       });
 
@@ -608,7 +602,7 @@ describe('SandboxManager', () => {
         const { sandbox } = manager.createSandbox('Test', 'Test', changes);
         manager.approve(sandbox.id);
 
-        const approveEvent = events.find(e => e.type === 'sandbox_approved');
+        const approveEvent = events.find((e) => e.type === 'sandbox_approved');
         expect(approveEvent).toBeDefined();
       });
 
@@ -621,7 +615,7 @@ describe('SandboxManager', () => {
         const { sandbox } = manager.createSandbox('Test', 'Test', changes);
         manager.reject(sandbox.id);
 
-        const rejectEvent = events.find(e => e.type === 'sandbox_rejected');
+        const rejectEvent = events.find((e) => e.type === 'sandbox_rejected');
         expect(rejectEvent).toBeDefined();
       });
 
@@ -763,7 +757,7 @@ describe('SandboxManager', () => {
       }
 
       expect(results.length).toBe(10);
-      const ids = results.map(r => r.sandbox.id);
+      const ids = results.map((r) => r.sandbox.id);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(10);
     });

@@ -4,11 +4,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { dataCleanerEngine } from '../../datacleaner';
-import type {
-  CleanerSheetData,
-  QualityScore,
-  CellChange,
-} from '../../datacleaner/types';
+import type { CleanerSheetData, QualityScore, CellChange } from '../../datacleaner/types';
 import { QualityScoreCard } from './QualityScoreCard';
 import { IssuesList } from './IssuesList';
 import { CleaningProgress } from './CleaningProgress';
@@ -97,14 +93,16 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
           <span>Data Cleaner</span>
         </div>
         <div className="data-cleaner-panel__actions">
-          <button type="button"
+          <button
+            type="button"
             className="data-cleaner-panel__action data-cleaner-panel__action--primary"
             onClick={handleAnalyze}
             disabled={isAnalyzing}
           >
             {isAnalyzing ? 'Analyzing...' : 'Analyze'}
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="data-cleaner-panel__action"
             onClick={onClose}
             title="Close"
@@ -115,19 +113,21 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
       </div>
 
       {/* Quality Score */}
-      {score && (
-        <QualityScoreCard score={score} />
-      )}
+      {score && <QualityScoreCard score={score} />}
 
       {/* Stats Bar */}
       {score && (
         <div className="data-cleaner-panel__stats">
           <div className="data-cleaner-panel__stat">
-            <span className="data-cleaner-panel__stat-value">{score.summary.totalRows.toLocaleString()}</span>
+            <span className="data-cleaner-panel__stat-value">
+              {score.summary.totalRows.toLocaleString()}
+            </span>
             <span className="data-cleaner-panel__stat-label">rows</span>
           </div>
           <div className="data-cleaner-panel__stat">
-            <span className="data-cleaner-panel__stat-value">{score.summary.totalCells.toLocaleString()}</span>
+            <span className="data-cleaner-panel__stat-value">
+              {score.summary.totalCells.toLocaleString()}
+            </span>
             <span className="data-cleaner-panel__stat-label">cells</span>
           </div>
           <div className="data-cleaner-panel__stat">
@@ -139,25 +139,30 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
 
       {/* Tabs */}
       <div className="data-cleaner-panel__tabs">
-        <button type="button"
+        <button
+          type="button"
           className={`data-cleaner-panel__tab ${activeTab === 'overview' ? 'data-cleaner-panel__tab--active' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
           Overview
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`data-cleaner-panel__tab ${activeTab === 'issues' ? 'data-cleaner-panel__tab--active' : ''}`}
           onClick={() => setActiveTab('issues')}
         >
-          Issues {score && score.summary.totalIssues > 0 && (
+          Issues{' '}
+          {score && score.summary.totalIssues > 0 && (
             <span className="data-cleaner-panel__tab-badge">{score.summary.totalIssues}</span>
           )}
         </button>
-        <button type="button"
+        <button
+          type="button"
           className={`data-cleaner-panel__tab ${activeTab === 'fixes' ? 'data-cleaner-panel__tab--active' : ''}`}
           onClick={() => setActiveTab('fixes')}
         >
-          Fixes {pendingChanges.length > 0 && (
+          Fixes{' '}
+          {pendingChanges.length > 0 && (
             <span className="data-cleaner-panel__tab-badge">{pendingChanges.length}</span>
           )}
         </button>
@@ -166,9 +171,7 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
       {/* Content */}
       <div className="data-cleaner-panel__content">
         {/* Cleaning Progress */}
-        {isCleaning && (
-          <CleaningProgress progress={cleaningProgress} />
-        )}
+        {isCleaning && <CleaningProgress progress={cleaningProgress} />}
 
         {/* Empty State */}
         {!score && !isAnalyzing && (
@@ -203,7 +206,8 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
             </div>
 
             {score.summary.autoFixable > 0 && (
-              <button type="button"
+              <button
+                type="button"
                 className="data-cleaner-panel__fix-all"
                 onClick={handleFixAll}
                 disabled={isCleaning}
@@ -216,9 +220,7 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
         )}
 
         {/* Issues Tab */}
-        {activeTab === 'issues' && score && !isAnalyzing && (
-          <IssuesList issues={score.issues} />
-        )}
+        {activeTab === 'issues' && score && !isAnalyzing && <IssuesList issues={score.issues} />}
 
         {/* Fixes Tab */}
         {activeTab === 'fixes' && (
@@ -232,7 +234,8 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
               <>
                 <div className="data-cleaner-panel__fixes-summary">
                   <span>{pendingChanges.length} changes ready to apply</span>
-                  <button type="button"
+                  <button
+                    type="button"
                     className="data-cleaner-panel__apply-btn"
                     onClick={handleApplyChanges}
                   >
@@ -244,7 +247,9 @@ export const DataCleanerPanel: React.FC<DataCleanerPanelProps> = ({
                     <div key={i} className="data-cleaner-panel__fix-item">
                       <span className="data-cleaner-panel__fix-ref">{change.ref}</span>
                       <span className="data-cleaner-panel__fix-type">{change.changeType}</span>
-                      <span className="data-cleaner-panel__fix-before">{String(change.before)}</span>
+                      <span className="data-cleaner-panel__fix-before">
+                        {String(change.before)}
+                      </span>
                       <span className="data-cleaner-panel__fix-arrow">→</span>
                       <span className="data-cleaner-panel__fix-after">{String(change.after)}</span>
                     </div>

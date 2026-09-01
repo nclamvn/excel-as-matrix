@@ -37,13 +37,12 @@ export const ColorSchemeSelector: React.FC<ColorSchemeSelectorProps> = ({
 
   return (
     <div className={`color-scheme-selector ${compact ? 'compact' : ''}`}>
-      <h4 className="selector-title">
-        {language === 'vi' ? 'Bảng màu' : 'Color Scheme'}
-      </h4>
+      <h4 className="selector-title">{language === 'vi' ? 'Bảng màu' : 'Color Scheme'}</h4>
 
       <div className="color-scheme-grid">
         {schemeEntries.map(([name, scheme]) => (
-          <button type="button"
+          <button
+            type="button"
             key={name}
             className={`color-scheme-option ${selectedScheme === name ? 'selected' : ''}`}
             onClick={() => onChange(name)}
@@ -51,11 +50,7 @@ export const ColorSchemeSelector: React.FC<ColorSchemeSelectorProps> = ({
           >
             <div className="scheme-preview">
               {scheme.colors.slice(0, 5).map((color, i) => (
-                <div
-                  key={i}
-                  className="scheme-color"
-                  style={{ backgroundColor: color }}
-                />
+                <div key={i} className="scheme-color" style={{ backgroundColor: color }} />
               ))}
             </div>
             {!compact && (
@@ -72,11 +67,7 @@ export const ColorSchemeSelector: React.FC<ColorSchemeSelectorProps> = ({
         <div className="scheme-details">
           <div className="scheme-full-preview">
             {COLOR_SCHEMES[selectedScheme]?.colors.map((color, i) => (
-              <div
-                key={i}
-                className="scheme-color-large"
-                style={{ backgroundColor: color }}
-              >
+              <div key={i} className="scheme-color-large" style={{ backgroundColor: color }}>
                 <span className="color-hex">{color}</span>
               </div>
             ))}

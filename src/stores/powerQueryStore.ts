@@ -24,7 +24,12 @@ interface PowerQueryState {
   createPipeline: (name: string, sourceSheetId: string) => string;
   deletePipeline: (id: string) => void;
   setActivePipeline: (id: string | null) => void;
-  addStep: (pipelineId: string, type: TransformType, params: Record<string, unknown>, label?: string) => void;
+  addStep: (
+    pipelineId: string,
+    type: TransformType,
+    params: Record<string, unknown>,
+    label?: string
+  ) => void;
   removeStep: (pipelineId: string, stepId: string) => void;
   toggleStep: (pipelineId: string, stepId: string) => void;
   moveStep: (pipelineId: string, stepId: string, direction: 'up' | 'down') => void;

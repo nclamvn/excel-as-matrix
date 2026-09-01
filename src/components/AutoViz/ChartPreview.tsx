@@ -137,9 +137,7 @@ function renderLineChart(
           y: height - 10 - (value - minValue) * yScale,
         }));
 
-        const pathData = points
-          .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-          .join(' ');
+        const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
         return (
           <g key={dsIndex}>
@@ -150,13 +148,7 @@ function renderLineChart(
               strokeWidth="2"
             />
             {points.map((p, i) => (
-              <circle
-                key={i}
-                cx={p.x}
-                cy={p.y}
-                r="4"
-                fill={dataset.color || colors[dsIndex]}
-              />
+              <circle key={i} cx={p.x} cy={p.y} r="4" fill={dataset.color || colors[dsIndex]} />
             ))}
           </g>
         );
@@ -287,13 +279,7 @@ function renderPieChart(
       : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
 
     slices.push(
-      <path
-        key={i}
-        d={pathData}
-        fill={colors[i % colors.length]}
-        stroke="#fff"
-        strokeWidth="2"
-      />
+      <path key={i} d={pathData} fill={colors[i % colors.length]} stroke="#fff" strokeWidth="2" />
     );
 
     startAngle = endAngle;
@@ -331,17 +317,11 @@ function renderAreaChart(
           points.map((p) => `L ${p.x} ${p.y}`).join(' ') +
           ` L ${width} ${baseline} Z`;
 
-        const linePath = points
-          .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-          .join(' ');
+        const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
         return (
           <g key={dsIndex}>
-            <path
-              d={areaPath}
-              fill={dataset.color || colors[dsIndex]}
-              opacity="0.3"
-            />
+            <path d={areaPath} fill={dataset.color || colors[dsIndex]} opacity="0.3" />
             <path
               d={linePath}
               fill="none"

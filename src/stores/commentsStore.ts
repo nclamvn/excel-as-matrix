@@ -63,7 +63,7 @@ interface CommentsStore {
 
 const extractMentions = (content: string): string[] => {
   const matches = content.match(/@(\w+)/g);
-  return matches ? matches.map(m => m.slice(1)) : [];
+  return matches ? matches.map((m) => m.slice(1)) : [];
 };
 
 export const useCommentsStore = create<CommentsStore>()(
@@ -111,9 +111,14 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           comments: {
             ...state.comments,
-            [sheetId]: (state.comments[sheetId] || []).map(c =>
+            [sheetId]: (state.comments[sheetId] || []).map((c) =>
               c.id === commentId
-                ? { ...c, content, updatedAt: new Date().toISOString(), mentions: extractMentions(content) }
+                ? {
+                    ...c,
+                    content,
+                    updatedAt: new Date().toISOString(),
+                    mentions: extractMentions(content),
+                  }
                 : c
             ),
           },
@@ -124,7 +129,7 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           comments: {
             ...state.comments,
-            [sheetId]: (state.comments[sheetId] || []).filter(c => c.id !== commentId),
+            [sheetId]: (state.comments[sheetId] || []).filter((c) => c.id !== commentId),
           },
           activeCommentId: state.activeCommentId === commentId ? null : state.activeCommentId,
         }));
@@ -144,7 +149,7 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           comments: {
             ...state.comments,
-            [sheetId]: (state.comments[sheetId] || []).map(c =>
+            [sheetId]: (state.comments[sheetId] || []).map((c) =>
               c.id === commentId
                 ? { ...c, replies: [...c.replies, reply], updatedAt: new Date().toISOString() }
                 : c
@@ -157,10 +162,8 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           comments: {
             ...state.comments,
-            [sheetId]: (state.comments[sheetId] || []).map(c =>
-              c.id === commentId
-                ? { ...c, replies: c.replies.filter(r => r.id !== replyId) }
-                : c
+            [sheetId]: (state.comments[sheetId] || []).map((c) =>
+              c.id === commentId ? { ...c, replies: c.replies.filter((r) => r.id !== replyId) } : c
             ),
           },
         }));
@@ -171,9 +174,14 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           comments: {
             ...state.comments,
-            [sheetId]: (state.comments[sheetId] || []).map(c =>
+            [sheetId]: (state.comments[sheetId] || []).map((c) =>
               c.id === commentId
-                ? { ...c, resolved: true, resolvedBy: currentUserId, resolvedAt: new Date().toISOString() }
+                ? {
+                    ...c,
+                    resolved: true,
+                    resolvedBy: currentUserId,
+                    resolvedAt: new Date().toISOString(),
+                  }
                 : c
             ),
           },
@@ -184,7 +192,7 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           comments: {
             ...state.comments,
-            [sheetId]: (state.comments[sheetId] || []).map(c =>
+            [sheetId]: (state.comments[sheetId] || []).map((c) =>
               c.id === commentId
                 ? { ...c, resolved: false, resolvedBy: undefined, resolvedAt: undefined }
                 : c
@@ -199,11 +207,11 @@ export const useCommentsStore = create<CommentsStore>()(
         const { comments, activeCommentId, filter } = get();
         let sheetComments = comments[sheetId] || [];
         if (!filter.showResolved) {
-          sheetComments = sheetComments.filter(c => !c.resolved);
+          sheetComments = sheetComments.filter((c) => !c.resolved);
         }
         if (sheetComments.length === 0) return;
 
-        const currentIndex = sheetComments.findIndex(c => c.id === activeCommentId);
+        const currentIndex = sheetComments.findIndex((c) => c.id === activeCommentId);
         const nextIndex = (currentIndex + 1) % sheetComments.length;
         set({ activeCommentId: sheetComments[nextIndex].id });
       },
@@ -212,11 +220,11 @@ export const useCommentsStore = create<CommentsStore>()(
         const { comments, activeCommentId, filter } = get();
         let sheetComments = comments[sheetId] || [];
         if (!filter.showResolved) {
-          sheetComments = sheetComments.filter(c => !c.resolved);
+          sheetComments = sheetComments.filter((c) => !c.resolved);
         }
         if (sheetComments.length === 0) return;
 
-        const currentIndex = sheetComments.findIndex(c => c.id === activeCommentId);
+        const currentIndex = sheetComments.findIndex((c) => c.id === activeCommentId);
         const prevIndex = currentIndex <= 0 ? sheetComments.length - 1 : currentIndex - 1;
         set({ activeCommentId: sheetComments[prevIndex].id });
       },
@@ -246,7 +254,7 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           notes: {
             ...state.notes,
-            [sheetId]: (state.notes[sheetId] || []).map(n =>
+            [sheetId]: (state.notes[sheetId] || []).map((n) =>
               n.id === noteId ? { ...n, content, updatedAt: new Date().toISOString() } : n
             ),
           },
@@ -257,7 +265,7 @@ export const useCommentsStore = create<CommentsStore>()(
         set((state) => ({
           notes: {
             ...state.notes,
-            [sheetId]: (state.notes[sheetId] || []).filter(n => n.id !== noteId),
+            [sheetId]: (state.notes[sheetId] || []).filter((n) => n.id !== noteId),
           },
         }));
       },
@@ -267,7 +275,7 @@ export const useCommentsStore = create<CommentsStore>()(
       setFilter: (filter) => set((state) => ({ filter: { ...state.filter, ...filter } })),
 
       getCommentsForCell: (sheetId, cellRef) => {
-        return (get().comments[sheetId] || []).filter(c => c.cellRef === cellRef);
+        return (get().comments[sheetId] || []).filter((c) => c.cellRef === cellRef);
       },
 
       getCommentsForSheet: (sheetId) => {
@@ -275,27 +283,28 @@ export const useCommentsStore = create<CommentsStore>()(
         let sheetComments = comments[sheetId] || [];
 
         if (!filter.showResolved) {
-          sheetComments = sheetComments.filter(c => !c.resolved);
+          sheetComments = sheetComments.filter((c) => !c.resolved);
         }
 
         if (filter.searchText) {
           const search = filter.searchText.toLowerCase();
-          sheetComments = sheetComments.filter(c =>
-            c.content.toLowerCase().includes(search) ||
-            c.replies.some(r => r.content.toLowerCase().includes(search))
+          sheetComments = sheetComments.filter(
+            (c) =>
+              c.content.toLowerCase().includes(search) ||
+              c.replies.some((r) => r.content.toLowerCase().includes(search))
           );
         }
 
-        return sheetComments.sort((a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        return sheetComments.sort(
+          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
       },
 
       getNoteForCell: (sheetId, cellRef) => {
-        return (get().notes[sheetId] || []).find(n => n.cellRef === cellRef);
+        return (get().notes[sheetId] || []).find((n) => n.cellRef === cellRef);
       },
 
-      getAuthor: (authorId) => get().authors.find(a => a.id === authorId),
+      getAuthor: (authorId) => get().authors.find((a) => a.id === authorId),
     }),
     {
       name: 'excelai-comments',

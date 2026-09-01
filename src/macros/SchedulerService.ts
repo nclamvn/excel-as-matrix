@@ -107,7 +107,7 @@ export class SchedulerService {
     const cutoff = new Date(Date.now() + hours * 60 * 60 * 1000);
 
     return this.getJobs()
-      .filter(job => job.enabled && job.nextRun <= cutoff)
+      .filter((job) => job.enabled && job.nextRun <= cutoff)
       .sort((a, b) => a.nextRun.getTime() - b.nextRun.getTime());
   }
 
@@ -198,9 +198,10 @@ export class SchedulerService {
       case 'daily':
         return `${t.daily} ${schedule.timeOfDay || '09:00'}`;
 
-      case 'weekly':
-        const dayNames = (schedule.daysOfWeek || []).map(d => days[d]).join(', ');
+      case 'weekly': {
+        const dayNames = (schedule.daysOfWeek || []).map((d) => days[d]).join(', ');
         return `${t.weekly} ${dayNames} ${schedule.timeOfDay || '09:00'}`;
+      }
 
       case 'monthly':
         return `${t.monthly} ${schedule.dayOfMonth || 1} ${schedule.timeOfDay || '09:00'}`;
@@ -230,9 +231,12 @@ export class SchedulerService {
       return;
     }
 
-    const timer = setTimeout(async () => {
-      await this.runJob(job);
-    }, Math.min(delay, 2147483647)); // Max timeout value
+    const timer = setTimeout(
+      async () => {
+        await this.runJob(job);
+      },
+      Math.min(delay, 2147483647)
+    ); // Max timeout value
 
     this.timers.set(job.macroId, timer);
   }
@@ -278,16 +282,10 @@ export class SchedulerService {
         return this.getNextDailyRun(schedule.timeOfDay || '09:00');
 
       case 'weekly':
-        return this.getNextWeeklyRun(
-          schedule.daysOfWeek || [1],
-          schedule.timeOfDay || '09:00'
-        );
+        return this.getNextWeeklyRun(schedule.daysOfWeek || [1], schedule.timeOfDay || '09:00');
 
       case 'monthly':
-        return this.getNextMonthlyRun(
-          schedule.dayOfMonth || 1,
-          schedule.timeOfDay || '09:00'
-        );
+        return this.getNextMonthlyRun(schedule.dayOfMonth || 1, schedule.timeOfDay || '09:00');
 
       default:
         return null;
@@ -358,6 +356,6 @@ export class SchedulerService {
   }
 
   private emit(event: ScheduleEvent): void {
-    this.eventHandlers.forEach(handler => handler(event));
+    this.eventHandlers.forEach((handler) => handler(event));
   }
 }

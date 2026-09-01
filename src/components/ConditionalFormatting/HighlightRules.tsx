@@ -13,14 +13,21 @@ import {
   Equal,
   Type,
   Calendar,
-  Grid3X3
+  Grid3X3,
 } from 'lucide-react';
 
 interface HighlightRulesProps {
   onSelect: () => void;
 }
 
-type RuleType = 'greaterThan' | 'lessThan' | 'between' | 'equal' | 'textContains' | 'date' | 'duplicate';
+type RuleType =
+  | 'greaterThan'
+  | 'lessThan'
+  | 'between'
+  | 'equal'
+  | 'textContains'
+  | 'date'
+  | 'duplicate';
 
 interface RuleConfig {
   label: string;
@@ -30,13 +37,48 @@ interface RuleConfig {
 }
 
 const RULE_CONFIGS: RuleConfig[] = [
-  { label: 'Greater Than...', icon: <ChevronRight size={14} color="#dc2626" strokeWidth={3} />, bgColor: '#FFC7CE', type: 'greaterThan' },
-  { label: 'Less Than...', icon: <ChevronLeft size={14} color="#ca8a04" strokeWidth={3} />, bgColor: '#FFEB9C', type: 'lessThan' },
-  { label: 'Between...', icon: <ArrowLeftRight size={14} color="#2563eb" strokeWidth={2.5} />, bgColor: '#C6EFCE', type: 'between' },
-  { label: 'Equal To...', icon: <Equal size={14} color="#16a34a" strokeWidth={3} />, bgColor: '#C6EFCE', type: 'equal' },
-  { label: 'Text That Contains...', icon: <Type size={14} color="#ca8a04" strokeWidth={2.5} />, bgColor: '#FFEB9C', type: 'textContains' },
-  { label: 'A Date Occurring...', icon: <Calendar size={14} color="#dc2626" strokeWidth={2} />, bgColor: '#FFC7CE', type: 'date' },
-  { label: 'Duplicate Values...', icon: <Grid3X3 size={14} color="#16a34a" strokeWidth={2} />, bgColor: '#C6EFCE', type: 'duplicate' },
+  {
+    label: 'Greater Than...',
+    icon: <ChevronRight size={14} color="#dc2626" strokeWidth={3} />,
+    bgColor: '#FFC7CE',
+    type: 'greaterThan',
+  },
+  {
+    label: 'Less Than...',
+    icon: <ChevronLeft size={14} color="#ca8a04" strokeWidth={3} />,
+    bgColor: '#FFEB9C',
+    type: 'lessThan',
+  },
+  {
+    label: 'Between...',
+    icon: <ArrowLeftRight size={14} color="#2563eb" strokeWidth={2.5} />,
+    bgColor: '#C6EFCE',
+    type: 'between',
+  },
+  {
+    label: 'Equal To...',
+    icon: <Equal size={14} color="#16a34a" strokeWidth={3} />,
+    bgColor: '#C6EFCE',
+    type: 'equal',
+  },
+  {
+    label: 'Text That Contains...',
+    icon: <Type size={14} color="#ca8a04" strokeWidth={2.5} />,
+    bgColor: '#FFEB9C',
+    type: 'textContains',
+  },
+  {
+    label: 'A Date Occurring...',
+    icon: <Calendar size={14} color="#dc2626" strokeWidth={2} />,
+    bgColor: '#FFC7CE',
+    type: 'date',
+  },
+  {
+    label: 'Duplicate Values...',
+    icon: <Grid3X3 size={14} color="#16a34a" strokeWidth={2} />,
+    bgColor: '#C6EFCE',
+    type: 'duplicate',
+  },
 ];
 
 export const HighlightRules: React.FC<HighlightRulesProps> = ({ onSelect }) => {
@@ -140,7 +182,7 @@ export const HighlightRules: React.FC<HighlightRulesProps> = ({ onSelect }) => {
     return (
       <div className="highlight-dialog">
         <div className="dialog-header">
-          {RULE_CONFIGS.find(r => r.type === showDialog)?.label}
+          {RULE_CONFIGS.find((r) => r.type === showDialog)?.label}
         </div>
         <div className="dialog-content">
           {showDialog !== 'duplicate' && showDialog !== 'date' && (
@@ -173,14 +215,20 @@ export const HighlightRules: React.FC<HighlightRulesProps> = ({ onSelect }) => {
               onChange={(e) => setSelectedStyle(parseInt(e.target.value))}
             >
               {HIGHLIGHT_STYLES.map((style, idx) => (
-                <option key={idx} value={idx}>{style.name}</option>
+                <option key={idx} value={idx}>
+                  {style.name}
+                </option>
               ))}
             </select>
           </div>
         </div>
         <div className="dialog-footer">
-          <button type="button" className="btn-cancel" onClick={() => setShowDialog(null)}>Cancel</button>
-          <button type="button" className="btn-ok" onClick={handleApply}>OK</button>
+          <button type="button" className="btn-cancel" onClick={() => setShowDialog(null)}>
+            Cancel
+          </button>
+          <button type="button" className="btn-ok" onClick={handleApply}>
+            OK
+          </button>
         </div>
       </div>
     );
@@ -189,7 +237,8 @@ export const HighlightRules: React.FC<HighlightRulesProps> = ({ onSelect }) => {
   return (
     <div className="highlight-rules-menu">
       {RULE_CONFIGS.map((rule) => (
-        <button type="button"
+        <button
+          type="button"
           key={rule.type}
           className="highlight-rule-item"
           onClick={() => setShowDialog(rule.type)}

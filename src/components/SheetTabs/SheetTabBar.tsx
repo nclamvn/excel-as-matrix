@@ -7,7 +7,9 @@ import { useWorkbookStore } from '../../stores/workbookStore';
 
 export const SheetTabBar: React.FC = () => {
   const { sheets, activeSheetId, setActiveSheet, addSheet, renameSheet } = useWorkbookStore();
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sheetId: string } | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sheetId: string } | null>(
+    null
+  );
 
   const handleContextMenu = (e: React.MouseEvent, sheetId: string) => {
     e.preventDefault();
@@ -33,15 +35,17 @@ export const SheetTabBar: React.FC = () => {
             onRename={renameSheet}
           />
         ))}
-        <AddSheetButton onClick={() => {
-          const newSheet = {
-            id: `sheet-${Date.now()}`,
-            name: `Sheet${sheetList.length + 1}`,
-            index: sheetList.length,
-            cells: {},
-          };
-          addSheet(newSheet);
-        }} />
+        <AddSheetButton
+          onClick={() => {
+            const newSheet = {
+              id: `sheet-${Date.now()}`,
+              name: `Sheet${sheetList.length + 1}`,
+              index: sheetList.length,
+              cells: {},
+            };
+            addSheet(newSheet);
+          }}
+        />
       </div>
 
       {contextMenu && (

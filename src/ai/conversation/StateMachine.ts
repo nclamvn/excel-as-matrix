@@ -94,9 +94,7 @@ export class ConversationStateMachine {
    */
   transition(toState: ConversationState, data?: Record<string, unknown>): boolean {
     if (!this.canTransition(toState)) {
-      loggers.ai.warn(
-        `Invalid state transition: ${this.context.state} -> ${toState}`
-      );
+      loggers.ai.warn(`Invalid state transition: ${this.context.state} -> ${toState}`);
       return false;
     }
 
@@ -353,10 +351,7 @@ export class ConversationStateMachine {
   private needsPlanning(intent: ParsedIntent): boolean {
     // Complex intents need planning
     const complexActions = ['batch_update', 'complex_formula', 'multi_step'];
-    return (
-      complexActions.some((a) => intent.action.includes(a)) ||
-      intent.confidence < 0.7
-    );
+    return complexActions.some((a) => intent.action.includes(a)) || intent.confidence < 0.7;
   }
 
   /**
@@ -365,9 +360,7 @@ export class ConversationStateMachine {
   getNextStep(): number {
     if (!this.context.taskPlan) return -1;
 
-    return this.context.taskPlan.steps.findIndex(
-      (step) => step.status === 'pending'
-    );
+    return this.context.taskPlan.steps.findIndex((step) => step.status === 'pending');
   }
 
   /**
@@ -414,10 +407,7 @@ export class ConversationStateMachine {
     };
   }
 
-  private emitEvent(
-    type: ConversationEventType,
-    data: Partial<ConversationEvent>
-  ): void {
+  private emitEvent(type: ConversationEventType, data: Partial<ConversationEvent>): void {
     const event: ConversationEvent = {
       type,
       conversationId: this.context.id,

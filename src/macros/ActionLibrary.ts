@@ -32,7 +32,7 @@ export class ActionLibrary {
    * Get actions by category
    */
   getByCategory(category: ActionCategory): ActionDefinition[] {
-    return this.getAll().filter(a => a.category === category);
+    return this.getAll().filter((a) => a.category === category);
   }
 
   /**
@@ -57,10 +57,11 @@ export class ActionLibrary {
    */
   search(query: string): ActionDefinition[] {
     const q = query.toLowerCase();
-    return this.getAll().filter(a =>
-      a.name.toLowerCase().includes(q) ||
-      a.nameVi.toLowerCase().includes(q) ||
-      a.description.toLowerCase().includes(q)
+    return this.getAll().filter(
+      (a) =>
+        a.name.toLowerCase().includes(q) ||
+        a.nameVi.toLowerCase().includes(q) ||
+        a.description.toLowerCase().includes(q)
     );
   }
 
@@ -79,7 +80,13 @@ export class ActionLibrary {
       category: 'data',
       icon: 'copy',
       params: [
-        { name: 'range', type: 'range', label: 'Source Range', labelVi: 'Vùng nguồn', required: true },
+        {
+          name: 'range',
+          type: 'range',
+          label: 'Source Range',
+          labelVi: 'Vùng nguồn',
+          required: true,
+        },
       ],
       hasOutput: true,
       outputType: 'range_data',
@@ -94,7 +101,13 @@ export class ActionLibrary {
       category: 'data',
       icon: 'clipboard',
       params: [
-        { name: 'range', type: 'range', label: 'Target Range', labelVi: 'Vùng đích', required: true },
+        {
+          name: 'range',
+          type: 'range',
+          label: 'Target Range',
+          labelVi: 'Vùng đích',
+          required: true,
+        },
       ],
       hasOutput: false,
     });
@@ -109,12 +122,18 @@ export class ActionLibrary {
       icon: 'trash',
       params: [
         { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
-        { name: 'clearType', type: 'select', label: 'Clear', labelVi: 'Xóa', required: true, default: 'all',
+        {
+          name: 'clearType',
+          type: 'select',
+          label: 'Clear',
+          labelVi: 'Xóa',
+          required: true,
+          default: 'all',
           options: [
             { value: 'all', label: 'All' },
             { value: 'values', label: 'Values only' },
             { value: 'formats', label: 'Formats only' },
-          ]
+          ],
         },
       ],
       hasOutput: false,
@@ -131,7 +150,13 @@ export class ActionLibrary {
       params: [
         { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
         { name: 'column', type: 'string', label: 'Column', labelVi: 'Cột', required: true },
-        { name: 'condition', type: 'string', label: 'Condition', labelVi: 'Điều kiện', required: true },
+        {
+          name: 'condition',
+          type: 'string',
+          label: 'Condition',
+          labelVi: 'Điều kiện',
+          required: true,
+        },
       ],
       hasOutput: true,
       requiresSelection: true,
@@ -147,8 +172,21 @@ export class ActionLibrary {
       icon: 'arrow-up-down',
       params: [
         { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
-        { name: 'column', type: 'string', label: 'Sort Column', labelVi: 'Cột sắp xếp', required: true },
-        { name: 'ascending', type: 'boolean', label: 'Ascending', labelVi: 'Tăng dần', required: false, default: true },
+        {
+          name: 'column',
+          type: 'string',
+          label: 'Sort Column',
+          labelVi: 'Cột sắp xếp',
+          required: true,
+        },
+        {
+          name: 'ascending',
+          type: 'boolean',
+          label: 'Ascending',
+          labelVi: 'Tăng dần',
+          required: false,
+          default: true,
+        },
       ],
       hasOutput: false,
     });
@@ -161,9 +199,7 @@ export class ActionLibrary {
       descriptionVi: 'Xóa các hàng trùng lặp',
       category: 'data',
       icon: 'layers',
-      params: [
-        { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
-      ],
+      params: [{ name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true }],
       hasOutput: true,
       outputType: 'number',
     });
@@ -179,7 +215,13 @@ export class ActionLibrary {
       icon: 'function',
       params: [
         { name: 'cell', type: 'range', label: 'Cell', labelVi: 'Ô', required: true },
-        { name: 'formula', type: 'formula', label: 'Formula', labelVi: 'Công thức', required: true },
+        {
+          name: 'formula',
+          type: 'formula',
+          label: 'Formula',
+          labelVi: 'Công thức',
+          required: true,
+        },
       ],
       hasOutput: true,
     });
@@ -194,11 +236,16 @@ export class ActionLibrary {
       icon: 'arrow-down',
       params: [
         { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
-        { name: 'direction', type: 'select', label: 'Direction', labelVi: 'Hướng', required: true,
+        {
+          name: 'direction',
+          type: 'select',
+          label: 'Direction',
+          labelVi: 'Hướng',
+          required: true,
           options: [
             { value: 'down', label: 'Down' },
             { value: 'right', label: 'Right' },
-          ]
+          ],
         },
       ],
       hasOutput: false,
@@ -218,7 +265,13 @@ export class ActionLibrary {
         { name: 'bold', type: 'boolean', label: 'Bold', labelVi: 'Đậm', required: false },
         { name: 'italic', type: 'boolean', label: 'Italic', labelVi: 'Nghiêng', required: false },
         { name: 'color', type: 'string', label: 'Text Color', labelVi: 'Màu chữ', required: false },
-        { name: 'bgColor', type: 'string', label: 'Background', labelVi: 'Màu nền', required: false },
+        {
+          name: 'bgColor',
+          type: 'string',
+          label: 'Background',
+          labelVi: 'Màu nền',
+          required: false,
+        },
       ],
       hasOutput: false,
     });
@@ -233,7 +286,13 @@ export class ActionLibrary {
       icon: 'sliders',
       params: [
         { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
-        { name: 'condition', type: 'string', label: 'Condition', labelVi: 'Điều kiện', required: true },
+        {
+          name: 'condition',
+          type: 'string',
+          label: 'Condition',
+          labelVi: 'Điều kiện',
+          required: true,
+        },
         { name: 'format', type: 'string', label: 'Format', labelVi: 'Định dạng', required: true },
       ],
       hasOutput: false,
@@ -249,15 +308,26 @@ export class ActionLibrary {
       category: 'chart',
       icon: 'bar-chart',
       params: [
-        { name: 'range', type: 'range', label: 'Data Range', labelVi: 'Vùng dữ liệu', required: true },
-        { name: 'chartType', type: 'select', label: 'Chart Type', labelVi: 'Loại biểu đồ', required: true,
+        {
+          name: 'range',
+          type: 'range',
+          label: 'Data Range',
+          labelVi: 'Vùng dữ liệu',
+          required: true,
+        },
+        {
+          name: 'chartType',
+          type: 'select',
+          label: 'Chart Type',
+          labelVi: 'Loại biểu đồ',
+          required: true,
           options: [
             { value: 'line', label: 'Line' },
             { value: 'bar', label: 'Bar' },
             { value: 'column', label: 'Column' },
             { value: 'pie', label: 'Pie' },
             { value: 'scatter', label: 'Scatter' },
-          ]
+          ],
         },
         { name: 'title', type: 'string', label: 'Title', labelVi: 'Tiêu đề', required: false },
       ],
@@ -275,7 +345,13 @@ export class ActionLibrary {
       category: 'sheet',
       icon: 'plus-square',
       params: [
-        { name: 'name', type: 'string', label: 'Sheet Name', labelVi: 'Tên trang tính', required: true },
+        {
+          name: 'name',
+          type: 'string',
+          label: 'Sheet Name',
+          labelVi: 'Tên trang tính',
+          required: true,
+        },
       ],
       hasOutput: true,
       outputType: 'sheet_id',
@@ -356,7 +432,13 @@ export class ActionLibrary {
         { name: 'to', type: 'string', label: 'To', labelVi: 'Đến', required: true },
         { name: 'subject', type: 'string', label: 'Subject', labelVi: 'Chủ đề', required: true },
         { name: 'body', type: 'string', label: 'Body', labelVi: 'Nội dung', required: true },
-        { name: 'attachFile', type: 'boolean', label: 'Attach File', labelVi: 'Đính kèm tệp', required: false },
+        {
+          name: 'attachFile',
+          type: 'boolean',
+          label: 'Attach File',
+          labelVi: 'Đính kèm tệp',
+          required: false,
+        },
       ],
       hasOutput: true,
     });
@@ -371,13 +453,19 @@ export class ActionLibrary {
       icon: 'bell',
       params: [
         { name: 'message', type: 'string', label: 'Message', labelVi: 'Nội dung', required: true },
-        { name: 'type', type: 'select', label: 'Type', labelVi: 'Loại', required: false, default: 'info',
+        {
+          name: 'type',
+          type: 'select',
+          label: 'Type',
+          labelVi: 'Loại',
+          required: false,
+          default: 'info',
           options: [
             { value: 'info', label: 'Info' },
             { value: 'success', label: 'Success' },
             { value: 'warning', label: 'Warning' },
             { value: 'error', label: 'Error' },
-          ]
+          ],
         },
       ],
       hasOutput: false,
@@ -394,13 +482,19 @@ export class ActionLibrary {
       icon: 'globe',
       params: [
         { name: 'url', type: 'string', label: 'URL', labelVi: 'URL', required: true },
-        { name: 'method', type: 'select', label: 'Method', labelVi: 'Phương thức', required: true, default: 'GET',
+        {
+          name: 'method',
+          type: 'select',
+          label: 'Method',
+          labelVi: 'Phương thức',
+          required: true,
+          default: 'GET',
           options: [
             { value: 'GET', label: 'GET' },
             { value: 'POST', label: 'POST' },
             { value: 'PUT', label: 'PUT' },
             { value: 'DELETE', label: 'DELETE' },
-          ]
+          ],
         },
         { name: 'body', type: 'string', label: 'Body', labelVi: 'Nội dung', required: false },
       ],
@@ -417,9 +511,7 @@ export class ActionLibrary {
       descriptionVi: 'Sử dụng AI để làm sạch dữ liệu',
       category: 'ai',
       icon: 'sparkles',
-      params: [
-        { name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true },
-      ],
+      params: [{ name: 'range', type: 'range', label: 'Range', labelVi: 'Vùng', required: true }],
       hasOutput: true,
     });
 
@@ -432,8 +524,20 @@ export class ActionLibrary {
       category: 'ai',
       icon: 'wand',
       params: [
-        { name: 'range', type: 'range', label: 'Data Range', labelVi: 'Vùng dữ liệu', required: true },
-        { name: 'description', type: 'string', label: 'Description', labelVi: 'Mô tả', required: false },
+        {
+          name: 'range',
+          type: 'range',
+          label: 'Data Range',
+          labelVi: 'Vùng dữ liệu',
+          required: true,
+        },
+        {
+          name: 'description',
+          type: 'string',
+          label: 'Description',
+          labelVi: 'Mô tả',
+          required: false,
+        },
       ],
       hasOutput: true,
       outputType: 'chart_id',
@@ -448,7 +552,13 @@ export class ActionLibrary {
       category: 'ai',
       icon: 'brain',
       params: [
-        { name: 'description', type: 'string', label: 'Description', labelVi: 'Mô tả', required: true },
+        {
+          name: 'description',
+          type: 'string',
+          label: 'Description',
+          labelVi: 'Mô tả',
+          required: true,
+        },
         { name: 'cell', type: 'range', label: 'Target Cell', labelVi: 'Ô đích', required: true },
       ],
       hasOutput: true,
@@ -464,7 +574,13 @@ export class ActionLibrary {
       category: 'ai',
       icon: 'search',
       params: [
-        { name: 'range', type: 'range', label: 'Data Range', labelVi: 'Vùng dữ liệu', required: true },
+        {
+          name: 'range',
+          type: 'range',
+          label: 'Data Range',
+          labelVi: 'Vùng dữ liệu',
+          required: true,
+        },
       ],
       hasOutput: true,
       outputType: 'insights',

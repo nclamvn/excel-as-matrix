@@ -17,7 +17,7 @@ export interface PlanConfig {
   name: string;
   description: string;
   monthlyPrice: number; // USD cents
-  yearlyPrice: number;  // USD cents (total per year)
+  yearlyPrice: number; // USD cents (total per year)
   features: PlanFeature[];
   limits: PlanLimits;
   stripePriceId: {
@@ -233,9 +233,8 @@ export const useSubscriptionStore = create<SubscriptionState>()(
       createCheckoutSession: async (planId: PlanTier) => {
         const { billingCycle } = get();
         const plan = PLANS[planId];
-        const priceId = billingCycle === 'yearly'
-          ? plan.stripePriceId.yearly
-          : plan.stripePriceId.monthly;
+        const priceId =
+          billingCycle === 'yearly' ? plan.stripePriceId.yearly : plan.stripePriceId.monthly;
 
         if (!priceId) return null;
 

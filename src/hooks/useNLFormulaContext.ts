@@ -11,12 +11,9 @@ import { colToLetter, getCellKey } from '../types/cell';
  * Hook to build CellContext for NL Formula engine
  * Extracts headers from first row and determines data range
  */
-export function useNLFormulaContext(
-  row: number,
-  col: number
-): CellContext | null {
-  const sheets = useWorkbookStore(state => state.sheets);
-  const activeSheetId = useWorkbookStore(state => state.activeSheetId);
+export function useNLFormulaContext(row: number, col: number): CellContext | null {
+  const sheets = useWorkbookStore((state) => state.sheets);
+  const activeSheetId = useWorkbookStore((state) => state.activeSheetId);
 
   return useMemo(() => {
     if (!activeSheetId || !sheets[activeSheetId]) return null;
@@ -95,9 +92,7 @@ export function useNLFormulaContext(
 /**
  * Infer data type from sample values
  */
-function inferDataType(
-  samples: unknown[]
-): 'number' | 'text' | 'date' | 'currency' | 'mixed' {
+function inferDataType(samples: unknown[]): 'number' | 'text' | 'date' | 'currency' | 'mixed' {
   if (!samples || samples.length === 0) return 'text';
 
   const types = samples.map((v) => {

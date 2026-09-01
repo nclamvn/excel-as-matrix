@@ -43,7 +43,7 @@ export const PrintTitlesDialog: React.FC<PrintTitlesDialogProps> = ({
 
   return (
     <div className="print-titles-overlay" onClick={onClose}>
-      <div className="print-titles-dialog" onClick={e => e.stopPropagation()}>
+      <div className="print-titles-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>Print Titles</h2>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -66,7 +66,7 @@ export const PrintTitlesDialog: React.FC<PrintTitlesDialogProps> = ({
                 <input
                   type="text"
                   value={repeatRows}
-                  onChange={e => setRepeatRows(e.target.value)}
+                  onChange={(e) => setRepeatRows(e.target.value)}
                   placeholder="e.g., $1:$2"
                 />
                 <span className="hint">Example: $1:$3 (rows 1-3)</span>
@@ -82,7 +82,7 @@ export const PrintTitlesDialog: React.FC<PrintTitlesDialogProps> = ({
                 <input
                   type="text"
                   value={repeatCols}
-                  onChange={e => setRepeatCols(e.target.value)}
+                  onChange={(e) => setRepeatCols(e.target.value)}
                   placeholder="e.g., $A:$B"
                 />
                 <span className="hint">Example: $A:$B (columns A-B)</span>
@@ -94,19 +94,9 @@ export const PrintTitlesDialog: React.FC<PrintTitlesDialogProps> = ({
             <h3>Preview</h3>
             <div className="titles-preview">
               <div className="preview-page">
-                {repeatRows && (
-                  <div className="repeat-rows-indicator">
-                    Rows: {repeatRows}
-                  </div>
-                )}
-                {repeatCols && (
-                  <div className="repeat-cols-indicator">
-                    Cols: {repeatCols}
-                  </div>
-                )}
-                <div className="page-content">
-                  Page Content
-                </div>
+                {repeatRows && <div className="repeat-rows-indicator">Rows: {repeatRows}</div>}
+                {repeatCols && <div className="repeat-cols-indicator">Cols: {repeatCols}</div>}
+                <div className="page-content">Page Content</div>
               </div>
             </div>
           </div>

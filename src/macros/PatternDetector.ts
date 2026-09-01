@@ -2,12 +2,7 @@
 // PATTERN DETECTOR — Detect repetitive patterns in user actions
 // =============================================================================
 
-import type {
-  RecordedAction,
-  DetectedPattern,
-  Workflow,
-  WorkflowStep,
-} from './types';
+import type { RecordedAction, DetectedPattern, Workflow, WorkflowStep } from './types';
 
 /**
  * Detect repetitive patterns in user actions
@@ -40,7 +35,7 @@ export class PatternDetector {
   analyze(): DetectedPattern[] {
     this.analyzePatterns();
     return Array.from(this.detectedPatterns.values())
-      .filter(p => p.occurrences >= this.MIN_OCCURRENCES)
+      .filter((p) => p.occurrences >= this.MIN_OCCURRENCES)
       .sort((a, b) => b.occurrences - a.occurrences);
   }
 
@@ -109,7 +104,11 @@ export class PatternDetector {
     if (this.actionHistory.length < this.MIN_PATTERN_LENGTH) return;
 
     // Find repeating sequences of different lengths
-    for (let length = this.MIN_PATTERN_LENGTH; length <= Math.min(10, this.actionHistory.length / 2); length++) {
+    for (
+      let length = this.MIN_PATTERN_LENGTH;
+      length <= Math.min(10, this.actionHistory.length / 2);
+      length++
+    ) {
       this.findPatternsOfLength(length);
     }
 
@@ -122,7 +121,10 @@ export class PatternDetector {
   }
 
   private findPatternsOfLength(length: number): void {
-    const sequences = new Map<string, { actions: RecordedAction[]; occurrences: number; lastSeen: Date }>();
+    const sequences = new Map<
+      string,
+      { actions: RecordedAction[]; occurrences: number; lastSeen: Date }
+    >();
 
     for (let i = 0; i <= this.actionHistory.length - length; i++) {
       const sequence = this.actionHistory.slice(i, i + length);
@@ -168,11 +170,11 @@ export class PatternDetector {
   }
 
   private getSequenceKey(actions: RecordedAction[]): string {
-    return actions.map(a => `${a.type}:${a.sheetId || ''}:${a.range || ''}`).join('|');
+    return actions.map((a) => `${a.type}:${a.sheetId || ''}:${a.range || ''}`).join('|');
   }
 
   private generatePatternName(actions: RecordedAction[]): string {
-    const types = [...new Set(actions.map(a => a.type))];
+    const types = [...new Set(actions.map((a) => a.type))];
     return types.slice(0, 3).join(' → ');
   }
 
@@ -204,7 +206,7 @@ export class PatternDetector {
   }
 
   private generateDescription(actions: RecordedAction[]): string {
-    const actionDescriptions = actions.map(a => {
+    const actionDescriptions = actions.map((a) => {
       const range = a.range ? ` on ${a.range}` : '';
       return `${a.type.replace(/_/g, ' ')}${range}`;
     });
@@ -251,11 +253,13 @@ export class PatternDetector {
     return generalized;
   }
 
-  private extractVariables(actions: RecordedAction[]): { name: string; type: 'string' | 'range'; isInput?: boolean }[] {
+  private extractVariables(
+    actions: RecordedAction[]
+  ): { name: string; type: 'string' | 'range'; isInput?: boolean }[] {
     const variables: { name: string; type: 'string' | 'range'; isInput?: boolean }[] = [];
 
     // Check for common variable needs
-    const hasRange = actions.some(a => a.range);
+    const hasRange = actions.some((a) => a.range);
     if (hasRange) {
       variables.push({
         name: 'selectedRange',

@@ -2,7 +2,14 @@
 
 export { FormulaEngine, formulaEngine } from './FormulaEngine';
 export type { CellDataProvider } from './FormulaEngine';
-export { parseFormula, numberToColLetter, colLetterToNumber, Parser, Tokenizer, parseCellRef } from './FormulaParser';
+export {
+  parseFormula,
+  numberToColLetter,
+  colLetterToNumber,
+  Parser,
+  Tokenizer,
+  parseCellRef,
+} from './FormulaParser';
 export { FormulaEvaluator, formulaEvaluator } from './FormulaEvaluator';
 
 // Types

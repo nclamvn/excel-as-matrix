@@ -42,10 +42,10 @@ export interface Sparkline {
   type: SparklineType;
 
   // Data source
-  dataRange: string;        // e.g., "B2:B10"
+  dataRange: string; // e.g., "B2:B10"
 
   // Location (cell where sparkline is displayed)
-  locationCell: string;     // e.g., "A2"
+  locationCell: string; // e.g., "A2"
   locationRow: number;
   locationCol: number;
 
@@ -53,13 +53,13 @@ export interface Sparkline {
   style: SparklineStyle;
 
   // Options
-  minValue?: number;        // Custom min (auto if undefined)
-  maxValue?: number;        // Custom max (auto if undefined)
+  minValue?: number; // Custom min (auto if undefined)
+  maxValue?: number; // Custom max (auto if undefined)
   rightToLeft: boolean;
   dateAxis: boolean;
 
   // Grouping
-  groupId?: string;         // For grouped sparklines
+  groupId?: string; // For grouped sparklines
 }
 
 export interface SparklineGroup {

@@ -62,9 +62,7 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
 
   const toggleCategory = (category: FeedbackCategory) => {
     setCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
   };
 
@@ -72,18 +70,18 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
   if (!showDetails) {
     return (
       <div className={`feedback-prompt feedback-prompt--quick ${className}`}>
-        <span className="feedback-prompt__question">
-          Was this helpful?
-        </span>
+        <span className="feedback-prompt__question">Was this helpful?</span>
         <div className="feedback-prompt__quick-actions">
-          <button type="button"
+          <button
+            type="button"
             className="feedback-prompt__thumb feedback-prompt__thumb--up"
             onClick={() => handleQuickFeedback('thumbs_up')}
             title="Yes, this was helpful"
           >
             👍
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="feedback-prompt__thumb feedback-prompt__thumb--down"
             onClick={() => handleQuickFeedback('thumbs_down')}
             title="No, something was wrong"
@@ -91,10 +89,7 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
             👎
           </button>
           {onDismiss && (
-            <button type="button"
-              className="feedback-prompt__dismiss"
-              onClick={onDismiss}
-            >
+            <button type="button" className="feedback-prompt__dismiss" onClick={onDismiss}>
               Not now
             </button>
           )}
@@ -108,10 +103,7 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
     <div className={`feedback-prompt feedback-prompt--detailed ${className}`}>
       <div className="feedback-prompt__header">
         <h4 className="feedback-prompt__title">Help us improve</h4>
-        <button type="button"
-          className="feedback-prompt__close"
-          onClick={onDismiss}
-        >
+        <button type="button" className="feedback-prompt__close" onClick={onDismiss}>
           ×
         </button>
       </div>
@@ -121,7 +113,8 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
         <label className="feedback-prompt__label">How would you rate this?</label>
         <div className="feedback-prompt__rating">
           {[1, 2, 3, 4, 5].map((star) => (
-            <button type="button"
+            <button
+              type="button"
               key={star}
               className={`feedback-prompt__star ${
                 star <= rating ? 'feedback-prompt__star--active' : ''
@@ -140,12 +133,11 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
           <label className="feedback-prompt__label">What went wrong?</label>
           <div className="feedback-prompt__categories">
             {FEEDBACK_CATEGORIES.map((category) => (
-              <button type="button"
+              <button
+                type="button"
                 key={category}
                 className={`feedback-prompt__category ${
-                  categories.includes(category)
-                    ? 'feedback-prompt__category--selected'
-                    : ''
+                  categories.includes(category) ? 'feedback-prompt__category--selected' : ''
                 }`}
                 onClick={() => toggleCategory(category)}
               >
@@ -158,9 +150,7 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
 
       {/* Comment */}
       <div className="feedback-prompt__section">
-        <label className="feedback-prompt__label">
-          Any additional comments? (optional)
-        </label>
+        <label className="feedback-prompt__label">Any additional comments? (optional)</label>
         <textarea
           className="feedback-prompt__textarea"
           value={comment}
@@ -173,9 +163,7 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
       {/* Correction */}
       {type === 'thumbs_down' && (
         <div className="feedback-prompt__section">
-          <label className="feedback-prompt__label">
-            What should have happened? (optional)
-          </label>
+          <label className="feedback-prompt__label">What should have happened? (optional)</label>
           <textarea
             className="feedback-prompt__textarea"
             value={correction}
@@ -188,13 +176,11 @@ export const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({
 
       {/* Actions */}
       <div className="feedback-prompt__actions">
-        <button type="button"
-          className="feedback-prompt__cancel"
-          onClick={onDismiss}
-        >
+        <button type="button" className="feedback-prompt__cancel" onClick={onDismiss}>
           Cancel
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="feedback-prompt__submit"
           onClick={handleSubmit}
           disabled={!type || rating === 0}
@@ -223,14 +209,16 @@ export const MiniFeedback: React.FC<MiniFeedbackProps> = ({
 }) => {
   return (
     <div className={`mini-feedback ${className}`}>
-      <button type="button"
+      <button
+        type="button"
         className="mini-feedback__btn mini-feedback__btn--up"
         onClick={onThumbsUp}
         title="Good response"
       >
         👍
       </button>
-      <button type="button"
+      <button
+        type="button"
         className="mini-feedback__btn mini-feedback__btn--down"
         onClick={onThumbsDown}
         title="Bad response"
@@ -250,33 +238,22 @@ interface FeedbackCardProps {
   className?: string;
 }
 
-export const FeedbackCard: React.FC<FeedbackCardProps> = ({
-  feedback,
-  className = '',
-}) => {
+export const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback, className = '' }) => {
   return (
     <div className={`feedback-card ${className}`}>
       <div className="feedback-card__header">
-        <span className="feedback-card__icon">
-          {getFeedbackIcon(feedback.type)}
-        </span>
-        <span className="feedback-card__type">
-          {formatFeedbackType(feedback.type)}
-        </span>
+        <span className="feedback-card__icon">{getFeedbackIcon(feedback.type)}</span>
+        <span className="feedback-card__type">{formatFeedbackType(feedback.type)}</span>
         {feedback.rating && (
           <span className="feedback-card__rating">
             {'★'.repeat(feedback.rating)}
             {'☆'.repeat(5 - feedback.rating)}
           </span>
         )}
-        <span className="feedback-card__time">
-          {formatTime(feedback.providedAt)}
-        </span>
+        <span className="feedback-card__time">{formatTime(feedback.providedAt)}</span>
       </div>
 
-      {feedback.comment && (
-        <p className="feedback-card__comment">{feedback.comment}</p>
-      )}
+      {feedback.comment && <p className="feedback-card__comment">{feedback.comment}</p>}
 
       {feedback.correction && (
         <p className="feedback-card__correction">
@@ -302,9 +279,7 @@ export const FeedbackCard: React.FC<FeedbackCardProps> = ({
 // -----------------------------------------------------------------------------
 
 function formatCategory(category: FeedbackCategory): string {
-  return category
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return category.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function getFeedbackIcon(type: FeedbackType): string {

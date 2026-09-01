@@ -15,12 +15,12 @@ export interface ShapeDefinition {
   id: string;
   name: string;
   category: ShapeCategory;
-  path: string;           // SVG path data
-  viewBox: string;        // SVG viewBox
+  path: string; // SVG path data
+  viewBox: string; // SVG viewBox
   defaultWidth: number;
   defaultHeight: number;
-  isLine?: boolean;       // For line-type shapes
-  hasText?: boolean;      // Can contain text
+  isLine?: boolean; // For line-type shapes
+  hasText?: boolean; // Can contain text
 }
 
 export interface ShapeStyle {
@@ -50,7 +50,7 @@ export interface ShapeTextStyle {
 
 export interface ShapeObject {
   id: string;
-  shapeId: string;        // Reference to ShapeDefinition.id
+  shapeId: string; // Reference to ShapeDefinition.id
   sheetId: string;
 
   // Position & Size
@@ -58,7 +58,7 @@ export interface ShapeObject {
   y: number;
   width: number;
   height: number;
-  rotation: number;       // Degrees
+  rotation: number; // Degrees
 
   // Style
   style: ShapeStyle;
@@ -85,11 +85,7 @@ export interface ShapeSelection {
   resizeHandle: ResizeHandle | null;
 }
 
-export type ResizeHandle =
-  | 'nw' | 'n' | 'ne'
-  | 'w'  |       'e'
-  | 'sw' | 's' | 'se'
-  | 'rotate';
+export type ResizeHandle = 'nw' | 'n' | 'ne' | 'w' | 'e' | 'sw' | 's' | 'se' | 'rotate';
 
 export const DEFAULT_SHAPE_STYLE: ShapeStyle = {
   fill: '#4285F4',

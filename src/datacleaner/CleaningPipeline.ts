@@ -61,7 +61,7 @@ export class CleaningPipeline {
 
     // Sort steps by order
     const sortedSteps = [...this.config.steps]
-      .filter(s => s.enabled)
+      .filter((s) => s.enabled)
       .sort((a, b) => a.order - b.order);
 
     for (let i = 0; i < sortedSteps.length; i++) {
@@ -108,7 +108,7 @@ export class CleaningPipeline {
     onProgress?.('Complete', 100);
 
     return {
-      success: stepResults.every(r => r.success),
+      success: stepResults.every((r) => r.success),
       stepResults,
       summary: this.calculateSummary(allChanges),
       duration: Date.now() - startTime,
@@ -118,10 +118,7 @@ export class CleaningPipeline {
   /**
    * Execute a single step
    */
-  private async executeStep(
-    step: CleaningStep,
-    data: CleanerSheetData
-  ): Promise<CellChange[]> {
+  private async executeStep(step: CleaningStep, data: CleanerSheetData): Promise<CellChange[]> {
     switch (step.type) {
       case 'remove_duplicates':
         return this.executeDuplicateRemoval(data, step);
@@ -145,14 +142,11 @@ export class CleaningPipeline {
   /**
    * Execute duplicate removal
    */
-  private executeDuplicateRemoval(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeDuplicateRemoval(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     const groups = this.duplicateDetector.detect(data);
     const rowsToDelete = this.duplicateDetector.removeDuplicates(groups);
 
-    return rowsToDelete.map(row => ({
+    return rowsToDelete.map((row) => ({
       row,
       col: 0,
       ref: `Row ${row + 1}`,
@@ -165,10 +159,7 @@ export class CleaningPipeline {
   /**
    * Execute fill missing values
    */
-  private executeFillMissing(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeFillMissing(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     const info = this.missingValueHandler.analyze(data);
     return this.missingValueHandler.fill(data, info);
   }
@@ -176,10 +167,7 @@ export class CleaningPipeline {
   /**
    * Execute format standardization
    */
-  private executeFormatStandardization(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeFormatStandardization(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     const issues = this.formatStandardizer.analyze(data);
     return this.formatStandardizer.standardize(data, issues);
   }
@@ -187,10 +175,7 @@ export class CleaningPipeline {
   /**
    * Execute inconsistency fix
    */
-  private executeInconsistencyFix(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeInconsistencyFix(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     const groups = this.inconsistencyFixer.detect(data);
     return this.inconsistencyFixer.fix(data, groups);
   }
@@ -198,10 +183,7 @@ export class CleaningPipeline {
   /**
    * Execute trim whitespace
    */
-  private executeTrimWhitespace(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeTrimWhitespace(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     const changes: CellChange[] = [];
 
     for (let row = 0; row < data.rowCount; row++) {
@@ -231,10 +213,7 @@ export class CleaningPipeline {
   /**
    * Execute outlier handling (detection only - removal requires manual review)
    */
-  private executeOutlierHandling(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeOutlierHandling(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     // Outlier detection - return empty changes as outliers need manual review
     this.outlierDetector.detect(data);
     return [];
@@ -243,10 +222,7 @@ export class CleaningPipeline {
   /**
    * Execute validation
    */
-  private executeValidation(
-    data: CleanerSheetData,
-    _step: CleaningStep
-  ): CellChange[] {
+  private executeValidation(data: CleanerSheetData, _step: CleaningStep): CellChange[] {
     // Validation doesn't make changes, just returns results
     this.dataValidator.validate(data);
     return [];
@@ -258,10 +234,10 @@ export class CleaningPipeline {
   private applyChanges(data: CleanerSheetData, changes: CellChange[]): void {
     // Sort deletions by row descending to avoid index issues
     const deletions = changes
-      .filter(c => c.changeType === 'deleted')
+      .filter((c) => c.changeType === 'deleted')
       .sort((a, b) => b.row - a.row);
 
-    const modifications = changes.filter(c => c.changeType !== 'deleted');
+    const modifications = changes.filter((c) => c.changeType !== 'deleted');
 
     // Apply modifications first
     for (const change of modifications) {
@@ -326,14 +302,14 @@ export class CleaningPipeline {
    * Remove a step by ID
    */
   removeStep(stepId: string): void {
-    this.config.steps = this.config.steps.filter(s => s.id !== stepId);
+    this.config.steps = this.config.steps.filter((s) => s.id !== stepId);
   }
 
   /**
    * Enable/disable a step
    */
   toggleStep(stepId: string, enabled: boolean): void {
-    const step = this.config.steps.find(s => s.id === stepId);
+    const step = this.config.steps.find((s) => s.id === stepId);
     if (step) {
       step.enabled = enabled;
     }
@@ -344,7 +320,7 @@ export class CleaningPipeline {
    */
   reorderSteps(stepIds: string[]): void {
     for (let i = 0; i < stepIds.length; i++) {
-      const step = this.config.steps.find(s => s.id === stepIds[i]);
+      const step = this.config.steps.find((s) => s.id === stepIds[i]);
       if (step) {
         step.order = i;
       }

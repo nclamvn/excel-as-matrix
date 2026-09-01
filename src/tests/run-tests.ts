@@ -34,11 +34,17 @@ const generateReport = () => {
 | # | Test | Formula | Expected | Actual |
 |---|------|---------|----------|--------|
 `;
-    results.results.forEach((r: { description: string; formula: string; expected: unknown; actual: unknown }, i: number) => {
-      const expected = typeof r.expected === 'object' ? JSON.stringify(r.expected) : String(r.expected);
-      const actual = typeof r.actual === 'object' ? JSON.stringify(r.actual) : String(r.actual);
-      report += `| ${i + 1} | ${r.description} | \`${r.formula}\` | ${expected} | ${actual} |\n`;
-    });
+    results.results.forEach(
+      (
+        r: { description: string; formula: string; expected: unknown; actual: unknown },
+        i: number
+      ) => {
+        const expected =
+          typeof r.expected === 'object' ? JSON.stringify(r.expected) : String(r.expected);
+        const actual = typeof r.actual === 'object' ? JSON.stringify(r.actual) : String(r.actual);
+        report += `| ${i + 1} | ${r.description} | \`${r.formula}\` | ${expected} | ${actual} |\n`;
+      }
+    );
   } else {
     report += `### All Tests Passed! 🎉
 

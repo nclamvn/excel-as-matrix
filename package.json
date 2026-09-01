@@ -9,7 +9,7 @@
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "build": "tsc && vite build",
     "build:server": "tsc -p server/tsconfig.json",
-    "start:server": "node --loader tsx server/index.ts",
+    "start:server": "node server/dist/index.js",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
@@ -17,13 +17,19 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:server": "vitest run --config vitest.server.config.ts",
+    "test:governance": "node --test scripts/__tests__/*.test.mjs",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:critical": "playwright test critical.spec.ts --project=chromium",
     "test:e2e:collab": "playwright test collaboration.spec.ts",
     "test:e2e:verify": "playwright test verify-features.spec.ts",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e:headed": "playwright test --headed",
+    "sot:check": "node scripts/sot-ci-check.mjs",
+    "release:evidence": "node scripts/release-evidence.mjs release-evidence --check-readme",
+    "release:evidence:update": "node scripts/release-evidence.mjs release-evidence --write-readme"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.96.0",
@@ -42,18 +48,17 @@
     "react-dropzone": "^14.2.3",
     "recharts": "^3.6.0",
     "workbox-window": "^7.0.0",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^4.4.0"
   },
   "optionalDependencies": {
-    "@hono/node-server": "^1.14.0",
-    "@hono/node-ws": "^1.1.0",
-    "concurrently": "^9.1.0",
-    "hono": "^4.7.0",
-    "tsx": "^4.19.0"
+    "@hono/node-server": "^1.19.17",
+    "@hono/node-ws": "^1.3.1",
+    "hono": "^4.13.5",
+    "tsx": "^4.23.13"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.5",
     "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
@@ -63,9 +68,10 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.0",
-    "@vitest/coverage-v8": "^4.0.17",
+    "@vitest/coverage-v8": "^4.1.11",
     "autoprefixer": "^10.4.0",
-    "eslint": "^10.2.0",
+    "concurrently": "^9.2.4",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.5.5",
@@ -81,7 +87,7 @@
     "typescript-eslint": "^8.58.0",
     "vite": "^5.0.0",
     "vite-plugin-pwa": "^0.17.0",
-    "vitest": "^4.0.17",
+    "vitest": "^4.1.11",
     "workbox-background-sync": "^7.0.0",
     "workbox-core": "^7.0.0",
     "workbox-precaching": "^7.0.0",
@@ -89,6 +95,15 @@
     "workbox-strategies": "^7.0.0"
   },
   "overrides": {
-    "serialize-javascript": ">=6.0.3"
+    "@babel/plugin-transform-modules-systemjs@<=7.29.3": "7.29.4",
+    "brace-expansion@<1.1.18": "1.1.18",
+    "brace-expansion@>=2.0.0 <2.1.4": "2.1.4",
+    "brace-expansion@>=3.0.0 <5.0.9": "5.0.9",
+    "esbuild@>=0.27.3 <0.28.1": "0.28.2",
+    "fast-uri@>=3.0.0 <3.1.5": "3.1.5",
+    "serialize-javascript": ">=6.0.3",
+    "tmp@<0.2.7": "0.2.7",
+    "uuid@<11.1.1": "11.1.1",
+    "ws@>=8.0.0 <8.21.0": "8.21.0"
   }
 }

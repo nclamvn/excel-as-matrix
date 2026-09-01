@@ -37,9 +37,7 @@ export const ShapeCanvas: React.FC<ShapeCanvasProps> = ({ sheetId }) => {
   } = useShapesStore();
 
   const shapes = getShapesForSheet(sheetId);
-  const selectedShape = selection.shapeId
-    ? getShapeById(sheetId, selection.shapeId)
-    : null;
+  const selectedShape = selection.shapeId ? getShapeById(sheetId, selection.shapeId) : null;
 
   // Handle mouse down on canvas (deselect)
   const handleCanvasClick = (e: React.MouseEvent) => {
@@ -83,58 +81,61 @@ export const ShapeCanvas: React.FC<ShapeCanvasProps> = ({ sheetId }) => {
   };
 
   // Handle mouse move
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!selection.shapeId) return;
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!selection.shapeId) return;
 
-    // Dragging
-    if (selection.isDragging && dragStart.current) {
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-      moveShape(
-        sheetId,
-        selection.shapeId,
-        dragStart.current.shapeX + dx,
-        dragStart.current.shapeY + dy
-      );
-    }
-
-    // Resizing
-    if (selection.isResizing && resizeStart.current && selection.resizeHandle) {
-      const dx = e.clientX - resizeStart.current.x;
-      const dy = e.clientY - resizeStart.current.y;
-
-      let newWidth = resizeStart.current.width;
-      let newHeight = resizeStart.current.height;
-      let newX = resizeStart.current.shapeX;
-      let newY = resizeStart.current.shapeY;
-
-      const handle = selection.resizeHandle;
-
-      // Calculate new dimensions based on handle
-      if (handle.includes('e')) {
-        newWidth = resizeStart.current.width + dx;
-      }
-      if (handle.includes('w')) {
-        newWidth = resizeStart.current.width - dx;
-        newX = resizeStart.current.shapeX + dx;
-      }
-      if (handle.includes('s')) {
-        newHeight = resizeStart.current.height + dy;
-      }
-      if (handle.includes('n')) {
-        newHeight = resizeStart.current.height - dy;
-        newY = resizeStart.current.shapeY + dy;
+      // Dragging
+      if (selection.isDragging && dragStart.current) {
+        const dx = e.clientX - dragStart.current.x;
+        const dy = e.clientY - dragStart.current.y;
+        moveShape(
+          sheetId,
+          selection.shapeId,
+          dragStart.current.shapeX + dx,
+          dragStart.current.shapeY + dy
+        );
       }
 
-      // Apply minimum size
-      if (newWidth >= 20 && newHeight >= 20) {
-        resizeShape(sheetId, selection.shapeId, newWidth, newHeight);
-        if (handle.includes('w') || handle.includes('n')) {
-          moveShape(sheetId, selection.shapeId, newX, newY);
+      // Resizing
+      if (selection.isResizing && resizeStart.current && selection.resizeHandle) {
+        const dx = e.clientX - resizeStart.current.x;
+        const dy = e.clientY - resizeStart.current.y;
+
+        let newWidth = resizeStart.current.width;
+        let newHeight = resizeStart.current.height;
+        let newX = resizeStart.current.shapeX;
+        let newY = resizeStart.current.shapeY;
+
+        const handle = selection.resizeHandle;
+
+        // Calculate new dimensions based on handle
+        if (handle.includes('e')) {
+          newWidth = resizeStart.current.width + dx;
+        }
+        if (handle.includes('w')) {
+          newWidth = resizeStart.current.width - dx;
+          newX = resizeStart.current.shapeX + dx;
+        }
+        if (handle.includes('s')) {
+          newHeight = resizeStart.current.height + dy;
+        }
+        if (handle.includes('n')) {
+          newHeight = resizeStart.current.height - dy;
+          newY = resizeStart.current.shapeY + dy;
+        }
+
+        // Apply minimum size
+        if (newWidth >= 20 && newHeight >= 20) {
+          resizeShape(sheetId, selection.shapeId, newWidth, newHeight);
+          if (handle.includes('w') || handle.includes('n')) {
+            moveShape(sheetId, selection.shapeId, newX, newY);
+          }
         }
       }
-    }
-  }, [selection, sheetId, moveShape, resizeShape]);
+    },
+    [selection, sheetId, moveShape, resizeShape]
+  );
 
   // Handle mouse up
   const handleMouseUp = useCallback(() => {
@@ -184,12 +185,8 @@ export const ShapeCanvas: React.FC<ShapeCanvasProps> = ({ sheetId }) => {
   if (shapes.length === 0) return null;
 
   return (
-    <div
-      ref={canvasRef}
-      className="shape-canvas"
-      onClick={handleCanvasClick}
-    >
-      {shapes.map(shape => (
+    <div ref={canvasRef} className="shape-canvas" onClick={handleCanvasClick}>
+      {shapes.map((shape) => (
         <div
           key={shape.id}
           className={`shape-wrapper ${selection.shapeId === shape.id ? 'selected' : ''}`}
@@ -208,7 +205,7 @@ export const ShapeCanvas: React.FC<ShapeCanvasProps> = ({ sheetId }) => {
           {/* Selection handles */}
           {selection.shapeId === shape.id && !shape.locked && (
             <div className="shape-handles">
-              {(['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'] as ResizeHandle[]).map(handle => (
+              {(['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'] as ResizeHandle[]).map((handle) => (
                 <div
                   key={handle}
                   className={`resize-handle handle-${handle}`}

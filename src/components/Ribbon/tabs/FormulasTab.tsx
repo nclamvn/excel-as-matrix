@@ -3,8 +3,15 @@ import { RibbonGroup } from '../RibbonGroup';
 import { RibbonButton } from '../RibbonButton';
 import { RibbonDropdown } from '../RibbonDropdown';
 import {
-  FunctionSquare, Calculator, FileText, Clock, Database,
-  Search, GitBranch, AlertTriangle, CheckCircle
+  FunctionSquare,
+  Calculator,
+  FileText,
+  Clock,
+  Database,
+  Search,
+  GitBranch,
+  AlertTriangle,
+  CheckCircle,
 } from 'lucide-react';
 
 export const FormulasTab: React.FC = () => {

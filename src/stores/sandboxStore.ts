@@ -222,9 +222,7 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
 
       // Update sandbox state
       set((state) => ({
-        currentSandbox: state.currentSandbox
-          ? { ...state.currentSandbox, state: 'Merged' }
-          : null,
+        currentSandbox: state.currentSandbox ? { ...state.currentSandbox, state: 'Merged' } : null,
         isLoading: false,
         isPreviewMode: false,
       }));
@@ -238,9 +236,7 @@ export const useSandboxStore = create<SandboxState>()((set, get) => ({
 
   abandonSandbox: async (_sandboxId) => {
     set((state) => ({
-      currentSandbox: state.currentSandbox
-        ? { ...state.currentSandbox, state: 'Abandoned' }
-        : null,
+      currentSandbox: state.currentSandbox ? { ...state.currentSandbox, state: 'Abandoned' } : null,
       isPreviewMode: false,
       currentDiffs: [],
       previewChanges: new Map(),

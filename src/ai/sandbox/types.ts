@@ -10,11 +10,11 @@
  * Sandbox status
  */
 export type SandboxStatus =
-  | 'pending'    // Created, awaiting review
-  | 'approved'   // User approved, ready to merge
-  | 'merged'     // Applied to main spreadsheet
-  | 'rejected'   // User rejected
-  | 'discarded'  // Auto-discarded (timeout, etc.)
+  | 'pending' // Created, awaiting review
+  | 'approved' // User approved, ready to merge
+  | 'merged' // Applied to main spreadsheet
+  | 'rejected' // User rejected
+  | 'discarded' // Auto-discarded (timeout, etc.)
   | 'rolled_back'; // Merged but then undone
 
 /**
@@ -31,15 +31,15 @@ export type ChangeType = 'added' | 'modified' | 'deleted';
  * Risk factors that can be detected
  */
 export type RiskFactor =
-  | 'large_blast_radius'    // >20 cells affected
-  | 'formula_complexity'    // Nested/complex formulas
-  | 'data_loss'             // Deleting existing data
-  | 'formula_removal'       // Removing formulas
-  | 'cross_sheet'           // Multiple sheets affected
-  | 'circular_dependency'   // Potential circular refs
-  | 'external_reference'    // External workbook refs
-  | 'array_formula'         // Array/spill formulas
-  | 'volatile_function';    // RAND, NOW, etc.
+  | 'large_blast_radius' // >20 cells affected
+  | 'formula_complexity' // Nested/complex formulas
+  | 'data_loss' // Deleting existing data
+  | 'formula_removal' // Removing formulas
+  | 'cross_sheet' // Multiple sheets affected
+  | 'circular_dependency' // Potential circular refs
+  | 'external_reference' // External workbook refs
+  | 'array_formula' // Array/spill formulas
+  | 'volatile_function'; // RAND, NOW, etc.
 
 // -----------------------------------------------------------------------------
 // Cell Change Types
@@ -49,10 +49,10 @@ export type RiskFactor =
  * Snapshot of a cell's state
  */
 export interface CellState {
-  ref: string;           // e.g., "A1"
-  value: unknown;        // Current value
+  ref: string; // e.g., "A1"
+  value: unknown; // Current value
   formula: string | null; // Formula if any
-  format?: string;       // Format string
+  format?: string; // Format string
 }
 
 /**
@@ -63,8 +63,8 @@ export interface CellChange {
   sheetId: string;
   sheetName: string;
   changeType: ChangeType;
-  before: CellState | null;  // null for 'added'
-  after: CellState | null;   // null for 'deleted'
+  before: CellState | null; // null for 'added'
+  after: CellState | null; // null for 'deleted'
 }
 
 /**
@@ -101,8 +101,8 @@ export interface DetectedRisk {
   factor: RiskFactor;
   severity: RiskLevel;
   description: string;
-  affectedCells?: string[];  // Cells triggering this risk
-  suggestion?: string;       // Mitigation suggestion
+  affectedCells?: string[]; // Cells triggering this risk
+  suggestion?: string; // Mitigation suggestion
 }
 
 /**
@@ -111,7 +111,7 @@ export interface DetectedRisk {
 export interface RiskAssessment {
   sandboxId: string;
   overallRisk: RiskLevel;
-  riskScore: number;        // 0-100 numeric score
+  riskScore: number; // 0-100 numeric score
   detectedRisks: DetectedRisk[];
   requiresApproval: boolean;
   canAutoApply: boolean;
@@ -129,7 +129,7 @@ export interface RollbackInfo {
   sandboxId: string;
   originalStates: CellState[];
   mergedAt: Date;
-  expiresAt: Date;           // 24 hours after merge
+  expiresAt: Date; // 24 hours after merge
   canRollback: boolean;
 }
 
@@ -158,7 +158,7 @@ export interface Sandbox {
   aiMessageId?: string;
 
   // Changes
-  proposedChanges: Map<string, CellState>;  // key: "sheetId:cellRef"
+  proposedChanges: Map<string, CellState>; // key: "sheetId:cellRef"
   diff?: SandboxDiff;
 
   // Risk
@@ -169,8 +169,8 @@ export interface Sandbox {
 
   // Metadata
   metadata?: {
-    intent?: string;           // What the user asked for
-    reasoning?: string;        // AI's reasoning
+    intent?: string; // What the user asked for
+    reasoning?: string; // AI's reasoning
     tokensUsed?: number;
   };
 }
@@ -214,19 +214,19 @@ export interface SandboxConfig {
   // Rollback settings
   rollback: {
     enabled: boolean;
-    retentionHours: number;    // Default: 24
+    retentionHours: number; // Default: 24
   };
 
   // Risk thresholds
   riskThresholds: {
-    largeBatchSize: number;    // Default: 20
-    highRiskScore: number;     // Default: 70
-    mediumRiskScore: number;   // Default: 40
+    largeBatchSize: number; // Default: 20
+    highRiskScore: number; // Default: 70
+    mediumRiskScore: number; // Default: 40
   };
 
   // Timeout settings
   timeouts: {
-    pendingExpiry: number;     // Minutes before auto-discard
+    pendingExpiry: number; // Minutes before auto-discard
   };
 }
 
@@ -250,7 +250,7 @@ export const DEFAULT_SANDBOX_CONFIG: SandboxConfig = {
     mediumRiskScore: 40,
   },
   timeouts: {
-    pendingExpiry: 60,  // 1 hour
+    pendingExpiry: 60, // 1 hour
   },
 };
 

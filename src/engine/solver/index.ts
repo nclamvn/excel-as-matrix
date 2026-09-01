@@ -62,13 +62,7 @@ export interface ConstraintDef {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function goalSeek(params: GoalSeekParams): GoalSeekResult {
-  const {
-    evaluate,
-    targetValue,
-    initialGuess,
-    maxIterations = 100,
-    tolerance = 1e-7,
-  } = params;
+  const { evaluate, targetValue, initialGuess, maxIterations = 100, tolerance = 1e-7 } = params;
 
   const f = (x: number) => evaluate(x) - targetValue;
 
@@ -164,7 +158,7 @@ export function solve(params: SolverParams): SolverResult {
   let bestVars = [...vars];
 
   // Evaluate objective (negate for maximize since we minimize internally)
-  const eval_ = (v: number[]) => goal === 'maximize' ? -objective(v) : objective(v);
+  const eval_ = (v: number[]) => (goal === 'maximize' ? -objective(v) : objective(v));
 
   // Check constraints
   const feasible = (v: number[]) => {
@@ -293,7 +287,7 @@ export function simplex(params: SimplexParams): SolverResult {
   }
 
   // Objective row
-  const objRow = c.map((v) => minimize ? v : -v);
+  const objRow = c.map((v) => (minimize ? v : -v));
   for (let j = 0; j < m; j++) objRow.push(0);
   objRow.push(0);
   tableau.push(objRow);
@@ -347,7 +341,13 @@ export function simplex(params: SimplexParams): SolverResult {
     }
 
     if (pivotRow === -1) {
-      return { found: false, values: new Array(n).fill(0), objectiveValue: 0, iterations, status: 'unbounded' };
+      return {
+        found: false,
+        values: new Array(n).fill(0),
+        objectiveValue: 0,
+        iterations,
+        status: 'unbounded',
+      };
     }
 
     // Pivot
@@ -368,5 +368,11 @@ export function simplex(params: SimplexParams): SolverResult {
     basis[pivotRow] = pivotCol;
   }
 
-  return { found: false, values: new Array(n).fill(0), objectiveValue: 0, iterations, status: 'max_iterations' };
+  return {
+    found: false,
+    values: new Array(n).fill(0),
+    objectiveValue: 0,
+    iterations,
+    status: 'max_iterations',
+  };
 }

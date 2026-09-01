@@ -102,7 +102,7 @@ export interface CellReference {
   rowAbsolute: boolean;
   sheetName?: string;
   isColumnRef?: boolean; // True if this is a column-only reference (e.g., A:A)
-  isRowRef?: boolean;    // True if this is a row-only reference (e.g., 1:1)
+  isRowRef?: boolean; // True if this is a row-only reference (e.g., 1:1)
 }
 
 // Range reference
@@ -120,7 +120,14 @@ export interface LambdaFunction {
 }
 
 // Formula values
-export type FormulaValue = number | string | boolean | null | FormulaError | FormulaValue[][] | LambdaFunction;
+export type FormulaValue =
+  | number
+  | string
+  | boolean
+  | null
+  | FormulaError
+  | FormulaValue[][]
+  | LambdaFunction;
 
 // Formula errors
 export type FormulaErrorType =

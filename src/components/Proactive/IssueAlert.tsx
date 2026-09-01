@@ -19,16 +19,12 @@ interface IssueAlertProps {
 // Issue Alert Component
 // -----------------------------------------------------------------------------
 
-export const IssueAlert: React.FC<IssueAlertProps> = ({
-  issue,
-  onAction,
-  onDismiss,
-}) => {
+export const IssueAlert: React.FC<IssueAlertProps> = ({ issue, onAction, onDismiss }) => {
   const severity = getSeverityConfig(issue.priority);
   const categoryConfig = getCategoryConfig(issue.category);
 
-  const primaryAction = issue.actions.find(a => a.type === 'primary');
-  const secondaryAction = issue.actions.find(a => a.type === 'secondary');
+  const primaryAction = issue.actions.find((a) => a.type === 'primary');
+  const secondaryAction = issue.actions.find((a) => a.type === 'secondary');
 
   return (
     <div
@@ -41,7 +37,10 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
 
       <div className="issue-alert__content">
         <div className="issue-alert__header">
-          <span className="issue-alert__category" style={{ backgroundColor: categoryConfig.bgColor }}>
+          <span
+            className="issue-alert__category"
+            style={{ backgroundColor: categoryConfig.bgColor }}
+          >
             {categoryConfig.icon}
             {categoryConfig.label}
           </span>
@@ -55,13 +54,13 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
 
         {issue.impact && (
           <div className="issue-alert__impact">
-            <span className="issue-alert__impact-icon"><CellIcon /></span>
+            <span className="issue-alert__impact-icon">
+              <CellIcon />
+            </span>
             <span>
               {issue.impact.cellCount} cell{issue.impact.cellCount !== 1 ? 's' : ''} affected
               {issue.affectedCells.length <= 5 && (
-                <span className="issue-alert__cells">
-                  : {issue.affectedCells.join(', ')}
-                </span>
+                <span className="issue-alert__cells">: {issue.affectedCells.join(', ')}</span>
               )}
             </span>
           </div>
@@ -69,7 +68,8 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
 
         <div className="issue-alert__actions">
           {primaryAction && (
-            <button type="button"
+            <button
+              type="button"
               className="issue-alert__action issue-alert__action--primary"
               onClick={() => onAction(issue.id, primaryAction.id)}
             >
@@ -78,14 +78,16 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
             </button>
           )}
           {secondaryAction && (
-            <button type="button"
+            <button
+              type="button"
               className="issue-alert__action issue-alert__action--secondary"
               onClick={() => onAction(issue.id, secondaryAction.id)}
             >
               {secondaryAction.label}
             </button>
           )}
-          <button type="button"
+          <button
+            type="button"
             className="issue-alert__action issue-alert__action--dismiss"
             onClick={() => onDismiss(issue.id)}
           >
@@ -94,7 +96,8 @@ export const IssueAlert: React.FC<IssueAlertProps> = ({
         </div>
       </div>
 
-      <button type="button"
+      <button
+        type="button"
         className="issue-alert__close"
         onClick={() => onDismiss(issue.id)}
         title="Dismiss"
@@ -162,7 +165,9 @@ function getCategoryConfig(category?: string) {
       bgColor: '#f5f5f4',
     },
   };
-  return configs[category || ''] || { label: 'Data Issue', icon: <AlertIcon />, bgColor: '#f3f4f6' };
+  return (
+    configs[category || ''] || { label: 'Data Issue', icon: <AlertIcon />, bgColor: '#f3f4f6' }
+  );
 }
 
 // -----------------------------------------------------------------------------

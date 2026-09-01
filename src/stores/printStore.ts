@@ -54,7 +54,13 @@ interface PrintStore {
   getPageBreaks: (sheetId: string) => PageBreak[];
 
   // Page calculation
-  calculatePages: (sheetId: string, totalRows: number, totalCols: number, rowHeights: number[], colWidths: number[]) => void;
+  calculatePages: (
+    sheetId: string,
+    totalRows: number,
+    totalCols: number,
+    rowHeights: number[],
+    colWidths: number[]
+  ) => void;
   setCurrentPage: (page: number) => void;
 
   // Reset
@@ -74,7 +80,7 @@ export const usePrintStore = create<PrintStore>()(
       },
 
       updateSettings: (sheetId, updates) => {
-        set(state => ({
+        set((state) => ({
           settings: {
             ...state.settings,
             [sheetId]: {
@@ -139,10 +145,10 @@ export const usePrintStore = create<PrintStore>()(
 
       // Page Breaks
       addPageBreak: (sheetId, type, index) => {
-        set(state => {
+        set((state) => {
           const existing = state.pageBreaks[sheetId] || [];
           // Don't add duplicate
-          if (existing.some(pb => pb.type === type && pb.index === index)) {
+          if (existing.some((pb) => pb.type === type && pb.index === index)) {
             return state;
           }
           return {
@@ -155,18 +161,18 @@ export const usePrintStore = create<PrintStore>()(
       },
 
       removePageBreak: (sheetId, type, index) => {
-        set(state => ({
+        set((state) => ({
           pageBreaks: {
             ...state.pageBreaks,
             [sheetId]: (state.pageBreaks[sheetId] || []).filter(
-              pb => !(pb.type === type && pb.index === index && pb.isManual)
+              (pb) => !(pb.type === type && pb.index === index && pb.isManual)
             ),
           },
         }));
       },
 
       clearPageBreaks: (sheetId) => {
-        set(state => ({
+        set((state) => ({
           pageBreaks: {
             ...state.pageBreaks,
             [sheetId]: [],
@@ -185,13 +191,17 @@ export const usePrintStore = create<PrintStore>()(
         const paper = PAPER_SIZES[settings.paperSize];
 
         // Get printable area
-        let pageWidth = settings.orientation === 'portrait' ? paper.width : paper.height;
-        let pageHeight = settings.orientation === 'portrait' ? paper.height : paper.width;
+        const pageWidth = settings.orientation === 'portrait' ? paper.width : paper.height;
+        const pageHeight = settings.orientation === 'portrait' ? paper.height : paper.width;
 
         // Subtract margins
         const printableWidth = pageWidth - settings.margins.left - settings.margins.right;
-        const printableHeight = pageHeight - settings.margins.top - settings.margins.bottom -
-                               settings.margins.header - settings.margins.footer;
+        const printableHeight =
+          pageHeight -
+          settings.margins.top -
+          settings.margins.bottom -
+          settings.margins.header -
+          settings.margins.footer;
 
         // Apply scaling
         let scale = 1;
@@ -210,14 +220,14 @@ export const usePrintStore = create<PrintStore>()(
 
         // Get manual row breaks
         const rowBreaks = pageBreaks
-          .filter(pb => pb.type === 'row')
-          .map(pb => pb.index)
+          .filter((pb) => pb.type === 'row')
+          .map((pb) => pb.index)
           .sort((a, b) => a - b);
 
         // Get manual column breaks
         const colBreaks = pageBreaks
-          .filter(pb => pb.type === 'column')
-          .map(pb => pb.index)
+          .filter((pb) => pb.type === 'column')
+          .map((pb) => pb.index)
           .sort((a, b) => a - b);
 
         while (currentRow < totalRows) {
@@ -228,7 +238,10 @@ export const usePrintStore = create<PrintStore>()(
             let endRow = currentRow;
             let heightSum = 0;
 
-            while (endRow < totalRows && heightSum + (rowHeights[endRow] || 25) <= scaledPrintableHeight) {
+            while (
+              endRow < totalRows &&
+              heightSum + (rowHeights[endRow] || 25) <= scaledPrintableHeight
+            ) {
               // Check for manual break
               if (rowBreaks.includes(endRow) && endRow > currentRow) break;
               heightSum += rowHeights[endRow] || 25;
@@ -239,7 +252,10 @@ export const usePrintStore = create<PrintStore>()(
             let endCol = currentCol;
             let widthSum = 0;
 
-            while (endCol < totalCols && widthSum + (colWidths[endCol] || 100) <= scaledPrintableWidth) {
+            while (
+              endCol < totalCols &&
+              widthSum + (colWidths[endCol] || 100) <= scaledPrintableWidth
+            ) {
               // Check for manual break
               if (colBreaks.includes(endCol) && endCol > currentCol) break;
               widthSum += colWidths[endCol] || 100;
@@ -260,7 +276,10 @@ export const usePrintStore = create<PrintStore>()(
           // Move to next row section
           let nextRow = currentRow;
           let heightSum = 0;
-          while (nextRow < totalRows && heightSum + (rowHeights[nextRow] || 25) <= scaledPrintableHeight) {
+          while (
+            nextRow < totalRows &&
+            heightSum + (rowHeights[nextRow] || 25) <= scaledPrintableHeight
+          ) {
             if (rowBreaks.includes(nextRow) && nextRow > currentRow) break;
             heightSum += rowHeights[nextRow] || 25;
             nextRow++;
@@ -290,7 +309,7 @@ export const usePrintStore = create<PrintStore>()(
       },
 
       resetSettings: (sheetId) => {
-        set(state => ({
+        set((state) => ({
           settings: {
             ...state.settings,
             [sheetId]: { ...DEFAULT_PRINT_SETTINGS },

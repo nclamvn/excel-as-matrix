@@ -37,7 +37,8 @@ export const RibbonDropdown: React.FC<RibbonDropdownProps> = ({
 
   return (
     <div className={`ribbon-dropdown ${size}`} ref={ref}>
-      <button type="button"
+      <button
+        type="button"
         className={`ribbon-dropdown-trigger ${size}`}
         onClick={() => setOpen(!isOpen)}
       >
@@ -48,11 +49,12 @@ export const RibbonDropdown: React.FC<RibbonDropdownProps> = ({
 
       {isOpen && (
         <div className="ribbon-dropdown-menu">
-          {options.map((option, index) => (
+          {options.map((option, index) =>
             option.divider ? (
               <div key={index} className="dropdown-divider" />
             ) : (
-              <button type="button"
+              <button
+                type="button"
                 key={option.id}
                 className="dropdown-item"
                 onClick={() => {
@@ -64,7 +66,7 @@ export const RibbonDropdown: React.FC<RibbonDropdownProps> = ({
                 <span>{option.label}</span>
               </button>
             )
-          ))}
+          )}
         </div>
       )}
     </div>

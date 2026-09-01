@@ -2,7 +2,11 @@ import { useEffect, useCallback } from 'react';
 import { shortcutManager, ShortcutHandler } from './ShortcutManager';
 import { Shortcut } from './shortcuts';
 
-export function useShortcut(action: string, handler: ShortcutHandler, deps: React.DependencyList = []) {
+export function useShortcut(
+  action: string,
+  handler: ShortcutHandler,
+  deps: React.DependencyList = []
+) {
   const stableHandler = useCallback(handler, deps);
 
   useEffect(() => {

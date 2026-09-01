@@ -87,7 +87,7 @@ export const PrintPreviewCanvas: React.FC<PrintPreviewCanvasProps> = ({
               fontStyle: format?.italic ? 'italic' : 'normal',
               textAlign: (format?.align as 'left' | 'center' | 'right') || 'left',
               backgroundColor: format?.backgroundColor || 'transparent',
-              color: settings.blackAndWhite ? '#000' : (format?.textColor || '#000'),
+              color: settings.blackAndWhite ? '#000' : format?.textColor || '#000',
               borderRight: settings.printGridlines ? '1px solid #ccc' : 'none',
               borderBottom: settings.printGridlines ? '1px solid #ccc' : 'none',
             }}
@@ -99,9 +99,7 @@ export const PrintPreviewCanvas: React.FC<PrintPreviewCanvasProps> = ({
 
       rows.push(
         <tr key={row}>
-          {settings.printRowColHeaders && (
-            <th className="row-header">{row + 1}</th>
-          )}
+          {settings.printRowColHeaders && <th className="row-header">{row + 1}</th>}
           {cells}
         </tr>
       );
@@ -149,12 +147,8 @@ export const PrintPreviewCanvas: React.FC<PrintPreviewCanvasProps> = ({
         }}
       >
         <table className="print-table">
-          <thead>
-            {renderColHeaders()}
-          </thead>
-          <tbody>
-            {renderCells()}
-          </tbody>
+          <thead>{renderColHeaders()}</thead>
+          <tbody>{renderCells()}</tbody>
         </table>
       </div>
 

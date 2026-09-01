@@ -64,12 +64,23 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               </p>
             </div>
           </div>
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="p-2 hover:bg-yellow-100 rounded-lg transition-colors"
           >
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -77,25 +88,37 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
         {/* Navigation */}
         {conflicts.length > 1 && (
           <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-b">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))}
               disabled={selectedIndex === 0}
               className="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
             <span className="text-sm text-gray-600">
               Conflict {selectedIndex + 1} of {conflicts.length}
             </span>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setSelectedIndex(Math.min(conflicts.length - 1, selectedIndex + 1))}
               disabled={selectedIndex === conflicts.length - 1}
               className="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </div>
@@ -117,7 +140,12 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               className="border-2 border-transparent hover:border-blue-500 rounded-xl p-4 cursor-pointer transition-all group bg-blue-50"
             >
               <div className="flex items-center gap-2 mb-3">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -133,7 +161,10 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               <p className="text-xs text-gray-500">
                 Modified: {formatTime(currentConflict.localTimestamp)}
               </p>
-              <button type="button" className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+              >
                 Use This Version
               </button>
             </div>
@@ -144,7 +175,12 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
               className="border-2 border-transparent hover:border-green-500 rounded-xl p-4 cursor-pointer transition-all group bg-green-50"
             >
               <div className="flex items-center gap-2 mb-3">
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -155,12 +191,17 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
                 <span className="font-semibold text-green-900">Server Version</span>
               </div>
               <div className="bg-white rounded-lg p-3 mb-2 border">
-                <code className="text-lg break-all">{formatValue(currentConflict.serverValue)}</code>
+                <code className="text-lg break-all">
+                  {formatValue(currentConflict.serverValue)}
+                </code>
               </div>
               <p className="text-xs text-gray-500">
                 Modified: {formatTime(currentConflict.serverTimestamp)}
               </p>
-              <button type="button" className="mt-3 w-full py-2 bg-green-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                className="mt-3 w-full py-2 bg-green-600 text-white rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+              >
                 Use This Version
               </button>
             </div>
@@ -169,18 +210,18 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
 
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-          <div className="text-sm text-gray-500">
-            Click a version to keep it
-          </div>
+          <div className="text-sm text-gray-500">Click a version to keep it</div>
           {conflicts.length > 1 && (
             <div className="flex gap-2">
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => onResolveAll('local')}
                 className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 Keep All Local
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => onResolveAll('server')}
                 className="px-4 py-2 text-sm font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors"
               >

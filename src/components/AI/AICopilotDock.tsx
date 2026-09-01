@@ -2,15 +2,8 @@
 // AI COPILOT DOCK — Main Container Component
 // ═══════════════════════════════════════════════════════════════════════════
 
-import React, { useCallback } from 'react';
-import {
-  X,
-  MessageSquare,
-  Zap,
-  Eye,
-  History,
-  Sparkles,
-} from 'lucide-react';
+import React, { useCallback, useEffect } from 'react';
+import { X, MessageSquare, Zap, Eye, History, Sparkles } from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
 import type { AICopilotTab } from '../../ai/types';
 import { ChatPanel } from './ChatPanel';
@@ -37,9 +30,25 @@ export const AICopilotDock: React.FC = () => {
   const isOpen = useAIStore((state) => state.isOpen);
   const activeTab = useAIStore((state) => state.activeTab);
   const pendingActions = useAIStore((state) => state.pendingActions);
-  const config = useAIStore((state) => state.config);
+  const availability = useAIStore((state) => state.availability);
   const closePanel = useAIStore((state) => state.closePanel);
   const setActiveTab = useAIStore((state) => state.setActiveTab);
+  const refreshAvailability = useAIStore((state) => state.refreshAvailability);
+
+  useEffect(() => {
+    if (isOpen) void refreshAvailability();
+  }, [isOpen, refreshAvailability]);
+
+  const statusLabel =
+    availability.mode === 'configured'
+      ? availability.transport === 'server-proxy'
+        ? 'Live · Server'
+        : 'Live · Browser key'
+      : availability.mode === 'mock'
+        ? 'Demo'
+        : availability.mode === 'checking'
+          ? 'Checking'
+          : 'Offline';
 
   const handleTabChange = useCallback(
     (tab: AICopilotTab) => {
@@ -57,12 +66,17 @@ export const AICopilotDock: React.FC = () => {
         <div className="ai-copilot-title">
           <Sparkles size={18} className="ai-copilot-icon" />
           <span>AI Copilot</span>
-          {config.mockMode && (
-            <span className="ai-copilot-badge ai-copilot-badge--mock">Demo</span>
-          )}
+          <span
+            className={`ai-copilot-badge ai-copilot-badge--${availability.mode}`}
+            data-testid="ai-runtime-status"
+            title={availability.reason}
+          >
+            {statusLabel}
+          </span>
         </div>
         <div className="ai-copilot-actions">
-          <button type="button"
+          <button
+            type="button"
             className="ai-copilot-btn ai-copilot-btn--icon"
             onClick={closePanel}
             title="Close"
@@ -75,7 +89,8 @@ export const AICopilotDock: React.FC = () => {
       {/* Tabs */}
       <div className="ai-copilot-tabs">
         {TABS.map((tab) => (
-          <button type="button"
+          <button
+            type="button"
             key={tab.id}
             className={`ai-copilot-tab ${activeTab === tab.id ? 'ai-copilot-tab--active' : ''}`}
             onClick={() => handleTabChange(tab.id)}

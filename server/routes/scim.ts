@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { Hono } from 'hono';
+import { serverConfig } from '../config/env.js';
 
 export const scimRouter = new Hono();
 
@@ -50,22 +51,28 @@ const SCIM_SCHEMA_USER = 'urn:ietf:params:scim:schemas:core:2.0:User';
 const SCIM_SCHEMA_GROUP = 'urn:ietf:params:scim:schemas:core:2.0:Group';
 const SCIM_SCHEMA_LIST = 'urn:ietf:params:scim:api:messages:2.0:ListResponse';
 
-const SCIM_TOKEN = process.env.SCIM_BEARER_TOKEN || '';
+const SCIM_TOKEN = serverConfig.scimBearerToken;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth Middleware
 // ─────────────────────────────────────────────────────────────────────────────
 
 scimRouter.use('*', async (c, next) => {
-  if (SCIM_TOKEN) {
-    const auth = c.req.header('Authorization');
-    if (!auth || auth !== `Bearer ${SCIM_TOKEN}`) {
-      return c.json({
-        schemas: ['urn:ietf:params:scim:api:messages:2.0:Error'],
-        detail: 'Unauthorized',
-        status: 401,
-      }, 401);
-    }
+  if (!SCIM_TOKEN) {
+    return c.json({
+      schemas: ['urn:ietf:params:scim:api:messages:2.0:Error'],
+      detail: 'SCIM service is not configured',
+      status: 503,
+    }, 503);
+  }
+
+  const auth = c.req.header('Authorization');
+  if (!auth || auth !== `Bearer ${SCIM_TOKEN}`) {
+    return c.json({
+      schemas: ['urn:ietf:params:scim:api:messages:2.0:Error'],
+      detail: 'Unauthorized',
+      status: 401,
+    }, 401);
   }
   await next();
 });

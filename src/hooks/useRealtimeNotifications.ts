@@ -28,9 +28,7 @@ export function useRealtimeNotifications(workbookId: string, userId: string) {
 
         if (notification.mentionedUserId === userId) {
           addNotification(notification);
-          loggers.websocket.info(
-            `Received mention from ${notification.mentionedByName}`
-          );
+          loggers.websocket.info(`Received mention from ${notification.mentionedByName}`);
         }
       })
       .subscribe((status) => {

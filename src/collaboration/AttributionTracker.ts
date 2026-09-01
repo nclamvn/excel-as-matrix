@@ -121,18 +121,14 @@ export class AttributionTracker {
    * Get all cells edited by a user
    */
   getCellsEditedBy(userId: string): CellAttribution[] {
-    return Array.from(this.attributions.values()).filter(
-      (a) => a.lastEditedBy.id === userId
-    );
+    return Array.from(this.attributions.values()).filter((a) => a.lastEditedBy.id === userId);
   }
 
   /**
    * Get cells edited in a time range
    */
   getCellsEditedSince(since: Date): CellAttribution[] {
-    return Array.from(this.attributions.values()).filter(
-      (a) => a.lastEditedAt >= since
-    );
+    return Array.from(this.attributions.values()).filter((a) => a.lastEditedAt >= since);
   }
 
   /**
@@ -171,8 +167,7 @@ export class AttributionTracker {
 
     for (const attr of attributions) {
       editors.add(attr.lastEditedBy.id);
-      editsByUser[attr.lastEditedBy.id] =
-        (editsByUser[attr.lastEditedBy.id] || 0) + 1;
+      editsByUser[attr.lastEditedBy.id] = (editsByUser[attr.lastEditedBy.id] || 0) + 1;
       allEdits.push(...attr.editHistory);
     }
 

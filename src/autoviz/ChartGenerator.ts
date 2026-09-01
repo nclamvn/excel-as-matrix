@@ -84,9 +84,7 @@ export class ChartGenerator {
     );
 
     // Find value columns
-    const valueCols = characteristics.columns.filter(
-      (c) => c.suggestedRole === 'value'
-    );
+    const valueCols = characteristics.columns.filter((c) => c.suggestedRole === 'value');
 
     // Build labels
     const labels = categoryCol
@@ -217,9 +215,7 @@ export class ChartGenerator {
     characteristics: DataCharacteristics,
     type: ChartType
   ): string {
-    const valueCol = characteristics.columns.find(
-      (c) => c.suggestedRole === 'value'
-    );
+    const valueCol = characteristics.columns.find((c) => c.suggestedRole === 'value');
     const categoryCol = characteristics.columns.find(
       (c) => c.suggestedRole === 'category' || c.suggestedRole === 'time'
     );
@@ -260,10 +256,7 @@ export class ChartGenerator {
   /**
    * Generate chart subtitle
    */
-  private generateSubtitle(
-    data: DataRange,
-    _characteristics: DataCharacteristics
-  ): string {
+  private generateSubtitle(data: DataRange, _characteristics: DataCharacteristics): string {
     return `${data.rowCount} data points`;
   }
 
@@ -307,10 +300,7 @@ export class ChartGenerator {
   /**
    * Generate quick chart (auto-detect best type)
    */
-  generateQuick(
-    data: DataRange,
-    characteristics: DataCharacteristics
-  ): ChartConfig {
+  generateQuick(data: DataRange, characteristics: DataCharacteristics): ChartConfig {
     // Auto-detect best chart type
     const type = this.detectBestChartType(characteristics);
     return this.generate(type, data, characteristics);
@@ -332,9 +322,7 @@ export class ChartGenerator {
 
     // Category with single value -> bar or pie
     if (characteristics.hasCategoryColumn) {
-      const categoryCol = characteristics.columns.find(
-        (c) => c.suggestedRole === 'category'
-      );
+      const categoryCol = characteristics.columns.find((c) => c.suggestedRole === 'category');
       if (categoryCol && categoryCol.uniqueValues && categoryCol.uniqueValues <= 6) {
         return 'pie';
       }
@@ -342,9 +330,7 @@ export class ChartGenerator {
     }
 
     // Two numeric columns -> scatter
-    const numericCols = characteristics.columns.filter(
-      (c) => c.dataType === 'number'
-    );
+    const numericCols = characteristics.columns.filter((c) => c.dataType === 'number');
     if (numericCols.length >= 2) {
       return 'scatter';
     }
@@ -356,10 +342,7 @@ export class ChartGenerator {
   /**
    * Clone config with modifications
    */
-  cloneConfig(
-    config: ChartConfig,
-    modifications: Partial<ChartConfig>
-  ): ChartConfig {
+  cloneConfig(config: ChartConfig, modifications: Partial<ChartConfig>): ChartConfig {
     return {
       ...config,
       ...modifications,
@@ -376,11 +359,7 @@ export class ChartGenerator {
   /**
    * Convert chart to different type
    */
-  convertType(
-    config: ChartConfig,
-    newType: ChartType,
-    colorScheme?: ColorScheme
-  ): ChartConfig {
+  convertType(config: ChartConfig, newType: ChartType, colorScheme?: ColorScheme): ChartConfig {
     const scheme = colorScheme || config.colorScheme;
 
     // Rebuild axes for new type
@@ -417,11 +396,7 @@ export class ChartGenerator {
   /**
    * Add series to existing config
    */
-  addSeries(
-    config: ChartConfig,
-    data: number[],
-    name: string
-  ): ChartConfig {
+  addSeries(config: ChartConfig, data: number[], name: string): ChartConfig {
     const newColor = getColorByIndex(config.colorScheme, config.series.length);
 
     const newDataset = {

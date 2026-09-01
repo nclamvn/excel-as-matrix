@@ -1,0 +1,14 @@
+# PROJECT.yaml · Meta của dự án — điền đầu tiên, trước mọi thứ khác.
+project: ExcelAI
+owner: nclamvn
+started: '2026-08-27'
+goal: >
+  Giữ một baseline kỹ thuật và sản phẩm có provenance để ưu tiên roadmap, kiểm tra
+  tuyên bố phát hành và chặn tài liệu dẫn xuất dùng số liệu đã drift.
+source_owners:
+  qa_baseline.csv: ExcelAI maintainer
+  repository_inventory.csv: ExcelAI maintainer
+  product_claims.csv: Product owner
+notes: >
+  Owner nclamvn được suy ra từ repository github.com/nclamvn/excel-as-matrix;
+  Chủ nhà cần xác nhận trước khi coi SOT là live và cấp publish token chính thức.

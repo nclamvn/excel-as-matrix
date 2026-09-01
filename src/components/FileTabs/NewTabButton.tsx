@@ -11,11 +11,7 @@ interface NewTabButtonProps {
 
 export const NewTabButton: React.FC<NewTabButtonProps> = ({ onClick }) => {
   return (
-    <button type="button"
-      className="new-tab-btn"
-      onClick={onClick}
-      title="New Workbook (Ctrl+N)"
-    >
+    <button type="button" className="new-tab-btn" onClick={onClick} title="New Workbook (Ctrl+N)">
       <Plus size={18} />
       <span className="new-tab-text">New</span>
     </button>

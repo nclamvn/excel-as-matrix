@@ -35,32 +35,50 @@ export const UpdatePrompt: React.FC = () => {
                 A new version is ready. Refresh to update.
               </p>
             </div>
-            <button type="button"
+            <button
+              type="button"
               onClick={dismissUpdate}
               className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
         </div>
 
         <div className="flex border-t">
-          <button type="button"
+          <button
+            type="button"
             onClick={dismissUpdate}
             className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
           >
             Later
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={update}
             disabled={isUpdating}
             className="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50"
           >
             {isUpdating ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-4 h-4 animate-spin"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -98,7 +116,8 @@ export const UpdateToast: React.FC = () => {
           />
         </svg>
         <span className="text-sm font-medium">New version available</span>
-        <button type="button"
+        <button
+          type="button"
           onClick={update}
           className="px-3 py-1 bg-white text-green-600 text-sm font-medium rounded hover:bg-green-50 transition-colors"
         >

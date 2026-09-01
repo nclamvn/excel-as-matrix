@@ -50,8 +50,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .status-bar-enhanced__mode-text {
@@ -119,8 +124,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Calc Customize */
@@ -207,7 +218,7 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-.calc-menu-option input[type="checkbox"] {
+.calc-menu-option input[type='checkbox'] {
   width: 16px;
   height: 16px;
   accent-color: #4ade80;

@@ -141,9 +141,7 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({
 };
 
 // Annotation Overlay Component
-const AnnotationOverlay: React.FC<{ annotation: Annotation }> = ({
-  annotation,
-}) => {
+const AnnotationOverlay: React.FC<{ annotation: Annotation }> = ({ annotation }) => {
   const { type, label, color, backgroundColor, borderColor } = annotation;
 
   const getStyle = (): React.CSSProperties => {

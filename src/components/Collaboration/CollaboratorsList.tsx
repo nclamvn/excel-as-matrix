@@ -96,16 +96,15 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = ({
     <div className="collab-list">
       <div className="collab-list__avatars">
         {visibleUsers.map((session) => (
-          <button type="button"
+          <button
+            type="button"
             key={session.user.id}
             className="collab-list__avatar-btn"
             onClick={() => onUserClick?.(session)}
             title={`${session.user.name}${session.activeSheet ? ` - on ${session.activeSheet}` : ''}`}
           >
             <UserAvatar user={session.user} size="md" showTooltip={false} />
-            <span
-              className={`collab-list__status collab-list__status--${session.status}`}
-            />
+            <span className={`collab-list__status collab-list__status--${session.status}`} />
           </button>
         ))}
         {hiddenCount > 0 && (
@@ -114,9 +113,7 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = ({
           </div>
         )}
       </div>
-      <span className="collab-list__count">
-        {otherUsers.length + 1} online
-      </span>
+      <span className="collab-list__count">{otherUsers.length + 1} online</span>
     </div>
   );
 };
@@ -161,9 +158,7 @@ export const CompactUserList: React.FC<CompactUserListProps> = ({
                 {session.user.id === currentUser.id && ' (you)'}
               </span>
               {session.activeSheet && (
-                <span className="collab-user-list__sheet">
-                  {session.activeSheet}
-                </span>
+                <span className="collab-user-list__sheet">{session.activeSheet}</span>
               )}
             </div>
             <span

@@ -174,11 +174,14 @@ export function useOfflineCache(options: UseOfflineCacheOptions = {}): UseOfflin
 
   // ============ Workbook Operations ============
 
-  const cacheWorkbook = useCallback(async (workbook: CachedWorkbook) => {
-    if (!cacheRef.current) return;
-    await cacheRef.current.saveWorkbook(workbook);
-    await refreshStats();
-  }, [refreshStats]);
+  const cacheWorkbook = useCallback(
+    async (workbook: CachedWorkbook) => {
+      if (!cacheRef.current) return;
+      await cacheRef.current.saveWorkbook(workbook);
+      await refreshStats();
+    },
+    [refreshStats]
+  );
 
   const getCachedWorkbook = useCallback(async (id: string) => {
     if (!cacheRef.current) return undefined;
@@ -192,11 +195,14 @@ export function useOfflineCache(options: UseOfflineCacheOptions = {}): UseOfflin
 
   // ============ Sheet Operations ============
 
-  const cacheSheet = useCallback(async (sheet: CachedSheet) => {
-    if (!cacheRef.current) return;
-    await cacheRef.current.saveSheet(sheet);
-    await refreshStats();
-  }, [refreshStats]);
+  const cacheSheet = useCallback(
+    async (sheet: CachedSheet) => {
+      if (!cacheRef.current) return;
+      await cacheRef.current.saveSheet(sheet);
+      await refreshStats();
+    },
+    [refreshStats]
+  );
 
   const getCachedSheet = useCallback(async (id: string) => {
     if (!cacheRef.current) return undefined;
@@ -215,11 +221,14 @@ export function useOfflineCache(options: UseOfflineCacheOptions = {}): UseOfflin
     await cacheRef.current.saveCell(cell);
   }, []);
 
-  const cacheCells = useCallback(async (cells: Omit<CachedCell, 'key'>[]) => {
-    if (!cacheRef.current) return;
-    await cacheRef.current.saveCells(cells);
-    await refreshStats();
-  }, [refreshStats]);
+  const cacheCells = useCallback(
+    async (cells: Omit<CachedCell, 'key'>[]) => {
+      if (!cacheRef.current) return;
+      await cacheRef.current.saveCells(cells);
+      await refreshStats();
+    },
+    [refreshStats]
+  );
 
   const getCachedCell = useCallback(
     async (workbookId: string, sheetId: string, row: number, col: number) => {

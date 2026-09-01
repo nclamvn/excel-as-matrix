@@ -7,15 +7,15 @@ export interface PictureObject {
   sheetId: string;
 
   // Source
-  src: string;              // Base64 or URL
-  originalName?: string;    // Original filename
+  src: string; // Base64 or URL
+  originalName?: string; // Original filename
 
   // Position & Size
   x: number;
   y: number;
   width: number;
   height: number;
-  originalWidth: number;    // For aspect ratio
+  originalWidth: number; // For aspect ratio
   originalHeight: number;
   rotation: number;
 
@@ -58,11 +58,7 @@ export interface PictureSelection {
   resizeHandle: ResizeHandle | null;
 }
 
-export type ResizeHandle =
-  | 'nw' | 'n' | 'ne'
-  | 'w'  |       'e'
-  | 'sw' | 's' | 'se'
-  | 'rotate';
+export type ResizeHandle = 'nw' | 'n' | 'ne' | 'w' | 'e' | 'sw' | 's' | 'se' | 'rotate';
 
 export const DEFAULT_PICTURE_STYLE = {
   opacity: 1,

@@ -60,9 +60,7 @@ export const ConversationFlow: React.FC<ConversationFlowProps> = ({
                 }`}
                 title={STATE_DESCRIPTIONS[state]}
               >
-                <span className="conversation-flow__dot-icon">
-                  {STATE_ICONS[state]}
-                </span>
+                <span className="conversation-flow__dot-icon">{STATE_ICONS[state]}</span>
               </div>
 
               {/* Connector line */}
@@ -87,13 +85,14 @@ export const ConversationFlow: React.FC<ConversationFlowProps> = ({
           {isError
             ? 'Error occurred'
             : isCancelled
-            ? 'Cancelled'
-            : STATE_DESCRIPTIONS[context.state]}
+              ? 'Cancelled'
+              : STATE_DESCRIPTIONS[context.state]}
         </span>
 
         {/* Cancel button */}
         {onCancel && !['complete', 'cancelled', 'idle'].includes(context.state) && (
-          <button type="button"
+          <button
+            type="button"
             className="conversation-flow__cancel"
             onClick={onCancel}
             title="Cancel"
@@ -106,13 +105,9 @@ export const ConversationFlow: React.FC<ConversationFlowProps> = ({
       {/* Error info */}
       {isError && context.lastError && (
         <div className="conversation-flow__error">
-          <span className="conversation-flow__error-message">
-            {context.lastError.message}
-          </span>
+          <span className="conversation-flow__error-message">{context.lastError.message}</span>
           {context.lastError.recoverable && (
-            <span className="conversation-flow__error-hint">
-              (Recoverable)
-            </span>
+            <span className="conversation-flow__error-hint">(Recoverable)</span>
           )}
         </div>
       )}
@@ -143,9 +138,7 @@ export const StateBadge: React.FC<StateBadgeProps> = ({
       style={{ '--state-color': color } as React.CSSProperties}
     >
       <span className="state-badge__icon">{STATE_ICONS[state]}</span>
-      {showLabel && (
-        <span className="state-badge__label">{formatStateName(state)}</span>
-      )}
+      {showLabel && <span className="state-badge__label">{formatStateName(state)}</span>}
     </span>
   );
 };
@@ -159,24 +152,15 @@ interface StateTimelineProps {
   className?: string;
 }
 
-export const StateTimeline: React.FC<StateTimelineProps> = ({
-  events,
-  className = '',
-}) => {
+export const StateTimeline: React.FC<StateTimelineProps> = ({ events, className = '' }) => {
   return (
     <div className={`state-timeline ${className}`}>
       {events.map((event, index) => (
         <div key={index} className="state-timeline__item">
-          <span className="state-timeline__dot">
-            {STATE_ICONS[event.state]}
-          </span>
+          <span className="state-timeline__dot">{STATE_ICONS[event.state]}</span>
           <div className="state-timeline__content">
-            <span className="state-timeline__state">
-              {formatStateName(event.state)}
-            </span>
-            <span className="state-timeline__time">
-              {formatTime(event.timestamp)}
-            </span>
+            <span className="state-timeline__state">{formatStateName(event.state)}</span>
+            <span className="state-timeline__time">{formatTime(event.timestamp)}</span>
           </div>
         </div>
       ))}

@@ -99,6 +99,9 @@ export interface AIToolCall {
 
 export interface AIProposedAction {
   id: string;
+  /** Sheet captured when the proposal was created; approval never follows a later active-sheet change. */
+  sheetId?: string;
+  workbookId?: string | null;
   type: 'write' | 'delete' | 'format' | 'formula' | 'bulk';
   description: string;
   preview: AIActionPreview;
@@ -107,6 +110,7 @@ export interface AIProposedAction {
   status: 'pending' | 'approved' | 'rejected' | 'executed';
   createdAt: Date;
   executedAt?: Date;
+  toolCall?: AIToolCall;
 }
 
 export interface AIActionPreview {
@@ -197,6 +201,14 @@ export interface AIActionHistory {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type AIAutonomyMode = 'copilot' | 'autopilot';
+export type AIRuntimeMode = 'checking' | 'offline' | 'mock' | 'configured';
+export type AITransport = 'server-proxy' | 'browser-key' | null;
+
+export interface AIAvailability {
+  mode: AIRuntimeMode;
+  transport: AITransport;
+  reason: string;
+}
 
 export interface AIConfig {
   apiKey?: string;
@@ -216,7 +228,7 @@ export const DEFAULT_AI_CONFIG: AIConfig = {
   model: 'claude-sonnet-4-20250514',
   maxTokens: 4096,
   temperature: 0.7,
-  mockMode: true, // Start in mock mode
+  mockMode: false, // Fail closed until a proxy/key is configured or demo is explicitly enabled
   autonomyMode: 'copilot', // Default: user approves everything
   autoApprove: {
     enabled: false,

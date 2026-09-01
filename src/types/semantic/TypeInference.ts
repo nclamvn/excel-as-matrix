@@ -19,86 +19,237 @@ export interface TypeInferenceResult {
 // Header Patterns
 // -----------------------------------------------------------------------------
 
-const HEADER_PATTERNS: Array<{ pattern: RegExp; type: string; confidence: number; reason: string }> = [
+const HEADER_PATTERNS: Array<{
+  pattern: RegExp;
+  type: string;
+  confidence: number;
+  reason: string;
+}> = [
   // Financial
-  { pattern: /\b(price|cost|amount|total|revenue|salary|budget|income|expense|payment)\b/i, type: 'currency', confidence: 0.85, reason: 'Header suggests currency' },
-  { pattern: /\b(percent|rate|ratio|%)\b/i, type: 'percentage', confidence: 0.85, reason: 'Header suggests percentage' },
+  {
+    pattern: /\b(price|cost|amount|total|revenue|salary|budget|income|expense|payment)\b/i,
+    type: 'currency',
+    confidence: 0.85,
+    reason: 'Header suggests currency',
+  },
+  {
+    pattern: /\b(percent|rate|ratio|%)\b/i,
+    type: 'percentage',
+    confidence: 0.85,
+    reason: 'Header suggests percentage',
+  },
 
   // Temporal
-  { pattern: /\b(date|day|created|updated|deadline|birthday|dob|born)\b/i, type: 'date', confidence: 0.85, reason: 'Header suggests date' },
-  { pattern: /\b(time|hour|minute|timestamp)\b/i, type: 'time', confidence: 0.80, reason: 'Header suggests time' },
-  { pattern: /\b(datetime|timestamp|created_at|updated_at)\b/i, type: 'datetime', confidence: 0.85, reason: 'Header suggests datetime' },
-  { pattern: /\b(duration|elapsed|time_spent|period)\b/i, type: 'duration', confidence: 0.80, reason: 'Header suggests duration' },
+  {
+    pattern: /\b(date|day|created|updated|deadline|birthday|dob|born)\b/i,
+    type: 'date',
+    confidence: 0.85,
+    reason: 'Header suggests date',
+  },
+  {
+    pattern: /\b(time|hour|minute|timestamp)\b/i,
+    type: 'time',
+    confidence: 0.8,
+    reason: 'Header suggests time',
+  },
+  {
+    pattern: /\b(datetime|timestamp|created_at|updated_at)\b/i,
+    type: 'datetime',
+    confidence: 0.85,
+    reason: 'Header suggests datetime',
+  },
+  {
+    pattern: /\b(duration|elapsed|time_spent|period)\b/i,
+    type: 'duration',
+    confidence: 0.8,
+    reason: 'Header suggests duration',
+  },
 
   // Contact
-  { pattern: /\b(email|e-mail|mail)\b/i, type: 'email', confidence: 0.95, reason: 'Header suggests email' },
-  { pattern: /\b(phone|tel|mobile|cell|fax)\b/i, type: 'phone', confidence: 0.95, reason: 'Header suggests phone' },
-  { pattern: /\b(url|website|link|webpage|site)\b/i, type: 'url', confidence: 0.95, reason: 'Header suggests URL' },
+  {
+    pattern: /\b(email|e-mail|mail)\b/i,
+    type: 'email',
+    confidence: 0.95,
+    reason: 'Header suggests email',
+  },
+  {
+    pattern: /\b(phone|tel|mobile|cell|fax)\b/i,
+    type: 'phone',
+    confidence: 0.95,
+    reason: 'Header suggests phone',
+  },
+  {
+    pattern: /\b(url|website|link|webpage|site)\b/i,
+    type: 'url',
+    confidence: 0.95,
+    reason: 'Header suggests URL',
+  },
 
   // Numeric
-  { pattern: /\b(count|quantity|qty|number|#|num|total|amount)\b/i, type: 'integer', confidence: 0.80, reason: 'Header suggests integer' },
-  { pattern: /\b(id|code|sku|ref|reference)\b/i, type: 'text', confidence: 0.70, reason: 'Header suggests identifier' },
+  {
+    pattern: /\b(count|quantity|qty|number|#|num|total|amount)\b/i,
+    type: 'integer',
+    confidence: 0.8,
+    reason: 'Header suggests integer',
+  },
+  {
+    pattern: /\b(id|code|sku|ref|reference)\b/i,
+    type: 'text',
+    confidence: 0.7,
+    reason: 'Header suggests identifier',
+  },
 
   // Boolean
-  { pattern: /\b(active|enabled|status|verified|approved|is_|has_|can_)\b/i, type: 'boolean', confidence: 0.75, reason: 'Header suggests boolean' },
+  {
+    pattern: /\b(active|enabled|status|verified|approved|is_|has_|can_)\b/i,
+    type: 'boolean',
+    confidence: 0.75,
+    reason: 'Header suggests boolean',
+  },
 
   // Measurement
   { pattern: /\b(weight|mass)\b/i, type: 'mass', confidence: 0.85, reason: 'Header suggests mass' },
-  { pattern: /\b(height|length|width|distance|depth)\b/i, type: 'length', confidence: 0.85, reason: 'Header suggests length' },
-  { pattern: /\b(temperature|temp)\b/i, type: 'temperature', confidence: 0.90, reason: 'Header suggests temperature' },
-  { pattern: /\b(area|size|surface)\b/i, type: 'area', confidence: 0.80, reason: 'Header suggests area' },
-  { pattern: /\b(volume|capacity)\b/i, type: 'volume', confidence: 0.80, reason: 'Header suggests volume' },
-  { pattern: /\b(speed|velocity)\b/i, type: 'speed', confidence: 0.85, reason: 'Header suggests speed' },
+  {
+    pattern: /\b(height|length|width|distance|depth)\b/i,
+    type: 'length',
+    confidence: 0.85,
+    reason: 'Header suggests length',
+  },
+  {
+    pattern: /\b(temperature|temp)\b/i,
+    type: 'temperature',
+    confidence: 0.9,
+    reason: 'Header suggests temperature',
+  },
+  {
+    pattern: /\b(area|size|surface)\b/i,
+    type: 'area',
+    confidence: 0.8,
+    reason: 'Header suggests area',
+  },
+  {
+    pattern: /\b(volume|capacity)\b/i,
+    type: 'volume',
+    confidence: 0.8,
+    reason: 'Header suggests volume',
+  },
+  {
+    pattern: /\b(speed|velocity)\b/i,
+    type: 'speed',
+    confidence: 0.85,
+    reason: 'Header suggests speed',
+  },
 
   // Geographic
-  { pattern: /\b(lat|lng|latitude|longitude|coords|coordinates)\b/i, type: 'coordinates', confidence: 0.90, reason: 'Header suggests coordinates' },
-  { pattern: /\b(country|nation)\b/i, type: 'country', confidence: 0.85, reason: 'Header suggests country' },
+  {
+    pattern: /\b(lat|lng|latitude|longitude|coords|coordinates)\b/i,
+    type: 'coordinates',
+    confidence: 0.9,
+    reason: 'Header suggests coordinates',
+  },
+  {
+    pattern: /\b(country|nation)\b/i,
+    type: 'country',
+    confidence: 0.85,
+    reason: 'Header suggests country',
+  },
 ];
 
 // -----------------------------------------------------------------------------
 // Value Patterns
 // -----------------------------------------------------------------------------
 
-const VALUE_PATTERNS: Array<{ pattern: RegExp; type: string; confidence: number; reason: string }> = [
-  // Email
-  { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, type: 'email', confidence: 0.95, reason: 'Email pattern detected' },
+const VALUE_PATTERNS: Array<{ pattern: RegExp; type: string; confidence: number; reason: string }> =
+  [
+    // Email
+    {
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      type: 'email',
+      confidence: 0.95,
+      reason: 'Email pattern detected',
+    },
 
-  // URL
-  { pattern: /^https?:\/\//, type: 'url', confidence: 0.95, reason: 'URL pattern detected' },
+    // URL
+    { pattern: /^https?:\/\//, type: 'url', confidence: 0.95, reason: 'URL pattern detected' },
 
-  // Phone
-  { pattern: /^\+?[\d\s\-()]{7,}$/, type: 'phone', confidence: 0.80, reason: 'Phone pattern detected' },
+    // Phone
+    {
+      pattern: /^\+?[\d\s\-()]{7,}$/,
+      type: 'phone',
+      confidence: 0.8,
+      reason: 'Phone pattern detected',
+    },
 
-  // Date patterns
-  { pattern: /^\d{4}-\d{2}-\d{2}$/, type: 'date', confidence: 0.90, reason: 'ISO date pattern' },
-  { pattern: /^\d{2}\/\d{2}\/\d{4}$/, type: 'date', confidence: 0.85, reason: 'US date pattern' },
-  { pattern: /^\d{2}-\d{2}-\d{4}$/, type: 'date', confidence: 0.85, reason: 'Date pattern' },
+    // Date patterns
+    { pattern: /^\d{4}-\d{2}-\d{2}$/, type: 'date', confidence: 0.9, reason: 'ISO date pattern' },
+    { pattern: /^\d{2}\/\d{2}\/\d{4}$/, type: 'date', confidence: 0.85, reason: 'US date pattern' },
+    { pattern: /^\d{2}-\d{2}-\d{4}$/, type: 'date', confidence: 0.85, reason: 'Date pattern' },
 
-  // Datetime
-  { pattern: /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/, type: 'datetime', confidence: 0.90, reason: 'Datetime pattern' },
+    // Datetime
+    {
+      pattern: /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/,
+      type: 'datetime',
+      confidence: 0.9,
+      reason: 'Datetime pattern',
+    },
 
-  // Time
-  { pattern: /^\d{2}:\d{2}(:\d{2})?$/, type: 'time', confidence: 0.90, reason: 'Time pattern' },
+    // Time
+    { pattern: /^\d{2}:\d{2}(:\d{2})?$/, type: 'time', confidence: 0.9, reason: 'Time pattern' },
 
-  // Percentage
-  { pattern: /^-?\d+(\.\d+)?%$/, type: 'percentage', confidence: 0.95, reason: 'Percentage pattern' },
+    // Percentage
+    {
+      pattern: /^-?\d+(\.\d+)?%$/,
+      type: 'percentage',
+      confidence: 0.95,
+      reason: 'Percentage pattern',
+    },
 
-  // Currency
-  { pattern: /^\$-?\d+(\.\d{2})?$/, type: 'currency', confidence: 0.90, reason: 'USD currency pattern' },
-  { pattern: /^-?\d+(\.\d{2})?\s*(USD|EUR|GBP|JPY)$/i, type: 'currency', confidence: 0.90, reason: 'Currency with code' },
+    // Currency
+    {
+      pattern: /^\$-?\d+(\.\d{2})?$/,
+      type: 'currency',
+      confidence: 0.9,
+      reason: 'USD currency pattern',
+    },
+    {
+      pattern: /^-?\d+(\.\d{2})?\s*(USD|EUR|GBP|JPY)$/i,
+      type: 'currency',
+      confidence: 0.9,
+      reason: 'Currency with code',
+    },
 
-  // VND
-  { pattern: /^-?\d+(\.\d+)?\s*(VND|đ|₫)$/i, type: 'currency_vnd', confidence: 0.90, reason: 'VND currency pattern' },
+    // VND
+    {
+      pattern: /^-?\d+(\.\d+)?\s*(VND|đ|₫)$/i,
+      type: 'currency_vnd',
+      confidence: 0.9,
+      reason: 'VND currency pattern',
+    },
 
-  // Boolean strings
-  { pattern: /^(true|false|yes|no|y|n|1|0)$/i, type: 'boolean', confidence: 0.85, reason: 'Boolean string' },
+    // Boolean strings
+    {
+      pattern: /^(true|false|yes|no|y|n|1|0)$/i,
+      type: 'boolean',
+      confidence: 0.85,
+      reason: 'Boolean string',
+    },
 
-  // UUID
-  { pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, type: 'uuid', confidence: 0.98, reason: 'UUID pattern' },
+    // UUID
+    {
+      pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+      type: 'uuid',
+      confidence: 0.98,
+      reason: 'UUID pattern',
+    },
 
-  // Coordinates
-  { pattern: /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/, type: 'coordinates', confidence: 0.80, reason: 'Coordinate pair' },
-];
+    // Coordinates
+    {
+      pattern: /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/,
+      type: 'coordinates',
+      confidence: 0.8,
+      reason: 'Coordinate pair',
+    },
+  ];
 
 // -----------------------------------------------------------------------------
 // Type Inference Class
@@ -268,9 +419,7 @@ export class TypeInference {
    * Infer type from multiple sample values
    */
   inferFromSamples(values: unknown[]): TypeInferenceResult {
-    const nonEmptyValues = values.filter(
-      (v) => v !== null && v !== undefined && v !== ''
-    );
+    const nonEmptyValues = values.filter((v) => v !== null && v !== undefined && v !== '');
 
     if (nonEmptyValues.length === 0) {
       return {

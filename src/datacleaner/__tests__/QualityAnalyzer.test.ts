@@ -16,8 +16,8 @@ function createTestSheetData(options: {
     sheetName: 'Test Sheet',
     rowCount: rows,
     colCount: cols,
-    cells: options.cells.map(row =>
-      row.map(v => ({
+    cells: options.cells.map((row) =>
+      row.map((v) => ({
         value: v,
         isEmpty: v === null || v === undefined || v === '',
       }))
@@ -38,7 +38,11 @@ describe('QualityAnalyzer', () => {
     describe('overall score', () => {
       it('returns quality score object', () => {
         const data = createTestSheetData({
-          cells: [['A', 1], ['B', 2], ['C', 3]],
+          cells: [
+            ['A', 1],
+            ['B', 2],
+            ['C', 3],
+          ],
         });
         const score = analyzer.analyze(data);
 
@@ -52,7 +56,11 @@ describe('QualityAnalyzer', () => {
 
       it('overall score is between 0 and 100', () => {
         const data = createTestSheetData({
-          cells: [['A', 1], ['B', 2], ['C', 3]],
+          cells: [
+            ['A', 1],
+            ['B', 2],
+            ['C', 3],
+          ],
         });
         const score = analyzer.analyze(data);
 
@@ -143,7 +151,7 @@ describe('QualityAnalyzer', () => {
         });
         const score = analyzer.analyze(data);
 
-        const dupIssue = score.issues.find(i => i.type === 'duplicate');
+        const dupIssue = score.issues.find((i) => i.type === 'duplicate');
         expect(dupIssue).toBeDefined();
         expect(dupIssue?.autoFixable).toBe(true);
       });
@@ -188,14 +196,11 @@ describe('QualityAnalyzer', () => {
       });
 
       it('creates missing value issues for columns with > 5% missing', () => {
-        const cells = Array.from({ length: 20 }, (_, i) => [
-          i % 5 === 0 ? '' : `Item ${i}`,
-          i,
-        ]);
+        const cells = Array.from({ length: 20 }, (_, i) => [i % 5 === 0 ? '' : `Item ${i}`, i]);
         const data = createTestSheetData({ cells });
         const score = analyzer.analyze(data);
 
-        const missingIssue = score.issues.find(i => i.type === 'missing');
+        const missingIssue = score.issues.find((i) => i.type === 'missing');
         // Depends on threshold
         expect(score.categories.completeness).toBeDefined();
       });
@@ -218,26 +223,18 @@ describe('QualityAnalyzer', () => {
 
       it('validates numbers', () => {
         const data = createTestSheetData({
-          cells: [
-            [100],
-            [200],
-            ['not a number'],
-          ],
+          cells: [[100], [200], ['not a number']],
           columnTypes: ['number'],
         });
         const score = analyzer.analyze(data);
 
-        const validityIssue = score.issues.find(i => i.type === 'invalid_format');
+        const validityIssue = score.issues.find((i) => i.type === 'invalid_format');
         expect(validityIssue).toBeDefined();
       });
 
       it('validates dates', () => {
         const data = createTestSheetData({
-          cells: [
-            ['2024-01-15'],
-            ['01/15/2024'],
-            ['not a date'],
-          ],
+          cells: [['2024-01-15'], ['01/15/2024'], ['not a date']],
           columnTypes: ['date'],
         });
         const score = analyzer.analyze(data);
@@ -247,17 +244,13 @@ describe('QualityAnalyzer', () => {
 
       it('validates emails', () => {
         const data = createTestSheetData({
-          cells: [
-            ['user@example.com'],
-            ['invalid-email'],
-            ['another@test.org'],
-          ],
+          cells: [['user@example.com'], ['invalid-email'], ['another@test.org']],
           columnTypes: ['email'],
         });
         const score = analyzer.analyze(data);
 
-        const emailIssue = score.issues.find(i =>
-          i.type === 'invalid_format' && i.title.includes('email')
+        const emailIssue = score.issues.find(
+          (i) => i.type === 'invalid_format' && i.title.includes('email')
         );
         // May have issues for invalid email
         expect(score.categories.validity).toBeDefined();
@@ -265,11 +258,7 @@ describe('QualityAnalyzer', () => {
 
       it('validates phone numbers', () => {
         const data = createTestSheetData({
-          cells: [
-            ['(555) 123-4567'],
-            ['+1-555-987-6543'],
-            ['not a phone'],
-          ],
+          cells: [['(555) 123-4567'], ['+1-555-987-6543'], ['not a phone']],
           columnTypes: ['phone'],
         });
         const score = analyzer.analyze(data);
@@ -281,12 +270,7 @@ describe('QualityAnalyzer', () => {
     describe('consistency category', () => {
       it('detects inconsistent naming', () => {
         const data = createTestSheetData({
-          cells: [
-            ['USA'],
-            ['U.S.A.'],
-            ['United States'],
-            ['usa'],
-          ],
+          cells: [['USA'], ['U.S.A.'], ['United States'], ['usa']],
           columnTypes: ['text'],
         });
         const score = analyzer.analyze(data);
@@ -305,11 +289,7 @@ describe('QualityAnalyzer', () => {
 
       it('creates inconsistency issues', () => {
         const data = createTestSheetData({
-          cells: [
-            ['New York'],
-            ['new york'],
-            ['NEW YORK'],
-          ],
+          cells: [['New York'], ['new york'], ['NEW YORK']],
         });
         const score = analyzer.analyze(data);
 
@@ -349,16 +329,14 @@ describe('QualityAnalyzer', () => {
       });
 
       it('marks outlier issues as not auto-fixable', () => {
-        const cells = Array.from({ length: 20 }, (_, i) => [
-          i === 19 ? 100000 : 100,
-        ]);
+        const cells = Array.from({ length: 20 }, (_, i) => [i === 19 ? 100000 : 100]);
         const data = createTestSheetData({
           cells,
           columnTypes: ['number'],
         });
         const score = analyzer.analyze(data);
 
-        const outlierIssue = score.issues.find(i => i.type === 'outlier');
+        const outlierIssue = score.issues.find((i) => i.type === 'outlier');
         if (outlierIssue) {
           expect(outlierIssue.autoFixable).toBe(false);
         }
@@ -498,7 +476,10 @@ describe('QualityAnalyzer', () => {
 
     it('handles all empty cells', () => {
       const data = createTestSheetData({
-        cells: [[null, null], ['', '']],
+        cells: [
+          [null, null],
+          ['', ''],
+        ],
       });
       const score = analyzer.analyze(data);
 
@@ -507,7 +488,11 @@ describe('QualityAnalyzer', () => {
 
     it('handles numeric-only data', () => {
       const data = createTestSheetData({
-        cells: [[1, 2], [3, 4], [5, 6]],
+        cells: [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+        ],
         columnTypes: ['number', 'number'],
       });
       const score = analyzer.analyze(data);
@@ -559,10 +544,10 @@ describe('QualityAnalyzer', () => {
       // Overall should be weighted average
       const expectedOverall = Math.round(
         score.categories.duplicates.score * 0.2 +
-        score.categories.completeness.score * 0.25 +
-        score.categories.validity.score * 0.2 +
-        score.categories.consistency.score * 0.2 +
-        score.categories.accuracy.score * 0.15
+          score.categories.completeness.score * 0.25 +
+          score.categories.validity.score * 0.2 +
+          score.categories.consistency.score * 0.2 +
+          score.categories.accuracy.score * 0.15
       );
 
       expect(score.overall).toBe(expectedOverall);

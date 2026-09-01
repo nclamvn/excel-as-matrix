@@ -273,14 +273,7 @@ export interface ValidationRule {
   errorMessage: string;
 }
 
-export type ValidationType =
-  | 'required'
-  | 'unique'
-  | 'range'
-  | 'regex'
-  | 'enum'
-  | 'type'
-  | 'custom';
+export type ValidationType = 'required' | 'unique' | 'range' | 'regex' | 'enum' | 'type' | 'custom';
 
 export interface ValidationParams {
   min?: number;
@@ -368,12 +361,7 @@ export interface CellChange {
   changeType: ChangeType;
 }
 
-export type ChangeType =
-  | 'modified'
-  | 'deleted'
-  | 'filled'
-  | 'trimmed'
-  | 'standardized';
+export type ChangeType = 'modified' | 'deleted' | 'filled' | 'trimmed' | 'standardized';
 
 export interface CleaningSummary {
   totalChanges: number;

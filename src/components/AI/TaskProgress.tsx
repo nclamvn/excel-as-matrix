@@ -47,10 +47,7 @@ export const TaskProgress: React.FC<TaskProgressProps> = ({
 
       {/* Progress bar */}
       <div className="task-progress__bar">
-        <div
-          className="task-progress__fill"
-          style={{ width: `${progress}%` }}
-        />
+        <div className="task-progress__fill" style={{ width: `${progress}%` }} />
       </div>
 
       {/* Steps */}
@@ -82,9 +79,7 @@ export const TaskProgress: React.FC<TaskProgressProps> = ({
 
       {/* Summary */}
       <div className="task-progress__summary">
-        <span className="task-progress__complexity">
-          Complexity: {plan.estimatedComplexity}
-        </span>
+        <span className="task-progress__complexity">Complexity: {plan.estimatedComplexity}</span>
       </div>
     </div>
   );
@@ -102,21 +97,11 @@ interface TaskStepRowProps {
   onSkip?: () => void;
 }
 
-const TaskStepRow: React.FC<TaskStepRowProps> = ({
-  step,
-  result,
-  isCurrent,
-  onRetry,
-  onSkip,
-}) => {
+const TaskStepRow: React.FC<TaskStepRowProps> = ({ step, result, isCurrent, onRetry, onSkip }) => {
   return (
-    <div
-      className={`task-step ${isCurrent ? 'task-step--current' : ''} task-step--${step.status}`}
-    >
+    <div className={`task-step ${isCurrent ? 'task-step--current' : ''} task-step--${step.status}`}>
       {/* Status indicator */}
-      <span className="task-step__status">
-        {getStatusIcon(step.status)}
-      </span>
+      <span className="task-step__status">{getStatusIcon(step.status)}</span>
 
       {/* Step info */}
       <div className="task-step__info">
@@ -127,9 +112,7 @@ const TaskStepRow: React.FC<TaskStepRowProps> = ({
         <span className="task-step__description">{step.description}</span>
 
         {/* Error message */}
-        {result?.error && (
-          <span className="task-step__error">{result.error}</span>
-        )}
+        {result?.error && <span className="task-step__error">{result.error}</span>}
       </div>
 
       {/* Actions */}
@@ -158,10 +141,7 @@ interface CompactProgressProps {
   className?: string;
 }
 
-export const CompactProgress: React.FC<CompactProgressProps> = ({
-  plan,
-  className = '',
-}) => {
+export const CompactProgress: React.FC<CompactProgressProps> = ({ plan, className = '' }) => {
   return (
     <div className={`compact-progress ${className}`}>
       {plan.steps.map((step) => (
@@ -187,11 +167,7 @@ interface StepListProps {
   className?: string;
 }
 
-export const StepList: React.FC<StepListProps> = ({
-  steps,
-  currentIndex,
-  className = '',
-}) => {
+export const StepList: React.FC<StepListProps> = ({ steps, currentIndex, className = '' }) => {
   return (
     <ol className={`step-list ${className}`}>
       {steps.map((step, index) => {
@@ -206,17 +182,15 @@ export const StepList: React.FC<StepListProps> = ({
               isPast
                 ? 'step-list__item--past'
                 : isCurrent
-                ? 'step-list__item--current'
-                : isFuture
-                ? 'step-list__item--future'
-                : ''
+                  ? 'step-list__item--current'
+                  : isFuture
+                    ? 'step-list__item--future'
+                    : ''
             }`}
           >
             <span className="step-list__number">{index + 1}</span>
             <span className="step-list__name">{step.name}</span>
-            <span className="step-list__status">
-              {getStatusIcon(step.status)}
-            </span>
+            <span className="step-list__status">{getStatusIcon(step.status)}</span>
           </li>
         );
       })}
@@ -283,9 +257,7 @@ export const ProgressSummary: React.FC<ProgressSummaryProps> = ({
       </div>
 
       {totalTime > 0 && (
-        <span className="progress-summary__time">
-          Total time: {formatDuration(totalTime)}
-        </span>
+        <span className="progress-summary__time">Total time: {formatDuration(totalTime)}</span>
       )}
     </div>
   );

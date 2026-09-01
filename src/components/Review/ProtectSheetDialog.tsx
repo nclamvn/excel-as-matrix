@@ -49,25 +49,29 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({ sheetId,
   };
 
   const toggleOption = (key: keyof typeof options) => {
-    setOptions(prev => ({ ...prev, [key]: !prev[key] }));
+    setOptions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const formatOptionLabel = (key: string) => {
     return key
       .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, str => str.toUpperCase())
+      .replace(/^./, (str) => str.toUpperCase())
       .trim();
   };
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog protect-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog protect-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>
             {isProtected ? (
-              <><ShieldOff size={20} /> Unprotect Sheet</>
+              <>
+                <ShieldOff size={20} /> Unprotect Sheet
+              </>
             ) : (
-              <><Shield size={20} /> Protect Sheet</>
+              <>
+                <Shield size={20} /> Protect Sheet
+              </>
             )}
           </h3>
           <button type="button" className="close-btn" onClick={onClose}>
@@ -137,8 +141,11 @@ export const ProtectSheetDialog: React.FC<ProtectSheetDialogProps> = ({ sheetId,
         </div>
 
         <div className="dialog-footer">
-          <button type="button" onClick={onClose}>Cancel</button>
-          <button type="button"
+          <button type="button" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            type="button"
             className="primary"
             onClick={isProtected ? handleUnprotect : handleProtect}
           >

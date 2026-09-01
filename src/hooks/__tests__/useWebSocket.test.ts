@@ -97,8 +97,8 @@ const { mockAuthState } = vi.hoisted(() => ({
     current: {
       user: { id: 'user-1', displayName: 'Test User', avatarUrl: null },
       tokens: { token: 'test-token' },
-    }
-  }
+    },
+  },
 }));
 
 vi.mock('../../stores/authStore', () => ({
@@ -113,6 +113,9 @@ const OriginalWebSocket = global.WebSocket;
 
 describe('useWebSocket', () => {
   let mockWs: MockWebSocket | null = null;
+  const captureMockWebSocket = (instance: MockWebSocket) => {
+    mockWs = instance;
+  };
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -128,7 +131,7 @@ describe('useWebSocket', () => {
 
       constructor(url: string) {
         super(url);
-        mockWs = this;
+        captureMockWebSocket(this);
       }
     }
     global.WebSocket = WebSocketMock as unknown as typeof WebSocket;
@@ -222,9 +225,7 @@ describe('useWebSocket', () => {
 
       await waitFor(() => {
         expect(mockWs?.sentMessages.length).toBeGreaterThan(0);
-        const joinMessage = mockWs?.sentMessages.find(m =>
-          JSON.parse(m).type === 'join'
-        );
+        const joinMessage = mockWs?.sentMessages.find((m) => JSON.parse(m).type === 'join');
         expect(joinMessage).toBeDefined();
       });
     });
@@ -330,8 +331,8 @@ describe('useWebSocket', () => {
         });
       });
 
-      const cellUpdateMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'cell_update'
+      const cellUpdateMessage = mockWs?.sentMessages.find(
+        (m) => JSON.parse(m).type === 'cell_update'
       );
       expect(cellUpdateMessage).toBeDefined();
     });
@@ -353,9 +354,7 @@ describe('useWebSocket', () => {
         result.current.sendCursorMove(5, 10);
       });
 
-      const cursorMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'cursor_move'
-      );
+      const cursorMessage = mockWs?.sentMessages.find((m) => JSON.parse(m).type === 'cursor_move');
       expect(cursorMessage).toBeDefined();
       const parsed = JSON.parse(cursorMessage!);
       expect(parsed.payload.row).toBe(5);
@@ -379,8 +378,8 @@ describe('useWebSocket', () => {
         result.current.sendSelectionChange(0, 0, 5, 5);
       });
 
-      const selectionMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'selection_change'
+      const selectionMessage = mockWs?.sentMessages.find(
+        (m) => JSON.parse(m).type === 'selection_change'
       );
       expect(selectionMessage).toBeDefined();
     });
@@ -402,9 +401,7 @@ describe('useWebSocket', () => {
         result.current.sendSheetChange('sheet-2');
       });
 
-      const sheetMessage = mockWs?.sentMessages.find(m =>
-        JSON.parse(m).type === 'sheet_change'
-      );
+      const sheetMessage = mockWs?.sentMessages.find((m) => JSON.parse(m).type === 'sheet_change');
       expect(sheetMessage).toBeDefined();
     });
   });

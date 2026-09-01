@@ -112,7 +112,13 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
             {showLegend && <Legend wrapperStyle={{ fontSize: '12px' }} />}
             <Bar dataKey="value" fill={colors[0]} radius={[4, 4, 0, 0]} name="value" />
             {seriesKeys?.map((key, i) => (
-              <Bar key={key} dataKey={key} fill={colors[(i + 1) % colors.length]} radius={[4, 4, 0, 0]} name={key} />
+              <Bar
+                key={key}
+                dataKey={key}
+                fill={colors[(i + 1) % colors.length]}
+                radius={[4, 4, 0, 0]}
+                name={key}
+              />
             ))}
           </BarChart>
         );
@@ -142,7 +148,15 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
               activeDot={{ r: 6 }}
             />
             {seriesKeys?.map((key, i) => (
-              <Line key={key} type="monotone" dataKey={key} stroke={colors[(i + 1) % colors.length]} strokeWidth={2} dot={{ fill: colors[(i + 1) % colors.length], strokeWidth: 2 }} name={key} />
+              <Line
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stroke={colors[(i + 1) % colors.length]}
+                strokeWidth={2}
+                dot={{ fill: colors[(i + 1) % colors.length], strokeWidth: 2 }}
+                name={key}
+              />
             ))}
           </LineChart>
         );
@@ -170,7 +184,15 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
               strokeWidth={2}
             />
             {seriesKeys?.map((key, i) => (
-              <Area key={key} type="monotone" dataKey={key} stroke={colors[(i + 1) % colors.length]} fill={`${colors[(i + 1) % colors.length]}33`} strokeWidth={2} name={key} />
+              <Area
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stroke={colors[(i + 1) % colors.length]}
+                fill={`${colors[(i + 1) % colors.length]}33`}
+                strokeWidth={2}
+                name={key}
+              />
             ))}
           </AreaChart>
         );
@@ -185,16 +207,11 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
               cx="50%"
               cy="50%"
               outerRadius={Math.min(width, height) / 3}
-              label={({ name, percent }) =>
-                `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
-              }
+              label={({ name, percent }) => `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`}
               labelLine={{ stroke: '#737373' }}
             >
               {data.map((_, index) => (
-                <PieCell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                />
+                <PieCell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>
             <Tooltip

@@ -35,7 +35,9 @@ export class CommentManager {
       this.handleCommentAdd(msg.payload as { comment: Comment })
     );
     this.wsClient.on('comment_update', (msg) =>
-      this.handleCommentUpdate(msg.payload as { commentId: string; content: string; updatedAt: Date })
+      this.handleCommentUpdate(
+        msg.payload as { commentId: string; content: string; updatedAt: Date }
+      )
     );
     this.wsClient.on('comment_delete', (msg) =>
       this.handleCommentDelete(msg.payload as { commentId: string })
@@ -224,10 +226,7 @@ export class CommentManager {
    * Get comment count for cell
    */
   getCommentCount(sheetId: string, cellRef: string): number {
-    return this.getThreadsForCell(sheetId, cellRef).reduce(
-      (sum, t) => sum + t.comments.length,
-      0
-    );
+    return this.getThreadsForCell(sheetId, cellRef).reduce((sum, t) => sum + t.comments.length, 0);
   }
 
   /**

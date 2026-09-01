@@ -12,10 +12,7 @@ interface DashboardViewProps {
   onWidgetClick?: (widgetId: string) => void;
 }
 
-export const DashboardView: React.FC<DashboardViewProps> = ({
-  dashboard,
-  onWidgetClick,
-}) => {
+export const DashboardView: React.FC<DashboardViewProps> = ({ dashboard, onWidgetClick }) => {
   const {
     isEditMode,
     isPresentationMode,
@@ -48,9 +45,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // Calculate grid position from pixel position
   const getGridPosition = useCallback(
     (pixelX: number, pixelY: number, width: number, height: number): WidgetPosition => {
-      const x = Math.max(0, Math.min(columns - 1, Math.round((pixelX - padding[0]) / (colWidth + margin[0]))));
+      const x = Math.max(
+        0,
+        Math.min(columns - 1, Math.round((pixelX - padding[0]) / (colWidth + margin[0])))
+      );
       const y = Math.max(0, Math.round((pixelY - padding[1]) / (rowHeight + margin[1])));
-      const w = Math.max(1, Math.min(columns - x, Math.round((width + margin[0]) / (colWidth + margin[0]))));
+      const w = Math.max(
+        1,
+        Math.min(columns - x, Math.round((width + margin[0]) / (colWidth + margin[0])))
+      );
       const h = Math.max(1, Math.round((height + margin[1]) / (rowHeight + margin[1])));
       return { x, y, w, h, isStatic: false };
     },
@@ -94,7 +97,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         { id: draggedWidget, position: { ...widget.position, x: newGridPos.x, y: newGridPos.y } },
       ]);
     },
-    [isDragging, draggedWidget, dashboard, dragOffset, getPixelPosition, getGridPosition, updateWidgetPositions]
+    [
+      isDragging,
+      draggedWidget,
+      dashboard,
+      dragOffset,
+      getPixelPosition,
+      getGridPosition,
+      updateWidgetPositions,
+    ]
   );
 
   const handleDragEnd = useCallback(() => {

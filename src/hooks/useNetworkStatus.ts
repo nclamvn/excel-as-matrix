@@ -89,7 +89,9 @@ export function useNetworkStatus(): NetworkStatus {
 }
 
 // Connection quality helper
-export function getConnectionQuality(status: NetworkStatus): 'good' | 'moderate' | 'poor' | 'offline' {
+export function getConnectionQuality(
+  status: NetworkStatus
+): 'good' | 'moderate' | 'poor' | 'offline' {
   if (!status.isOnline) return 'offline';
 
   switch (status.effectiveType) {

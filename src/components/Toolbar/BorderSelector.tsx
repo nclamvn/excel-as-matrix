@@ -34,7 +34,8 @@ export const BorderSelector: React.FC<BorderSelectorProps> = ({ value, onChange 
 
   return (
     <div className="border-selector" ref={ref}>
-      <button type="button"
+      <button
+        type="button"
         className="border-selector-trigger"
         onClick={() => setOpen(!isOpen)}
         title="Borders"
@@ -45,8 +46,9 @@ export const BorderSelector: React.FC<BorderSelectorProps> = ({ value, onChange 
 
       {isOpen && (
         <div className="border-selector-dropdown">
-          {BORDER_OPTIONS.map(option => (
-            <button type="button"
+          {BORDER_OPTIONS.map((option) => (
+            <button
+              type="button"
               key={option.id}
               className={`border-option ${value === option.id ? 'selected' : ''}`}
               onClick={() => {
@@ -84,11 +86,27 @@ const BorderIcon: React.FC<{ type: string }> = ({ type }) => {
           <line x1="2" y1="10" x2="14" y2="10" stroke="currentColor" strokeWidth="1" />
           <line x1="6" y1="2" x2="6" y2="14" stroke="currentColor" strokeWidth="1" />
           <line x1="10" y1="2" x2="10" y2="14" stroke="currentColor" strokeWidth="1" />
-          <rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1" />
+          <rect
+            x="2"
+            y="2"
+            width="12"
+            height="12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+          />
         </>
       )}
       {type === 'outside' && (
-        <rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1" />
+        <rect
+          x="2"
+          y="2"
+          width="12"
+          height="12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+        />
       )}
       {type === 'bottom' && (
         <line x1="2" y1="14" x2="14" y2="14" stroke="currentColor" strokeWidth="2" />

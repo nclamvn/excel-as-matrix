@@ -73,9 +73,7 @@ export class DataAnalyzer {
   /**
    * Detect data type of a column
    */
-  private detectDataType(
-    values: unknown[]
-  ): 'number' | 'text' | 'date' | 'boolean' | 'mixed' {
+  private detectDataType(values: unknown[]): 'number' | 'text' | 'date' | 'boolean' | 'mixed' {
     if (values.length === 0) return 'text';
 
     let numberCount = 0;
@@ -140,10 +138,7 @@ export class DataAnalyzer {
   /**
    * Calculate statistics for a column
    */
-  private calculateStats(
-    values: unknown[],
-    dataType: string
-  ): Partial<ColumnAnalysis> {
+  private calculateStats(values: unknown[], dataType: string): Partial<ColumnAnalysis> {
     const stats: Partial<ColumnAnalysis> = {
       uniqueValues: new Set(values.map(String)).size,
       nullCount: 0,
@@ -163,12 +158,8 @@ export class DataAnalyzer {
         stats.max = Math.max(...numbers);
         stats.mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
 
-        const squaredDiffs = numbers.map((n) =>
-          Math.pow(n - stats.mean!, 2)
-        );
-        stats.stdDev = Math.sqrt(
-          squaredDiffs.reduce((a, b) => a + b, 0) / numbers.length
-        );
+        const squaredDiffs = numbers.map((n) => Math.pow(n - stats.mean!, 2));
+        stats.stdDev = Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / numbers.length);
       }
     }
 
@@ -263,10 +254,7 @@ export class DataAnalyzer {
   /**
    * Detect patterns in data
    */
-  private detectPatterns(
-    data: DataRange,
-    columns: ColumnAnalysis[]
-  ): DataPattern[] {
+  private detectPatterns(data: DataRange, columns: ColumnAnalysis[]): DataPattern[] {
     const patterns: DataPattern[] = [];
 
     // Detect trend in numeric columns
@@ -363,9 +351,7 @@ export class DataAnalyzer {
   /**
    * Detect trend in values
    */
-  private detectTrend(
-    values: number[]
-  ): { direction: 'up' | 'down'; confidence: number } | null {
+  private detectTrend(values: number[]): { direction: 'up' | 'down'; confidence: number } | null {
     if (values.length < 3) return null;
 
     // Simple linear regression
@@ -398,11 +384,7 @@ export class DataAnalyzer {
   /**
    * Detect outliers using IQR method
    */
-  private detectOutliers(
-    values: number[],
-    mean: number,
-    stdDev: number
-  ): number[] {
+  private detectOutliers(values: number[], mean: number, stdDev: number): number[] {
     const threshold = 2.5; // 2.5 standard deviations
     return values.filter((v) => Math.abs(v - mean) > threshold * stdDev);
   }
@@ -410,11 +392,7 @@ export class DataAnalyzer {
   /**
    * Calculate Pearson correlation coefficient
    */
-  private calculateCorrelation(
-    data: DataRange,
-    col1: number,
-    col2: number
-  ): number {
+  private calculateCorrelation(data: DataRange, col1: number, col2: number): number {
     const pairs: { x: number; y: number }[] = [];
 
     for (let row = 0; row < data.rowCount; row++) {
@@ -422,14 +400,8 @@ export class DataAnalyzer {
       const v2 = data.data[row]?.[col2];
 
       if (v1 !== null && v2 !== null) {
-        const n1 =
-          typeof v1 === 'number'
-            ? v1
-            : parseFloat(String(v1).replace(/[$€¥£,\s%]/g, ''));
-        const n2 =
-          typeof v2 === 'number'
-            ? v2
-            : parseFloat(String(v2).replace(/[$€¥£,\s%]/g, ''));
+        const n1 = typeof v1 === 'number' ? v1 : parseFloat(String(v1).replace(/[$€¥£,\s%]/g, ''));
+        const n2 = typeof v2 === 'number' ? v2 : parseFloat(String(v2).replace(/[$€¥£,\s%]/g, ''));
 
         if (!isNaN(n1) && !isNaN(n2)) {
           pairs.push({ x: n1, y: n2 });
@@ -447,9 +419,7 @@ export class DataAnalyzer {
     const sumY2 = pairs.reduce((s, p) => s + p.y * p.y, 0);
 
     const numerator = n * sumXY - sumX * sumY;
-    const denominator = Math.sqrt(
-      (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
-    );
+    const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
 
     if (denominator === 0) return 0;
 
@@ -469,11 +439,9 @@ export class DataAnalyzer {
     void sorted[Math.floor(n / 2)];
 
     // Calculate skewness
-    const variance =
-      values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / n;
+    const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / n;
     const stdDev = Math.sqrt(variance);
-    const skewness =
-      values.reduce((sum, v) => sum + Math.pow((v - mean) / stdDev, 3), 0) / n;
+    const skewness = values.reduce((sum, v) => sum + Math.pow((v - mean) / stdDev, 3), 0) / n;
 
     if (Math.abs(skewness) < 0.5) {
       return 'Normal distribution (symmetric)';

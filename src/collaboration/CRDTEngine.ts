@@ -30,13 +30,8 @@ export class CRDTEngine {
   /**
    * Create a new operation
    */
-  createOperation(
-    type: CRDTOperation['type'],
-    path: string[],
-    value?: unknown
-  ): CRDTOperation {
-    this.state.vectorClock[this.userId] =
-      (this.state.vectorClock[this.userId] || 0) + 1;
+  createOperation(type: CRDTOperation['type'], path: string[], value?: unknown): CRDTOperation {
+    this.state.vectorClock[this.userId] = (this.state.vectorClock[this.userId] || 0) + 1;
 
     const op: CRDTOperation = {
       id: crypto.randomUUID(),
@@ -128,10 +123,7 @@ export class CRDTEngine {
    */
   private mergeVectorClock(remote: VectorClock): void {
     for (const [userId, time] of Object.entries(remote)) {
-      this.state.vectorClock[userId] = Math.max(
-        this.state.vectorClock[userId] || 0,
-        time
-      );
+      this.state.vectorClock[userId] = Math.max(this.state.vectorClock[userId] || 0, time);
     }
   }
 

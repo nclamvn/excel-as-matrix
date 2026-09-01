@@ -33,7 +33,7 @@ export class OutlierDetector {
 
       if (values.length < 10) continue; // Need enough data
 
-      const stats = this.calculateStats(values.map(v => v.value));
+      const stats = this.calculateStats(values.map((v) => v.value));
       const outliers = this.findOutliers(values, stats);
 
       if (outliers.length > 0) {
@@ -171,9 +171,8 @@ export class OutlierDetector {
 
     for (const { row, value } of values) {
       if (value < lowerBound || value > upperBound) {
-        const score = value < lowerBound
-          ? (lowerBound - value) / stats.iqr
-          : (value - upperBound) / stats.iqr;
+        const score =
+          value < lowerBound ? (lowerBound - value) / stats.iqr : (value - upperBound) / stats.iqr;
 
         outliers.push({
           row,
@@ -199,12 +198,13 @@ export class OutlierDetector {
     const outliers: OutlierCell[] = [];
 
     // Calculate MAD
-    const deviations = values.map(v => Math.abs(v.value - stats.median));
+    const deviations = values.map((v) => Math.abs(v.value - stats.median));
     const sortedDeviations = [...deviations].sort((a, b) => a - b);
     const mid = Math.floor(sortedDeviations.length / 2);
-    const mad = sortedDeviations.length % 2 === 0
-      ? (sortedDeviations[mid - 1] + sortedDeviations[mid]) / 2
-      : sortedDeviations[mid];
+    const mad =
+      sortedDeviations.length % 2 === 0
+        ? (sortedDeviations[mid - 1] + sortedDeviations[mid]) / 2
+        : sortedDeviations[mid];
 
     if (mad === 0) return outliers;
 
@@ -354,10 +354,7 @@ export class OutlierDetector {
   /**
    * Apply cap/winsorization - cap outliers to bounds
    */
-  applyCap(
-    data: CleanerSheetData,
-    outlierInfo: OutlierInfo
-  ): CellChange[] {
+  applyCap(data: CleanerSheetData, outlierInfo: OutlierInfo): CellChange[] {
     const changes: CellChange[] = [];
     const bounds = this.getBounds(outlierInfo.stats);
 
@@ -396,20 +393,14 @@ export class OutlierDetector {
   /**
    * Replace outliers with median
    */
-  applyReplaceWithMedian(
-    data: CleanerSheetData,
-    outlierInfo: OutlierInfo
-  ): CellChange[] {
+  applyReplaceWithMedian(data: CleanerSheetData, outlierInfo: OutlierInfo): CellChange[] {
     return this.applyReplaceWith(data, outlierInfo, outlierInfo.stats.median);
   }
 
   /**
    * Replace outliers with mean
    */
-  applyReplaceWithMean(
-    data: CleanerSheetData,
-    outlierInfo: OutlierInfo
-  ): CellChange[] {
+  applyReplaceWithMean(data: CleanerSheetData, outlierInfo: OutlierInfo): CellChange[] {
     return this.applyReplaceWith(data, outlierInfo, outlierInfo.stats.mean);
   }
 
@@ -448,7 +439,7 @@ export class OutlierDetector {
    * Get rows to remove (for outlier removal)
    */
   getRowsToRemove(outlierInfo: OutlierInfo): number[] {
-    return outlierInfo.outliers.map(o => o.row).sort((a, b) => b - a); // Descending order
+    return outlierInfo.outliers.map((o) => o.row).sort((a, b) => b - a); // Descending order
   }
 
   /**

@@ -21,7 +21,8 @@ export const RibbonButton: React.FC<RibbonButtonProps> = ({
   title,
 }) => {
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`ribbon-button ${size} ${active ? 'active' : ''}`}
       onClick={onClick}
       disabled={disabled}

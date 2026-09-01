@@ -4,7 +4,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle, RotateCcw, Trash2, X } from 'lucide-react';
-import { crashRecovery, type RecoveryData, type JournalEntry } from '../../recovery/CrashRecoveryJournal';
+import {
+  crashRecovery,
+  type RecoveryData,
+  type JournalEntry,
+} from '../../recovery/CrashRecoveryJournal';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useUIStore } from '../../stores/uiStore';
 import type { CellValue } from '../../types/cell';
@@ -67,17 +71,18 @@ export const CrashRecoveryBanner: React.FC = () => {
       <div className="flex items-center gap-3">
         <AlertTriangle size={20} className="text-amber-600 flex-shrink-0" />
         <div>
-          <p className="text-sm font-medium text-amber-900">
-            Unsaved changes detected
-          </p>
+          <p className="text-sm font-medium text-amber-900">Unsaved changes detected</p>
           <p className="text-xs text-amber-700">
-            {entryCount} changes from {ageMinutes < 60 ? `${ageMinutes} min` : `${Math.round(ageMinutes / 60)}h`} ago were not saved.
+            {entryCount} changes from{' '}
+            {ageMinutes < 60 ? `${ageMinutes} min` : `${Math.round(ageMinutes / 60)}h`} ago were not
+            saved.
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <button type="button"
+        <button
+          type="button"
           onClick={handleRecover}
           disabled={isRecovering}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md disabled:opacity-50 transition-colors"
@@ -87,7 +92,8 @@ export const CrashRecoveryBanner: React.FC = () => {
           {isRecovering ? 'Recovering...' : 'Restore'}
         </button>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleDiscard}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-amber-800 bg-amber-100 hover:bg-amber-200 rounded-md transition-colors"
           data-testid="recovery-discard-btn"
@@ -96,7 +102,8 @@ export const CrashRecoveryBanner: React.FC = () => {
           Discard
         </button>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleDismiss}
           className="p-1 text-amber-500 hover:text-amber-700 rounded transition-colors"
           aria-label="Dismiss"

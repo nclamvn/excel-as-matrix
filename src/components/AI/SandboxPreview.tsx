@@ -33,18 +33,11 @@ interface SandboxCardProps {
 // Sandbox Card (for list view)
 // -----------------------------------------------------------------------------
 
-export const SandboxCard: React.FC<SandboxCardProps> = ({
-  sandbox,
-  onClick,
-  selected = false,
-}) => {
+export const SandboxCard: React.FC<SandboxCardProps> = ({ sandbox, onClick, selected = false }) => {
   const timeAgo = getTimeAgo(sandbox.createdAt);
 
   return (
-    <div
-      className={`sandbox-card ${selected ? 'sandbox-card--selected' : ''}`}
-      onClick={onClick}
-    >
+    <div className={`sandbox-card ${selected ? 'sandbox-card--selected' : ''}`} onClick={onClick}>
       <div className="sandbox-card-header">
         <div className="sandbox-card-title">
           <GitBranch size={14} />
@@ -63,9 +56,7 @@ export const SandboxCard: React.FC<SandboxCardProps> = ({
           {sandbox.createdBy === 'ai' ? 'AI' : 'User'}
         </span>
         {sandbox.diff && (
-          <span className="sandbox-card-changes">
-            {sandbox.diff.summary.totalChanges} changes
-          </span>
+          <span className="sandbox-card-changes">{sandbox.diff.summary.totalChanges} changes</span>
         )}
       </div>
 
@@ -161,10 +152,7 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
             <span>{sandbox.name}</span>
           </div>
           {sandbox.riskAssessment && (
-            <RiskBadge
-              level={sandbox.riskAssessment.overallRisk}
-              size="small"
-            />
+            <RiskBadge level={sandbox.riskAssessment.overallRisk} size="small" />
           )}
         </div>
 
@@ -226,16 +214,9 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
       {/* Risk Assessment */}
       {sandbox.riskAssessment && (
         <div className="sandbox-section">
-          <div
-            className="sandbox-section-header"
-            onClick={() => toggleSection('risk')}
-          >
+          <div className="sandbox-section-header" onClick={() => toggleSection('risk')}>
             <span>Risk Assessment</span>
-            {expandedSections.risk ? (
-              <ChevronUp size={16} />
-            ) : (
-              <ChevronDown size={16} />
-            )}
+            {expandedSections.risk ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </div>
           {expandedSections.risk && (
             <div className="sandbox-section-content">
@@ -254,16 +235,9 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
       {/* Diff Preview */}
       {sandbox.diff && (
         <div className="sandbox-section">
-          <div
-            className="sandbox-section-header"
-            onClick={() => toggleSection('diff')}
-          >
+          <div className="sandbox-section-header" onClick={() => toggleSection('diff')}>
             <span>Changes Preview</span>
-            {expandedSections.diff ? (
-              <ChevronUp size={16} />
-            ) : (
-              <ChevronDown size={16} />
-            )}
+            {expandedSections.diff ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </div>
           {expandedSections.diff && (
             <div className="sandbox-section-content">
@@ -276,16 +250,9 @@ export const SandboxPreview: React.FC<SandboxPreviewProps> = ({
       {/* Metadata (AI reasoning, etc.) */}
       {sandbox.metadata && (sandbox.metadata.intent || sandbox.metadata.reasoning) && (
         <div className="sandbox-section">
-          <div
-            className="sandbox-section-header"
-            onClick={() => toggleSection('metadata')}
-          >
+          <div className="sandbox-section-header" onClick={() => toggleSection('metadata')}>
             <span>AI Context</span>
-            {expandedSections.metadata ? (
-              <ChevronUp size={16} />
-            ) : (
-              <ChevronDown size={16} />
-            )}
+            {expandedSections.metadata ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </div>
           {expandedSections.metadata && (
             <div className="sandbox-section-content sandbox-metadata">

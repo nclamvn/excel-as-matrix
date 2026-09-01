@@ -80,12 +80,10 @@ class AIUsageLogger {
       this.sessionStats.totalErrors++;
     }
 
-    this.sessionStats.byAction[event.action] =
-      (this.sessionStats.byAction[event.action] || 0) + 1;
+    this.sessionStats.byAction[event.action] = (this.sessionStats.byAction[event.action] || 0) + 1;
     this.sessionStats.averageTokensPerRequest =
       this.sessionStats.totalTokens / this.sessionStats.totalRequests;
-    this.sessionStats.averageDurationMs =
-      this.totalDurationMs / this.sessionStats.totalRequests;
+    this.sessionStats.averageDurationMs = this.totalDurationMs / this.sessionStats.totalRequests;
 
     // Determine severity
     let severity: AuditSeverity = 'info';
@@ -174,6 +172,7 @@ class AIUsageLogger {
       status: options.status,
       errorMessage: options.errorMessage,
     });
+    await auditLog.flush();
   }
 
   /**
@@ -182,6 +181,7 @@ class AIUsageLogger {
   async logToolDecision(options: {
     conversationId: string;
     userId?: string | null;
+    workbookId?: string | null;
     toolName: string;
     actionId: string;
     approved: boolean;
@@ -189,7 +189,7 @@ class AIUsageLogger {
     await this.logUsage({
       conversationId: options.conversationId,
       userId: options.userId ?? null,
-      workbookId: null,
+      workbookId: options.workbookId ?? null,
       action: options.approved ? 'tool.approve' : 'tool.reject',
       toolName: options.toolName,
       inputSummary: `actionId=${options.actionId}`,
@@ -199,6 +199,7 @@ class AIUsageLogger {
       piiRedacted: 0,
       status: 'success',
     });
+    await auditLog.flush();
   }
 
   /**
@@ -234,13 +235,15 @@ class AIUsageLogger {
   /**
    * Query AI usage from audit log
    */
-  async queryUsage(options: {
-    userId?: string;
-    workbookId?: string;
-    startDate?: string;
-    endDate?: string;
-    limit?: number;
-  } = {}) {
+  async queryUsage(
+    options: {
+      userId?: string;
+      workbookId?: string;
+      startDate?: string;
+      endDate?: string;
+      limit?: number;
+    } = {}
+  ) {
     return auditLog.query({
       category: 'ai',
       userId: options.userId,

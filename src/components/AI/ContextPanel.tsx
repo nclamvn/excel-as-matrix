@@ -3,15 +3,7 @@
 // =============================================================================
 
 import React, { useState, useEffect } from 'react';
-import {
-  Eye,
-  MousePointer,
-  FileSpreadsheet,
-  Hash,
-  Cpu,
-  Activity,
-  RefreshCw,
-} from 'lucide-react';
+import { Eye, MousePointer, FileSpreadsheet, Hash, Cpu, Activity, RefreshCw } from 'lucide-react';
 import { useWorkbookStore } from '../../stores/workbookStore';
 import { useSelectionStore } from '../../stores/selectionStore';
 import { getAIRuntime } from '../../ai/AIRuntime';
@@ -60,9 +52,7 @@ const ContextSection: React.FC<ContextSectionProps> = ({
       >
         {icon}
         <span>{title}</span>
-        {collapsible && (
-          <span className="collapse-indicator">{collapsed ? '▶' : '▼'}</span>
-        )}
+        {collapsible && <span className="collapse-indicator">{collapsed ? '▶' : '▼'}</span>}
       </div>
       {!collapsed && <div className="ai-context-section-content">{children}</div>}
     </div>
@@ -81,8 +71,7 @@ interface TokenBudgetBarProps {
 
 const TokenBudgetBar: React.FC<TokenBudgetBarProps> = ({ used, total, label }) => {
   const percentage = Math.min((used / total) * 100, 100);
-  const colorClass =
-    percentage > 80 ? 'high' : percentage > 50 ? 'medium' : 'low';
+  const colorClass = percentage > 80 ? 'high' : percentage > 50 ? 'medium' : 'low';
 
   return (
     <div className="token-budget-bar">
@@ -93,10 +82,7 @@ const TokenBudgetBar: React.FC<TokenBudgetBarProps> = ({ used, total, label }) =
         </span>
       </div>
       <div className="token-budget-track">
-        <div
-          className={`token-budget-fill ${colorClass}`}
-          style={{ width: `${percentage}%` }}
-        />
+        <div className={`token-budget-fill ${colorClass}`} style={{ width: `${percentage}%` }} />
       </div>
     </div>
   );
@@ -170,7 +156,8 @@ export const ContextPanel: React.FC = () => {
       <div className="ai-context-header">
         <Eye size={18} />
         <h3>Current Context</h3>
-        <button type="button"
+        <button
+          type="button"
           className="ai-context-refresh"
           onClick={handleRefreshContext}
           disabled={isRefreshing}
@@ -181,9 +168,7 @@ export const ContextPanel: React.FC = () => {
       </div>
 
       <div className="ai-context-info">
-        <p>
-          This is what the AI Copilot knows about your current spreadsheet state.
-        </p>
+        <p>This is what the AI Copilot knows about your current spreadsheet state.</p>
       </div>
 
       {/* Selection Context */}
@@ -209,9 +194,7 @@ export const ContextPanel: React.FC = () => {
           </div>
           <div className="ai-context-item">
             <span className="label">ID</span>
-            <span className="value ai-context-id">
-              {activeSheetId?.slice(0, 8) || 'N/A'}
-            </span>
+            <span className="value ai-context-id">{activeSheetId?.slice(0, 8) || 'N/A'}</span>
           </div>
         </div>
       </ContextSection>
@@ -236,7 +219,9 @@ export const ContextPanel: React.FC = () => {
           <div className="ai-context-tokens">
             <TokenBudgetBar
               used={assembledContext.metadata.totalTokens}
-              total={assembledContext.metadata.totalTokens + assembledContext.metadata.budgetRemaining}
+              total={
+                assembledContext.metadata.totalTokens + assembledContext.metadata.budgetRemaining
+              }
               label="Total"
             />
             <TokenBudgetBar
@@ -281,11 +266,15 @@ export const ContextPanel: React.FC = () => {
             </div>
             <div className="ai-context-item">
               <span className="label">Upstream Deps</span>
-              <span className="value">{assembledContext.dependencyContext.upstreamCells.length}</span>
+              <span className="value">
+                {assembledContext.dependencyContext.upstreamCells.length}
+              </span>
             </div>
             <div className="ai-context-item">
               <span className="label">Downstream Deps</span>
-              <span className="value">{assembledContext.dependencyContext.downstreamCells.length}</span>
+              <span className="value">
+                {assembledContext.dependencyContext.downstreamCells.length}
+              </span>
             </div>
             <div className="ai-context-item">
               <span className="label">Assembly Time</span>

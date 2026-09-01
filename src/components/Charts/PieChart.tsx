@@ -59,14 +59,7 @@ export const PieChart: React.FC<PieChartProps> = ({
       currentAngle = endAngle;
 
       // Create SVG arc path
-      const path = createArcPath(
-        centerX,
-        centerY,
-        radius,
-        innerRadius,
-        startAngle,
-        endAngle
-      );
+      const path = createArcPath(centerX, centerY, radius, innerRadius, startAngle, endAngle);
 
       // Calculate label position
       const midAngle = (startAngle + endAngle) / 2;
@@ -153,12 +146,7 @@ export const PieChart: React.FC<PieChartProps> = ({
           >
             {total.toLocaleString()}
           </text>
-          <text
-            x={centerX}
-            y={centerY + 12}
-            textAnchor="middle"
-            className="text-xs fill-gray-500"
-          >
+          <text x={centerX} y={centerY + 12} textAnchor="middle" className="text-xs fill-gray-500">
             Total
           </text>
         </g>
@@ -178,14 +166,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                 onMouseEnter={() => setHoveredSlice(i)}
                 onMouseLeave={() => setHoveredSlice(null)}
               >
-                <rect
-                  x={-40}
-                  y={-6}
-                  width={12}
-                  height={12}
-                  fill={slice.color}
-                  rx={2}
-                />
+                <rect x={-40} y={-6} width={12} height={12} fill={slice.color} rx={2} />
                 <text
                   x={-25}
                   y={4}

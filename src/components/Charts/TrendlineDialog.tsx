@@ -3,14 +3,7 @@
 // ============================================================
 
 import React, { useState, useMemo } from 'react';
-import {
-  X,
-  TrendingUp,
-  LineChart,
-  Activity,
-  BarChart2,
-  Zap,
-} from 'lucide-react';
+import { X, TrendingUp, LineChart, Activity, BarChart2, Zap } from 'lucide-react';
 import {
   TrendlineType,
   TrendlineConfig,
@@ -27,7 +20,12 @@ interface TrendlineDialogProps {
   seriesName?: string;
 }
 
-const TRENDLINE_OPTIONS: { type: TrendlineType; label: string; icon: React.ReactNode; description: string }[] = [
+const TRENDLINE_OPTIONS: {
+  type: TrendlineType;
+  label: string;
+  icon: React.ReactNode;
+  description: string;
+}[] = [
   {
     type: 'linear',
     label: 'Linear',
@@ -95,8 +93,8 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [dashArray, setDashArray] = useState('5,5');
 
-  const xValues = dataPoints.map(p => p.x);
-  const yValues = dataPoints.map(p => p.y);
+  const xValues = dataPoints.map((p) => p.x);
+  const yValues = dataPoints.map((p) => p.y);
 
   // Calculate preview result
   const previewResult = useMemo(() => {
@@ -116,7 +114,21 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
     };
 
     return calculateTrendline(xValues, yValues, config);
-  }, [selectedType, degree, period, forward, backward, dataPoints, xValues, yValues, displayEquation, displayRSquared, color, strokeWidth, dashArray]);
+  }, [
+    selectedType,
+    degree,
+    period,
+    forward,
+    backward,
+    dataPoints,
+    xValues,
+    yValues,
+    displayEquation,
+    displayRSquared,
+    color,
+    strokeWidth,
+    dashArray,
+  ]);
 
   const handleApply = () => {
     if (!previewResult) return;
@@ -142,7 +154,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog trendline-dialog" onClick={e => e.stopPropagation()}>
+      <div className="dialog trendline-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h2>
             <TrendingUp size={18} />
@@ -158,8 +170,9 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
           <div className="dialog-field">
             <label>Trendline Type</label>
             <div className="trendline-type-grid">
-              {TRENDLINE_OPTIONS.map(option => (
-                <button type="button"
+              {TRENDLINE_OPTIONS.map((option) => (
+                <button
+                  type="button"
                   key={option.type}
                   className={`trendline-type-btn ${selectedType === option.type ? 'active' : ''}`}
                   onClick={() => setSelectedType(option.type)}
@@ -179,8 +192,9 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
             <div className="dialog-field">
               <label>Polynomial Degree</label>
               <div className="degree-selector">
-                {[2, 3, 4, 5, 6].map(d => (
-                  <button type="button"
+                {[2, 3, 4, 5, 6].map((d) => (
+                  <button
+                    type="button"
                     key={d}
                     className={`degree-btn ${degree === d ? 'active' : ''}`}
                     onClick={() => setDegree(d)}
@@ -201,7 +215,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                 min="2"
                 max="20"
                 value={period}
-                onChange={e => setPeriod(parseInt(e.target.value) || 3)}
+                onChange={(e) => setPeriod(parseInt(e.target.value) || 3)}
                 className="dialog-input"
                 style={{ width: '100px' }}
               />
@@ -219,7 +233,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                   min="0"
                   max="100"
                   value={forward}
-                  onChange={e => setForward(parseInt(e.target.value) || 0)}
+                  onChange={(e) => setForward(parseInt(e.target.value) || 0)}
                   className="dialog-input"
                 />
                 <span>periods</span>
@@ -231,7 +245,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                   min="0"
                   max="100"
                   value={backward}
-                  onChange={e => setBackward(parseInt(e.target.value) || 0)}
+                  onChange={(e) => setBackward(parseInt(e.target.value) || 0)}
                   className="dialog-input"
                 />
                 <span>periods</span>
@@ -247,7 +261,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                 <input
                   type="checkbox"
                   checked={displayEquation}
-                  onChange={e => setDisplayEquation(e.target.checked)}
+                  onChange={(e) => setDisplayEquation(e.target.checked)}
                 />
                 <span>Display equation on chart</span>
               </label>
@@ -256,7 +270,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                   <input
                     type="checkbox"
                     checked={displayRSquared}
-                    onChange={e => setDisplayRSquared(e.target.checked)}
+                    onChange={(e) => setDisplayRSquared(e.target.checked)}
                   />
                   <span>Display R-squared value on chart</span>
                 </label>
@@ -271,8 +285,9 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
               <div className="color-picker">
                 <span>Color:</span>
                 <div className="color-options">
-                  {COLOR_OPTIONS.map(c => (
-                    <button type="button"
+                  {COLOR_OPTIONS.map((c) => (
+                    <button
+                      type="button"
                       key={c}
                       className={`color-btn ${color === c ? 'active' : ''}`}
                       style={{ backgroundColor: c }}
@@ -285,7 +300,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                 <span>Width:</span>
                 <select
                   value={strokeWidth}
-                  onChange={e => setStrokeWidth(parseFloat(e.target.value))}
+                  onChange={(e) => setStrokeWidth(parseFloat(e.target.value))}
                   className="dialog-select"
                 >
                   <option value="1">Thin (1px)</option>
@@ -297,7 +312,7 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
                 <span>Dash:</span>
                 <select
                   value={dashArray}
-                  onChange={e => setDashArray(e.target.value)}
+                  onChange={(e) => setDashArray(e.target.value)}
                   className="dialog-select"
                 >
                   <option value="">Solid</option>
@@ -356,7 +371,8 @@ export const TrendlineDialog: React.FC<TrendlineDialogProps> = ({
           <button type="button" className="dialog-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="dialog-btn-primary"
             onClick={handleApply}
             disabled={!previewResult || previewResult.points.length === 0}

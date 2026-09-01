@@ -15,10 +15,7 @@ interface FileTabsProps {
   onNewTab?: () => void;
 }
 
-export const FileTabs: React.FC<FileTabsProps> = ({
-  onTabChange,
-  onNewTab,
-}) => {
+export const FileTabs: React.FC<FileTabsProps> = ({ onTabChange, onNewTab }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = React.useState<{
     tabId: string;
@@ -93,17 +90,14 @@ export const FileTabs: React.FC<FileTabsProps> = ({
     onTabChange?.(newTabId, null);
   }, [addTab, onNewTab, onTabChange]);
 
-  const handleContextMenu = useCallback(
-    (tabId: string, e: React.MouseEvent) => {
-      e.preventDefault();
-      setContextMenu({
-        tabId,
-        x: e.clientX,
-        y: e.clientY,
-      });
-    },
-    []
-  );
+  const handleContextMenu = useCallback((tabId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({
+      tabId,
+      x: e.clientX,
+      y: e.clientY,
+    });
+  }, []);
 
   const closeContextMenu = useCallback(() => {
     setContextMenu(null);
@@ -120,8 +114,7 @@ export const FileTabs: React.FC<FileTabsProps> = ({
     (tabId: string, e: React.DragEvent) => {
       e.preventDefault();
       const rect = (e.target as HTMLElement).getBoundingClientRect();
-      const position =
-        e.clientX < rect.left + rect.width / 2 ? 'before' : 'after';
+      const position = e.clientX < rect.left + rect.width / 2 ? 'before' : 'after';
       updateDragTarget(tabId, position);
     },
     [updateDragTarget]
@@ -146,10 +139,7 @@ export const FileTabs: React.FC<FileTabsProps> = ({
       <div className="file-tabs-scroll" ref={containerRef}>
         <div className="file-tabs-list">
           {showHomeTab && (
-            <HomeTab
-              isActive={activeTabId === 'home'}
-              onClick={() => handleTabClick('home')}
-            />
+            <HomeTab isActive={activeTabId === 'home'} onClick={() => handleTabClick('home')} />
           )}
 
           {tabs
@@ -161,11 +151,7 @@ export const FileTabs: React.FC<FileTabsProps> = ({
                 isActive={activeTabId === tab.id}
                 isDragging={dragState.draggedTabId === tab.id}
                 isDropTarget={dragState.dropTargetId === tab.id}
-                dropPosition={
-                  dragState.dropTargetId === tab.id
-                    ? dragState.dropPosition
-                    : null
-                }
+                dropPosition={dragState.dropTargetId === tab.id ? dragState.dropPosition : null}
                 onClick={() => handleTabClick(tab.id)}
                 onClose={(e) => handleTabClose(tab.id, e)}
                 onContextMenu={(e) => handleContextMenu(tab.id, e)}

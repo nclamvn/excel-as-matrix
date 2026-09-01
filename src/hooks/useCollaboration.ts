@@ -52,7 +52,12 @@ export function useCollaboration(options: UseCollaborationOptions): UseCollabora
 
   // Apply a remote cell update to the local workbook (guarded by flag)
   const applyRemoteUpdate = useCallback(
-    (sheetId: string, row: number, col: number, data: { value?: CellValue; formula?: string | null; displayValue?: string }) => {
+    (
+      sheetId: string,
+      row: number,
+      col: number,
+      data: { value?: CellValue; formula?: string | null; displayValue?: string }
+    ) => {
       isRemoteUpdateRef.current = true;
       try {
         useWorkbookStore.getState().updateCell(sheetId, row, col, data);
@@ -74,39 +79,42 @@ export function useCollaboration(options: UseCollaborationOptions): UseCollabora
     managerRef.current = manager;
 
     // Connect
-    manager.connect().then(() => {
-      setConnectionStatus(manager.getConnectionStatus());
+    manager
+      .connect()
+      .then(() => {
+        setConnectionStatus(manager.getConnectionStatus());
 
-      // Subscribe to inbound cell_update messages from WS
-      const wsClient = getWsClient(manager);
-      if (wsClient) {
-        wsClient.on('cell_update', (message: SyncMessage) => {
-          const payload = message.payload as {
-            sheetId: string;
-            cellKey: string;
-            value?: unknown;
-            formula?: string | null;
-            displayValue?: string;
-          };
-          if (!payload?.sheetId || !payload?.cellKey) return;
-          // Skip updates from ourselves
-          if (message.userId === config.userId) return;
+        // Subscribe to inbound cell_update messages from WS
+        const wsClient = getWsClient(manager);
+        if (wsClient) {
+          wsClient.on('cell_update', (message: SyncMessage) => {
+            const payload = message.payload as {
+              sheetId: string;
+              cellKey: string;
+              value?: unknown;
+              formula?: string | null;
+              displayValue?: string;
+            };
+            if (!payload?.sheetId || !payload?.cellKey) return;
+            // Skip updates from ourselves
+            if (message.userId === config.userId) return;
 
-          const [rowStr, colStr] = payload.cellKey.split(':');
-          const row = parseInt(rowStr);
-          const col = parseInt(colStr);
-          if (isNaN(row) || isNaN(col)) return;
+            const [rowStr, colStr] = payload.cellKey.split(':');
+            const row = parseInt(rowStr);
+            const col = parseInt(colStr);
+            if (isNaN(row) || isNaN(col)) return;
 
-          applyRemoteUpdate(payload.sheetId, row, col, {
-            value: payload.value as string | number | boolean | null,
-            formula: payload.formula ?? null,
-            displayValue: payload.displayValue,
+            applyRemoteUpdate(payload.sheetId, row, col, {
+              value: payload.value as string | number | boolean | null,
+              formula: payload.formula ?? null,
+              displayValue: payload.displayValue,
+            });
           });
-        });
-      }
-    }).catch(() => {
-      setConnectionStatus('error');
-    });
+        }
+      })
+      .catch(() => {
+        setConnectionStatus('error');
+      });
 
     // Subscribe to connection status changes
     const unsubConnection = manager.onConnectionChange((status) => {
@@ -126,7 +134,7 @@ export function useCollaboration(options: UseCollaborationOptions): UseCollabora
       setConnectionStatus('disconnected');
       setUserCount(0);
     };
-  }, [enabled, config?.wsUrl, config?.documentId, config?.userId, applyRemoteUpdate]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [enabled, config?.wsUrl, config?.documentId, config?.userId, applyRemoteUpdate]);
 
   // Broadcast cursor position on selection change
   useEffect(() => {
@@ -143,44 +151,42 @@ export function useCollaboration(options: UseCollaborationOptions): UseCollabora
   useEffect(() => {
     if (!enabled) return;
 
-    const unsubscribe = useWorkbookStore.subscribe(
-      (state, prevState) => {
-        // Skip if this was a remote update (prevents echo loops)
-        if (isRemoteUpdateRef.current) return;
+    const unsubscribe = useWorkbookStore.subscribe((state, prevState) => {
+      // Skip if this was a remote update (prevents echo loops)
+      if (isRemoteUpdateRef.current) return;
 
-        const manager = managerRef.current;
-        if (!manager || !manager.isConnected()) return;
+      const manager = managerRef.current;
+      if (!manager || !manager.isConnected()) return;
 
-        const wsClient = getWsClient(manager);
-        if (!wsClient) return;
+      const wsClient = getWsClient(manager);
+      if (!wsClient) return;
 
-        const activeSheet = state.activeSheetId;
-        if (!activeSheet) return;
+      const activeSheet = state.activeSheetId;
+      if (!activeSheet) return;
 
-        const currentCells = state.sheets[activeSheet]?.cells;
-        const prevCells = prevState.sheets[activeSheet]?.cells;
-        if (currentCells === prevCells) return;
+      const currentCells = state.sheets[activeSheet]?.cells;
+      const prevCells = prevState.sheets[activeSheet]?.cells;
+      if (currentCells === prevCells) return;
 
-        // Find changed cells and broadcast each
-        if (currentCells && prevCells) {
-          for (const key of Object.keys(currentCells)) {
-            if (currentCells[key] !== prevCells[key]) {
-              const cell = currentCells[key];
-              // Send cell_update through WS
-              wsClient.send('cell_update', {
-                sheetId: activeSheet,
-                cellKey: key,
-                value: cell.value,
-                formula: cell.formula,
-                displayValue: cell.displayValue,
-              });
-              // Record attribution
-              manager.recordEdit(activeSheet, key, crypto.randomUUID(), 'value');
-            }
+      // Find changed cells and broadcast each
+      if (currentCells && prevCells) {
+        for (const key of Object.keys(currentCells)) {
+          if (currentCells[key] !== prevCells[key]) {
+            const cell = currentCells[key];
+            // Send cell_update through WS
+            wsClient.send('cell_update', {
+              sheetId: activeSheet,
+              cellKey: key,
+              value: cell.value,
+              formula: cell.formula,
+              displayValue: cell.displayValue,
+            });
+            // Record attribution
+            manager.recordEdit(activeSheet, key, crypto.randomUUID(), 'value');
           }
         }
       }
-    );
+    });
 
     return unsubscribe;
   }, [enabled]);

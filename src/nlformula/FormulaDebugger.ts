@@ -17,11 +17,7 @@ export class FormulaDebugger {
   /**
    * Debug a formula
    */
-  async debug(
-    formula: string,
-    error: string,
-    context?: CellContext
-  ): Promise<DebugResult> {
+  async debug(formula: string, error: string, context?: CellContext): Promise<DebugResult> {
     const cleanFormula = formula.startsWith('=') ? formula.slice(1) : formula;
 
     // Detect error type
@@ -31,12 +27,7 @@ export class FormulaDebugger {
     const rootCause = this.findRootCause(cleanFormula, errorType, context);
 
     // Generate fixes
-    const suggestedFixes = this.generateFixes(
-      cleanFormula,
-      errorType,
-      rootCause,
-      context
-    );
+    const suggestedFixes = this.generateFixes(cleanFormula, errorType, rootCause, context);
 
     // Evaluation steps (if possible)
     const evaluationSteps = this.tryEvaluate(cleanFormula);
@@ -61,14 +52,12 @@ export class FormulaDebugger {
     if (errorLower.includes('#ref')) return 'REFERENCE';
     if (errorLower.includes('#value')) return 'VALUE';
     if (errorLower.includes('#name')) return 'NAME';
-    if (errorLower.includes('#div/0') || errorLower.includes('divide by zero'))
-      return 'DIV_ZERO';
+    if (errorLower.includes('#div/0') || errorLower.includes('divide by zero')) return 'DIV_ZERO';
     if (errorLower.includes('#null')) return 'NULL';
     if (errorLower.includes('#num')) return 'NUM';
     if (errorLower.includes('#n/a')) return 'NA';
     if (errorLower.includes('circular')) return 'CIRCULAR';
-    if (errorLower.includes('syntax') || errorLower.includes('parse'))
-      return 'SYNTAX';
+    if (errorLower.includes('syntax') || errorLower.includes('parse')) return 'SYNTAX';
 
     return 'UNKNOWN';
   }
@@ -126,7 +115,7 @@ export class FormulaDebugger {
     }
 
     // Check for double operators
-    if (/[+\-*\/]{2,}/.test(formula)) {
+    if (/[+*/-]{2,}/.test(formula)) {
       return 'Double operators detected (e.g., ++ or */)';
     }
 
@@ -280,7 +269,7 @@ export class FormulaDebugger {
         });
         break;
 
-      case 'NAME':
+      case 'NAME': {
         const correctedFormula = this.correctFunctionNames(formula);
         if (correctedFormula !== formula) {
           fixes.push({
@@ -291,6 +280,7 @@ export class FormulaDebugger {
           });
         }
         break;
+      }
 
       case 'VALUE':
         fixes.push({
@@ -352,7 +342,7 @@ export class FormulaDebugger {
     }
 
     // Fix double operators
-    const doubleOpFixed = formula.replace(/([+\-*\/])\1+/g, '$1');
+    const doubleOpFixed = formula.replace(/([+*/-])\1+/g, '$1');
     if (doubleOpFixed !== formula) {
       fixes.push({
         fix: '=' + doubleOpFixed,
@@ -425,10 +415,7 @@ export class FormulaDebugger {
     for (const func of funcs) {
       const suggestion = this.suggestFunction(func);
       if (suggestion.toLowerCase() !== func.toLowerCase()) {
-        corrected = corrected.replace(
-          new RegExp(func + '\\s*\\(', 'gi'),
-          suggestion + '('
-        );
+        corrected = corrected.replace(new RegExp(func + '\\s*\\(', 'gi'), suggestion + '(');
       }
     }
 

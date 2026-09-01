@@ -209,27 +209,30 @@ useWorkbookStore.subscribe(
 );
 
 // Selector hooks for common use cases
-export const useFontFormat = () => useFormatStore((state) => ({
-  fontFamily: state.fontFamily,
-  fontSize: state.fontSize,
-  bold: state.bold,
-  italic: state.italic,
-  underline: state.underline,
-  setFontFamily: state.setFontFamily,
-  setFontSize: state.setFontSize,
-  toggleBold: state.toggleBold,
-  toggleItalic: state.toggleItalic,
-  toggleUnderline: state.toggleUnderline,
-}));
+export const useFontFormat = () =>
+  useFormatStore((state) => ({
+    fontFamily: state.fontFamily,
+    fontSize: state.fontSize,
+    bold: state.bold,
+    italic: state.italic,
+    underline: state.underline,
+    setFontFamily: state.setFontFamily,
+    setFontSize: state.setFontSize,
+    toggleBold: state.toggleBold,
+    toggleItalic: state.toggleItalic,
+    toggleUnderline: state.toggleUnderline,
+  }));
 
-export const useColorFormat = () => useFormatStore((state) => ({
-  textColor: state.textColor,
-  backgroundColor: state.backgroundColor,
-  setTextColor: state.setTextColor,
-  setBackgroundColor: state.setBackgroundColor,
-}));
+export const useColorFormat = () =>
+  useFormatStore((state) => ({
+    textColor: state.textColor,
+    backgroundColor: state.backgroundColor,
+    setTextColor: state.setTextColor,
+    setBackgroundColor: state.setBackgroundColor,
+  }));
 
-export const useAlignFormat = () => useFormatStore((state) => ({
-  align: state.align,
-  setAlign: state.setAlign,
-}));
+export const useAlignFormat = () =>
+  useFormatStore((state) => ({
+    align: state.align,
+    setAlign: state.setAlign,
+  }));

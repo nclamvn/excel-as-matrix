@@ -53,9 +53,7 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
   const [showUndone, setShowUndone] = useState(false);
 
-  const visibleSessions = showUndone
-    ? history.sessions
-    : history.sessions.filter(s => !s.undone);
+  const visibleSessions = showUndone ? history.sessions : history.sessions.filter((s) => !s.undone);
 
   const totalChanges = visibleSessions.reduce((sum, s) => sum + s.changes.length, 0);
 
@@ -68,7 +66,8 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
           <span>Cleaning History</span>
         </div>
         <div className="cleaning-history__controls">
-          <button type="button"
+          <button
+            type="button"
             className="cleaning-history__undo"
             onClick={onUndo}
             disabled={!history.canUndo}
@@ -76,7 +75,8 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
           >
             <UndoIcon />
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="cleaning-history__redo"
             onClick={onRedo}
             disabled={!history.canRedo}
@@ -89,12 +89,8 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
 
       {/* Summary */}
       <div className="cleaning-history__summary">
-        <span className="cleaning-history__count">
-          {visibleSessions.length} sessions
-        </span>
-        <span className="cleaning-history__changes">
-          {totalChanges} changes
-        </span>
+        <span className="cleaning-history__count">{visibleSessions.length} sessions</span>
+        <span className="cleaning-history__changes">{totalChanges} changes</span>
         <label className="cleaning-history__show-undone">
           <input
             type="checkbox"
@@ -120,9 +116,9 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
               session={session}
               isExpanded={expandedSession === session.id}
               isCurrent={index === history.currentIndex}
-              onToggle={() => setExpandedSession(
-                expandedSession === session.id ? null : session.id
-              )}
+              onToggle={() =>
+                setExpandedSession(expandedSession === session.id ? null : session.id)
+              }
               onUndo={onUndoSession}
               onRevert={onRevertToSession}
             />
@@ -133,10 +129,7 @@ export const CleaningHistory: React.FC<CleaningHistoryProps> = ({
       {/* Clear Button */}
       {onClearHistory && visibleSessions.length > 0 && (
         <div className="cleaning-history__footer">
-          <button type="button"
-            className="cleaning-history__clear"
-            onClick={onClearHistory}
-          >
+          <button type="button" className="cleaning-history__clear" onClick={onClearHistory}>
             <TrashIcon />
             Clear History
           </button>
@@ -189,20 +182,12 @@ const HistorySessionCard: React.FC<HistorySessionCardProps> = ({
               {typeConfig.icon}
             </span>
             <span className="history-session__description">{session.description}</span>
-            {session.undone && (
-              <span className="history-session__undone-badge">Undone</span>
-            )}
-            {isCurrent && (
-              <span className="history-session__current-badge">Current</span>
-            )}
+            {session.undone && <span className="history-session__undone-badge">Undone</span>}
+            {isCurrent && <span className="history-session__current-badge">Current</span>}
           </div>
           <div className="history-session__meta">
-            <span className="history-session__time">
-              {formatTime(session.timestamp)}
-            </span>
-            <span className="history-session__changes-count">
-              {session.changes.length} changes
-            </span>
+            <span className="history-session__time">{formatTime(session.timestamp)}</span>
+            <span className="history-session__changes-count">{session.changes.length} changes</span>
           </div>
           <ChevronIcon expanded={isExpanded} />
         </div>
@@ -219,9 +204,7 @@ const HistorySessionCard: React.FC<HistorySessionCardProps> = ({
                     {formatValue(change.before)}
                   </span>
                   <span className="history-session__change-arrow">→</span>
-                  <span className="history-session__change-after">
-                    {formatValue(change.after)}
-                  </span>
+                  <span className="history-session__change-after">{formatValue(change.after)}</span>
                 </div>
               ))}
               {session.changes.length > 10 && (
@@ -234,7 +217,8 @@ const HistorySessionCard: React.FC<HistorySessionCardProps> = ({
             {/* Actions */}
             <div className="history-session__actions">
               {!session.undone && onUndo && (
-                <button type="button"
+                <button
+                  type="button"
                   className="history-session__action"
                   onClick={() => onUndo(session.id)}
                 >
@@ -243,7 +227,8 @@ const HistorySessionCard: React.FC<HistorySessionCardProps> = ({
                 </button>
               )}
               {onRevert && (
-                <button type="button"
+                <button
+                  type="button"
                   className="history-session__action"
                   onClick={() => onRevert(session.id)}
                 >
@@ -278,7 +263,8 @@ export const CompactHistoryBar: React.FC<CompactHistoryBarProps> = ({
 
   return (
     <div className="compact-history-bar">
-      <button type="button"
+      <button
+        type="button"
         className="compact-history-bar__btn"
         onClick={onUndo}
         disabled={!history.canUndo}
@@ -287,13 +273,10 @@ export const CompactHistoryBar: React.FC<CompactHistoryBarProps> = ({
         <UndoIcon />
       </button>
       <div className="compact-history-bar__status">
-        {recentSession ? (
-          <span>{recentSession.description}</span>
-        ) : (
-          <span>No changes</span>
-        )}
+        {recentSession ? <span>{recentSession.description}</span> : <span>No changes</span>}
       </div>
-      <button type="button"
+      <button
+        type="button"
         className="compact-history-bar__btn"
         onClick={onRedo}
         disabled={!history.canRedo}
@@ -424,7 +407,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>

@@ -4,11 +4,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {
-  CellChange,
-  TrackChangesSettings,
-  DEFAULT_TRACK_SETTINGS,
-} from '../types/trackChanges';
+import { CellChange, TrackChangesSettings, DEFAULT_TRACK_SETTINGS } from '../types/trackChanges';
 
 // Simple ID generator
 const generateId = () => Math.random().toString(36).substring(2, 10);
@@ -95,7 +91,7 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
         set((state) => ({
           changes: {
             ...state.changes,
-            [sheetId]: (state.changes[sheetId] || []).map(c =>
+            [sheetId]: (state.changes[sheetId] || []).map((c) =>
               c.id === changeId
                 ? { ...c, status: 'accepted' as const, reviewedAt: new Date().toISOString() }
                 : c
@@ -108,7 +104,7 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
         set((state) => ({
           changes: {
             ...state.changes,
-            [sheetId]: (state.changes[sheetId] || []).map(c =>
+            [sheetId]: (state.changes[sheetId] || []).map((c) =>
               c.id === changeId
                 ? { ...c, status: 'rejected' as const, reviewedAt: new Date().toISOString() }
                 : c
@@ -121,7 +117,7 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
         set((state) => ({
           changes: {
             ...state.changes,
-            [sheetId]: (state.changes[sheetId] || []).map(c =>
+            [sheetId]: (state.changes[sheetId] || []).map((c) =>
               c.status === 'pending'
                 ? { ...c, status: 'accepted' as const, reviewedAt: new Date().toISOString() }
                 : c
@@ -134,7 +130,7 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
         set((state) => ({
           changes: {
             ...state.changes,
-            [sheetId]: (state.changes[sheetId] || []).map(c =>
+            [sheetId]: (state.changes[sheetId] || []).map((c) =>
               c.status === 'pending'
                 ? { ...c, status: 'rejected' as const, reviewedAt: new Date().toISOString() }
                 : c
@@ -156,11 +152,11 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
       },
 
       getPendingChanges: (sheetId) => {
-        return (get().changes[sheetId] || []).filter(c => c.status === 'pending');
+        return (get().changes[sheetId] || []).filter((c) => c.status === 'pending');
       },
 
       getChangeById: (changeId, sheetId) => {
-        return (get().changes[sheetId] || []).find(c => c.id === changeId);
+        return (get().changes[sheetId] || []).find((c) => c.id === changeId);
       },
 
       goToNextChange: (sheetId) => {
@@ -168,7 +164,7 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
         if (pendingChanges.length === 0) return;
 
         const { selectedChangeId } = get();
-        const currentIndex = pendingChanges.findIndex(c => c.id === selectedChangeId);
+        const currentIndex = pendingChanges.findIndex((c) => c.id === selectedChangeId);
         const nextIndex = (currentIndex + 1) % pendingChanges.length;
         set({ selectedChangeId: pendingChanges[nextIndex].id });
       },
@@ -178,7 +174,7 @@ export const useTrackChangesStore = create<TrackChangesStore>()(
         if (pendingChanges.length === 0) return;
 
         const { selectedChangeId } = get();
-        const currentIndex = pendingChanges.findIndex(c => c.id === selectedChangeId);
+        const currentIndex = pendingChanges.findIndex((c) => c.id === selectedChangeId);
         const prevIndex = currentIndex <= 0 ? pendingChanges.length - 1 : currentIndex - 1;
         set({ selectedChangeId: pendingChanges[prevIndex].id });
       },

@@ -96,7 +96,11 @@ export const PrintDialog: React.FC<PrintDialogProps> = ({ onClose }) => {
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog print-dialog" onClick={(e) => e.stopPropagation()} style={{ width: 400 }}>
+      <div
+        className="dialog print-dialog"
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: 400 }}
+      >
         <div className="dialog-header">
           <h2>Print</h2>
           <button type="button" className="dialog-close" onClick={onClose}>

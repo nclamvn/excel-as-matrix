@@ -219,7 +219,10 @@ export const CellValidationBadge: React.FC<CellValidationBadgeProps> = ({
   if (valid) return null;
 
   return (
-    <span className={`cell-validation-badge ${className}`} title={`${errorCount} validation error(s)`}>
+    <span
+      className={`cell-validation-badge ${className}`}
+      title={`${errorCount} validation error(s)`}
+    >
       <AlertCircle size={10} />
     </span>
   );

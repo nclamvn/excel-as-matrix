@@ -399,10 +399,7 @@ export class ChartRecommender {
   /**
    * Generate chart recommendations for data
    */
-  recommend(
-    data: DataRange,
-    characteristics: DataCharacteristics
-  ): ChartRecommendation[] {
+  recommend(data: DataRange, characteristics: DataCharacteristics): ChartRecommendation[] {
     const scores: { type: ChartType; score: number; factors: ScoreFactors }[] = [];
 
     for (const metadata of CHART_METADATA) {
@@ -498,8 +495,8 @@ export class ChartRecommender {
 
     // Category count check
     const categoryCount =
-      characteristics.columns.find((c) => c.suggestedRole === 'category')
-        ?.uniqueValues || data.rowCount;
+      characteristics.columns.find((c) => c.suggestedRole === 'category')?.uniqueValues ||
+      data.rowCount;
 
     if (categoryCount <= metadata.maxCategories) {
       score += 10;
@@ -531,9 +528,7 @@ export class ChartRecommender {
     }
 
     // Numeric requirement
-    const numericCols = characteristics.columns.filter(
-      (c) => c.dataType === 'number'
-    ).length;
+    const numericCols = characteristics.columns.filter((c) => c.dataType === 'number').length;
 
     if (metadata.requiresNumeric && numericCols === 0) {
       return 0; // Disqualify
@@ -564,9 +559,7 @@ export class ChartRecommender {
     }
 
     // Correlation patterns
-    const hasCorrelation = characteristics.patterns.some(
-      (p) => p.type === 'correlation'
-    );
+    const hasCorrelation = characteristics.patterns.some((p) => p.type === 'correlation');
     if (hasCorrelation) {
       if (['scatter', 'bubble', 'heatmap'].includes(metadata.type)) {
         score += 10;
@@ -574,9 +567,7 @@ export class ChartRecommender {
     }
 
     // Distribution patterns
-    const hasDistribution = characteristics.patterns.some(
-      (p) => p.type === 'distribution'
-    );
+    const hasDistribution = characteristics.patterns.some((p) => p.type === 'distribution');
     if (hasDistribution) {
       if (['scatter', 'column', 'bar'].includes(metadata.type)) {
         score += 5;
@@ -596,10 +587,7 @@ export class ChartRecommender {
   /**
    * Calculate aesthetics score
    */
-  private calculateAesthetics(
-    metadata: ChartMetadata,
-    data: DataRange
-  ): number {
+  private calculateAesthetics(metadata: ChartMetadata, data: DataRange): number {
     let score = 10;
 
     // Penalize cluttered charts
@@ -651,31 +639,20 @@ export class ChartRecommender {
    * Calculate total score from factors
    */
   private calculateTotalScore(factors: ScoreFactors): number {
-    return (
-      factors.dataFit +
-      factors.insightClarity +
-      factors.aesthetics +
-      factors.familiarity
-    );
+    return factors.dataFit + factors.insightClarity + factors.aesthetics + factors.familiarity;
   }
 
   /**
    * Generate English reason for recommendation
    */
-  private generateReason(
-    metadata: ChartMetadata,
-    characteristics: DataCharacteristics
-  ): string {
+  private generateReason(metadata: ChartMetadata, characteristics: DataCharacteristics): string {
     const reasons: string[] = [];
 
     if (characteristics.hasTimeColumn && ['line', 'area'].includes(metadata.type)) {
       reasons.push('Your data has time values, perfect for showing trends');
     }
 
-    if (
-      characteristics.hasCategoryColumn &&
-      ['bar', 'column', 'pie'].includes(metadata.type)
-    ) {
+    if (characteristics.hasCategoryColumn && ['bar', 'column', 'pie'].includes(metadata.type)) {
       reasons.push('Categories in your data are ideal for comparison');
     }
 
@@ -698,20 +675,14 @@ export class ChartRecommender {
   /**
    * Generate Vietnamese reason for recommendation
    */
-  private generateReasonVi(
-    metadata: ChartMetadata,
-    characteristics: DataCharacteristics
-  ): string {
+  private generateReasonVi(metadata: ChartMetadata, characteristics: DataCharacteristics): string {
     const reasons: string[] = [];
 
     if (characteristics.hasTimeColumn && ['line', 'area'].includes(metadata.type)) {
       reasons.push('Dữ liệu có giá trị thời gian, phù hợp để hiển thị xu hướng');
     }
 
-    if (
-      characteristics.hasCategoryColumn &&
-      ['bar', 'column', 'pie'].includes(metadata.type)
-    ) {
+    if (characteristics.hasCategoryColumn && ['bar', 'column', 'pie'].includes(metadata.type)) {
       reasons.push('Danh mục trong dữ liệu lý tưởng để so sánh');
     }
 
@@ -729,10 +700,7 @@ export class ChartRecommender {
   /**
    * Generate insight text
    */
-  private generateInsight(
-    type: ChartType,
-    characteristics: DataCharacteristics
-  ): string {
+  private generateInsight(type: ChartType, characteristics: DataCharacteristics): string {
     const insights: string[] = [];
 
     const trendPattern = characteristics.patterns.find((p) => p.type === 'trend');
@@ -740,9 +708,7 @@ export class ChartRecommender {
       insights.push(trendPattern.description);
     }
 
-    const correlationPattern = characteristics.patterns.find(
-      (p) => p.type === 'correlation'
-    );
+    const correlationPattern = characteristics.patterns.find((p) => p.type === 'correlation');
     if (correlationPattern) {
       insights.push(correlationPattern.description);
     }
@@ -765,10 +731,7 @@ export class ChartRecommender {
   /**
    * Generate Vietnamese insight text
    */
-  private generateInsightVi(
-    type: ChartType,
-    characteristics: DataCharacteristics
-  ): string {
+  private generateInsightVi(type: ChartType, characteristics: DataCharacteristics): string {
     const metadata = CHART_METADATA.find((m) => m.type === type);
     const cols = characteristics.columns.filter((c) => c.suggestedRole === 'value');
 
@@ -809,9 +772,9 @@ export class ChartRecommender {
     const colorScheme = getRecommendedScheme(type);
 
     // Extract labels and datasets from data
-    const labels = data.data.slice(0, Math.min(10, data.rowCount)).map(
-      (row) => String(row[0] || '')
-    );
+    const labels = data.data
+      .slice(0, Math.min(10, data.rowCount))
+      .map((row) => String(row[0] || ''));
 
     const datasets = [];
     for (let col = 1; col < Math.min(4, data.colCount); col++) {

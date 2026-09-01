@@ -62,7 +62,8 @@ export const AI_TOOLS: AITool[] = [
   },
   {
     name: 'get_dependencies',
-    description: 'Lấy danh sách cells mà một cell phụ thuộc vào (upstream) và cells phụ thuộc vào nó (downstream)',
+    description:
+      'Lấy danh sách cells mà một cell phụ thuộc vào (upstream) và cells phụ thuộc vào nó (downstream)',
     parameters: [
       {
         name: 'cell',
@@ -183,26 +184,23 @@ export class AIToolExecutor {
 
     switch (tool) {
       case 'read_range':
-        return this.readRange(args.range as string, args.includeFormulas as boolean ?? true);
+        return this.readRange(args.range as string, (args.includeFormulas as boolean) ?? true);
 
       case 'write_range':
         return this.writeRange(
           args.range as string,
           args.values as unknown[][],
-          args.type as string ?? 'value'
+          (args.type as string) ?? 'value'
         );
 
       case 'get_dependencies':
-        return this.getDependencies(
-          args.cell as string,
-          args.direction as string ?? 'both'
-        );
+        return this.getDependencies(args.cell as string, (args.direction as string) ?? 'both');
 
       case 'search_cells':
         return this.searchCells(
           args.query as string,
-          args.searchIn as string ?? 'both',
-          args.matchCase as boolean ?? false
+          (args.searchIn as string) ?? 'both',
+          (args.matchCase as boolean) ?? false
         );
 
       case 'propose_action':
@@ -227,7 +225,10 @@ export class AIToolExecutor {
   // Tool Implementations
   // ─────────────────────────────────────────────────────────────────────────
 
-  private readRange(range: string, includeFormulas: boolean): {
+  private readRange(
+    range: string,
+    includeFormulas: boolean
+  ): {
     result: unknown;
     sources: AISource[];
   } {
@@ -416,9 +417,7 @@ export class AIToolExecutor {
 
       // Search in values
       if (searchIn !== 'formulas' && cell.value != null) {
-        const valueStr = matchCase
-          ? String(cell.value)
-          : String(cell.value).toLowerCase();
+        const valueStr = matchCase ? String(cell.value) : String(cell.value).toLowerCase();
         if (valueStr.includes(searchQuery)) {
           matches = true;
         }
@@ -516,9 +515,7 @@ export class AIToolExecutor {
       maxCol = Math.max(maxCol, col);
     }
 
-    const usedRange = cellCount > 0
-      ? `A1:${colToLetter(maxCol)}${maxRow + 1}`
-      : 'Empty';
+    const usedRange = cellCount > 0 ? `A1:${colToLetter(maxCol)}${maxRow + 1}` : 'Empty';
 
     return {
       result: {

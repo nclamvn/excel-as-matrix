@@ -15,7 +15,13 @@ interface VersionDiffViewProps {
   onClose: () => void;
 }
 
-export function VersionDiffView({ oldData, newData, oldLabel, newLabel, onClose }: VersionDiffViewProps) {
+export function VersionDiffView({
+  oldData,
+  newData,
+  oldLabel,
+  newLabel,
+  onClose,
+}: VersionDiffViewProps) {
   const diff = useMemo(() => computeSnapshotDiff(oldData, newData), [oldData, newData]);
 
   return (
@@ -26,7 +32,9 @@ export function VersionDiffView({ oldData, newData, oldLabel, newLabel, onClose 
           {oldLabel && <span className="vh-diff-label vh-diff-label--old">{oldLabel}</span>}
           {newLabel && <span className="vh-diff-label vh-diff-label--new">{newLabel}</span>}
         </div>
-        <button type="button" className="vh-close" onClick={onClose}>&times;</button>
+        <button type="button" className="vh-close" onClick={onClose}>
+          &times;
+        </button>
       </div>
       <div className="vh-diff-content">
         <DiffViewer diff={diff} maxRows={100} showSummary={true} />
@@ -81,15 +89,36 @@ function computeSnapshotDiff(oldData: SnapshotData, newData: SnapshotData): Sand
       };
 
       if (!oldCell && newCell) {
-        changes.push({ ref, sheetId, sheetName, changeType: 'added', before: null, after: makeCellState(newCell) });
+        changes.push({
+          ref,
+          sheetId,
+          sheetName,
+          changeType: 'added',
+          before: null,
+          after: makeCellState(newCell),
+        });
         added++;
         sheetsAffected.add(sheetName);
       } else if (oldCell && !newCell) {
-        changes.push({ ref, sheetId, sheetName, changeType: 'deleted', before: makeCellState(oldCell), after: null });
+        changes.push({
+          ref,
+          sheetId,
+          sheetName,
+          changeType: 'deleted',
+          before: makeCellState(oldCell),
+          after: null,
+        });
         deleted++;
         sheetsAffected.add(sheetName);
       } else if (oldVal !== newVal || oldFormula !== newFormula) {
-        changes.push({ ref, sheetId, sheetName, changeType: 'modified', before: makeCellState(oldCell), after: makeCellState(newCell) });
+        changes.push({
+          ref,
+          sheetId,
+          sheetName,
+          changeType: 'modified',
+          before: makeCellState(oldCell),
+          after: makeCellState(newCell),
+        });
         modified++;
         if (oldFormula !== newFormula) formulaChanges++;
         sheetsAffected.add(sheetName);

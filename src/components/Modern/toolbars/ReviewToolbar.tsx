@@ -9,10 +9,5 @@ export const ReviewToolbar: React.FC = () => {
 
   if (!activeSheetId) return null;
 
-  return (
-    <ReviewTab
-      sheetId={activeSheetId}
-      selectedCell={selectedCell}
-    />
-  );
+  return <ReviewTab sheetId={activeSheetId} selectedCell={selectedCell} />;
 };

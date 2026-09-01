@@ -21,13 +21,7 @@ type DialogType =
   | 'fillSeries';
 
 // Sidebar panel types
-type SidebarPanel =
-  | 'none'
-  | 'format'
-  | 'formulas'
-  | 'comments'
-  | 'history'
-  | 'ai';
+type SidebarPanel = 'none' | 'format' | 'formulas' | 'comments' | 'history' | 'ai';
 
 // Toast notification types
 interface Toast {
@@ -224,20 +218,22 @@ export const useUIStore = create<UIState & UIActions>()(
         setCommandPaletteQuery: (query) => set({ commandPaletteQuery: query }),
 
         // Dialogs
-        openDialog: (dialog, props = {}) => set({
-          activeDialog: dialog,
-          dialogProps: props,
-          // Close other overlays
-          commandPaletteOpen: false,
-          contextMenuOpen: false,
-        }),
+        openDialog: (dialog, props = {}) =>
+          set({
+            activeDialog: dialog,
+            dialogProps: props,
+            // Close other overlays
+            commandPaletteOpen: false,
+            contextMenuOpen: false,
+          }),
         closeDialog: () => set({ activeDialog: null, dialogProps: {} }),
 
         // Sidebar
-        openSidebar: (panel = 'format') => set({
-          sidebarOpen: true,
-          sidebarPanel: panel
-        }),
+        openSidebar: (panel = 'format') =>
+          set({
+            sidebarOpen: true,
+            sidebarPanel: panel,
+          }),
         closeSidebar: () => set({ sidebarOpen: false }),
         toggleSidebar: () => {
           const { sidebarOpen } = get();
@@ -247,15 +243,17 @@ export const useUIStore = create<UIState & UIActions>()(
         setSidebarWidth: (width) => set({ sidebarWidth: Math.max(200, Math.min(600, width)) }),
 
         // Context Menu
-        openContextMenu: (x, y, type) => set({
-          contextMenuOpen: true,
-          contextMenuPosition: { x, y },
-          contextMenuType: type,
-        }),
-        closeContextMenu: () => set({
-          contextMenuOpen: false,
-          contextMenuType: null
-        }),
+        openContextMenu: (x, y, type) =>
+          set({
+            contextMenuOpen: true,
+            contextMenuPosition: { x, y },
+            contextMenuType: type,
+          }),
+        closeContextMenu: () =>
+          set({
+            contextMenuOpen: false,
+            contextMenuType: null,
+          }),
 
         // Notifications
         showToast: (message, type = 'info', duration = 3000) => {
@@ -271,9 +269,10 @@ export const useUIStore = create<UIState & UIActions>()(
             }, duration);
           }
         },
-        dismissToast: (id) => set((state) => ({
-          toasts: state.toasts.filter((t) => t.id !== id)
-        })),
+        dismissToast: (id) =>
+          set((state) => ({
+            toasts: state.toasts.filter((t) => t.id !== id),
+          })),
         clearToasts: () => set({ toasts: [] }),
 
         // Layout
@@ -282,10 +281,11 @@ export const useUIStore = create<UIState & UIActions>()(
         toggleStatusBar: () => set((state) => ({ statusBarVisible: !state.statusBarVisible })),
 
         // Loading
-        setLoading: (loading, message) => set({
-          isLoading: loading,
-          loadingMessage: message
-        }),
+        setLoading: (loading, message) =>
+          set({
+            isLoading: loading,
+            loadingMessage: message,
+          }),
 
         // Mobile
         setMobile: (isMobile) => set({ isMobile }),
@@ -327,17 +327,20 @@ if (typeof window !== 'undefined') {
 
 // Selector hooks for common use cases
 export const useTheme = () => useUIStore((state) => state.resolvedTheme);
-export const useDialog = () => useUIStore((state) => ({
-  activeDialog: state.activeDialog,
-  dialogProps: state.dialogProps
-}));
-export const useSidebar = () => useUIStore((state) => ({
-  open: state.sidebarOpen,
-  panel: state.sidebarPanel,
-  width: state.sidebarWidth,
-}));
+export const useDialog = () =>
+  useUIStore((state) => ({
+    activeDialog: state.activeDialog,
+    dialogProps: state.dialogProps,
+  }));
+export const useSidebar = () =>
+  useUIStore((state) => ({
+    open: state.sidebarOpen,
+    panel: state.sidebarPanel,
+    width: state.sidebarWidth,
+  }));
 export const useToasts = () => useUIStore((state) => state.toasts);
-export const useLoading = () => useUIStore((state) => ({
-  isLoading: state.isLoading,
-  message: state.loadingMessage,
-}));
+export const useLoading = () =>
+  useUIStore((state) => ({
+    isLoading: state.isLoading,
+    message: state.loadingMessage,
+  }));

@@ -76,13 +76,9 @@ describe('VirtualHeaders', () => {
     });
 
     it('should apply scroll offset to column headers', () => {
-      const { container } = render(
-        <VirtualHeaders {...defaultProps} scrollLeft={50} />
-      );
+      const { container } = render(<VirtualHeaders {...defaultProps} scrollLeft={50} />);
 
-      const columnContainer = container.querySelector(
-        '[style*="translateX(-50px)"]'
-      );
+      const columnContainer = container.querySelector('[style*="translateX(-50px)"]');
       expect(columnContainer).toBeInTheDocument();
     });
   });
@@ -122,13 +118,9 @@ describe('VirtualHeaders', () => {
     });
 
     it('should apply scroll offset to row headers', () => {
-      const { container } = render(
-        <VirtualHeaders {...defaultProps} scrollTop={30} />
-      );
+      const { container } = render(<VirtualHeaders {...defaultProps} scrollTop={30} />);
 
-      const rowContainer = container.querySelector(
-        '[style*="translateY(-30px)"]'
-      );
+      const rowContainer = container.querySelector('[style*="translateY(-30px)"]');
       expect(rowContainer).toBeInTheDocument();
     });
   });
@@ -155,12 +147,7 @@ describe('VirtualHeaders', () => {
         createVirtualItem(52, 300, 100), // BA
       ];
 
-      render(
-        <VirtualHeaders
-          {...defaultProps}
-          virtualCols={extendedCols}
-        />
-      );
+      render(<VirtualHeaders {...defaultProps} virtualCols={extendedCols} />);
 
       expect(screen.getByText('AA')).toBeInTheDocument();
       expect(screen.getByText('AB')).toBeInTheDocument();
@@ -171,9 +158,7 @@ describe('VirtualHeaders', () => {
 
   describe('Empty State', () => {
     it('should handle empty virtual columns', () => {
-      const { container } = render(
-        <VirtualHeaders {...defaultProps} virtualCols={[]} />
-      );
+      const { container } = render(<VirtualHeaders {...defaultProps} virtualCols={[]} />);
 
       // Should still render corner and row headers
       expect(container.querySelector('.bg-gray-200')).toBeInTheDocument();
@@ -181,9 +166,7 @@ describe('VirtualHeaders', () => {
     });
 
     it('should handle empty virtual rows', () => {
-      const { container } = render(
-        <VirtualHeaders {...defaultProps} virtualRows={[]} />
-      );
+      const { container } = render(<VirtualHeaders {...defaultProps} virtualRows={[]} />);
 
       // Should still render corner and column headers
       expect(container.querySelector('.bg-gray-200')).toBeInTheDocument();
@@ -232,9 +215,7 @@ describe('ResizableColumnHeader', () => {
 
   it('should call onResize when dragging resize handle', () => {
     const onResize = vi.fn();
-    const { container } = render(
-      <ResizableColumnHeader {...defaultProps} onResize={onResize} />
-    );
+    const { container } = render(<ResizableColumnHeader {...defaultProps} onResize={onResize} />);
 
     const resizeHandle = container.querySelector('.cursor-col-resize')!;
 
@@ -267,9 +248,7 @@ describe('ResizableColumnHeader', () => {
 
   it('should stop resizing on mouseup', () => {
     const onResize = vi.fn();
-    const { container } = render(
-      <ResizableColumnHeader {...defaultProps} onResize={onResize} />
-    );
+    const { container } = render(<ResizableColumnHeader {...defaultProps} onResize={onResize} />);
 
     const resizeHandle = container.querySelector('.cursor-col-resize')!;
 
@@ -330,9 +309,7 @@ describe('ResizableRowHeader', () => {
 
   it('should call onResize when dragging resize handle', () => {
     const onResize = vi.fn();
-    const { container } = render(
-      <ResizableRowHeader {...defaultProps} onResize={onResize} />
-    );
+    const { container } = render(<ResizableRowHeader {...defaultProps} onResize={onResize} />);
 
     const resizeHandle = container.querySelector('.cursor-row-resize')!;
 
@@ -365,9 +342,7 @@ describe('ResizableRowHeader', () => {
 
   it('should stop resizing on mouseup', () => {
     const onResize = vi.fn();
-    const { container } = render(
-      <ResizableRowHeader {...defaultProps} onResize={onResize} />
-    );
+    const { container } = render(<ResizableRowHeader {...defaultProps} onResize={onResize} />);
 
     const resizeHandle = container.querySelector('.cursor-row-resize')!;
 

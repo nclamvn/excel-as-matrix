@@ -76,7 +76,8 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(errorData.error || 'Login failed');
           }
 
-          const data: LoginResponse & { mfaRequired?: boolean; mfaSessionToken?: string } = await response.json();
+          const data: LoginResponse & { mfaRequired?: boolean; mfaSessionToken?: string } =
+            await response.json();
 
           // Phase 11: Check if MFA is required
           if (data.mfaRequired) {
@@ -174,7 +175,7 @@ export const useAuthStore = create<AuthState>()(
             await fetch(`${API_BASE}/auth/logout`, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${tokens.token}`,
+                Authorization: `Bearer ${tokens.token}`,
               },
             });
           }
@@ -237,7 +238,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await fetch(`${API_BASE}/auth/me`, {
             headers: {
-              'Authorization': `Bearer ${tokens.token}`,
+              Authorization: `Bearer ${tokens.token}`,
             },
           });
 
@@ -270,7 +271,7 @@ export const useAuthStore = create<AuthState>()(
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${tokens.token}`,
+              Authorization: `Bearer ${tokens.token}`,
             },
             body: JSON.stringify(request),
           });
@@ -300,7 +301,7 @@ export const useAuthStore = create<AuthState>()(
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${tokens.token}`,
+              Authorization: `Bearer ${tokens.token}`,
             },
             body: JSON.stringify(request),
           });
@@ -327,7 +328,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await fetch(`${API_BASE}/sessions`, {
             headers: {
-              'Authorization': `Bearer ${tokens.token}`,
+              Authorization: `Bearer ${tokens.token}`,
             },
           });
 
@@ -352,7 +353,7 @@ export const useAuthStore = create<AuthState>()(
           const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
             method: 'DELETE',
             headers: {
-              'Authorization': `Bearer ${tokens.token}`,
+              Authorization: `Bearer ${tokens.token}`,
             },
           });
 

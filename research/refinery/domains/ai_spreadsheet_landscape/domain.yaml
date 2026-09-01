@@ -1,0 +1,34 @@
+domain: ai_spreadsheet_landscape
+entity_label: "Sản phẩm bảng tính có trợ lý AI"
+
+schema:
+  type_field: null
+  fields:
+    - nha_cung_cap
+    - dinh_vi
+    - tao_cong_thuc
+    - chinh_sua_workbook
+    - phan_tich_du_lieu
+    - tao_bieu_do
+    - toi_uu_hoa
+    - checkpoint_khoi_phuc
+    - nghien_cuu_web
+    - pham_vi_context_ai
+    - realtime_collaboration
+    - offline_mode
+
+rollup_field: chinh_sua_workbook
+
+universe:
+  estimate: 4
+  basis: "Tập benchmark chủ đích gồm ExcelAI, Microsoft Excel Copilot, Google Sheets Gemini và Rows AI; không đại diện toàn bộ thị trường."
+
+refresh_days:
+  default: 60
+
+alias_map:
+  "Copilot in Excel": "Microsoft Excel Copilot"
+  "Gemini in Sheets": "Google Sheets Gemini"
+  "Rows AI Analyst": "Rows AI"
+
+ambiguous_clusters: []

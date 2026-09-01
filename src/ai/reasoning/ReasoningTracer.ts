@@ -11,16 +11,16 @@ import { loggers } from '@/utils/logger';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type ReasoningStepType =
-  | 'context_read'    // Read data from spreadsheet
-  | 'intent_parse'    // Parsed user intent
-  | 'tool_select'     // Chose which tool to use
-  | 'tool_execute'    // Executed a tool
-  | 'data_analyze'    // Analyzed data patterns
-  | 'formula_build'   // Constructed a formula
-  | 'decision'        // Made a decision
-  | 'confidence_check'// Assessed confidence
-  | 'clarify'         // Asked for clarification
-  | 'output';         // Generated final response
+  | 'context_read' // Read data from spreadsheet
+  | 'intent_parse' // Parsed user intent
+  | 'tool_select' // Chose which tool to use
+  | 'tool_execute' // Executed a tool
+  | 'data_analyze' // Analyzed data patterns
+  | 'formula_build' // Constructed a formula
+  | 'decision' // Made a decision
+  | 'confidence_check' // Assessed confidence
+  | 'clarify' // Asked for clarification
+  | 'output'; // Generated final response
 
 export interface ReasoningStep {
   id: string;
@@ -29,8 +29,8 @@ export interface ReasoningStep {
   description: string;
   confidence: number; // 0-1
   durationMs: number;
-  inputs: string[];   // What data/context was used
-  output: string;     // What was produced
+  inputs: string[]; // What data/context was used
+  output: string; // What was produced
   metadata?: Record<string, unknown>;
 }
 
@@ -121,22 +121,32 @@ export class ReasoningTracer {
    * Convenience: trace a context read
    */
   traceContextRead(range: string, cellCount: number): ReasoningStep {
-    return this.addStep('context_read', `Read ${range}`, `Loaded ${cellCount} cells from ${range}`, {
-      confidence: 1.0,
-      inputs: [range],
-      output: `${cellCount} cells`,
-    });
+    return this.addStep(
+      'context_read',
+      `Read ${range}`,
+      `Loaded ${cellCount} cells from ${range}`,
+      {
+        confidence: 1.0,
+        inputs: [range],
+        output: `${cellCount} cells`,
+      }
+    );
   }
 
   /**
    * Convenience: trace intent parsing
    */
   traceIntentParse(userMessage: string, intent: string, confidence: number): ReasoningStep {
-    return this.addStep('intent_parse', `Parsed intent: ${intent}`, `User asked: "${userMessage.slice(0, 80)}..."`, {
-      confidence,
-      inputs: [userMessage.slice(0, 100)],
-      output: intent,
-    });
+    return this.addStep(
+      'intent_parse',
+      `Parsed intent: ${intent}`,
+      `User asked: "${userMessage.slice(0, 80)}..."`,
+      {
+        confidence,
+        inputs: [userMessage.slice(0, 100)],
+        output: intent,
+      }
+    );
   }
 
   /**
@@ -154,12 +164,22 @@ export class ReasoningTracer {
   /**
    * Convenience: trace tool execution
    */
-  traceToolExecute(toolName: string, args: string, result: string, durationMs: number): ReasoningStep {
-    return this.addStep('tool_execute', `Executed: ${toolName}`, `Args: ${args} → Result: ${result}`, {
-      durationMs,
-      inputs: [args],
-      output: result,
-    });
+  traceToolExecute(
+    toolName: string,
+    args: string,
+    result: string,
+    durationMs: number
+  ): ReasoningStep {
+    return this.addStep(
+      'tool_execute',
+      `Executed: ${toolName}`,
+      `Args: ${args} → Result: ${result}`,
+      {
+        durationMs,
+        inputs: [args],
+        output: result,
+      }
+    );
   }
 
   /**

@@ -24,7 +24,7 @@ export class MacroStorage {
   saveAll(macros: Macro[]): void {
     const data: StorageData = {
       version: STORAGE_VERSION,
-      macros: macros.map(m => this.serializeMacro(m)),
+      macros: macros.map((m) => this.serializeMacro(m)),
       lastUpdated: new Date().toISOString(),
     };
 
@@ -50,7 +50,7 @@ export class MacroStorage {
         return this.migrateMacros(data);
       }
 
-      return data.macros.map(m => this.deserializeMacro(m));
+      return data.macros.map((m) => this.deserializeMacro(m));
     } catch (error) {
       loggers.macro.error('Failed to load macros:', error);
       return [];
@@ -62,7 +62,7 @@ export class MacroStorage {
    */
   save(macro: Macro): void {
     const macros = this.loadAll();
-    const index = macros.findIndex(m => m.id === macro.id);
+    const index = macros.findIndex((m) => m.id === macro.id);
 
     if (index >= 0) {
       macros[index] = macro;
@@ -78,7 +78,7 @@ export class MacroStorage {
    */
   delete(macroId: string): void {
     const macros = this.loadAll();
-    const filtered = macros.filter(m => m.id !== macroId);
+    const filtered = macros.filter((m) => m.id !== macroId);
     this.saveAll(filtered);
   }
 
@@ -87,7 +87,7 @@ export class MacroStorage {
    */
   get(macroId: string): Macro | null {
     const macros = this.loadAll();
-    return macros.find(m => m.id === macroId) || null;
+    return macros.find((m) => m.id === macroId) || null;
   }
 
   /**
@@ -97,14 +97,18 @@ export class MacroStorage {
     let macros = this.loadAll();
 
     if (macroIds && macroIds.length > 0) {
-      macros = macros.filter(m => macroIds.includes(m.id));
+      macros = macros.filter((m) => macroIds.includes(m.id));
     }
 
-    return JSON.stringify({
-      exportedAt: new Date().toISOString(),
-      version: STORAGE_VERSION,
-      macros,
-    }, null, 2);
+    return JSON.stringify(
+      {
+        exportedAt: new Date().toISOString(),
+        version: STORAGE_VERSION,
+        macros,
+      },
+      null,
+      2
+    );
   }
 
   /**
@@ -167,14 +171,12 @@ export class MacroStorage {
   private serializeMacro(macro: Macro): Macro {
     return {
       ...macro,
-      createdAt: macro.createdAt instanceof Date
-        ? macro.createdAt
-        : new Date(macro.createdAt),
-      updatedAt: macro.updatedAt instanceof Date
-        ? macro.updatedAt
-        : new Date(macro.updatedAt),
+      createdAt: macro.createdAt instanceof Date ? macro.createdAt : new Date(macro.createdAt),
+      updatedAt: macro.updatedAt instanceof Date ? macro.updatedAt : new Date(macro.updatedAt),
       lastRunAt: macro.lastRunAt
-        ? (macro.lastRunAt instanceof Date ? macro.lastRunAt : new Date(macro.lastRunAt))
+        ? macro.lastRunAt instanceof Date
+          ? macro.lastRunAt
+          : new Date(macro.lastRunAt)
         : undefined,
     };
   }
@@ -192,6 +194,6 @@ export class MacroStorage {
     // Handle migrations from older versions
     // Add migration logic as versions change
     // Add migration logic as versions change
-    return data.macros.map(m => this.deserializeMacro(m));
+    return data.macros.map((m) => this.deserializeMacro(m));
   }
 }

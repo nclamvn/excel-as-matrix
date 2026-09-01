@@ -25,11 +25,15 @@ const nlPatterns: NLPattern[] = [
       const column = match[1].trim();
       const value = match[2].trim().replace(/^["']|["']$/g, '');
       const isRemove = /xóa|remove|delete/i.test(match[0]);
-      return createStep('filter', {
-        column,
-        operator: isRemove ? 'notEquals' : 'equals',
-        value,
-      }, `Filter ${column} ${isRemove ? '!=' : '='} ${value}`);
+      return createStep(
+        'filter',
+        {
+          column,
+          operator: isRemove ? 'notEquals' : 'equals',
+          value,
+        },
+        `Filter ${column} ${isRemove ? '!=' : '='} ${value}`
+      );
     },
   },
   // Remove blank/empty rows
@@ -40,7 +44,11 @@ const nlPatterns: NLPattern[] = [
     ],
     generate: (_match, columns) => {
       const col = columns[0] || 'A';
-      return createStep('filter', { column: col, operator: 'isNotNull', value: null }, 'Remove blank rows');
+      return createStep(
+        'filter',
+        { column: col, operator: 'isNotNull', value: null },
+        'Remove blank rows'
+      );
     },
   },
   // Sort
@@ -64,25 +72,24 @@ const nlPatterns: NLPattern[] = [
       let op = match[2].toLowerCase();
       if (op === 'average') op = 'avg';
       const valueCol = match[3].trim();
-      return createStep('groupBy', {
-        columns: [groupCol],
-        aggregations: [{ column: valueCol, operation: op, as: `${op}_${valueCol}` }],
-      }, `Group by ${groupCol}, ${op}(${valueCol})`);
+      return createStep(
+        'groupBy',
+        {
+          columns: [groupCol],
+          aggregations: [{ column: valueCol, operation: op, as: `${op}_${valueCol}` }],
+        },
+        `Group by ${groupCol}, ${op}(${valueCol})`
+      );
     },
   },
   // Remove duplicates
   {
-    patterns: [
-      /(?:remove|xóa)\s+(?:duplicates?|trùng)/i,
-      /(?:distinct|unique|duy nhất)/i,
-    ],
+    patterns: [/(?:remove|xóa)\s+(?:duplicates?|trùng)/i, /(?:distinct|unique|duy nhất)/i],
     generate: () => createStep('removeDuplicates', {}, 'Remove duplicates'),
   },
   // Remove columns
   {
-    patterns: [
-      /(?:remove|xóa|drop)\s+(?:column|cột)\s+(\w+(?:\s*,\s*\w+)*)/i,
-    ],
+    patterns: [/(?:remove|xóa|drop)\s+(?:column|cột)\s+(\w+(?:\s*,\s*\w+)*)/i],
     generate: (match) => {
       const cols = match[1].split(',').map((c) => c.trim());
       return createStep('removeColumns', { columns: cols }, `Remove columns: ${cols.join(', ')}`);
@@ -90,18 +97,18 @@ const nlPatterns: NLPattern[] = [
   },
   // Rename column
   {
-    patterns: [
-      /(?:rename|đổi tên)\s+(?:column|cột)\s+(\w+)\s+(?:to|thành)\s+(\w+)/i,
-    ],
+    patterns: [/(?:rename|đổi tên)\s+(?:column|cột)\s+(\w+)\s+(?:to|thành)\s+(\w+)/i],
     generate: (match) => {
-      return createStep('renameColumn', { from: match[1].trim(), to: match[2].trim() }, `Rename ${match[1]} → ${match[2]}`);
+      return createStep(
+        'renameColumn',
+        { from: match[1].trim(), to: match[2].trim() },
+        `Rename ${match[1]} → ${match[2]}`
+      );
     },
   },
   // Trim
   {
-    patterns: [
-      /(?:trim|cắt khoảng trắng)\s+(?:column|cột)?\s*(\w+)?/i,
-    ],
+    patterns: [/(?:trim|cắt khoảng trắng)\s+(?:column|cột)?\s*(\w+)?/i],
     generate: (match, columns) => {
       const col = match[1]?.trim() || columns[0] || 'A';
       return createStep('trimText', { column: col }, `Trim ${col}`);
@@ -128,11 +135,15 @@ const nlPatterns: NLPattern[] = [
       /(?:replace|thay thế)\s+["'](.+?)["']\s+(?:with|bằng|thành)\s+["'](.+?)["']\s+(?:in|ở|tại)\s+(\w+)/i,
     ],
     generate: (match) => {
-      return createStep('replaceValues', {
-        column: match[3].trim(),
-        find: match[1],
-        replace: match[2],
-      }, `Replace "${match[1]}" with "${match[2]}" in ${match[3]}`);
+      return createStep(
+        'replaceValues',
+        {
+          column: match[3].trim(),
+          find: match[1],
+          replace: match[2],
+        },
+        `Replace "${match[1]}" with "${match[2]}" in ${match[3]}`
+      );
     },
   },
 ];

@@ -35,7 +35,8 @@ export const SuggestionBadge: React.FC<SuggestionBadgeProps> = ({
   const config = getTypeConfig(type);
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`suggestion-badge suggestion-badge--${size} ${animated && count > 0 ? 'suggestion-badge--animated' : ''}`}
       onClick={onClick}
       style={{
@@ -66,17 +67,14 @@ interface MultiBadgeProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const MultiBadge: React.FC<MultiBadgeProps> = ({
-  counts,
-  onClick,
-  size = 'medium',
-}) => {
+export const MultiBadge: React.FC<MultiBadgeProps> = ({ counts, onClick, size = 'medium' }) => {
   const total = Object.values(counts).reduce((sum, c) => sum + (c || 0), 0);
 
   if (total === 0) return null;
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className={`multi-badge multi-badge--${size}`}
       onClick={onClick}
       title={`${total} suggestions`}
@@ -85,22 +83,34 @@ export const MultiBadge: React.FC<MultiBadgeProps> = ({
       <span className="multi-badge__total">{total > 99 ? '99+' : total}</span>
       <div className="multi-badge__breakdown">
         {counts.issue ? (
-          <span className="multi-badge__item multi-badge__item--issue" title={`${counts.issue} issues`}>
+          <span
+            className="multi-badge__item multi-badge__item--issue"
+            title={`${counts.issue} issues`}
+          >
             {counts.issue}
           </span>
         ) : null}
         {counts.insight ? (
-          <span className="multi-badge__item multi-badge__item--insight" title={`${counts.insight} insights`}>
+          <span
+            className="multi-badge__item multi-badge__item--insight"
+            title={`${counts.insight} insights`}
+          >
             {counts.insight}
           </span>
         ) : null}
         {counts.optimization ? (
-          <span className="multi-badge__item multi-badge__item--optimization" title={`${counts.optimization} optimizations`}>
+          <span
+            className="multi-badge__item multi-badge__item--optimization"
+            title={`${counts.optimization} optimizations`}
+          >
             {counts.optimization}
           </span>
         ) : null}
         {counts.pattern ? (
-          <span className="multi-badge__item multi-badge__item--pattern" title={`${counts.pattern} patterns`}>
+          <span
+            className="multi-badge__item multi-badge__item--pattern"
+            title={`${counts.pattern} patterns`}
+          >
             {counts.pattern}
           </span>
         ) : null}
@@ -147,10 +157,7 @@ export const InlineBadge: React.FC<InlineBadgeProps> = ({
   };
 
   return (
-    <span
-      className={`inline-badge inline-badge--${variant}`}
-      style={styles[variant]}
-    >
+    <span className={`inline-badge inline-badge--${variant}`} style={styles[variant]}>
       {count}
     </span>
   );

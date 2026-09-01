@@ -8,9 +8,7 @@ export const ModeIndicator: React.FC = () => {
 
   return (
     <div className="mode-indicator">
-      <span className={`mode-text ${isEditing ? 'editing' : ''}`}>
-        {mode}
-      </span>
+      <span className={`mode-text ${isEditing ? 'editing' : ''}`}>{mode}</span>
     </div>
   );
 };

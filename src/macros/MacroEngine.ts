@@ -109,11 +109,7 @@ export class MacroEngine {
       return null;
     }
 
-    return this.createMacro(
-      result.suggestedName,
-      result.workflow,
-      result.trigger
-    );
+    return this.createMacro(result.suggestedName, result.workflow, result.trigger);
   }
 
   /**
@@ -217,7 +213,6 @@ export class MacroEngine {
       macro.lastRunAt = new Date();
       macro.runCount++;
       this.saveMacros();
-
     } catch (error) {
       execution.status = 'failed';
       execution.completedAt = new Date();
@@ -236,7 +231,7 @@ export class MacroEngine {
    * Cancel running execution
    */
   cancelExecution(executionId: string): void {
-    const execution = this.executions.find(e => e.id === executionId);
+    const execution = this.executions.find((e) => e.id === executionId);
     if (execution && execution.status === 'running') {
       execution.status = 'cancelled';
       this.executor.cancel(executionId);
@@ -248,9 +243,7 @@ export class MacroEngine {
    * Get execution history
    */
   getExecutions(macroId?: string): MacroExecution[] {
-    return macroId
-      ? this.executions.filter(e => e.macroId === macroId)
-      : this.executions;
+    return macroId ? this.executions.filter((e) => e.macroId === macroId) : this.executions;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -316,7 +309,9 @@ export class MacroEngine {
    * Record an action (called by event system)
    */
   recordAction(action: unknown): void {
-    const session = this.recorder.recordAction(action as Parameters<typeof this.recorder.recordAction>[0]);
+    const session = this.recorder.recordAction(
+      action as Parameters<typeof this.recorder.recordAction>[0]
+    );
     if (session) this.notifyRecordingHandlers(session);
   }
 
@@ -339,11 +334,11 @@ export class MacroEngine {
     if (!pattern) return null;
 
     const workflow = this.patternDetector.toWorkflow(pattern);
-    return this.createMacro(
-      pattern.suggestedName,
-      workflow,
-      { type: 'manual', config: {}, enabled: true }
-    );
+    return this.createMacro(pattern.suggestedName, workflow, {
+      type: 'manual',
+      config: {},
+      enabled: true,
+    });
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -411,11 +406,11 @@ export class MacroEngine {
   }
 
   private notifyExecutionHandlers(execution: MacroExecution): void {
-    this.executionHandlers.forEach(h => h(execution));
+    this.executionHandlers.forEach((h) => h(execution));
   }
 
   private notifyRecordingHandlers(session: RecordingSession): void {
-    this.recordingHandlers.forEach(h => h(session));
+    this.recordingHandlers.forEach((h) => h(session));
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -424,7 +419,7 @@ export class MacroEngine {
 
   private loadMacros(): void {
     const saved = this.storage.loadAll();
-    saved.forEach(macro => {
+    saved.forEach((macro) => {
       this.macros.set(macro.id, macro);
       if (macro.enabled && macro.trigger.enabled) {
         this.triggerManager.register(macro);

@@ -54,7 +54,8 @@ const PII_PATTERNS: PIIPattern[] = [
   {
     type: 'credit_card',
     // Visa, MC, Amex, Discover — with optional separators
-    regex: /\b(?:4[0-9]{3}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|5[1-5][0-9]{2}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|3[47][0-9]{1}[-\s]?[0-9]{4}[-\s]?[0-9]{6}[-\s]?[0-9]{5}|6(?:011|5[0-9]{2})[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4})\b/g,
+    regex:
+      /\b(?:4[0-9]{3}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|5[1-5][0-9]{2}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|3[47][0-9]{1}[-\s]?[0-9]{4}[-\s]?[0-9]{6}[-\s]?[0-9]{5}|6(?:011|5[0-9]{2})[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4})\b/g,
     label: 'CREDIT_CARD',
     validate: (match: string) => luhnCheck(match.replace(/[-\s]/g, '')),
   },
@@ -199,7 +200,9 @@ export class PIIRedactor {
     }
 
     if (matches.length > 0) {
-      loggers.ai.info(`PII redacted: ${matches.length} items (${matches.map((m) => m.type).join(', ')})`);
+      loggers.ai.info(
+        `PII redacted: ${matches.length} items (${matches.map((m) => m.type).join(', ')})`
+      );
     }
 
     return {
@@ -223,9 +226,7 @@ export class PIIRedactor {
   /**
    * Redact PII from an array of Claude API messages
    */
-  redactMessages(
-    messages: Array<{ role: string; content: string | unknown[] }>
-  ): {
+  redactMessages(messages: Array<{ role: string; content: string | unknown[] }>): {
     messages: Array<{ role: string; content: string | unknown[] }>;
     totalRedactions: number;
   } {

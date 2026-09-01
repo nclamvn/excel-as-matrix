@@ -1,0 +1,13 @@
+id,key,value,unit,status,evidence
+REPO.URL,Repository URL,https://github.com/nclamvn/excel-as-matrix,,VERIFIED,"git command: git remote -v; 2026-08-27"
+REPO.BRANCH,Checked out branch,main,,VERIFIED,"git command: git branch --show-current; 2026-08-27"
+REPO.HEAD,Checked out commit,92a5fd8,,VERIFIED,"git command: git log -1 --oneline; 2026-08-27"
+REPO.TRACKED_FILES,Tracked files,786,files,VERIFIED,"git command: git ls-files | wc -l; 2026-08-27"
+REPO.SOURCE_FILES,Files under src,715,files,VERIFIED,"source scan: find src -type f | wc -l; 2026-08-27"
+REPO.TS_LOC,TypeScript and SQL lines in src server e2e supabase,189449,lines,VERIFIED,"source scan: wc -l over ts tsx sql files; 2026-08-27"
+REPO.COMPONENT_FILES,Files under src/components,375,files,VERIFIED,"source scan: find src/components -type f | wc -l; 2026-08-27"
+REPO.STORE_FILES,Top-level TypeScript store files,41,files,VERIFIED,"source scan: find src/stores maxdepth 1 name *.ts; 2026-08-27"
+REPO.HOOK_FILES,Top-level TypeScript hook files,23,files,VERIFIED,"source scan: find src/hooks maxdepth 1 name *.ts; 2026-08-27"
+REPO.UNIT_TEST_FILES,Unit test files under src,35,files,VERIFIED,"source scan: find *.test.* and *.spec.* under src; 2026-08-27"
+REPO.E2E_SPEC_FILES,Playwright specification files,3,files,VERIFIED,"source scan: find e2e -name *.spec.ts; 2026-08-27"
+REPO.SERVER.ROUTES,Backend route modules,5,files,VERIFIED,"source scan: server/routes contains ai billing compliance scim webhooks; 2026-08-27"

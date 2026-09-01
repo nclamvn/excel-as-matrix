@@ -15,7 +15,10 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
 
   // Parse cell reference like "A1", "B10", "AA100"
   const parseReference = (ref: string): { row: number; col: number } | null => {
-    const match = ref.toUpperCase().trim().match(/^([A-Z]+)(\d+)$/);
+    const match = ref
+      .toUpperCase()
+      .trim()
+      .match(/^([A-Z]+)(\d+)$/);
     if (!match) return null;
 
     const colStr = match[1];
@@ -65,7 +68,11 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog goto-dialog" onClick={e => e.stopPropagation()} style={{ width: 320 }}>
+      <div
+        className="dialog goto-dialog"
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: 320 }}
+      >
         <div className="dialog-header">
           <h2>Go To</h2>
           <button type="button" className="dialog-close" onClick={onClose}>
@@ -79,7 +86,7 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
             <input
               type="text"
               value={reference}
-              onChange={e => setReference(e.target.value.toUpperCase())}
+              onChange={(e) => setReference(e.target.value.toUpperCase())}
               onKeyDown={handleKeyDown}
               placeholder="e.g., A1, B10, AA100"
               className="dialog-input"
@@ -93,7 +100,8 @@ export const GoToDialog: React.FC<GoToDialogProps> = ({ onClose }) => {
               <label>Recent:</label>
               <div className="goto-recent">
                 {recentRefs.map((ref, i) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={i}
                     className="goto-recent-btn"
                     onClick={() => {

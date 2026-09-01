@@ -125,12 +125,10 @@ export class CalibrationTracker {
       }
 
       const predictedAccuracy =
-        bucketRecords.reduce((sum, r) => sum + r.predictedConfidence, 0) /
-        bucketRecords.length;
+        bucketRecords.reduce((sum, r) => sum + r.predictedConfidence, 0) / bucketRecords.length;
 
       const actualAccuracy =
-        bucketRecords.reduce((sum, r) => sum + r.outcomeScore, 0) /
-        bucketRecords.length;
+        bucketRecords.reduce((sum, r) => sum + r.outcomeScore, 0) / bucketRecords.length;
 
       // Consider calibrated if within 0.15 of predicted
       const isCalibrated = Math.abs(predictedAccuracy - actualAccuracy) < 0.15;
@@ -184,9 +182,7 @@ export class CalibrationTracker {
     const recent = this.records.slice(-n);
     if (recent.length === 0) return 0.7; // Default
 
-    return (
-      recent.reduce((sum, r) => sum + r.outcomeScore, 0) / recent.length
-    );
+    return recent.reduce((sum, r) => sum + r.outcomeScore, 0) / recent.length;
   }
 
   /**
@@ -199,8 +195,7 @@ export class CalibrationTracker {
     const firstHalf = this.records.slice(0, midpoint);
     const secondHalf = this.records.slice(midpoint);
 
-    const firstAccuracy =
-      firstHalf.reduce((sum, r) => sum + r.outcomeScore, 0) / firstHalf.length;
+    const firstAccuracy = firstHalf.reduce((sum, r) => sum + r.outcomeScore, 0) / firstHalf.length;
     const secondAccuracy =
       secondHalf.reduce((sum, r) => sum + r.outcomeScore, 0) / secondHalf.length;
 
@@ -230,8 +225,7 @@ export class CalibrationTracker {
     const accuracies = new Map<string, number>();
 
     for (const [type, records] of byType) {
-      const accuracy =
-        records.reduce((sum, r) => sum + r.outcomeScore, 0) / records.length;
+      const accuracy = records.reduce((sum, r) => sum + r.outcomeScore, 0) / records.length;
       accuracies.set(type, accuracy);
     }
 
@@ -278,14 +272,11 @@ export class CalibrationTracker {
     const bucketsWithData = metrics.buckets.filter((b) => b.sampleCount > 0);
     if (bucketsWithData.length === 0) return 0;
 
-    const avgBias =
-      bucketsWithData.reduce(
-        (sum, b) =>
-          sum +
-          (b.predictedAccuracy - b.actualAccuracy) *
-            (b.sampleCount / metrics.totalPredictions),
-        0
-      );
+    const avgBias = bucketsWithData.reduce(
+      (sum, b) =>
+        sum + (b.predictedAccuracy - b.actualAccuracy) * (b.sampleCount / metrics.totalPredictions),
+      0
+    );
 
     // Recommend adjustment opposite to bias
     return -avgBias;
@@ -327,9 +318,7 @@ export class CalibrationTracker {
     const lines: string[] = [];
 
     const icon = this.getCalibrationIcon(metrics.overallCalibration);
-    lines.push(
-      `${icon} Calibration: ${Math.round(metrics.overallCalibration * 100)}%`
-    );
+    lines.push(`${icon} Calibration: ${Math.round(metrics.overallCalibration * 100)}%`);
     lines.push(`Recent Accuracy: ${Math.round(metrics.recentAccuracy * 100)}%`);
     lines.push(`Trend: ${this.formatTrend(metrics.trend)}`);
     lines.push(`Total Predictions: ${metrics.totalPredictions}`);

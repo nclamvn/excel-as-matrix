@@ -48,13 +48,13 @@ export class QualityAnalyzer {
 
     const overall = Math.round(
       duplicates.score * weights.duplicates +
-      completeness.score * weights.completeness +
-      validity.score * weights.validity +
-      consistency.score * weights.consistency +
-      accuracy.score * weights.accuracy
+        completeness.score * weights.completeness +
+        validity.score * weights.validity +
+        consistency.score * weights.consistency +
+        accuracy.score * weights.accuracy
     );
 
-    const autoFixable = issues.filter(i => i.autoFixable).length;
+    const autoFixable = issues.filter((i) => i.autoFixable).length;
 
     return {
       overall,
@@ -74,10 +74,7 @@ export class QualityAnalyzer {
   /**
    * Analyze duplicates
    */
-  private analyzeDuplicates(
-    data: CleanerSheetData,
-    issues: QualityIssue[]
-  ): CategoryScore {
+  private analyzeDuplicates(data: CleanerSheetData, issues: QualityIssue[]): CategoryScore {
     const rowHashes = new Map<string, number[]>();
 
     // Hash each row
@@ -85,7 +82,7 @@ export class QualityAnalyzer {
       const rowData = data.cells[row];
       if (!rowData) continue;
 
-      const hash = rowData.map(c => String(c.value).toLowerCase().trim()).join('|');
+      const hash = rowData.map((c) => String(c.value).toLowerCase().trim()).join('|');
       const existing = rowHashes.get(hash) || [];
       existing.push(row);
       rowHashes.set(hash, existing);
@@ -100,17 +97,17 @@ export class QualityAnalyzer {
         duplicateRows += rows.length - 1; // Don't count the original
         duplicateGroups.push({
           rows,
-          values: data.cells[rows[0]]?.map(c => c.value) || [],
+          values: data.cells[rows[0]]?.map((c) => c.value) || [],
         });
       }
     }
 
     // Add issue if duplicates found
     if (duplicateGroups.length > 0) {
-      const examples: IssueExample[] = duplicateGroups.slice(0, 3).map(g => ({
+      const examples: IssueExample[] = duplicateGroups.slice(0, 3).map((g) => ({
         cell: `Row ${g.rows[0] + 1}`,
         currentValue: g.values.slice(0, 3).join(', '),
-        reason: `Duplicated in rows: ${g.rows.map(r => r + 1).join(', ')}`,
+        reason: `Duplicated in rows: ${g.rows.map((r) => r + 1).join(', ')}`,
       }));
 
       issues.push({
@@ -121,7 +118,7 @@ export class QualityAnalyzer {
         title: `${duplicateGroups.length} duplicate groups found`,
         description: `Found ${duplicateRows} duplicate rows in ${duplicateGroups.length} groups`,
         affectedCells: [],
-        affectedRows: duplicateGroups.flatMap(g => g.rows.slice(1)),
+        affectedRows: duplicateGroups.flatMap((g) => g.rows.slice(1)),
         count: duplicateRows,
         autoFixable: true,
         suggestedFix: {
@@ -140,19 +137,17 @@ export class QualityAnalyzer {
       score,
       grade: this.getGrade(score),
       issueCount: duplicateGroups.length,
-      description: duplicateRows === 0
-        ? 'No duplicate rows found'
-        : `${duplicateRows} duplicate rows (${duplicatePercent.toFixed(1)}%)`,
+      description:
+        duplicateRows === 0
+          ? 'No duplicate rows found'
+          : `${duplicateRows} duplicate rows (${duplicatePercent.toFixed(1)}%)`,
     };
   }
 
   /**
    * Analyze completeness (missing values)
    */
-  private analyzeCompleteness(
-    data: CleanerSheetData,
-    issues: QualityIssue[]
-  ): CategoryScore {
+  private analyzeCompleteness(data: CleanerSheetData, issues: QualityIssue[]): CategoryScore {
     let totalEmpty = 0;
     const emptyByColumn = new Map<number, number[]>();
 
@@ -171,8 +166,9 @@ export class QualityAnalyzer {
     // Add issues for columns with many missing values
     for (const [col, rows] of emptyByColumn) {
       const missingPercent = (rows.length / data.rowCount) * 100;
-      if (missingPercent > 5) { // Only flag if > 5% missing
-        const examples: IssueExample[] = rows.slice(0, 3).map(r => ({
+      if (missingPercent > 5) {
+        // Only flag if > 5% missing
+        const examples: IssueExample[] = rows.slice(0, 3).map((r) => ({
           cell: `${this.colToLetter(col)}${r + 1}`,
           currentValue: '(empty)',
           reason: 'Missing value',
@@ -185,7 +181,7 @@ export class QualityAnalyzer {
           category: 'completeness',
           title: `Missing values in column ${data.headers[col] || this.colToLetter(col)}`,
           description: `${rows.length} missing values (${missingPercent.toFixed(1)}%)`,
-          affectedCells: rows.map(r => ({
+          affectedCells: rows.map((r) => ({
             row: r,
             col,
             ref: `${this.colToLetter(col)}${r + 1}`,
@@ -211,19 +207,17 @@ export class QualityAnalyzer {
       score,
       grade: this.getGrade(score),
       issueCount: emptyByColumn.size,
-      description: totalEmpty === 0
-        ? 'All cells have values'
-        : `${totalEmpty} empty cells (${emptyPercent.toFixed(1)}%)`,
+      description:
+        totalEmpty === 0
+          ? 'All cells have values'
+          : `${totalEmpty} empty cells (${emptyPercent.toFixed(1)}%)`,
     };
   }
 
   /**
    * Analyze validity (format issues, invalid values)
    */
-  private analyzeValidity(
-    data: CleanerSheetData,
-    issues: QualityIssue[]
-  ): CategoryScore {
+  private analyzeValidity(data: CleanerSheetData, issues: QualityIssue[]): CategoryScore {
     let invalidCount = 0;
     const formatIssues: Array<{ col: number; rows: number[]; type: string }> = [];
 
@@ -251,7 +245,7 @@ export class QualityAnalyzer {
     // Add issues
     for (const { col, rows, type } of formatIssues) {
       if (rows.length > 0) {
-        const examples: IssueExample[] = rows.slice(0, 3).map(r => ({
+        const examples: IssueExample[] = rows.slice(0, 3).map((r) => ({
           cell: `${this.colToLetter(col)}${r + 1}`,
           currentValue: data.cells[r]?.[col]?.value,
           reason: `Expected ${type} format`,
@@ -264,7 +258,7 @@ export class QualityAnalyzer {
           category: 'validity',
           title: `Invalid format in ${data.headers[col] || this.colToLetter(col)}`,
           description: `${rows.length} cells don't match expected ${type} format`,
-          affectedCells: rows.map(r => ({
+          affectedCells: rows.map((r) => ({
             row: r,
             col,
             ref: `${this.colToLetter(col)}${r + 1}`,
@@ -290,19 +284,17 @@ export class QualityAnalyzer {
       score,
       grade: this.getGrade(score),
       issueCount: formatIssues.length,
-      description: invalidCount === 0
-        ? 'All values are valid'
-        : `${invalidCount} invalid values (${invalidPercent.toFixed(1)}%)`,
+      description:
+        invalidCount === 0
+          ? 'All values are valid'
+          : `${invalidCount} invalid values (${invalidPercent.toFixed(1)}%)`,
     };
   }
 
   /**
    * Analyze consistency (similar values that should be the same)
    */
-  private analyzeConsistency(
-    data: CleanerSheetData,
-    issues: QualityIssue[]
-  ): CategoryScore {
+  private analyzeConsistency(data: CleanerSheetData, issues: QualityIssue[]): CategoryScore {
     let inconsistentCount = 0;
     const inconsistencies: Array<{ col: number; groups: Map<string, string[]> }> = [];
 
@@ -376,19 +368,17 @@ export class QualityAnalyzer {
       score,
       grade: this.getGrade(score),
       issueCount: inconsistencies.length,
-      description: inconsistentCount === 0
-        ? 'All values are consistent'
-        : `${inconsistencies.length} columns with inconsistent values`,
+      description:
+        inconsistentCount === 0
+          ? 'All values are consistent'
+          : `${inconsistencies.length} columns with inconsistent values`,
     };
   }
 
   /**
    * Analyze accuracy (outliers, suspicious values)
    */
-  private analyzeAccuracy(
-    data: CleanerSheetData,
-    issues: QualityIssue[]
-  ): CategoryScore {
+  private analyzeAccuracy(data: CleanerSheetData, issues: QualityIssue[]): CategoryScore {
     let outlierCount = 0;
     const outlierColumns: Array<{ col: number; outliers: number[] }> = [];
 
@@ -437,7 +427,7 @@ export class QualityAnalyzer {
 
     // Add issues
     for (const { col, outliers } of outlierColumns) {
-      const examples: IssueExample[] = outliers.slice(0, 3).map(r => ({
+      const examples: IssueExample[] = outliers.slice(0, 3).map((r) => ({
         cell: `${this.colToLetter(col)}${r + 1}`,
         currentValue: data.cells[r]?.[col]?.value,
         reason: 'Statistical outlier (z-score > 3)',
@@ -450,7 +440,7 @@ export class QualityAnalyzer {
         category: 'accuracy',
         title: `Outliers in ${data.headers[col] || this.colToLetter(col)}`,
         description: `Found ${outliers.length} statistical outliers`,
-        affectedCells: outliers.map(r => ({
+        affectedCells: outliers.map((r) => ({
           row: r,
           col,
           ref: `${this.colToLetter(col)}${r + 1}`,
@@ -469,9 +459,10 @@ export class QualityAnalyzer {
       score,
       grade: this.getGrade(score),
       issueCount: outlierColumns.length,
-      description: outlierCount === 0
-        ? 'No outliers detected'
-        : `${outlierCount} potential outliers in ${outlierColumns.length} columns`,
+      description:
+        outlierCount === 0
+          ? 'No outliers detected'
+          : `${outlierCount} potential outliers in ${outlierColumns.length} columns`,
     };
   }
 
@@ -499,11 +490,11 @@ export class QualityAnalyzer {
       case 'currency':
         return !isNaN(parseFloat(str.replace(/[$,]/g, '')));
       case 'date':
-        return !isNaN(Date.parse(str)) || /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(str);
+        return !isNaN(Date.parse(str)) || /^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}$/.test(str);
       case 'email':
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
       case 'phone':
-        return /^[\d\s\-\(\)\+]+$/.test(str) && str.replace(/\D/g, '').length >= 10;
+        return /^[\d\s()+-]+$/.test(str) && str.replace(/\D/g, '').length >= 10;
       default:
         return true;
     }

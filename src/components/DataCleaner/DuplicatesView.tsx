@@ -63,7 +63,8 @@ export const DuplicatesView: React.FC<DuplicatesViewProps> = ({
           <span className="duplicates-view__total">{totalDuplicates} duplicates</span>
         </div>
         {onRemoveAllDuplicates && totalDuplicates > 0 && (
-          <button type="button"
+          <button
+            type="button"
             className="duplicates-view__remove-all"
             onClick={onRemoveAllDuplicates}
           >
@@ -80,9 +81,7 @@ export const DuplicatesView: React.FC<DuplicatesViewProps> = ({
             key={group.id}
             group={group}
             isExpanded={expandedGroup === group.id}
-            onToggle={() => setExpandedGroup(
-              expandedGroup === group.id ? null : group.id
-            )}
+            onToggle={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)}
             selectedRows={selectedRows}
             onToggleRow={(rowIndex) => toggleRowSelection(group.id, rowIndex)}
             onKeepRow={onKeepRow}
@@ -127,9 +126,7 @@ const DuplicateGroupCard: React.FC<DuplicateGroupCardProps> = ({
       {/* Group Header */}
       <div className="duplicate-group__header" onClick={onToggle}>
         <div className="duplicate-group__info">
-          <span className="duplicate-group__badge">
-            {group.rows.length} rows
-          </span>
+          <span className="duplicate-group__badge">{group.rows.length} rows</span>
           <span className={`duplicate-group__type duplicate-group__type--${group.type}`}>
             {matchTypeLabel}
           </span>
@@ -141,7 +138,8 @@ const DuplicateGroupCard: React.FC<DuplicateGroupCardProps> = ({
         </div>
         <div className="duplicate-group__actions">
           {onMerge && (
-            <button type="button"
+            <button
+              type="button"
               className="duplicate-group__action"
               onClick={(e) => {
                 e.stopPropagation();
@@ -198,7 +196,9 @@ const DuplicateGroupCard: React.FC<DuplicateGroupCardProps> = ({
           {group.type === 'fuzzy' && group.similarity < 1 && (
             <div className="duplicate-group__differences">
               <span className="duplicate-group__diff-label">Similarity:</span>
-              <span className="duplicate-group__diff-col">{Math.round(group.similarity * 100)}%</span>
+              <span className="duplicate-group__diff-col">
+                {Math.round(group.similarity * 100)}%
+              </span>
             </div>
           )}
         </div>
@@ -228,13 +228,11 @@ const DuplicateRowItem: React.FC<DuplicateRowItemProps> = ({
   onKeep,
   onRemove,
 }) => (
-  <div className={`duplicate-row ${isFirst ? 'duplicate-row--original' : ''} ${isSelected ? 'duplicate-row--selected' : ''}`}>
+  <div
+    className={`duplicate-row ${isFirst ? 'duplicate-row--original' : ''} ${isSelected ? 'duplicate-row--selected' : ''}`}
+  >
     <div className="duplicate-row__select">
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={onToggle}
-      />
+      <input type="checkbox" checked={isSelected} onChange={onToggle} />
     </div>
     <div className="duplicate-row__index">
       {row.rowIndex + 1}
@@ -247,7 +245,8 @@ const DuplicateRowItem: React.FC<DuplicateRowItemProps> = ({
     ))}
     <div className="duplicate-row__actions">
       {onKeep && (
-        <button type="button"
+        <button
+          type="button"
           className="duplicate-row__action duplicate-row__action--keep"
           onClick={onKeep}
           title="Keep this row"
@@ -256,7 +255,8 @@ const DuplicateRowItem: React.FC<DuplicateRowItemProps> = ({
         </button>
       )}
       {onRemove && !isFirst && (
-        <button type="button"
+        <button
+          type="button"
           className="duplicate-row__action duplicate-row__action--remove"
           onClick={onRemove}
           title="Remove this row"
@@ -317,7 +317,10 @@ const ChevronIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+    style={{
+      transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      transition: 'transform 0.2s',
+    }}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>

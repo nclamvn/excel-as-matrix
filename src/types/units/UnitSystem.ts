@@ -13,10 +13,10 @@ export interface Unit {
   name: string;
   symbol: string;
   dimension: Dimension;
-  toBase: number;      // Multiply by this to convert to base unit
-  fromBase: number;    // Multiply by this to convert from base unit
-  offset?: number;     // For temperature conversions
-  aliases?: string[];  // Alternative names for this unit
+  toBase: number; // Multiply by this to convert to base unit
+  fromBase: number; // Multiply by this to convert from base unit
+  offset?: number; // For temperature conversions
+  aliases?: string[]; // Alternative names for this unit
 }
 
 // -----------------------------------------------------------------------------

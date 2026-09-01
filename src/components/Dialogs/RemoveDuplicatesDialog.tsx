@@ -9,7 +9,8 @@ interface RemoveDuplicatesDialogProps {
 }
 
 export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ onClose }) => {
-  const { activeSheetId, sheets, selectionRange, selectedCell, batchUpdateCells } = useWorkbookStore();
+  const { activeSheetId, sheets, selectionRange, selectedCell, batchUpdateCells } =
+    useWorkbookStore();
   const { showToast } = useUIStore();
 
   const sheet = activeSheetId ? sheets[activeSheetId] : null;
@@ -121,7 +122,11 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
     }
 
     // Remove duplicate rows by clearing their cells
-    const updates: Array<{ row: number; col: number; data: { value: null; displayValue: string; formula: null } }> = [];
+    const updates: Array<{
+      row: number;
+      col: number;
+      data: { value: null; displayValue: string; formula: null };
+    }> = [];
 
     // Sort duplicate rows in descending order to remove from bottom first
     const rowsToRemove = [...duplicateInfo.duplicateRows].sort((a, b) => b - a);
@@ -275,7 +280,8 @@ export const RemoveDuplicatesDialog: React.FC<RemoveDuplicatesDialogProps> = ({ 
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="button"
+          <button
+            type="button"
             className="btn btn-primary"
             onClick={handleRemoveDuplicates}
             disabled={selectedColumns.size === 0}

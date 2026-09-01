@@ -8,13 +8,7 @@ interface NameManagerProps {
 }
 
 export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) => {
-  const {
-    ranges,
-    listAll,
-    addRange,
-    removeRange,
-    updateRange,
-  } = useNamedRangeStore();
+  const { ranges, listAll, addRange, removeRange, updateRange } = useNamedRangeStore();
 
   const [selectedRangeId, setSelectedRangeId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -93,14 +87,16 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
         {/* Toolbar */}
         <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
           <div className="flex gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setIsCreating(true)}
               className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               New
             </button>
             {selectedRange && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => handleDelete(selectedRange.id)}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
               >
@@ -174,14 +170,19 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleCreate}
                     className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
                   >
                     Create
                   </button>
-                  <button type="button"
-                    onClick={() => { setIsCreating(false); resetForm(); }}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCreating(false);
+                      resetForm();
+                    }}
                     className="px-3 py-1 text-sm bg-gray-300 rounded hover:bg-gray-400"
                   >
                     Cancel
@@ -194,9 +195,7 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
           {/* Range List */}
           <div className="p-4">
             {filteredRanges.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-4">
-                No named ranges defined
-              </p>
+              <p className="text-gray-500 text-sm text-center py-4">No named ranges defined</p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
@@ -257,7 +256,8 @@ export const NameManager: React.FC<NameManagerProps> = ({ sheetId, onClose }) =>
 
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-200 flex justify-end">
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
           >

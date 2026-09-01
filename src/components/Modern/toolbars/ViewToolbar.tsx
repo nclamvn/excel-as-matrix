@@ -1,17 +1,11 @@
 import React from 'react';
-import {
-  Grid, Columns, ZoomIn, ZoomOut,
-  Maximize, Sun, Moon
-} from 'lucide-react';
+import { Grid, Columns, ZoomIn, ZoomOut, Maximize, Sun, Moon } from 'lucide-react';
 import { useWorkbookStore } from '../../../stores/workbookStore';
 import { useUIStore } from '../../../stores/uiStore';
 
 export const ViewToolbar: React.FC = () => {
-  const {
-    zoom, setZoom,
-    showGridlines, setShowGridlines,
-    showHeadings, setShowHeadings,
-  } = useWorkbookStore();
+  const { zoom, setZoom, showGridlines, setShowGridlines, showHeadings, setShowHeadings } =
+    useWorkbookStore();
 
   const { resolvedTheme, toggleTheme, formulaBarVisible, toggleFormulaBar } = useUIStore();
   const isDark = resolvedTheme === 'dark';
@@ -39,11 +33,7 @@ export const ViewToolbar: React.FC = () => {
           <span>Headings</span>
         </label>
         <label className="toolbar-2026__checkbox">
-          <input
-            type="checkbox"
-            checked={formulaBarVisible}
-            onChange={toggleFormulaBar}
-          />
+          <input type="checkbox" checked={formulaBarVisible} onChange={toggleFormulaBar} />
           <span>Formula Bar</span>
         </label>
       </div>
@@ -52,7 +42,8 @@ export const ViewToolbar: React.FC = () => {
 
       {/* Zoom */}
       <div className="toolbar-2026__group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setZoom(Math.max(25, zoom - 10))}
           disabled={zoom <= 25}
@@ -61,7 +52,8 @@ export const ViewToolbar: React.FC = () => {
           <ZoomOut size={16} />
         </button>
         <span className="toolbar-2026__zoom-value">{zoom}%</span>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setZoom(Math.min(400, zoom + 10))}
           disabled={zoom >= 400}
@@ -69,7 +61,8 @@ export const ViewToolbar: React.FC = () => {
         >
           <ZoomIn size={16} />
         </button>
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={() => setZoom(100)}
           title="Reset to 100%"
@@ -83,7 +76,8 @@ export const ViewToolbar: React.FC = () => {
 
       {/* Theme */}
       <div className="toolbar-2026__group">
-        <button type="button"
+        <button
+          type="button"
           className="toolbar-2026__btn"
           onClick={toggleTheme}
           title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
